@@ -97,8 +97,8 @@ public extension Double {
 }
 
 public enum ScreenSize {
-    static let width = UIScreen.main.bounds.width
-    static let height = UIScreen.main.bounds.height
+    public static let width = UIScreen.main.bounds.width
+    public static let height = UIScreen.main.bounds.height
 }
 
 public extension SwiftUI.Color {
