@@ -101,13 +101,13 @@ public enum ScreenSize {
     static let height = UIScreen.main.bounds.height
 }
 
-extension SwiftUI.Color {
+public extension SwiftUI.Color {
     var uiColor: UIColor {
         return UIColor(self)
     }
 }
 
-extension Image {
+public extension Image {
     var icAccount: Image {
         return .init("ic_account")
     }

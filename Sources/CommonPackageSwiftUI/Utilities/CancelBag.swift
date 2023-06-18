@@ -10,6 +10,8 @@ import Combine
 public final class CancelBag {
     fileprivate(set) var subscriptions = Set<AnyCancellable>()
     
+    public init() { }
+    
     public func cancel() {
         subscriptions.removeAll()
     }
