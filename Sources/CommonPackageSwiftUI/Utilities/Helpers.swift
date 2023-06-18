@@ -28,7 +28,7 @@ public extension Result {
 // MARK: - View Inspection helper
 
 public final class Inspection<V> {
-    let notice = PassthroughSubject<UInt, Never>()
+    public let notice = PassthroughSubject<UInt, Never>()
     var callbacks = [UInt: (V) -> Void]()
     
     public init(callbacks: [UInt : (V) -> Void] = [UInt: (V) -> Void]()) {
