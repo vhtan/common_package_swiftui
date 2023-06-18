@@ -20,9 +20,19 @@ public protocol SessionRepository {
 public struct Access {
     let deviceId: String?
     let accessKey: String?
+    
+    public init(deviceId: String?, accessKey: String?) {
+        self.deviceId = deviceId
+        self.accessKey = accessKey
+    }
 }
 
 public struct Session {
     let token: String?
     let userId: Int?
+    
+    public init(token: String?, userId: Int?) {
+        self.token = token
+        self.userId = userId
+    }
 }
