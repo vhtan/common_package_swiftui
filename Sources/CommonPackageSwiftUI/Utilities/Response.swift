@@ -15,16 +15,16 @@ public enum StatusCode: Int {
 }
 
 public struct Pagination: Decodable {
-    let currentPage: Int?
-    let perPage: Int?
-    let total: Int?
-    let totalPage: Int?
+    public let currentPage: Int?
+    public let perPage: Int?
+    public let total: Int?
+    public let totalPage: Int?
     
-    var canLoadMore: Bool {
+    public var canLoadMore: Bool {
         return (currentPage ?? 0) < (totalPage ?? 0)
     }
     
-    var nextPage: Int? {
+    public var nextPage: Int? {
         guard let current = currentPage else {
             return nil
         }
@@ -33,9 +33,9 @@ public struct Pagination: Decodable {
 }
 
 public struct Response<T: Decodable>: Decodable{
-    let message: String?
-    let code: Int?
-    let data: T?
+    public let message: String?
+    public let code: Int?
+    public let data: T?
 }
 
 public extension Response {
