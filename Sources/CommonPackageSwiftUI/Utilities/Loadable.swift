@@ -17,14 +17,14 @@ public enum Loadable<T> {
     case loaded(T)
     case failed(Error)
 
-    var value: T? {
+    public var value: T? {
         switch self {
         case let .loaded(value): return value
         case let .isLoading(last, _): return last
         default: return nil
         }
     }
-    var error: Error? {
+    public var error: Error? {
         switch self {
         case let .failed(error): return error
         default: return nil
