@@ -61,9 +61,9 @@ public struct BuildConfiguration {
         do {
             let path = try BuildConfiguration.value(for: "BASE_API_URL")
             if let pathComponent = pathComponent {
-                return URL(string: "\(http)\(path)")!.appendingPathComponent(pathComponent, conformingTo: .url)
+                return URL(string: "\(http)://\(path)")!.appendingPathComponent(pathComponent, conformingTo: .url)
             } else {
-                return URL(string: "\(http)\(path)")!
+                return URL(string: "\(http)://\(path)")!
             }
         } catch {
             assertionFailure("Missing BASE_API_URL in Info.plist")
