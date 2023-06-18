@@ -59,9 +59,9 @@ public struct BuildConfiguration {
         do {
             let path = try BuildConfiguration.value(for: "BASE_API_URL")
             if environment.isDebug {
-                return URL(string: "http://\(path)")!.appendingPathComponent("v1")
+                return URL(string: "http://\(path)")!
             } else {
-                return URL(string: "http://\(path)")!.appendingPathComponent("v1")
+                return URL(string: "http://\(path)")!
             }
         } catch {
             assertionFailure("Missing BASE_API_URL in Info.plist")
@@ -73,9 +73,9 @@ public struct BuildConfiguration {
         do {
             let path = try BuildConfiguration.value(for: "FILE_API_URL")
             if environment.isDebug {
-                return URL(string: "http://\(path)")!.appendingPathComponent("v1")
+                return URL(string: "http://\(path)")!
             } else {
-                return URL(string: "http://\(path)")!.appendingPathComponent("v1")
+                return URL(string: "http://\(path)")!
             }
         } catch {
             assertionFailure("Missing FILE_API_URL in Info.plist")
