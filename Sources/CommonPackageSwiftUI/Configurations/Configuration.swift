@@ -37,6 +37,8 @@ public struct BuildConfiguration {
         case missingKey, invalidValue
     }
     
+    public init() { }
+    
     static func value(for key: String) throws -> String {
         guard let value = Bundle.main.object(forInfoDictionaryKey: key) as? String else {
             throw Error.invalidValue
