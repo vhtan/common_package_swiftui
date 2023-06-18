@@ -18,8 +18,8 @@ public protocol SessionRepository {
 }
 
 public struct Access {
-    let deviceId: String?
-    let accessKey: String?
+    public let deviceId: String?
+    public let accessKey: String?
     
     public init(deviceId: String?, accessKey: String?) {
         self.deviceId = deviceId
@@ -28,8 +28,8 @@ public struct Access {
 }
 
 public struct Session {
-    let token: String?
-    let userId: Int?
+    public let token: String?
+    public let userId: Int?
     
     public init(token: String?, userId: Int?) {
         self.token = token

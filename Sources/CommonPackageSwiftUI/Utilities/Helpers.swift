@@ -35,7 +35,7 @@ public final class Inspection<V> {
         self.callbacks = callbacks
     }
     
-    func visit(_ view: V, _ line: UInt) {
+    public func visit(_ view: V, _ line: UInt) {
         if let callback = callbacks.removeValue(forKey: line) {
             callback(view)
         }
