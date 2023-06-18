@@ -33,13 +33,13 @@ public final class ActivityIndicator {
     @Published private var relay = 0
     private let lock = NSRecursiveLock()
     
-    var loading: AnyPublisher<Bool, Never> {
+    public var loading: AnyPublisher<Bool, Never> {
         $relay.map { $0 > 0 }
             .removeDuplicates()
             .eraseToAnyPublisher()
     }
     
-    init() {}
+    public init() {}
     
     func trackActivityOfPublisher<Source: Publisher>(source: Source) -> AnyPublisher<Source.Output, Source.Failure> {
         return ActivityToken(source: source) {

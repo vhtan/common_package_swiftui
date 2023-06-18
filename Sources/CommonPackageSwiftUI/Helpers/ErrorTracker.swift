@@ -34,11 +34,11 @@ public final class ErrorTracker {
     private var relay: Error?
     private let lock = NSRecursiveLock()
     
-    var error: AnyPublisher<Error, Never> {
+    public var error: AnyPublisher<Error, Never> {
         $relay.compactMap { $0 }.eraseToAnyPublisher()
     }
     
-    init() {}
+    public init() {}
     
     func trackErrorOfPublisher<Source: Publisher>(source: Source) -> AnyPublisher<Source.Output, Never> {
         return ActivityToken(source: source) { error in
