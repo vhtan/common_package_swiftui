@@ -31,12 +31,18 @@ open class APIService: NSObject {
     public var sessionRepository: SessionRepository
     
     public required init(sessionRepository: SessionRepository, configuration: BuildConfiguration,
-                         encoder: JSONEncoder, decoder: JSONDecoder, sessionTask: SessionTask) {
+                         encoder: JSONEncoder, decoder: JSONDecoder, sessionTask: SessionTask,
+                         configs: [APIConfig]? = nil) {
         self.sessionRepository = sessionRepository
         self.sessionTask = sessionTask
         self.decoder = decoder
         self.encoder = encoder
-        self.baseURL = configuration.baseAPIURL
+        self.baseURL = configuration.baseAPIURL(apiConfigs: configs ?? [])
+    }
+    
+    public enum APIConfig {
+        case hasSSL
+        case path(String)
     }
 }
 

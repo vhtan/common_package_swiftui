@@ -37,8 +37,6 @@ public struct BuildConfiguration {
         case missingKey, invalidValue
     }
     
-    public init() { }
-
     static func value(for key: String) throws -> String {
         guard let value = Bundle.main.object(forInfoDictionaryKey: key) as? String else {
             throw Error.invalidValue
@@ -55,13 +53,15 @@ public struct BuildConfiguration {
         return .debugDev
     }
     
-    public var baseAPIURL: URL {
+    public func baseAPIURL(apiConfigs: [APIService.APIConfig]) -> URL {
+        let http = apiConfigs.first(where: { if case .hasSSL = $0 { return true }; return false }) != nil ? "https" : "http"
+        let pathComponent = apiConfigs.compactMap({ if case let .path(path) = $0 { return path }; return nil }).first.map { $0 }
         do {
             let path = try BuildConfiguration.value(for: "BASE_API_URL")
-            if environment.isDebug {
-                return URL(string: "http://\(path)")!
+            if let pathComponent = pathComponent {
+                return URL(string: "\(http)\(path)")!.appendingPathComponent(pathComponent, conformingTo: .url)
             } else {
-                return URL(string: "http://\(path)")!
+                return URL(string: "\(http)\(path)")!
             }
         } catch {
             assertionFailure("Missing BASE_API_URL in Info.plist")
