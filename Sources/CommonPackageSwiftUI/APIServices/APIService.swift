@@ -30,7 +30,7 @@ open class APIService: NSObject {
     }
     public var sessionRepository: SessionRepository
     
-    public required init(sessionRepository: SessionRepository, configuration: WConfiguration,
+    public required init(sessionRepository: SessionRepository, configuration: BuildConfiguration,
                          encoder: JSONEncoder, decoder: JSONDecoder, sessionTask: SessionTask) {
         self.sessionRepository = sessionRepository
         self.sessionTask = sessionTask

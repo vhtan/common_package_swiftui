@@ -17,7 +17,7 @@ public struct LogManager {
         return documentsPath + "/.logs"
     }
     
-    public static func setup(configuration: WConfiguration) {
+    public static func setup(configuration: BuildConfiguration) {
         var level: XCGLogger.Level = .none
         switch configuration.environment {
         case .debugDev, .debugStag, .debugPro:

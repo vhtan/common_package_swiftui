@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum WEnvironment {
+public enum BuildEnvironment {
     case debugDev
     case debugStag
     case debugPro
@@ -31,7 +31,7 @@ public enum WEnvironment {
     }
 }
 
-public struct WConfiguration {
+public struct BuildConfiguration {
     
     enum Error: Swift.Error {
         case missingKey, invalidValue
@@ -47,9 +47,9 @@ public struct WConfiguration {
         return value
     }
     
-    public var environment: WEnvironment {
+    public var environment: BuildEnvironment {
         do {
-            return try WEnvironment(value: WConfiguration.value(for: "ENVIRONMENT"))
+            return try BuildEnvironment(value: BuildConfiguration.value(for: "ENVIRONMENT"))
         } catch { }
         
         return .debugDev
@@ -57,7 +57,7 @@ public struct WConfiguration {
     
     public var baseAPIURL: URL {
         do {
-            let path = try WConfiguration.value(for: "BASE_API_URL")
+            let path = try BuildConfiguration.value(for: "BASE_API_URL")
             if environment.isDebug {
                 return URL(string: "http://\(path)")!.appendingPathComponent("v1")
             } else {
@@ -71,7 +71,7 @@ public struct WConfiguration {
     
     public var fileAPIURL: URL {
         do {
-            let path = try WConfiguration.value(for: "FILE_API_URL")
+            let path = try BuildConfiguration.value(for: "FILE_API_URL")
             if environment.isDebug {
                 return URL(string: "http://\(path)")!.appendingPathComponent("v1")
             } else {
