@@ -19,7 +19,7 @@ public enum BuildEnvironment {
         return self == .debugDev || self == .debugStag || self == .debugPro
     }
     
-    init(value: String) {
+    public init(value: String) {
         switch value {
         case "debug_stag":      self = .debugStag
         case "debug_pro":       self = .debugPro
