@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum Environment {
+public enum WEnvironment {
     case debugDev
     case debugStag
     case debugPro
@@ -47,9 +47,9 @@ public struct WConfiguration {
         return value
     }
     
-    public var environment: Environment {
+    public var environment: WEnvironment {
         do {
-            return try Environment(value: WConfiguration.value(for: "ENVIRONMENT"))
+            return try WEnvironment(value: WConfiguration.value(for: "ENVIRONMENT"))
         } catch { }
         
         return .debugDev
