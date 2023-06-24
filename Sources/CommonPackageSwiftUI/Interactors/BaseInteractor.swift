@@ -8,7 +8,7 @@
 import SwiftUI
 import Combine
  
-public protocol WBaseInteractor {
+public protocol BaseInteractor {
     associatedtype AppState
     func activityIndicator(isLoading: Binding<Bool>)
     func handleErrorTracker(errorMessage: Binding<String?>)
@@ -18,7 +18,7 @@ public protocol WBaseInteractor {
     var appState: Store<AppState> { get set }
 }
 
-public extension WBaseInteractor {
+public extension BaseInteractor {
     func activityIndicator(isLoading: Binding<Bool>) {
         activityIndicator.loading
             .sink(receiveValue: { flag in
