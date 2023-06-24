@@ -9,13 +9,11 @@ import SwiftUI
 import Combine
  
 public protocol BaseInteractor {
-    associatedtype AppState
     func activityIndicator(isLoading: Binding<Bool>)
     func handleErrorTracker(errorMessage: Binding<String?>)
     var activityIndicator: ActivityIndicator { get set }
     var cancelBag: CancelBag { get set }
     var errorTracker: ErrorTracker { get set }
-    var appState: Store<AppState> { get set }
 }
 
 public extension BaseInteractor {
