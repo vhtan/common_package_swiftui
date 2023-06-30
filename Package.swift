@@ -21,7 +21,8 @@ let package = Package(
         .package(url: "https://github.com/kishikawakatsumi/KeychainAccess.git", from: "4.2.2"),
         .package(url: "https://github.com/eddiekaiger/SwiftyAttributes.git", from: "5.3.0"),
         .package(url: "https://github.com/google/GoogleSignIn-iOS", from: "6.2.4"),
-        .package(url: "https://github.com/facebook/facebook-ios-sdk", from: "9.3.0")
+        .package(url: "https://github.com/facebook/facebook-ios-sdk", from: "9.3.0"),
+        .package(url: "https://github.com/hackiftekhar/IQKeyboardManager.git", from: "6.5.0")
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -35,7 +36,8 @@ let package = Package(
                 .product(name: "SwiftyAttributes", package: "SwiftyAttributes"),
                 .product(name: "GoogleSignIn", package: "GoogleSignIn-iOS"),
                 .product(name: "FacebookCore", package: "facebook-ios-sdk"),
-                .product(name: "FacebookLogin", package: "facebook-ios-sdk")
+                .product(name: "FacebookLogin", package: "facebook-ios-sdk"),
+                .product(name: "IQKeyboardManagerSwift", package: "IQKeyboardManager")
             ]),
     ]
 )
