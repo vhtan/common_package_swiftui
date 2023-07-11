@@ -62,25 +62,18 @@ extension APIService: URLSessionDelegate {
 
 extension APIService {
     
-    public func call<Value: Decodable>(endpoint: APICall,
-                                       httpCodes: HTTPCodes = .success) -> AnyPublisher<Response<Value>, Error> {
-        do {
-            let request = try endpoint.urlRequest(baseURL: baseURL, encoder: encoder, headers: headers)
-            print(request.cURL(pretty: true))
-            return session
-                .dataTaskPublisher(for: request)
-                .requestJSON(httpCodes: httpCodes, decoder: decoder)
-        } catch let error {
-            return Fail<Response<Value>, Error>(error: error)
-                .eraseToAnyPublisher()
-        }
+    public func call<Value: Decodable>(endpoint: APICall) -> AnyPublisher<Response<Value>, Error> {
+        let request = endpoint.urlRequest(baseURL: baseURL, encoder: encoder, headers: headers)
+        print(request.cURL(pretty: true))
+        return session
+            .dataTaskPublisher(for: request)
+            .requestJSON(decoder: decoder)
     }
 }
 
 // MARK: - Helpers
 private extension Publisher where Output == URLSession.DataTaskPublisher.Output {
-    func requestJSON<Value: Decodable>(httpCodes: HTTPCodes,
-                                       decoder: JSONDecoder) -> AnyPublisher<Response<Value>, Error> {
+    func requestJSON<Value: Decodable>(decoder: JSONDecoder) -> AnyPublisher<Response<Value>, Error> {
         return tryMap {
             assert(!Thread.isMainThread)
             self.logData(url: "", data: $0.data)

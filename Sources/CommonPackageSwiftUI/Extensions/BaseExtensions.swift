@@ -137,3 +137,52 @@ public extension Color {
                   opacity: Double(a) / 255)
     }
 }
+
+public extension Encodable {
+    func asDictionary(encoder: JSONEncoder = JSONEncoder()) -> [String: Any]? {
+        guard let data = try? encoder.encode(self) else { return nil }
+        return (try? JSONSerialization.jsonObject(with: data, options: .allowFragments)).flatMap { $0 as? [String: Any] }
+    }
+}
+
+public extension Dictionary {
+    var json: String {
+        let invalidJson = "Not a valid JSON"
+        do {
+            let jsonData = try JSONSerialization.data(withJSONObject: self, options: .prettyPrinted)
+            return String(bytes: jsonData, encoding: String.Encoding.utf8) ?? invalidJson
+        } catch {
+            return invalidJson
+        }
+    }
+}
+
+public extension Dictionary {
+    func toData() -> Data? {
+        do {
+            return try NSKeyedArchiver.archivedData(withRootObject: self, requiringSecureCoding: false)
+        } catch {
+            return nil
+        }
+    }
+}
+
+public extension Data {
+    var mimeType: String {
+        var values = [UInt8](repeating: 0, count: 1)
+        copyBytes(to: &values, count: 1)
+        
+        switch values[0] {
+        case 0xFF:
+            return "image/jpeg"
+        case 0x89:
+            return "image/png"
+        case 0x47:
+            return "image/gif"
+        case 0x49, 0x4D:
+            return "image/tiff"
+        default:
+            return "undefine"
+        }
+    }
+}

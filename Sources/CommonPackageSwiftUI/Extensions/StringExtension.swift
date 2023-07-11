@@ -56,8 +56,8 @@ public extension String {
         return  self == filtered
     }
     
-    var isValidPassword: Bool {
-        return self.trimmingCharacters(in: .whitespacesAndNewlines).count >= 8
+    func isValidPassword(minimumCount: Int) -> Bool {
+        return self.trimmingCharacters(in: .whitespacesAndNewlines).count >= minimumCount
     }
     
     func hasSpecialCharacters() -> Bool {
