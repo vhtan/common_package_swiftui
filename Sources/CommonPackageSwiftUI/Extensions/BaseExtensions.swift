@@ -186,3 +186,76 @@ public extension Data {
         }
     }
 }
+
+public extension UIImage {
+    func resized(maxSize: CGFloat) -> UIImage? {
+        let scale: CGFloat
+        if size.width > size.height {
+            scale = maxSize / size.width
+        }
+        else {
+            scale = maxSize / size.height
+        }
+        
+        let newWidth = size.width * scale
+        let newHeight = size.height * scale
+        UIGraphicsBeginImageContext(CGSize(width: newWidth, height: newHeight))
+        draw(in: CGRect(x: 0, y: 0, width: newWidth, height: newHeight))
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return newImage
+    }
+    
+    func toData(compressionQuality: CGFloat = 1.0) -> Data? {
+        return self.jpegData(compressionQuality: compressionQuality)
+    }
+    
+    var ratio: CGFloat {
+        return size.width / size.height
+    }
+    
+    var ratioString: String {
+        return "\(Int(size.width)):\(Int(size.height))"
+    }
+    
+    func cropSquare() -> UIImage? {
+        var point = CGPoint(x: 0, y: 0)
+        let width = self.size.width
+        let heigh = self.size.height
+        let est = width - heigh
+        if est > 0 {
+            point = CGPoint(x: est / 2, y: 0)
+        } else {
+            point = CGPoint(x: 0, y: abs(est / 2))
+        }
+        let frame = CGRect(x: point.x, y: point.y, width: width, height: width)
+        if let cgimage = self.cgImage?.cropping(to: frame) {
+            return UIImage(cgImage: cgimage)
+        } else {
+            return nil
+        }
+    }
+    
+    func compressionQuality(imageLimitSize: Double = 1000000.0) -> Data? {
+        var quality: CGFloat = 1.0
+        var count = self.jpegData(compressionQuality: quality)?.sizeBytes() ?? 0
+        while count > imageLimitSize, quality > 0 {
+            quality -= 0.1
+            autoreleasepool {
+                count = self.jpegData(compressionQuality: quality)?.sizeBytes() ?? 0
+            }
+        }
+        return self.jpegData(compressionQuality: quality)
+    }
+}
+
+public extension Data {
+    func sizeMB() -> Double? {
+        let bytes: Int = self.count
+        return (Double(bytes) / 1024.0)/1024.0
+    }
+    
+    func sizeBytes() -> Double? {
+        return Double(self.count)
+    }
+}
