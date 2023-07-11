@@ -9,14 +9,14 @@ import Foundation
 
 public struct LazyList<T> {
     
-    typealias Access = (Int) throws -> T?
+    public typealias Access = (Int) throws -> T?
     private let access: Access
     private let useCache: Bool
     private var cache = Cache()
     
     public let count: Int
     
-    init(count: Int, useCache: Bool, _ access: @escaping Access) {
+    public init(count: Int, useCache: Bool, _ access: @escaping Access) {
         self.count = count
         self.useCache = useCache
         self.access = access
