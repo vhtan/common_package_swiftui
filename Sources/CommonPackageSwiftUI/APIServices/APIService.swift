@@ -64,7 +64,7 @@ extension APIService {
     
     public func call<Value: Decodable>(endpoint: APICall) -> AnyPublisher<Response<Value>, Error> {
         let request = endpoint.urlRequest(baseURL: baseURL, encoder: encoder, headers: headers)
-        print(request.cURL(pretty: true))
+        debugPrint(request.cURL(pretty: true))
         return session
             .dataTaskPublisher(for: request)
             .requestJSON(decoder: decoder)

@@ -40,6 +40,6 @@ public struct Response<T: Decodable>: Decodable{
 
 public extension Response {
     var error: APIError? {
-        return APIError(code: code, messageResponse: message)
+        return APIError(code: code, messageResponse: message, message: nil)
     }
 }
