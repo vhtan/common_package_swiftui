@@ -29,7 +29,10 @@ public struct LogManager {
         case .releaseDev:
             level = .none
         }
-        log.setup(level: level, showLogIdentifier: false, showFunctionName: false, showThreadName: false, showLevel: true, showFileNames: true, showLineNumbers: true, showDate: false)
+        log.setup(level: level, showLogIdentifier: false,
+                  showFunctionName: false, showThreadName: false,
+                  showLevel: true, showFileNames: true,
+                  showLineNumbers: true, showDate: false)
         if FileManager.default.fileExists(atPath: Self.logsDir) == false {
             do {
                 try FileManager.default.createDirectory(atPath: Self.logsDir, withIntermediateDirectories: true)
