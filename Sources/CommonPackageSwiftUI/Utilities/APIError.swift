@@ -8,12 +8,10 @@
 public struct APIError: Error {
     public var code: Int?
     public var messageResponse: String?
-    public var message: String?
 
-    init(code: Int? = nil, messageResponse: String? = nil, message: String? = nil) {
+    init(code: Int? = nil, messageResponse: String? = nil) {
         self.code = code
         self.messageResponse = messageResponse
-        self.message = message
     }
 
     public static func defaultError() -> APIError {

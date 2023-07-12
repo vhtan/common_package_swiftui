@@ -38,8 +38,8 @@ public struct Response<T: Decodable>: Decodable{
     public let data: T?
 }
 
-public extension Response {
+extension Response {
     var error: APIError? {
-        return APIError(code: code, messageResponse: message, message: nil)
+        return APIError(code: code, messageResponse: message)
     }
 }

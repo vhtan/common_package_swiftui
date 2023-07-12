@@ -65,16 +65,11 @@ public struct LogManager {
         
         
         let emojiLogFormatter = PrePostFixLogFormatter()
-//        emojiLogFormatter.apply(prefix: "🗯🗯🗯 ", to: .verbose)
-//        emojiLogFormatter.apply(prefix: "🔹🔹🔹 ", to: .debug)
-//        emojiLogFormatter.apply(prefix: "ℹ️ℹ️ℹ️ ", to: .info)
-//        emojiLogFormatter.apply(prefix: "⚠️⚠️⚠️ ", to: .warning)
         emojiLogFormatter.apply(prefix: "‼️‼️‼️ ", to: .error)
-//        emojiLogFormatter.apply(prefix: "💣💣💣 ", to: .severe)
         log.formatters = [emojiLogFormatter]
         
         fileDestination.logQueue = XCGLogger.logQueue
-
+        
         // Add the destination to the logger
         log.add(destination: fileDestination)
     }
