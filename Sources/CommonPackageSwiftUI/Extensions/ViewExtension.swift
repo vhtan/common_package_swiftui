@@ -61,4 +61,18 @@ public extension View {
             }
         }
     }
+    
+    func fullScreenCoverCustom<Item, Content>(item: Binding<Item?>,
+                                              onDismiss: (() -> Void)? = nil,
+                                              @ViewBuilder content: @escaping (Item) -> Content) -> some View where Item : Identifiable, Content : View {
+        if #available(iOS 15.0, *) {
+            return self.fullScreenCover(item: item, onDismiss: onDismiss, content: content)
+        } else {
+            return VStack(spacing: 0) {
+                self
+                EmptyView()
+                    .fullScreenCover(item: item, onDismiss: onDismiss, content: content)
+            }
+        }
+    }
 }
