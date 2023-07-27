@@ -20,8 +20,8 @@ let package = Package(
         .package(url: "https://github.com/DaveWoodCom/XCGLogger.git", from: "7.0.1"),
         .package(url: "https://github.com/kishikawakatsumi/KeychainAccess.git", from: "4.2.2"),
         .package(url: "https://github.com/eddiekaiger/SwiftyAttributes.git", from: "5.3.0"),
-        .package(url: "https://github.com/google/GoogleSignIn-iOS", from: "6.2.4"),
-        .package(url: "https://github.com/facebook/facebook-ios-sdk", from: "9.3.0"),
+        .package(url: "https://github.com/google/GoogleSignIn-iOS", from: "7.0.0"),
+        .package(url: "https://github.com/facebook/facebook-ios-sdk", from: "16.1.3"),
         .package(url: "https://github.com/hackiftekhar/IQKeyboardManager.git", from: "6.5.0")
     ],
     targets: [
