@@ -7,7 +7,9 @@ class AppTheme {
 
   static ThemeData lightAppTheme = ThemeData(
     appBarTheme: const AppBarTheme(
-      color: Color(0xFFF4511E),
+      titleTextStyle: TextStyle(
+          fontSize: 20, fontWeight: FontWeight.w700, color: AppColors.white),
+      color: AppColors.primary,
       centerTitle: true,
     ),
     dialogTheme: const DialogTheme(
@@ -18,16 +20,13 @@ class AppTheme {
         ),
       ),
     ),
-    inputDecorationTheme: const InputDecorationTheme(
-        enabledBorder: enabledBorder,
-        focusedBorder: focusedBorder,
-        errorBorder: errorBorder,
-        border: inputBorder),
+    inputDecorationTheme: inputTextTheme,
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color(0xFFF4511E),
       ),
     ),
+    filledButtonTheme: filledButtonTheme,
     floatingActionButtonTheme: const FloatingActionButtonThemeData(
       backgroundColor: Color(0xFFF4511E),
     ),
