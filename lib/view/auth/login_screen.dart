@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_text_fields/material_text_fields.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
+import 'package:mvvm_cubit/core/app_asset.dart';
 import 'package:mvvm_cubit/data/model/auth/user.dart';
 import 'package:mvvm_cubit/viewmodel/auth/auth_cubit.dart';
 
@@ -40,6 +41,11 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
+                  const SizedBox(height: 20),
+                  Image.asset(
+                    AppAsset.appLogo,
+                    height: 50,
+                  ),
                   const SizedBox(height: 40),
                   _PhoneField(),
                   const SizedBox(height: 20),
@@ -98,6 +104,7 @@ class _PasswordField extends StatelessWidget {
           textInputAction: TextInputAction.next,
           prefixIcon: const Icon(Icons.lock),
           controller: _passwordTextController,
+          onChanged: (value) {},
           validator: null,
           obscureText: true,
         );
@@ -121,12 +128,13 @@ class _CustomButton extends StatelessWidget {
           child: FilledButton(
             onPressed: () {
               Navigator.pop(context);
+              // context.read<AuthCubit>()
             },
             child: const Row(children: [
               Spacer(),
               Text(
                 "Đăng nhập",
-                style: TextStyle(fontWeight: FontWeight.normal, fontSize: 18),
+                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18),
               ),
               Spacer()
             ]),
