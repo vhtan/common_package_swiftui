@@ -135,8 +135,7 @@ class _CustomButton extends StatelessWidget {
           child: FilledButton(
             onPressed: state.data?.isValid() == true
                 ? () {
-                    Navigator.pop(context);
-                    // context.read<AuthCubit>()
+                    context.read<AuthCubit>().login(context);
                   }
                 : null,
             child: const Row(children: [
