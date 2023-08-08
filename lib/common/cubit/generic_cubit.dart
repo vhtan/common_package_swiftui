@@ -2,7 +2,6 @@ import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/common/network/api_result.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-
 enum ApiOperation { select, create, update, delete }
 
 class GenericCubit<T> extends Cubit<GenericCubitState<List<T>>> {

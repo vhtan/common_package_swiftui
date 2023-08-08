@@ -1,98 +1,72 @@
 import 'package:flutter/material.dart';
 import 'package:material_text_fields/theme/material_text_field_theme.dart';
 
-// const List<Color> colorList = [
-//   Color(0xFFF4511E),
-//   Color(0xFFFDD835),
-//   Color(0xFF7CB342),
-//   Color(0xFF00ACC1),
-//   Color(0xFF673AB7),
-//   Color(0xFFE53935),
-//   Color(0xFFD81B60),
-//   Color(0xFF8E24AA),
-//   Color(0xFF3949AB),
-//   Color(0xFF1E88E5),
-//   Color(0xFF039BE5),
-//   Color(0xFF00ACC1),
-//   Color(0xFF00897B),
-//   Color(0xFF43A047),
-//   Color(0xFF7CB342),
-//   Color(0xFFC0CA33),
-// ];
-
-extension AppColors on Color {
-  static const Color primary = Color.fromRGBO(0, 65, 168, 1);
-  static const Color white = Color.fromRGBO(255, 255, 255, 1);
-}
+import 'app_extension.dart';
 
 const headLine6 = TextStyle(
   fontSize: 12,
   fontWeight: FontWeight.w500,
-  color: Colors.grey,
+  color: AppColors.textDefault,
   overflow: TextOverflow.ellipsis,
 );
 
 const headLine5 = TextStyle(fontSize: 15, fontWeight: FontWeight.bold);
 
 const headLine4 = TextStyle(
-  fontSize: 16,
+  fontSize: Dimension.textFontSize,
   fontWeight: FontWeight.w700,
   overflow: TextOverflow.ellipsis,
 );
 
-const headLine3 = TextStyle(
-  fontSize: 17,
-  fontWeight: FontWeight.w700,
-  overflow: TextOverflow.ellipsis,
-);
-
-const headLine2 = TextStyle(
-  fontSize: 18,
-  fontWeight: FontWeight.bold,
-  overflow: TextOverflow.ellipsis,
-);
-
-const headLine1 = TextStyle(fontSize: 20, fontWeight: FontWeight.w900);
+const headLine1 =
+    TextStyle(fontSize: Dimension.titleFontSize, fontWeight: FontWeight.w900);
 
 const focusedBorder = OutlineInputBorder(
-  borderSide: BorderSide(color: Colors.black54, width: 2.0),
-  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+  borderSide:
+      BorderSide(color: AppColors.border, width: Dimension.borderWidthDefault),
+  borderRadius: BorderRadius.all(Radius.circular(Dimension.radiusDefault)),
 );
 
 const enabledBorder = OutlineInputBorder(
-  borderSide: BorderSide(color: Colors.black12, width: 1.0),
-  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+  borderSide: BorderSide(color: AppColors.border, width: 1.0),
+  borderRadius: BorderRadius.all(Radius.circular(Dimension.radiusDefault)),
 );
 
 const errorBorder = OutlineInputBorder(
-  borderSide: BorderSide(width: 3, color: Color.fromRGBO(255, 82, 82, 1)),
-  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+  borderSide:
+      BorderSide(width: Dimension.borderWidthDefault, color: AppColors.error),
+  borderRadius: BorderRadius.all(Radius.circular(Dimension.radiusDefault)),
 );
 
 const inputBorder = OutlineInputBorder(
-  borderRadius: BorderRadius.all(Radius.circular(10.0)),
-  borderSide: BorderSide(color: Colors.redAccent),
+  borderRadius: BorderRadius.all(Radius.circular(Dimension.radiusDefault)),
+  borderSide: BorderSide(color: AppColors.error),
 );
 
 const focusedErrorBorder = OutlineInputBorder(
-  borderSide: BorderSide(width: 3, color: Colors.redAccent),
+  borderSide:
+      BorderSide(width: Dimension.borderWidthDefault, color: AppColors.error),
   borderRadius: BorderRadius.all(
-    Radius.circular(10.0),
+    Radius.circular(Dimension.radiusDefault),
   ),
 );
 
 final inputTextTheme = FilledOrOutlinedTextTheme(
   radius: 8,
   contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-  errorStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+  errorStyle: const TextStyle(
+      color: AppColors.error,
+      fontSize: Dimension.textFontSize,
+      fontWeight: FontWeight.w700),
   fillColor: Colors.transparent,
   prefixIconColor: AppColors.primary,
-  enabledColor: Colors.grey,
+  enabledColor: AppColors.textDefaultLight,
   focusedColor: AppColors.primary,
   floatingLabelStyle: const TextStyle(
       color: AppColors.primary, fontWeight: FontWeight.w700, fontSize: 14),
   width: 1.5,
-  labelStyle: const TextStyle(fontSize: 16, color: Colors.black),
+  labelStyle: const TextStyle(
+      fontSize: Dimension.textFontSize, color: AppColors.textDefault),
 );
 
 final filledButtonTheme = FilledButtonThemeData(
@@ -100,7 +74,7 @@ final filledButtonTheme = FilledButtonThemeData(
   backgroundColor: MaterialStateProperty.all(AppColors.primary),
   shape: MaterialStateProperty.all(
     const RoundedRectangleBorder(
-      borderRadius: BorderRadius.all(Radius.circular(10)),
+      borderRadius: BorderRadius.all(Radius.circular(Dimension.radiusDefault)),
     ),
   ),
 ));

@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_text_fields/material_text_fields.dart';
@@ -16,6 +14,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController _phoneTextController = TextEditingController();
+  final TextEditingController _passwordTextController = TextEditingController();
+
   PreferredSizeWidget get _appBar {
     return AppBar(
       automaticallyImplyLeading: false,
@@ -32,10 +33,14 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       appBar: _appBar,
       body: BlocConsumer<AuthCubit, GenericCubitState>(
-        listener: (context, state) {},
+        listener: (context, state) {
+          if (state.status == Status.success) {
+            Navigator.pop(context);
+          }
+        },
         builder: (context, state) {
-          return BlocBuilder<AuthCubit, GenericCubitState<List<User>>>(builder:
-              (BuildContext context, GenericCubitState<List<User>> state) {
+          return BlocBuilder<AuthCubit, GenericCubitState<User>>(
+              builder: (BuildContext context, GenericCubitState<User> state) {
             return Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
@@ -47,9 +52,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: 50,
                   ),
                   const SizedBox(height: 40),
-                  _PhoneField(),
+                  _PhoneField(_phoneTextController),
                   const SizedBox(height: 20),
-                  _PasswordField(),
+                  _PasswordField(_passwordTextController),
                   const SizedBox(
                     height: 20,
                   ),
@@ -67,7 +72,9 @@ class _LoginScreenState extends State<LoginScreen> {
 }
 
 class _PhoneField extends StatelessWidget {
-  final TextEditingController _emailTextController = TextEditingController();
+  final TextEditingController phoneTextController;
+
+  const _PhoneField(this.phoneTextController);
 
   @override
   Widget build(BuildContext context) {
@@ -75,23 +82,23 @@ class _PhoneField extends StatelessWidget {
       listener: (context, state) {},
       builder: (context, state) {
         return MaterialTextField(
-          keyboardType: TextInputType.phone,
-          hint: 'Nhập số điện thoại',
-          labelText: 'Số điện thoại',
-          textInputAction: TextInputAction.next,
-          prefixIcon: const Icon(Icons.phone_outlined),
-          controller: _emailTextController,
-          validator: null,
-          obscureText: false,
-        );
+            keyboardType: TextInputType.phone,
+            hint: 'Nhập số điện thoại',
+            labelText: 'Số điện thoại',
+            textInputAction: TextInputAction.next,
+            prefixIcon: const Icon(Icons.phone_outlined),
+            controller: phoneTextController,
+            onChanged: (value) => context.read<AuthCubit>().phoneChanged(value),
+            obscureText: false);
       },
     );
   }
 }
 
 class _PasswordField extends StatelessWidget {
-  final TextEditingController _passwordTextController = TextEditingController();
+  final TextEditingController passwordTextController;
 
+  const _PasswordField(this.passwordTextController);
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AuthCubit, GenericCubitState>(
@@ -103,9 +110,9 @@ class _PasswordField extends StatelessWidget {
           labelText: 'Mật khẩu',
           textInputAction: TextInputAction.next,
           prefixIcon: const Icon(Icons.lock),
-          controller: _passwordTextController,
-          onChanged: (value) {},
-          validator: null,
+          controller: passwordTextController,
+          onChanged: (value) =>
+              context.read<AuthCubit>().passwordChanged(value),
           obscureText: true,
         );
       },
@@ -120,16 +127,18 @@ class _CustomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<AuthCubit, GenericCubitState>(
+    return BlocConsumer<AuthCubit, GenericCubitState<User>>(
       listener: (context, state) {},
       builder: (context, state) {
         return SizedBox(
           height: buttonHeight,
           child: FilledButton(
-            onPressed: () {
-              Navigator.pop(context);
-              // context.read<AuthCubit>()
-            },
+            onPressed: state.data?.isValid() == true
+                ? () {
+                    Navigator.pop(context);
+                    // context.read<AuthCubit>()
+                  }
+                : null,
             child: const Row(children: [
               Spacer(),
               Text(

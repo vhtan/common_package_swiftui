@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:mvvm_cubit/core/app_asset.dart';
 import 'package:flutter/material.dart';
 
@@ -53,6 +55,23 @@ void pop(BuildContext context, int returnedLevel) {
   for (var i = 0; i < returnedLevel; ++i) {
     Navigator.pop(context, true);
   }
+}
+
+extension Dimension on Double {
+  static const double radiusDefault = 10.0;
+  static const double borderWidthDefault = 2.0;
+  static const double titleFontSize = 20;
+  static const double textFontSize = 16;
+}
+
+// App colors
+extension AppColors on Color {
+  static const Color primary = Color(0xFF0041A8);
+  static const Color white = Color(0xFFFFFFFF);
+  static const Color error = Color(0xFFFF5252);
+  static const Color border = Color(0x88000000);
+  static const Color textDefaultLight = Color(0x86757373);
+  static const Color textDefault = Color(0xFF000000);
 }
 
 // import 'package:flutter/material.dart';

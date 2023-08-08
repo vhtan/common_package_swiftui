@@ -2,6 +2,8 @@ import 'package:mvvm_cubit/core/app_string.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:flutter/material.dart';
 
+import 'app_extension.dart';
+
 class AppTheme {
   AppTheme._();
 
@@ -14,64 +16,65 @@ class AppTheme {
     ),
     dialogTheme: const DialogTheme(
       shape: RoundedRectangleBorder(
-        side: BorderSide(color: Color(0xFFF4511E), width: 1.0),
+        side: BorderSide(color: AppColors.error, width: 1.0),
         borderRadius: BorderRadius.all(
-          Radius.circular(15.0),
+          Radius.circular(Dimension.radiusDefault),
         ),
       ),
     ),
     inputDecorationTheme: inputTextTheme,
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xFFF4511E),
+        backgroundColor: AppColors.error,
       ),
     ),
     filledButtonTheme: filledButtonTheme,
     floatingActionButtonTheme: const FloatingActionButtonThemeData(
-      backgroundColor: Color(0xFFF4511E),
+      backgroundColor: AppColors.error,
     ),
     fontFamily: AppString.appFont,
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
-        foregroundColor: Colors.black54,
+        foregroundColor: AppColors.textDefault,
         shape: const RoundedRectangleBorder(
-          side: BorderSide(color: Colors.grey),
+          side: BorderSide(color: AppColors.textDefaultLight),
         ),
       ),
     ),
     timePickerTheme: TimePickerThemeData(
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(8)),
+        borderRadius:
+            BorderRadius.all(Radius.circular(Dimension.radiusDefault)),
         side: BorderSide(color: Colors.grey, width: 2),
       ),
-      dialHandColor: const Color(0xFFF4511E),
+      dialHandColor: AppColors.error,
       hourMinuteColor: MaterialStateColor.resolveWith((states) =>
           states.contains(MaterialState.selected)
-              ? const Color(0xFFF4511E)
-              : Colors.black12),
+              ? AppColors.error
+              : AppColors.textDefault),
       hourMinuteTextColor: MaterialStateColor.resolveWith((states) =>
           states.contains(MaterialState.selected)
-              ? Colors.black54
-              : Colors.grey),
-      dayPeriodBorderSide: const BorderSide(color: Colors.grey),
+              ? AppColors.textDefault
+              : AppColors.textDefaultLight),
+      dayPeriodBorderSide: const BorderSide(color: AppColors.textDefaultLight),
       dayPeriodShape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(5),
+        borderRadius: BorderRadius.circular(Dimension.radiusDefault),
       ),
       dayPeriodColor: Colors.transparent,
       dayPeriodTextColor: MaterialStateColor.resolveWith((states) =>
           states.contains(MaterialState.selected)
-              ? const Color(0xFFF4511E)
-              : Colors.black12),
+              ? AppColors.error
+              : AppColors.textDefault),
       hourMinuteShape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-        side: const BorderSide(color: Colors.black12),
+        borderRadius: BorderRadius.circular(Dimension.radiusDefault),
+        side: const BorderSide(color: AppColors.textDefault),
       ),
     ),
     bottomSheetTheme: const BottomSheetThemeData(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
+          topLeft: Radius.circular(Dimension.radiusDefault),
+          topRight: Radius.circular(Dimension.radiusDefault),
         ),
       ),
     ),
