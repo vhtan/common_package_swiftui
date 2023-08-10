@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/common/widget/empty_widget.dart';
 import 'package:mvvm_cubit/common/widget/spinkit_indicator.dart';
+import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/data/model/main/delivery.dart';
 import 'package:mvvm_cubit/view/auth/login_screen.dart';
@@ -17,6 +18,17 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  final List<Delivery> _deliveries = List.generate(
+      9,
+      (index) => Delivery(
+          orderCode: '${index}32312',
+          startAddress: 'Phú Thuận, District 7, Ho Chi Minh City $index',
+          destinationAddress:
+              '4 Đ. Đào Trí, Phú Thuận, Quận 7, Thành phố Hồ Chí Minh $index',
+          startedTime: DateTime(2023),
+          status: DeliveryStatus.arrived,
+          type: DeliveryType.decreaseFund));
+
   @override
   void initState() {
     BlocProvider.of<MainCubit>(context).getListDelivery();
@@ -58,7 +70,9 @@ class _MainScreenState extends State<MainScreen> {
           listener: (context, state) {
         switch (state.status) {
           case Status.failure:
-            navigateTo(const LoginScreen());
+            // navigateTo(const LoginScreen());
+            break;
+          case Status.success:
             break;
           default:
             break;
@@ -69,7 +83,8 @@ class _MainScreenState extends State<MainScreen> {
                 GenericCubitState<List<Delivery>> state) {
           switch (state.status) {
             case Status.failure:
-              return const SizedBox();
+              // return const SizedBox();
+              return deliveryList();
             case Status.empty:
               return const EmptyWidget(message: "No delivery!");
             case Status.loading:
@@ -91,24 +106,83 @@ class _MainScreenState extends State<MainScreen> {
 
   Widget renderListDelivery(Delivery delivery) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Card(
-        child: Row(
-          children: [
-            const SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(delivery.name, style: headLine4),
-                  const SizedBox(height: 10),
-                  Text(delivery.email, style: headLine6)
-                ],
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('#${delivery.orderCode}', style: headLine4),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.location_pin,
+                          color: AppColors.primary,
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            'Xuất phát: ${delivery.startAddress}',
+                            style: textDefault,
+                            maxLines: 2,
+                            overflow: TextOverflow.clip,
+                          ),
+                        )
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.pin_drop,
+                          color: AppColors.primary,
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            'Điểm đến: ${delivery.destinationAddress}',
+                            style: textDefault,
+                            maxLines: 2,
+                            overflow: TextOverflow.clip,
+                          ),
+                        )
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.access_time,
+                          color: AppColors.primary,
+                        ),
+                        const SizedBox(width: 10),
+                        Text(delivery.startedTime.toStringFormat(),
+                            style: textDefault)
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.car_crash,
+                          color: AppColors.primary,
+                        ),
+                        const SizedBox(width: 10),
+                        Text(delivery.type.name, style: textDefault),
+                        const Spacer(),
+                        StatusContainer(status: delivery.status),
+                      ],
+                    )
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(width: 15),
-            StatusContainer(status: delivery.status),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -128,6 +202,20 @@ class _MainScreenState extends State<MainScreen> {
       MaterialPageRoute(
         builder: (context) => screen,
       ),
+    );
+  }
+}
+
+extension _MainScreenDeliveryList on _MainScreenState {
+  Widget deliveryList() {
+    return ListView.separated(
+      separatorBuilder: (context, index) => const SizedBox(height: 10),
+      shrinkWrap: true,
+      itemCount: _deliveries.length,
+      itemBuilder: (_, index) {
+        Delivery delivery = _deliveries[index];
+        return renderListDelivery(delivery);
+      },
     );
   }
 }

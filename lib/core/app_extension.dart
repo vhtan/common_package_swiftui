@@ -2,6 +2,7 @@ import 'dart:ffi';
 
 import 'package:mvvm_cubit/core/app_asset.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 extension StringExtension on String {
   String get getGenderWidget {
@@ -72,6 +73,12 @@ extension AppColors on Color {
   static const Color border = Color(0x88000000);
   static const Color textDefaultLight = Color(0x86757373);
   static const Color textDefault = Color(0xFF000000);
+}
+
+extension DateTimeFormatCustom on DateTime {
+  String toStringFormat({String format = 'yyyy-MM-dd – kk:mm'}) {
+    return DateFormat(format).format(this);
+  }
 }
 
 // import 'package:flutter/material.dart';

@@ -24,7 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
       //   onPressed: () => Navigator.pop(context),
       //   icon: const Icon(Icons.arrow_back),
       // ),
-      title: const Text("Login"),
+      title: const Text("Đăng nhập"),
     );
   }
 

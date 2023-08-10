@@ -18,6 +18,12 @@ const headLine4 = TextStyle(
   overflow: TextOverflow.ellipsis,
 );
 
+const headLine3 = TextStyle(
+  fontSize: Dimension.textFontSize,
+  fontWeight: FontWeight.w800,
+  overflow: TextOverflow.ellipsis,
+);
+
 const headLine1 =
     TextStyle(fontSize: Dimension.titleFontSize, fontWeight: FontWeight.w900);
 
@@ -78,3 +84,10 @@ final filledButtonTheme = FilledButtonThemeData(
     ),
   ),
 ));
+
+const textDefault = TextStyle(
+  fontSize: 15,
+  fontWeight: FontWeight.w500,
+  color: AppColors.textDefault,
+  overflow: TextOverflow.ellipsis,
+);
