@@ -94,6 +94,42 @@ public extension Double {
         nf.maximumFractionDigits = 0
         return (nf.string(from: NSNumber(value: self)) ?? "?") + currency
     }
+    
+    func toDurationString() -> String {
+        let formatter = DateComponentsFormatter()
+        formatter.allowedUnits = [.hour, .minute, .second]
+        formatter.unitsStyle = .full
+        let formattedString = formatter.string(from: TimeInterval(self))!
+        return formattedString
+    }
+    
+    func toDurationString(unit: DurationUnit = .seconds) -> String {
+        let formatter = DateComponentsFormatter()
+        formatter.allowedUnits = [.hour, .minute]
+        formatter.unitsStyle = .full
+        
+        var seconds = self
+        if unit == .minute {
+            seconds = self * 60
+        } else if unit == .hour {
+            seconds = self * 60 * 60
+        }
+        
+        let formattedString = formatter.string(from: TimeInterval(seconds))!
+        return formattedString
+    }
+    
+    func durationString() -> String {
+        let min = Int(self/60)
+        let sec = Int(self.truncatingRemainder(dividingBy: 60))
+        return String(format: "%02d:%02d", min, sec)
+    }
+    
+    enum DurationUnit {
+        case seconds
+        case minute
+        case hour
+    }
 }
 
 public enum ScreenSize {
@@ -259,3 +295,4 @@ public extension Data {
         return Double(self.count)
     }
 }
+
