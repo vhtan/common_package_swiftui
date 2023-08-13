@@ -10,16 +10,18 @@ import SwiftUI
 
 public struct ImageView: View {
     @ObservedObject private var imageLoader: ImageLoader
-    @State var image:UIImage = UIImage()
+    @State private var image: UIImage = UIImage()
     
-    public init(url:String) {
-        imageLoader = ImageLoader(urlString:url)
+    private let aspectRatio: Double
+    
+    public init(url: String, aspectRatio: Double) {
+        imageLoader = ImageLoader(urlString: url)
+        self.aspectRatio = aspectRatio
     }
     
     public var body: some View {
         Image(uiImage: image)
-            .resizable()
-            .aspectRatio(contentMode: .fill)
+            .fitToAspectRatio(aspectRatio)
             .onReceive(imageLoader.didChange) { data in
                 self.image = UIImage(data: data) ?? UIImage()
             }
