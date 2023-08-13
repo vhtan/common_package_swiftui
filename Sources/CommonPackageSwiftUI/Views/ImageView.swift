@@ -8,7 +8,7 @@
 import Combine
 import SwiftUI
 
-public struct ImageView {
+public struct ImageView: View {
     @ObservedObject private var imageLoader: ImageLoader
     @State var image:UIImage = UIImage()
     
@@ -16,7 +16,7 @@ public struct ImageView {
         imageLoader = ImageLoader(urlString:url)
     }
     
-    var body: some View {
+    public var body: some View {
         Image(uiImage: image)
             .resizable()
             .aspectRatio(contentMode: .fill)
