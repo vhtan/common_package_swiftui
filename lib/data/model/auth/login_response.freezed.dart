@@ -20,9 +20,11 @@ LoginResponse _$LoginResponseFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$LoginResponse {
-  String get code => throw _privateConstructorUsedError;
-  int get responseTime => throw _privateConstructorUsedError;
-  String get session => throw _privateConstructorUsedError;
+  String? get code => throw _privateConstructorUsedError;
+  int? get responseTime => throw _privateConstructorUsedError;
+  String? get session => throw _privateConstructorUsedError;
+  String? get username => throw _privateConstructorUsedError;
+  String? get password => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -36,7 +38,12 @@ abstract class $LoginResponseCopyWith<$Res> {
           LoginResponse value, $Res Function(LoginResponse) then) =
       _$LoginResponseCopyWithImpl<$Res, LoginResponse>;
   @useResult
-  $Res call({String code, int responseTime, String session});
+  $Res call(
+      {String? code,
+      int? responseTime,
+      String? session,
+      String? username,
+      String? password});
 }
 
 /// @nodoc
@@ -52,23 +59,33 @@ class _$LoginResponseCopyWithImpl<$Res, $Val extends LoginResponse>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? code = null,
-    Object? responseTime = null,
-    Object? session = null,
+    Object? code = freezed,
+    Object? responseTime = freezed,
+    Object? session = freezed,
+    Object? username = freezed,
+    Object? password = freezed,
   }) {
     return _then(_value.copyWith(
-      code: null == code
+      code: freezed == code
           ? _value.code
           : code // ignore: cast_nullable_to_non_nullable
-              as String,
-      responseTime: null == responseTime
+              as String?,
+      responseTime: freezed == responseTime
           ? _value.responseTime
           : responseTime // ignore: cast_nullable_to_non_nullable
-              as int,
-      session: null == session
+              as int?,
+      session: freezed == session
           ? _value.session
           : session // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
+      username: freezed == username
+          ? _value.username
+          : username // ignore: cast_nullable_to_non_nullable
+              as String?,
+      password: freezed == password
+          ? _value.password
+          : password // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -81,7 +98,12 @@ abstract class _$$_LoginResponseCopyWith<$Res>
       __$$_LoginResponseCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String code, int responseTime, String session});
+  $Res call(
+      {String? code,
+      int? responseTime,
+      String? session,
+      String? username,
+      String? password});
 }
 
 /// @nodoc
@@ -95,23 +117,33 @@ class __$$_LoginResponseCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? code = null,
-    Object? responseTime = null,
-    Object? session = null,
+    Object? code = freezed,
+    Object? responseTime = freezed,
+    Object? session = freezed,
+    Object? username = freezed,
+    Object? password = freezed,
   }) {
     return _then(_$_LoginResponse(
-      code: null == code
+      code: freezed == code
           ? _value.code
           : code // ignore: cast_nullable_to_non_nullable
-              as String,
-      responseTime: null == responseTime
+              as String?,
+      responseTime: freezed == responseTime
           ? _value.responseTime
           : responseTime // ignore: cast_nullable_to_non_nullable
-              as int,
-      session: null == session
+              as int?,
+      session: freezed == session
           ? _value.session
           : session // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
+      username: freezed == username
+          ? _value.username
+          : username // ignore: cast_nullable_to_non_nullable
+              as String?,
+      password: freezed == password
+          ? _value.password
+          : password // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -120,21 +152,29 @@ class __$$_LoginResponseCopyWithImpl<$Res>
 @JsonSerializable()
 class _$_LoginResponse implements _LoginResponse {
   const _$_LoginResponse(
-      {required this.code, required this.responseTime, required this.session});
+      {this.code,
+      this.responseTime,
+      this.session,
+      this.username,
+      this.password});
 
   factory _$_LoginResponse.fromJson(Map<String, dynamic> json) =>
       _$$_LoginResponseFromJson(json);
 
   @override
-  final String code;
+  final String? code;
   @override
-  final int responseTime;
+  final int? responseTime;
   @override
-  final String session;
+  final String? session;
+  @override
+  final String? username;
+  @override
+  final String? password;
 
   @override
   String toString() {
-    return 'LoginResponse(code: $code, responseTime: $responseTime, session: $session)';
+    return 'LoginResponse(code: $code, responseTime: $responseTime, session: $session, username: $username, password: $password)';
   }
 
   @override
@@ -145,12 +185,17 @@ class _$_LoginResponse implements _LoginResponse {
             (identical(other.code, code) || other.code == code) &&
             (identical(other.responseTime, responseTime) ||
                 other.responseTime == responseTime) &&
-            (identical(other.session, session) || other.session == session));
+            (identical(other.session, session) || other.session == session) &&
+            (identical(other.username, username) ||
+                other.username == username) &&
+            (identical(other.password, password) ||
+                other.password == password));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, code, responseTime, session);
+  int get hashCode =>
+      Object.hash(runtimeType, code, responseTime, session, username, password);
 
   @JsonKey(ignore: true)
   @override
@@ -168,19 +213,25 @@ class _$_LoginResponse implements _LoginResponse {
 
 abstract class _LoginResponse implements LoginResponse {
   const factory _LoginResponse(
-      {required final String code,
-      required final int responseTime,
-      required final String session}) = _$_LoginResponse;
+      {final String? code,
+      final int? responseTime,
+      final String? session,
+      final String? username,
+      final String? password}) = _$_LoginResponse;
 
   factory _LoginResponse.fromJson(Map<String, dynamic> json) =
       _$_LoginResponse.fromJson;
 
   @override
-  String get code;
+  String? get code;
   @override
-  int get responseTime;
+  int? get responseTime;
   @override
-  String get session;
+  String? get session;
+  @override
+  String? get username;
+  @override
+  String? get password;
   @override
   @JsonKey(ignore: true)
   _$$_LoginResponseCopyWith<_$_LoginResponse> get copyWith =>

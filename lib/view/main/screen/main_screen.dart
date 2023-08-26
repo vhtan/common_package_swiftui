@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/common/widget/empty_widget.dart';
 import 'package:mvvm_cubit/common/widget/spinkit_indicator.dart';
+import 'package:mvvm_cubit/core/api_config.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/data/model/main/delivery.dart';
@@ -73,6 +74,9 @@ class _MainScreenState extends State<MainScreen> {
             // navigateTo(const LoginScreen());
             break;
           case Status.success:
+            // clear cached login
+            ApiConfig.loginResponse = null;
+            navigateTo(const LoginScreen());
             break;
           default:
             break;
@@ -190,7 +194,11 @@ class _MainScreenState extends State<MainScreen> {
 
   Widget get floatingActionButton {
     return FloatingActionButton(
-      onPressed: () async {},
+      onPressed: () async {
+        context
+            .read<MainCubit>()
+            .logout(ApiConfig.loginResponse?.username ?? '');
+      },
       child: const Text("SOS"),
     );
   }

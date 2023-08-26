@@ -12,17 +12,16 @@ final getIt = GetIt.instance;
 
 Future<void> init() async {
   //Dio
-  getIt.registerLazySingleton<Dio>(() => Dio());
-  getIt.registerLazySingleton<DioClient>(() => DioClient(getIt<Dio>()));
+  getIt.registerFactory<Dio>(() => Dio());
+  getIt.registerFactory<DioClient>(() => DioClient(getIt<Dio>()));
 
   // Register Main Components
   getIt.registerLazySingleton<MainApi>(
-      () => MainApi(dioClient: getIt<DioClient>()));
+      () => MainApi(client: getIt<DioClient>()));
   getIt.registerLazySingleton<MainRepository>(
     () => MainRepository(mainApi: getIt<MainApi>()),
   );
-  getIt.registerFactory(
-      () => MainCubit(mainRepository: getIt<MainRepository>()));
+  getIt.registerFactory(() => MainCubit(repository: getIt<MainRepository>()));
 
   // Register Auth Components
   getIt.registerLazySingleton<AuthApi>(

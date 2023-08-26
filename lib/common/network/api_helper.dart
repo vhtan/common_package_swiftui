@@ -21,6 +21,10 @@ abstract mixin class ApiHelper<T> {
     return _requestMethodTemplate(apiCallback);
   }
 
+  Future<dynamic> get(Future<Response<dynamic>> apiCallback) async {
+    return _requestMethodTemplate(apiCallback);
+  }
+
   //Generic method template for update item on server
   Future<dynamic> makePutRequest(Future<Response<dynamic>> apiCallback) async {
     return _requestMethodTemplate(apiCallback);

@@ -6,6 +6,10 @@ class DioClient {
   final Dio dio;
 
   DioClient(this.dio) {
+    if (ApiConfig.loginResponse != null) {
+      // add session in case login success
+      ApiConfig.header['Authorization'] = ApiConfig.loginResponse?.session;
+    }
     dio
       ..options.baseUrl = ApiConfig.baseUrl
       ..options.headers = ApiConfig.header

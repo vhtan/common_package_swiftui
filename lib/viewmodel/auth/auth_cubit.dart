@@ -3,11 +3,10 @@ import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/data/model/auth/login_response.dart';
-import 'package:mvvm_cubit/data/model/auth/user.dart';
 import 'package:mvvm_cubit/data/request/auth/login_request.dart';
 import 'package:mvvm_cubit/repository/auth/auth_repository.dart';
 
-class AuthCubit extends Cubit<GenericCubitState<User>> {
+class AuthCubit extends Cubit<GenericCubitState<LoginResponse>> {
   final AuthRepository repository;
 
   AuthCubit({required this.repository}) : super(GenericCubitState.loading());
@@ -19,7 +18,8 @@ class AuthCubit extends Cubit<GenericCubitState<User>> {
       print("login response = $response");
       final user = LoginResponse.fromJson(response);
       print("login data = $user");
-      emit(GenericCubitState.success(User(null, null, user.session)));
+      emit(
+          GenericCubitState.success(user.copyWith(username: request.username)));
     } else {
       emit(GenericCubitState.failure("Error"));
     }
@@ -28,12 +28,16 @@ class AuthCubit extends Cubit<GenericCubitState<User>> {
   void phoneChanged(String value) {
     final password = state.data?.password ?? '';
     emit(GenericCubitState(
-        data: User(value, password), error: null, status: Status.empty));
+        data: LoginResponse(username: value, password: password),
+        error: null,
+        status: Status.empty));
   }
 
   void passwordChanged(String value) {
-    final phone = state.data?.phone ?? '';
+    final phone = state.data?.username ?? '';
     emit(GenericCubitState(
-        data: User(phone, value), error: null, status: Status.empty));
+        data: LoginResponse(username: phone, password: value),
+        error: null,
+        status: Status.empty));
   }
 }

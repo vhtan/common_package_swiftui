@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_text_fields/material_text_fields.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
+import 'package:mvvm_cubit/core/api_config.dart';
 import 'package:mvvm_cubit/core/app_asset.dart';
-import 'package:mvvm_cubit/data/model/auth/user.dart';
+import 'package:mvvm_cubit/data/model/auth/login_response.dart';
 import 'package:mvvm_cubit/data/request/auth/login_request.dart';
 import 'package:mvvm_cubit/view/main/screen/main_screen.dart';
 import 'package:mvvm_cubit/viewmodel/auth/auth_cubit.dart';
@@ -37,6 +38,9 @@ class _LoginScreenState extends State<LoginScreen> {
       body: BlocConsumer<AuthCubit, GenericCubitState>(
         listener: (context, state) {
           if (state.status == Status.success) {
+            // cached login response success
+            ApiConfig.loginResponse = state.data;
+            print('login success ${ApiConfig.loginResponse}');
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -46,8 +50,9 @@ class _LoginScreenState extends State<LoginScreen> {
           }
         },
         builder: (context, state) {
-          return BlocBuilder<AuthCubit, GenericCubitState<User>>(
-              builder: (BuildContext context, GenericCubitState<User> state) {
+          return BlocBuilder<AuthCubit, GenericCubitState<LoginResponse>>(
+              builder: (BuildContext context,
+                  GenericCubitState<LoginResponse> state) {
             return Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
@@ -134,13 +139,14 @@ class _CustomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<AuthCubit, GenericCubitState<User>>(
+    return BlocConsumer<AuthCubit, GenericCubitState<LoginResponse>>(
       listener: (context, state) {},
       builder: (context, state) {
         return SizedBox(
           height: buttonHeight,
           child: FilledButton(
-            onPressed: state.data?.isValid() == true
+            onPressed: state.data?.username?.isNotEmpty == true &&
+                    state.data?.password?.isNotEmpty == true
                 ? () {
                     context.read<AuthCubit>().login(const LoginRequest(
                         username: "acb",
