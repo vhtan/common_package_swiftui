@@ -1,3 +1,4 @@
+import 'package:mvvm_cubit/view/auth/login_screen.dart';
 import 'package:mvvm_cubit/view/main/screen/main_screen.dart';
 import 'package:mvvm_cubit/viewmodel/auth/auth_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/main/main_cubit.dart';
@@ -25,7 +26,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: AppTheme.lightAppTheme,
-        home: const MainScreen(),
+        home: const LoginScreen(),
       ),
     );
   }

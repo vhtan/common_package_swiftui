@@ -7,18 +7,20 @@ part 'login_request.g.dart';
 @JsonSerializable()
 class LoginRequest {
   const LoginRequest({
-    this.id,
-    required this.userId,
-    required this.title,
-    required this.dueOn,
+    required this.username,
+    required this.password,
+    required this.requestId,
+    required this.requestTime,
   });
 
-  final int? id;
-  @JsonKey(name: "user_id")
-  final int userId;
-  final String title;
-  @JsonKey(name: "due_on")
-  final DateTime dueOn;
+  @JsonKey(name: "username")
+  final String username;
+  @JsonKey(name: "password")
+  final String password;
+  @JsonKey(name: "requestId")
+  final String requestId;
+  @JsonKey(name: "requestTime")
+  final int requestTime;
 
   factory LoginRequest.fromJson(Map<String, dynamic> json) =>
       _$LoginRequestFromJson(json);

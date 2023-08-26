@@ -4,6 +4,8 @@ import 'package:material_text_fields/material_text_fields.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/core/app_asset.dart';
 import 'package:mvvm_cubit/data/model/auth/user.dart';
+import 'package:mvvm_cubit/data/request/auth/login_request.dart';
+import 'package:mvvm_cubit/view/main/screen/main_screen.dart';
 import 'package:mvvm_cubit/viewmodel/auth/auth_cubit.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -35,7 +37,12 @@ class _LoginScreenState extends State<LoginScreen> {
       body: BlocConsumer<AuthCubit, GenericCubitState>(
         listener: (context, state) {
           if (state.status == Status.success) {
-            Navigator.pop(context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const MainScreen(),
+              ),
+            );
           }
         },
         builder: (context, state) {
@@ -135,7 +142,11 @@ class _CustomButton extends StatelessWidget {
           child: FilledButton(
             onPressed: state.data?.isValid() == true
                 ? () {
-                    context.read<AuthCubit>().login(context);
+                    context.read<AuthCubit>().login(const LoginRequest(
+                        username: "acb",
+                        password: "somePass",
+                        requestId: "66dcf650-754c-4573-a38f-5d373324686c",
+                        requestTime: 1692897514));
                   }
                 : null,
             child: const Row(children: [

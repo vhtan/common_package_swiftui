@@ -7,23 +7,16 @@ part 'user.g.dart';
 @immutable
 @JsonSerializable()
 class User {
-  const User({
-    this.id,
-    required this.phone,
-    required this.password,
-  });
-
-  final int? id;
-  final String phone;
-  final String password;
+  const User([this.phone, this.password, this.session]);
+  final String? phone;
+  final String? password;
+  final String? session;
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 
   Map<String, dynamic> toJson() => _$UserToJson(this);
 
   bool isValid() {
-    print('phone $phone');
-    print('password $password');
     return phone.isNotNullOrEmpty() && password.isNotNullOrEmpty();
   }
 }
