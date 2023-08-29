@@ -91,3 +91,10 @@ const textDefault = TextStyle(
   color: AppColors.textDefault,
   overflow: TextOverflow.ellipsis,
 );
+
+const menuTextStyle = TextStyle(
+  fontSize: 16,
+  fontWeight: FontWeight.w500,
+  color: AppColors.white,
+  overflow: TextOverflow.ellipsis,
+);

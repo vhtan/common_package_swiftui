@@ -63,6 +63,7 @@ extension Dimension on Double {
   static const double borderWidthDefault = 2.0;
   static const double titleFontSize = 20;
   static const double textFontSize = 16;
+  static const double menuIconSize = 30;
 }
 
 // App colors
@@ -73,6 +74,7 @@ extension AppColors on Color {
   static const Color border = Color(0x88000000);
   static const Color textDefaultLight = Color(0x86757373);
   static const Color textDefault = Color(0xFF000000);
+  static const Color menuSelected = Color(0xFF000000);
 }
 
 extension DateTimeFormatCustom on DateTime {

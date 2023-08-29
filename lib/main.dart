@@ -1,6 +1,7 @@
-import 'package:mvvm_cubit/view/auth/login_screen.dart';
-import 'package:mvvm_cubit/view/main/screen/main_screen.dart';
+import 'package:mvvm_cubit/common/cubit/generic_cubit.dart';
+import 'package:mvvm_cubit/view/container/container_screen.dart';
 import 'package:mvvm_cubit/viewmodel/auth/auth_cubit.dart';
+import 'package:mvvm_cubit/viewmodel/container/container_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/main/main_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/core/app_theme.dart';
@@ -22,11 +23,13 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider<MainCubit>(create: (context) => getIt<MainCubit>()),
         BlocProvider<AuthCubit>(create: (context) => getIt<AuthCubit>()),
+        BlocProvider<ContainerCubit>(
+            create: (context) => getIt<ContainerCubit>()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: AppTheme.lightAppTheme,
-        home: const LoginScreen(),
+        home: const ContainerScreen(),
       ),
     );
   }

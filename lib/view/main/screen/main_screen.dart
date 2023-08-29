@@ -8,7 +8,7 @@ import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/data/model/main/delivery.dart';
 import 'package:mvvm_cubit/view/auth/login_screen.dart';
-import 'package:mvvm_cubit/view/main/wiget/status_container.dart';
+import 'package:mvvm_cubit/view/main/widget/status_container.dart';
 import 'package:mvvm_cubit/viewmodel/main/main_cubit.dart';
 
 class MainScreen extends StatefulWidget {
@@ -65,8 +65,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: floatingActionButton,
-      appBar: _appBar,
+      // appBar: _appBar,
       body: BlocConsumer<MainCubit, GenericCubitState>(
           listener: (context, state) {
         switch (state.status) {
