@@ -15,17 +15,6 @@ public extension View {
     func failedView(_ error: Error) -> some View {
         ErrorView(error: error, retryAction: { })
     }
-    
-//    func handleLoadable(_ loadable: Loadable) -> some View {
-//        switch loadable {
-//        case .isLoading:
-//            return AnyView(loadingView())
-//        case let .failed(error):
-//            return AnyView(failedView(error))
-//        default: break
-//        }
-//        return AnyView(EmptyView())
-//    }
 }
 
 private struct SafeAreaInsetsKey: EnvironmentKey {
