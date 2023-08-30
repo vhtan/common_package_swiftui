@@ -11,4 +11,8 @@ class ContainerCubit extends Cubit<ContainerViewStatus> {
   void showAccount() {
     emit(ContainerViewStatus.account);
   }
+
+  void logOut() {
+    emit(ContainerViewStatus.logout);
+  }
 }
