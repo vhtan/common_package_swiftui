@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/data/model/container/container_view_status.dart';
 import 'package:mvvm_cubit/view/account/account_screen.dart';
-import 'package:mvvm_cubit/view/container/menu_screen.dart';
+import 'package:mvvm_cubit/view/container/widget/menu_widget.dart';
 import 'package:mvvm_cubit/view/main/screen/main_screen.dart';
 import 'package:mvvm_cubit/viewmodel/container/container_cubit.dart';
 import 'package:shrink_sidemenu/shrink_sidemenu.dart';
@@ -76,22 +77,26 @@ class _ContainerScreenState extends State<ContainerScreen> {
             ],
             title: Text(title),
           ),
-          body: BlocConsumer<ContainerCubit, ContainerViewStatus>(
+          body: BlocConsumer<ContainerCubit,
+              GenericCubitState<ContainerViewStatus>>(
             listener: (context, state) {
               toggleMenu();
-              switch (state) {
+              switch (state.data) {
                 case ContainerViewStatus.route:
                   title = 'Lộ trình';
                 case ContainerViewStatus.account:
                   title = 'Tài khoản';
                 case ContainerViewStatus.logout:
                   title = '';
+                default:
+                  break;
               }
             },
             builder: (context, state) {
-              return BlocBuilder<ContainerCubit, ContainerViewStatus>(
+              return BlocBuilder<ContainerCubit,
+                  GenericCubitState<ContainerViewStatus>>(
                 builder: (context, state) {
-                  switch (state) {
+                  switch (state.data) {
                     case ContainerViewStatus.route:
                       return const MainScreen();
                     case ContainerViewStatus.account:

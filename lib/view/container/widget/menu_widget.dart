@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/core/app_asset.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
-import 'package:mvvm_cubit/data/model/container/container_view_status.dart';
 import 'package:mvvm_cubit/viewmodel/container/container_cubit.dart';
 
 class MenuScreen extends StatelessWidget {
@@ -11,7 +11,7 @@ class MenuScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<ContainerCubit, ContainerViewStatus>(
+    return BlocConsumer<ContainerCubit, GenericCubitState>(
       listener: (context, state) {},
       builder: (context, state) {
         return SingleChildScrollView(

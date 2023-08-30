@@ -1,4 +1,4 @@
-import 'package:mvvm_cubit/view/container/container_screen.dart';
+import 'package:mvvm_cubit/view/container/screen/container_screen.dart';
 import 'package:mvvm_cubit/viewmodel/auth/auth_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/container/container_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/main/main_cubit.dart';

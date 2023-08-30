@@ -30,5 +30,6 @@ Future<void> init() async {
   getIt.registerLazySingleton<AuthRepository>(
       () => AuthRepository(api: getIt<AuthApi>()));
   getIt.registerFactory(() => AuthCubit(repository: getIt<AuthRepository>()));
-  getIt.registerFactory(() => ContainerCubit());
+  getIt.registerFactory(
+      () => ContainerCubit(repository: getIt<MainRepository>()));
 }
