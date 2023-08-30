@@ -8,6 +8,7 @@ import 'package:mvvm_cubit/data/model/auth/login_response.dart';
 import 'package:mvvm_cubit/data/request/auth/login_request.dart';
 import 'package:mvvm_cubit/view/container/screen/container_screen.dart';
 import 'package:mvvm_cubit/viewmodel/auth/auth_cubit.dart';
+import 'package:uuid/uuid.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -95,8 +96,8 @@ class _PhoneField extends StatelessWidget {
       builder: (context, state) {
         return MaterialTextField(
             keyboardType: TextInputType.phone,
-            hint: 'Nhập số điện thoại',
-            labelText: 'Số điện thoại',
+            hint: 'Nhập tên đăng nhập',
+            labelText: 'Tên đăng nhập',
             textInputAction: TextInputAction.next,
             prefixIcon: const Icon(Icons.phone_outlined),
             controller: phoneTextController,
@@ -148,11 +149,11 @@ class _CustomButton extends StatelessWidget {
             onPressed: state.data?.username?.isNotEmpty == true &&
                     state.data?.password?.isNotEmpty == true
                 ? () {
-                    context.read<AuthCubit>().login(const LoginRequest(
-                        username: "acb",
-                        password: "somePass",
-                        requestId: "66dcf650-754c-4573-a38f-5d373324686c",
-                        requestTime: 1692897514));
+                    context.read<AuthCubit>().login(LoginRequest(
+                        username: 'acb',
+                        password: 'somePass',
+                        requestId: const Uuid().v4(),
+                        requestTime: DateTime.now().microsecondsSinceEpoch));
                   }
                 : null,
             child: const Row(children: [

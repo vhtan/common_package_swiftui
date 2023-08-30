@@ -45,6 +45,7 @@ dependencies:
   get_it: ^7.2.0
   material_text_fields: ^1.0.3
   shrink_sidemenu: ^2.0.0+2-null-safety
+  uuid: ^3.0.6
 
 dev_dependencies:
   flutter_test:

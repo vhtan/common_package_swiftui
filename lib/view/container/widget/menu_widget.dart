@@ -34,7 +34,7 @@ class MenuScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 16.0),
                     const Text(
-                      "Hello, John Doe",
+                      'Nguyễn An',
                       style: TextStyle(color: Colors.white),
                     ),
                     const SizedBox(height: 20.0),
