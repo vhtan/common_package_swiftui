@@ -18,14 +18,14 @@ class ContainerCubit extends Cubit<GenericCubitState<ContainerViewStatus>> {
   }
 
   Future<void> logOut() async {
-    emit(GenericCubitState.loading());
+    emit(GenericCubitState.success(ContainerViewStatus.logout));
     final response = await repository.mainApi
         .logout(const LogoutRequest(username: 'username'));
     if (response != null) {
       print("logout response = $response");
-      emit(GenericCubitState.success(null));
+      // emit(GenericCubitState.success(null));
     } else {
-      emit(GenericCubitState.failure("Error"));
+      // emit(GenericCubitState.failure("Error"));
     }
   }
 }

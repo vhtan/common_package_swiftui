@@ -6,7 +6,7 @@ import 'package:mvvm_cubit/core/api_config.dart';
 import 'package:mvvm_cubit/core/app_asset.dart';
 import 'package:mvvm_cubit/data/model/auth/login_response.dart';
 import 'package:mvvm_cubit/data/request/auth/login_request.dart';
-import 'package:mvvm_cubit/view/main/screen/main_screen.dart';
+import 'package:mvvm_cubit/view/container/screen/container_screen.dart';
 import 'package:mvvm_cubit/viewmodel/auth/auth_cubit.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -44,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const MainScreen(),
+                builder: (context) => const ContainerScreen(),
               ),
             );
           }

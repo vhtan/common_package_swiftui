@@ -4,6 +4,7 @@ import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/data/model/container/container_view_status.dart';
 import 'package:mvvm_cubit/view/account/account_screen.dart';
+import 'package:mvvm_cubit/view/auth/login_screen.dart';
 import 'package:mvvm_cubit/view/container/widget/menu_widget.dart';
 import 'package:mvvm_cubit/view/main/screen/main_screen.dart';
 import 'package:mvvm_cubit/viewmodel/container/container_cubit.dart';
@@ -81,6 +82,18 @@ class _ContainerScreenState extends State<ContainerScreen> {
               GenericCubitState<ContainerViewStatus>>(
             listener: (context, state) {
               toggleMenu();
+              // switch (state.status) {
+              //   case Status.failure:
+              //     // navigateTo(const LoginScreen());
+              //     break;
+              //   case Status.success:
+              //     // clear cached login
+              //     // ApiConfig.loginResponse = null;
+              //     navigateTo(const LoginScreen());
+              //     break;
+              //   default:
+              //     break;
+              // }
               switch (state.data) {
                 case ContainerViewStatus.route:
                   title = 'Lộ trình';
@@ -88,6 +101,7 @@ class _ContainerScreenState extends State<ContainerScreen> {
                   title = 'Tài khoản';
                 case ContainerViewStatus.logout:
                   title = '';
+                  navigateTo(const LoginScreen());
                 default:
                   break;
               }
@@ -109,6 +123,16 @@ class _ContainerScreenState extends State<ContainerScreen> {
             },
           ),
         ),
+      ),
+    );
+  }
+
+  void navigateTo(Widget screen) {
+    if (!mounted) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => screen,
       ),
     );
   }
