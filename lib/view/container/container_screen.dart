@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/data/model/container/container_view_status.dart';
+import 'package:mvvm_cubit/view/account/account_screen.dart';
 import 'package:mvvm_cubit/view/container/menu_screen.dart';
 import 'package:mvvm_cubit/view/main/screen/main_screen.dart';
 import 'package:mvvm_cubit/viewmodel/container/container_cubit.dart';
@@ -90,7 +91,14 @@ class _ContainerScreenState extends State<ContainerScreen> {
             builder: (context, state) {
               return BlocBuilder<ContainerCubit, ContainerViewStatus>(
                 builder: (context, state) {
-                  return const MainScreen();
+                  switch (state) {
+                    case ContainerViewStatus.route:
+                      return const MainScreen();
+                    case ContainerViewStatus.account:
+                      return const AccountScreen();
+                    default:
+                      return const MainScreen();
+                  }
                 },
               );
             },

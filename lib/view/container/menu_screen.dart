@@ -82,7 +82,7 @@ class _MenuListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      onTap: () => onTap,
+      onTap: onTap,
       leading: Icon(icon, size: Dimension.menuIconSize, color: Colors.white),
       title: Text(
         title,
