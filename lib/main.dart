@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: AppTheme.lightAppTheme,
-        home: const LoginScreen(),
+        home: const ContainerScreen(),
       ),
     );
   }
