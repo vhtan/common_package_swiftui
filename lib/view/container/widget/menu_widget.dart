@@ -55,6 +55,11 @@ class MenuScreen extends StatelessWidget {
                 onTap: () => context.read<ContainerCubit>().showAccount(),
               ),
               _MenuListTile(
+                title: 'Thông báo',
+                icon: Icons.notifications_active,
+                onTap: () => context.read<ContainerCubit>().showNotitication(),
+              ),
+              _MenuListTile(
                 title: 'Đăng xuất',
                 icon: Icons.logout,
                 onTap: () => context.read<ContainerCubit>().logOut(),

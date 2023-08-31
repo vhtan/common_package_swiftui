@@ -13,7 +13,6 @@ class AuthCubit extends Cubit<GenericCubitState<LoginResponse>> {
     emit(GenericCubitState.loading());
     final response = await repository.api.login(request);
     if (response != null) {
-      print("login response = $response");
       final user = LoginResponse.fromJson(response);
       print("login data = $user");
       emit(
@@ -23,7 +22,7 @@ class AuthCubit extends Cubit<GenericCubitState<LoginResponse>> {
     }
   }
 
-  void phoneChanged(String value) {
+  void usernameChanged(String value) {
     final password = state.data?.password ?? '';
     emit(GenericCubitState(
         data: LoginResponse(username: value, password: password),
@@ -32,9 +31,9 @@ class AuthCubit extends Cubit<GenericCubitState<LoginResponse>> {
   }
 
   void passwordChanged(String value) {
-    final phone = state.data?.username ?? '';
+    final username = state.data?.username ?? '';
     emit(GenericCubitState(
-        data: LoginResponse(username: phone, password: value),
+        data: LoginResponse(username: username, password: value),
         error: null,
         status: Status.empty));
   }

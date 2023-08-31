@@ -18,7 +18,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController _phoneTextController = TextEditingController();
+  final TextEditingController _usernameTextController = TextEditingController();
   final TextEditingController _passwordTextController = TextEditingController();
 
   PreferredSizeWidget get _appBar {
@@ -65,14 +65,21 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: 50,
                   ),
                   const SizedBox(height: 40),
-                  _PhoneField(_phoneTextController),
+                  _UsernameField(_usernameTextController),
                   const SizedBox(height: 20),
                   _PasswordField(_passwordTextController),
                   const SizedBox(
                     height: 20,
                   ),
-                  const _CustomButton(
+                  _CustomButton(
                     buttonHeight: 50,
+                    onPressed: () {
+                      context.read<AuthCubit>().login(LoginRequest(
+                          username: _usernameTextController.text,
+                          password: _passwordTextController.text,
+                          requestId: const Uuid().v4(),
+                          requestTime: DateTime.now().microsecondsSinceEpoch));
+                    },
                   ),
                 ],
               ),
@@ -84,10 +91,10 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 }
 
-class _PhoneField extends StatelessWidget {
-  final TextEditingController phoneTextController;
+class _UsernameField extends StatelessWidget {
+  final TextEditingController usernameTextController;
 
-  const _PhoneField(this.phoneTextController);
+  const _UsernameField(this.usernameTextController);
 
   @override
   Widget build(BuildContext context) {
@@ -95,13 +102,14 @@ class _PhoneField extends StatelessWidget {
       listener: (context, state) {},
       builder: (context, state) {
         return MaterialTextField(
-            keyboardType: TextInputType.phone,
+            keyboardType: TextInputType.text,
             hint: 'Nhập tên đăng nhập',
             labelText: 'Tên đăng nhập',
             textInputAction: TextInputAction.next,
-            prefixIcon: const Icon(Icons.phone_outlined),
-            controller: phoneTextController,
-            onChanged: (value) => context.read<AuthCubit>().phoneChanged(value),
+            prefixIcon: const Icon(Icons.person),
+            controller: usernameTextController,
+            onChanged: (value) =>
+                context.read<AuthCubit>().usernameChanged(value),
             obscureText: false);
       },
     );
@@ -135,8 +143,9 @@ class _PasswordField extends StatelessWidget {
 
 class _CustomButton extends StatelessWidget {
   final double buttonHeight;
+  final VoidCallback onPressed;
 
-  const _CustomButton({required this.buttonHeight});
+  const _CustomButton({required this.buttonHeight, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -148,13 +157,7 @@ class _CustomButton extends StatelessWidget {
           child: FilledButton(
             onPressed: state.data?.username?.isNotEmpty == true &&
                     state.data?.password?.isNotEmpty == true
-                ? () {
-                    context.read<AuthCubit>().login(LoginRequest(
-                        username: 'acb',
-                        password: 'somePass',
-                        requestId: const Uuid().v4(),
-                        requestTime: DateTime.now().microsecondsSinceEpoch));
-                  }
+                ? onPressed
                 : null,
             child: const Row(children: [
               Spacer(),

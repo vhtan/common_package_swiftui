@@ -1,1 +1,1 @@
-enum ContainerViewStatus { route, account, logout }
+enum ContainerViewStatus { route, account, notitication, logout }

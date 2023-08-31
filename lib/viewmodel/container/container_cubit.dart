@@ -17,6 +17,10 @@ class ContainerCubit extends Cubit<GenericCubitState<ContainerViewStatus>> {
     emit(GenericCubitState.success(ContainerViewStatus.account));
   }
 
+  void showNotitication() {
+    emit(GenericCubitState.success(ContainerViewStatus.notitication));
+  }
+
   Future<void> logOut() async {
     emit(GenericCubitState.success(ContainerViewStatus.logout));
     final response = await repository.mainApi

@@ -82,23 +82,13 @@ class _ContainerScreenState extends State<ContainerScreen> {
               GenericCubitState<ContainerViewStatus>>(
             listener: (context, state) {
               toggleMenu();
-              // switch (state.status) {
-              //   case Status.failure:
-              //     // navigateTo(const LoginScreen());
-              //     break;
-              //   case Status.success:
-              //     // clear cached login
-              //     // ApiConfig.loginResponse = null;
-              //     navigateTo(const LoginScreen());
-              //     break;
-              //   default:
-              //     break;
-              // }
               switch (state.data) {
                 case ContainerViewStatus.route:
                   title = 'Lộ trình';
                 case ContainerViewStatus.account:
                   title = 'Tài khoản';
+                case ContainerViewStatus.notitication:
+                  title = 'Thông báo';
                 case ContainerViewStatus.logout:
                   title = '';
                   navigateTo(const LoginScreen());
