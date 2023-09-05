@@ -1,83 +1,75 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/core/app_asset.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
-import 'package:mvvm_cubit/viewmodel/container/container_cubit.dart';
+import 'package:mvvm_cubit/data/model/container/menu_type.dart';
 
 class MenuScreen extends StatelessWidget {
-  const MenuScreen({Key? key}) : super(key: key);
+  final ValueChanged<MenuType> valueChanged;
+
+  const MenuScreen({Key? key, required this.valueChanged}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<ContainerCubit, GenericCubitState>(
-      listener: (context, state) {},
-      builder: (context, state) {
-        return SingleChildScrollView(
-          // padding: const EdgeInsets.symmetric(vertical: 20.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CircleAvatar(
-                      backgroundColor: Colors.white,
-                      radius: 50.0,
-                      child: Image.asset(
-                        AppAsset.user,
-                      ),
-                    ),
-                    const SizedBox(height: 16.0),
-                    const Text(
-                      'Nguyễn An',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    const SizedBox(height: 20.0),
-                  ],
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CircleAvatar(
+                  backgroundColor: Colors.white,
+                  radius: 50.0,
+                  child: Image.asset(
+                    AppAsset.user,
+                  ),
                 ),
-              ),
-              const Divider(
-                thickness: 0.5,
-              ),
-              _MenuListTile(
-                title: 'Lộ trình',
-                icon: Icons.home,
-                onTap: () => context.read<ContainerCubit>().showRoute(),
-              ),
-              _MenuListTile(
-                title: 'Tài khoản',
-                icon: Icons.person,
-                onTap: () => context.read<ContainerCubit>().showAccount(),
-              ),
-              _MenuListTile(
-                title: 'Thông báo',
-                icon: Icons.notifications_active,
-                onTap: () => context.read<ContainerCubit>().showNotitication(),
-              ),
-              _MenuListTile(
-                title: 'Đăng xuất',
-                icon: Icons.logout,
-                onTap: () => context.read<ContainerCubit>().logOut(),
-              ),
-            ],
+                const SizedBox(height: 16.0),
+                const Text(
+                  'Nguyễn An',
+                  style: TextStyle(color: Colors.white),
+                ),
+                const SizedBox(height: 20.0),
+              ],
+            ),
           ),
-        );
-      },
+          const Divider(
+            thickness: 0.5,
+          ),
+          _MenuListTile(
+            title: 'Lộ trình',
+            icon: Icons.home,
+            onTap: () => valueChanged(MenuType.route),
+          ),
+          _MenuListTile(
+            title: 'Tài khoản',
+            icon: Icons.person,
+            onTap: () => valueChanged(MenuType.account),
+          ),
+          _MenuListTile(
+            title: 'Thông báo',
+            icon: Icons.notifications_active,
+            onTap: () => valueChanged(MenuType.notification),
+          ),
+          _MenuListTile(
+            title: 'Đăng xuất',
+            icon: Icons.logout,
+            onTap: () => valueChanged(MenuType.logOut),
+          ),
+        ],
+      ),
     );
   }
 }
 
-typedef TapCallback = void Function();
-
 class _MenuListTile extends StatelessWidget {
   final String title;
   final IconData icon;
-  final TapCallback onTap;
+  final VoidCallback onTap;
   const _MenuListTile({
     required this.title,
     required this.icon,

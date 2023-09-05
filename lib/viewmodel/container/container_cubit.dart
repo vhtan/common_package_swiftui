@@ -1,28 +1,26 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
-import 'package:mvvm_cubit/data/model/container/container_view_status.dart';
+import 'package:mvvm_cubit/data/model/container/menu_type.dart';
 import 'package:mvvm_cubit/data/request/auth/logout_request.dart';
 import 'package:mvvm_cubit/repository/main/main_repository.dart';
 
-class ContainerCubit extends Cubit<GenericCubitState<ContainerViewStatus>> {
+class ContainerCubit extends Cubit<GenericCubitState<MenuType>> {
   final MainRepository repository;
   ContainerCubit({required this.repository})
       : super(GenericCubitState.loading());
 
-  void showRoute() {
-    emit(GenericCubitState.success(ContainerViewStatus.route));
-  }
-
-  void showAccount() {
-    emit(GenericCubitState.success(ContainerViewStatus.account));
-  }
-
-  void showNotitication() {
-    emit(GenericCubitState.success(ContainerViewStatus.notitication));
+  Future<void> menuAction(MenuType menuType) async {
+    emit(GenericCubitState.success(menuType));
+    switch (menuType) {
+      case MenuType.logOut:
+        logOut();
+      default:
+        break;
+    }
   }
 
   Future<void> logOut() async {
-    emit(GenericCubitState.success(ContainerViewStatus.logout));
+    emit(GenericCubitState.success(MenuType.logOut));
     final response = await repository.mainApi
         .logout(const LogoutRequest(username: 'username'));
     if (response != null) {
