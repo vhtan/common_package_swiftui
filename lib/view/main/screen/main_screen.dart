@@ -31,18 +31,34 @@ class _MainScreenState extends State<MainScreen> {
   //     phone: '0987654321',
   //   ),
   // );
-  final List<Itinerary> _itineraries = const [
-    Itinerary(
+  final List<Itinerary> _itineraries = [
+    PickUpItinerary(
       title: 'Đón áp tải',
+      buttonTitle: 'Đến nơi',
       name: 'Nguyễn Văn Thắng',
       address: '123 Nguyên Công Trứ, P1, Quận 10',
       phone: '0987654321',
     ),
-    Itinerary(
+    PickUpItinerary(
       title: 'Đón bảo vệ',
+      buttonTitle: 'Đến nơi',
       name: 'Nguyễn Văn Thắng',
       address: '123 Nguyên Công Trứ, P1, Quận 10',
       phone: '0987654321',
+    ),
+    RequestFormItinerary(
+      title: 'Xử lý phiếu yêu cầu',
+      buttonTitle: 'Hoàn thành',
+      requestFormId: 'PYC: 78909',
+      totalAmount: 'Tổng tiền: 3 tỷ',
+      type: 'Loại: tiếp quỹ',
+    ),
+    RequestFormItinerary(
+      title: 'Xử lý phiếu yêu cầu',
+      buttonTitle: 'Hoàn thành',
+      requestFormId: 'PYC: 22909',
+      totalAmount: 'Tổng tiền: 4 tỷ',
+      type: 'Loại: trả quỷ',
     ),
   ];
   @override
@@ -94,7 +110,39 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  Widget renderListItinerary(Itinerary itinerary) {
+  void navigateTo(Widget screen) {
+    if (!mounted) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => screen,
+      ),
+    );
+  }
+}
+
+extension _MainScreenDeliveryList on _MainScreenState {
+  Widget itineraryList() {
+    return ListView.separated(
+      separatorBuilder: (context, index) => const SizedBox(height: 0),
+      shrinkWrap: true,
+      itemCount: _itineraries.length,
+      itemBuilder: (_, index) {
+        Itinerary itinerary = _itineraries[index];
+        if (itinerary is PickUpItinerary) {
+          PickUpItinerary pickUp = itinerary;
+          return renderPickUpItinerary(pickUp);
+        } else if (itinerary is RequestFormItinerary) {
+          RequestFormItinerary request = itinerary;
+          return renderRequestFormItinerary(request);
+        } else {
+          return null;
+        }
+      },
+    );
+  }
+
+  Widget renderPickUpItinerary(PickUpItinerary itinerary) {
     return ExpansionTile(
       backgroundColor: AppColors.notificationUnread,
       title: Text(
@@ -137,7 +185,7 @@ class _MainScreenState extends State<MainScreen> {
         Padding(
           padding: const EdgeInsets.only(left: 20, right: 20),
           child: PrimaryButton(
-            title: 'Đến nơi',
+            title: itinerary.buttonTitle,
             buttonHeight: 50,
             onPressed: () => showDialog(
               context: context,
@@ -151,27 +199,70 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  void navigateTo(Widget screen) {
-    if (!mounted) return;
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => screen,
+  Widget renderRequestFormItinerary(RequestFormItinerary itinerary) {
+    return ExpansionTile(
+      backgroundColor: AppColors.notificationUnread,
+      title: Text(
+        itinerary.title,
+        style: headLine2,
       ),
-    );
-  }
-}
-
-extension _MainScreenDeliveryList on _MainScreenState {
-  Widget itineraryList() {
-    return ListView.separated(
-      separatorBuilder: (context, index) => const SizedBox(height: 10),
-      shrinkWrap: true,
-      itemCount: _itineraries.length,
-      itemBuilder: (_, index) {
-        Itinerary itinerary = _itineraries[index];
-        return renderListItinerary(itinerary);
-      },
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.only(left: 20, right: 20),
+          child: Row(
+            children: [
+              const Icon(Icons.api_sharp),
+              const SizedBox(width: 10),
+              Text(
+                itinerary.requestFormId,
+                style: textDefault,
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 10),
+        Padding(
+          padding: const EdgeInsets.only(left: 20, right: 20),
+          child: Row(
+            children: [
+              const Icon(Icons.money_rounded),
+              const SizedBox(width: 10),
+              Text(
+                itinerary.totalAmount,
+                style: textDefault,
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 10),
+        Padding(
+          padding: const EdgeInsets.only(left: 20, right: 20),
+          child: Row(
+            children: [
+              const Icon(Icons.account_balance),
+              const SizedBox(width: 10),
+              Text(
+                itinerary.type,
+                style: textDefault,
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 10),
+        Padding(
+          padding: const EdgeInsets.only(left: 20, right: 20),
+          child: PrimaryButton(
+            title: itinerary.buttonTitle,
+            buttonHeight: 50,
+            onPressed: () => showDialog(
+              context: context,
+              builder: (context) => const CheckPointScreen(),
+              barrierDismissible: false,
+            ),
+          ),
+        ),
+        const SizedBox(height: 10),
+      ],
     );
   }
 }
