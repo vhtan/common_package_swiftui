@@ -1,20 +1,19 @@
 import 'package:camera_camera/camera_camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mvvm_cubit/common/widget/drop_down.dart';
 import 'package:mvvm_cubit/common/widget/image_capture.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
-import 'package:mvvm_cubit/viewmodel/report_sos/report_sos_cubit.dart';
+import 'package:mvvm_cubit/viewmodel/check_point/check_point_cubit.dart';
 
-class ReportSOSScreen extends StatefulWidget {
-  const ReportSOSScreen({Key? key}) : super(key: key);
+class CheckPointScreen extends StatefulWidget {
+  const CheckPointScreen({Key? key}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _ReportSOSScreen();
+  State<StatefulWidget> createState() => _CheckPointScreen();
 }
 
-class _ReportSOSScreen extends State<ReportSOSScreen> {
+class _CheckPointScreen extends State<CheckPointScreen> {
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -30,10 +29,10 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
             ),
             padding:
                 const EdgeInsets.only(left: 20, right: 20, bottom: 20, top: 10),
-            child: BlocConsumer<ReportSOSCubit, ReportSOSData>(
+            child: BlocConsumer<CheckPointCubit, CheckPointData>(
               listener: (context, state) {},
               builder: (context, state) {
-                return BlocBuilder<ReportSOSCubit, ReportSOSData>(
+                return BlocBuilder<CheckPointCubit, CheckPointData>(
                   builder: (context, state) {
                     return Column(
                       mainAxisSize: MainAxisSize.min,
@@ -45,7 +44,7 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
                             const Align(
                               alignment: Alignment.center,
                               child: Text(
-                                'Báo cáo sự cố',
+                                'Xác nhận đến nơi',
                                 style: headLine1,
                               ),
                             ),
@@ -61,50 +60,13 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 20),
-                        DropDown<String>(
-                          items: const [
-                            'Xe hư',
-                            'Hết xăng',
-                            'Thủng lốp',
-                            'Sự cố khác'
-                          ],
-                          onChanged: (value) {},
-                        ),
-                        const SizedBox(height: 20),
-                        // if (state.file != null)
-                        //   AspectRatio(
-                        //     aspectRatio: 16 / 9,
-                        //     child: Container(
-                        //       clipBehavior: Clip.antiAlias,
-                        //       decoration: const BoxDecoration(
-                        //         borderRadius:
-                        //             BorderRadius.all(Radius.circular(8)),
-                        //       ),
-                        //       child: Image.file(
-                        //         state.file!,
-                        //         fit: BoxFit.fitWidth,
-                        //       ),
-                        //     ),
-                        //   ),
-                        // if (state.file != null) const SizedBox(height: 20),
                         ImageCapture(
-                          title: 'Chụp ảnh sự cố',
+                          title: 'Chụp ảnh xác nhận đến nơi',
                           imageFile: state.file,
                           captureCallback: () => openCamera(context),
                           deleteCallback: () => context
-                              .read<ReportSOSCubit>()
+                              .read<CheckPointCubit>()
                               .didCapturePhoto(null),
-                        ),
-                        const SizedBox(height: 20),
-                        const TextField(
-                          decoration: InputDecoration(
-                              hintText: 'Mô tả sự cố',
-                              contentPadding: EdgeInsets.all(10)),
-                          minLines: 3, // Set this
-                          maxLines: 6, // and this
-                          keyboardType: TextInputType.multiline,
-                          style: textDefault,
                         ),
                         const SizedBox(height: 20),
                         PrimaryButton(
@@ -135,7 +97,7 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
             children: [
               CameraCamera(
                 onFile: (file) {
-                  context.read<ReportSOSCubit>().didCapturePhoto(file);
+                  context.read<CheckPointCubit>().didCapturePhoto(file);
                   Navigator.pop(context);
                 },
               ),

@@ -26,6 +26,8 @@ const headLine3 = TextStyle(
 
 const headLine1 =
     TextStyle(fontSize: Dimension.titleFontSize, fontWeight: FontWeight.w900);
+const headLine2 =
+    TextStyle(fontSize: Dimension.titleFontSize, fontWeight: FontWeight.w700);
 
 const focusedBorder = OutlineInputBorder(
   borderSide:

@@ -4,13 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
 
-class ImageSOS extends StatelessWidget {
-  const ImageSOS(
-      {Key? key,
-      required this.imageFile,
-      required this.captureCallback,
-      required this.deleteCallback})
-      : super(key: key);
+class ImageCapture extends StatelessWidget {
+  const ImageCapture({
+    Key? key,
+    required this.title,
+    required this.imageFile,
+    required this.captureCallback,
+    required this.deleteCallback,
+  }) : super(key: key);
+  final String title;
   final File? imageFile;
   final VoidCallback captureCallback;
   final VoidCallback deleteCallback;
@@ -51,15 +53,15 @@ class ImageSOS extends StatelessWidget {
               )
             : GestureDetector(
                 onTap: captureCallback,
-                child: const Column(
+                child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.camera_alt_outlined,
                       size: 40,
                     ),
                     Text(
-                      'Chụp ảnh sự cố',
+                      title,
                       style: textDefault,
                     ),
                   ],

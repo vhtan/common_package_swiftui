@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/common/widget/empty_widget.dart';
+import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/common/widget/spinkit_indicator.dart';
 import 'package:mvvm_cubit/core/api_config.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/data/model/main/delivery.dart';
+import 'package:mvvm_cubit/data/model/main/itinerary.dart';
 import 'package:mvvm_cubit/view/auth/login_screen.dart';
+import 'package:mvvm_cubit/view/check_point/check_point_screen.dart';
 import 'package:mvvm_cubit/view/main/widget/status_container.dart';
 import 'package:mvvm_cubit/viewmodel/main/main_cubit.dart';
 
@@ -19,53 +22,38 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  final List<Delivery> _deliveries = List.generate(
-      9,
-      (index) => Delivery(
-          orderCode: '${index}32312',
-          startAddress: 'Phú Thuận, District 7, Ho Chi Minh City $index',
-          destinationAddress:
-              '4 Đ. Đào Trí, Phú Thuận, Quận 7, Thành phố Hồ Chí Minh $index',
-          startedTime: DateTime(2023),
-          status: DeliveryStatus.arrived,
-          type: DeliveryType.decreaseFund));
-
+  // final List<Itinerary> _itineraries = List.generate(
+  //   4,
+  //   (index) => Itinerary(
+  //     title: 'Đón áp tải $index',
+  //     name: 'Nguyễn Văn Thắng $index',
+  //     address: '123 Nguyên Công Trứ, P1, Quận 10',
+  //     phone: '0987654321',
+  //   ),
+  // );
+  final List<Itinerary> _itineraries = const [
+    Itinerary(
+      title: 'Đón áp tải',
+      name: 'Nguyễn Văn Thắng',
+      address: '123 Nguyên Công Trứ, P1, Quận 10',
+      phone: '0987654321',
+    ),
+    Itinerary(
+      title: 'Đón bảo vệ',
+      name: 'Nguyễn Văn Thắng',
+      address: '123 Nguyên Công Trứ, P1, Quận 10',
+      phone: '0987654321',
+    ),
+  ];
   @override
   void initState() {
     BlocProvider.of<MainCubit>(context).getListDelivery();
     super.initState();
   }
 
-  PreferredSizeWidget get _appBar {
-    return AppBar(
-      // leading: IconButton(
-      //   onPressed: () => context.read<MainCubit>().getDeliveryList(),
-      //   icon: const Icon(Icons.refresh),
-      // ),
-      // actions: [
-      //   PopupMenu<DeliveryStatus>(
-      //     icon: Icons.filter_list_outlined,
-      //     items: DeliveryStatus.values,
-      //     onChanged: (DeliveryStatus value) {
-      //       context.read<MainCubit>().getDeliveryList(status: value);
-      //     },
-      //   ),
-      //   PopupMenu<Gender>(
-      //     icon: Icons.filter_alt_outlined,
-      //     items: Gender.values,
-      //     onChanged: (Gender value) {
-      //       context.read<MainCubit>().getDeliveryList(gender: value);
-      //     },
-      //   )
-      // ],
-      title: const Text("Main Report"),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: _appBar,
       body: BlocConsumer<MainCubit, GenericCubitState>(
           listener: (context, state) {
         switch (state.status) {
@@ -97,8 +85,16 @@ class _MainScreenState extends State<MainScreen> {
                 shrinkWrap: true,
                 itemCount: state.data?.length ?? 0,
                 itemBuilder: (_, index) {
-                  Delivery delivery = state.data![index];
-                  return renderListDelivery(delivery);
+                  // return renderListDelivery(delivery);
+                  return const ExpansionTile(
+                    title: Text('ExpansionTile 1'),
+                    subtitle: Text('Trailing expansion arrow icon'),
+                    children: <Widget>[
+                      ListTile(title: Text('This is tile number 1')),
+                      ListTile(title: Text('This is tile number 2')),
+                      ListTile(title: Text('This is tile number 3')),
+                    ],
+                  );
                 },
               );
           }
@@ -108,83 +104,90 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Widget renderListDelivery(Delivery delivery) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('#${delivery.orderCode}', style: headLine4),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.location_pin,
-                          color: AppColors.primary,
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            'Xuất phát: ${delivery.startAddress}',
-                            style: textDefault,
-                            maxLines: 2,
-                            overflow: TextOverflow.clip,
+    return GestureDetector(
+      onTap: () => showDialog(
+        context: context,
+        builder: (context) => const CheckPointScreen(),
+        barrierDismissible: false,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Card(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('#${delivery.orderCode}', style: headLine4),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.location_pin,
+                            color: AppColors.primary,
                           ),
-                        )
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.pin_drop,
-                          color: AppColors.primary,
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            'Điểm đến: ${delivery.destinationAddress}',
-                            style: textDefault,
-                            maxLines: 2,
-                            overflow: TextOverflow.clip,
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              'Xuất phát: ${delivery.startAddress}',
+                              style: textDefault,
+                              maxLines: 2,
+                              overflow: TextOverflow.clip,
+                            ),
+                          )
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.pin_drop,
+                            color: AppColors.primary,
                           ),
-                        )
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.access_time,
-                          color: AppColors.primary,
-                        ),
-                        const SizedBox(width: 10),
-                        Text(delivery.startedTime.toStringFormat(),
-                            style: textDefault)
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.car_crash,
-                          color: AppColors.primary,
-                        ),
-                        const SizedBox(width: 10),
-                        Text(delivery.type.name, style: textDefault),
-                        const Spacer(),
-                        StatusContainer(status: delivery.status),
-                      ],
-                    )
-                  ],
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              'Điểm đến: ${delivery.destinationAddress}',
+                              style: textDefault,
+                              maxLines: 2,
+                              overflow: TextOverflow.clip,
+                            ),
+                          )
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.access_time,
+                            color: AppColors.primary,
+                          ),
+                          const SizedBox(width: 10),
+                          Text(delivery.startedTime.toStringFormat(),
+                              style: textDefault)
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.car_crash,
+                            color: AppColors.primary,
+                          ),
+                          const SizedBox(width: 10),
+                          Text(delivery.type.name, style: textDefault),
+                          const Spacer(),
+                          StatusContainer(status: delivery.status),
+                        ],
+                      )
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -207,10 +210,59 @@ extension _MainScreenDeliveryList on _MainScreenState {
     return ListView.separated(
       separatorBuilder: (context, index) => const SizedBox(height: 10),
       shrinkWrap: true,
-      itemCount: _deliveries.length,
+      itemCount: _itineraries.length,
       itemBuilder: (_, index) {
-        Delivery delivery = _deliveries[index];
-        return renderListDelivery(delivery);
+        Itinerary itinerary = _itineraries[index];
+        return ExpansionTile(
+          backgroundColor: AppColors.notificationUnread,
+          title: Text(
+            itinerary.title,
+            style: headLine2,
+          ),
+          subtitle: Text(
+            itinerary.name,
+            style: textDefault,
+          ),
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(left: 20, right: 20),
+              child: Row(
+                children: [
+                  const Icon(Icons.map),
+                  const SizedBox(width: 10),
+                  Text(
+                    itinerary.address,
+                    style: textDefault,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.only(left: 20, right: 20),
+              child: Row(
+                children: [
+                  const Icon(Icons.phone),
+                  const SizedBox(width: 10),
+                  Text(
+                    itinerary.phone,
+                    style: textDefault,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.only(left: 20, right: 20),
+              child: PrimaryButton(
+                title: 'Đến nơi',
+                buttonHeight: 50,
+                onPressed: () {},
+              ),
+            ),
+            const SizedBox(height: 10),
+          ],
+        );
       },
     );
   }

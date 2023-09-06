@@ -3,6 +3,7 @@ import 'package:mvvm_cubit/data/api/main/main_api.dart';
 import 'package:mvvm_cubit/repository/auth/auth_repository.dart';
 import 'package:mvvm_cubit/repository/main/main_repository.dart';
 import 'package:mvvm_cubit/viewmodel/auth/auth_cubit.dart';
+import 'package:mvvm_cubit/viewmodel/check_point/check_point_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/container/container_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/main/main_cubit.dart';
 import 'package:mvvm_cubit/common/network/dio_client.dart';
@@ -25,6 +26,7 @@ Future<void> init() async {
   );
   getIt.registerFactory(() => MainCubit(repository: getIt<MainRepository>()));
   getIt.registerFactory(() => ReportSOSCubit());
+  getIt.registerFactory(() => CheckPointCubit());
 
   // Register Auth Components
   getIt.registerLazySingleton<AuthApi>(
