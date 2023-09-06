@@ -1,8 +1,8 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:mvvm_cubit/common/widget/drop_down.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
-import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
-import 'package:mvvm_cubit/view/report_sos/widget/drop_down_list.dart';
 import 'package:mvvm_cubit/view/report_sos/widget/image_sos.dart';
 
 class ReportSOSScreen extends StatefulWidget {
@@ -13,14 +13,6 @@ class ReportSOSScreen extends StatefulWidget {
 }
 
 class _ReportSOSScreen extends State<ReportSOSScreen> {
-  final List<String> items = [
-    "Item 1",
-    "Item 2",
-    "Item 3",
-    "Item 4",
-    "Item 5",
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -64,7 +56,15 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
                     ],
                   ),
                   const SizedBox(height: 20),
-                  const DropdownList(),
+                  DropDown<String>(
+                    items: const [
+                      'Xe hư',
+                      'Hết xăng',
+                      'Thủng lốp',
+                      'Sự cố khác'
+                    ],
+                    onChanged: (value) {},
+                  ),
                   const SizedBox(height: 20),
                   const ImageSOS(),
                   const SizedBox(height: 20),
@@ -81,7 +81,10 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
                   PrimaryButton(
                     title: 'Gửi',
                     buttonHeight: 50,
-                    onPressed: () {},
+                    onPressed: () {
+                      // Navigator.pop(context);
+                      openCamera();
+                    },
                   )
                 ],
               ),
@@ -89,6 +92,66 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Future<void> openCamera() async {
+    WidgetsFlutterBinding.ensureInitialized();
+
+    _cameras = await availableCameras();
+    runApp(const CameraApp());
+  }
+}
+
+class CameraApp extends StatefulWidget {
+  /// Default Constructor
+  const CameraApp({super.key});
+
+  @override
+  State<CameraApp> createState() => _CameraAppState();
+}
+
+late List<CameraDescription> _cameras;
+
+class _CameraAppState extends State<CameraApp> {
+  late CameraController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = CameraController(_cameras[0], ResolutionPreset.max);
+    controller.initialize().then((_) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {});
+    }).catchError((Object e) {
+      if (e is CameraException) {
+        switch (e.code) {
+          case 'CameraAccessDenied':
+            // Handle access errors here.
+            break;
+          default:
+            // Handle other errors here.
+            break;
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!controller.value.isInitialized) {
+      return Container();
+    }
+    return MaterialApp(
+      home: CameraPreview(controller),
     );
   }
 }

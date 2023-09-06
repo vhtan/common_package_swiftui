@@ -7,6 +7,7 @@ import 'package:mvvm_cubit/view/account/account_screen.dart';
 import 'package:mvvm_cubit/view/auth/login_screen.dart';
 import 'package:mvvm_cubit/view/container/widget/menu_widget.dart';
 import 'package:mvvm_cubit/view/main/screen/main_screen.dart';
+import 'package:mvvm_cubit/view/notification/screen/notification_screen.dart';
 import 'package:mvvm_cubit/view/report_sos/screen/report_sos_screen.dart';
 import 'package:mvvm_cubit/viewmodel/container/container_cubit.dart';
 import 'package:shrink_sidemenu/shrink_sidemenu.dart';
@@ -129,6 +130,8 @@ class _ContainerScreenState extends State<ContainerScreen> {
         return const MainScreen();
       case MenuType.account:
         return const AccountScreen();
+      case MenuType.notification:
+        return const NotificationScreen();
       default:
         return const MainScreen();
     }

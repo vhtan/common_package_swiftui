@@ -191,17 +191,6 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  Widget get floatingActionButton {
-    return FloatingActionButton(
-      onPressed: () async {
-        context
-            .read<MainCubit>()
-            .logout(ApiConfig.loginResponse?.username ?? '');
-      },
-      child: const Text("SOS"),
-    );
-  }
-
   void navigateTo(Widget screen) {
     if (!mounted) return;
     Navigator.push(

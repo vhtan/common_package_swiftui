@@ -75,6 +75,8 @@ extension AppColors on Color {
   static const Color textDefaultLight = Color(0x86757373);
   static const Color textDefault = Color(0xFF000000);
   static const Color menuSelected = Color(0xFF000000);
+  static const Color notificationUnread = Color(0xFFFFF7E9);
+  static const Color notificationRead = Color(0xFFFFFFFF);
 }
 
 extension DateTimeFormatCustom on DateTime {
