@@ -56,8 +56,18 @@ public struct BuildConfiguration {
     }
     
     public func baseAPIURL(apiConfigs: [APIService.APIConfig]) -> URL {
-        let http = apiConfigs.first(where: { if case .hasSSL = $0 { return true }; return false }) != nil ? "https" : "http"
-        let pathComponent = apiConfigs.compactMap({ if case let .path(path) = $0 { return path }; return nil }).first.map { $0 }
+        let http = apiConfigs.first(where: {
+            if case .hasSSL = $0 {
+                return true
+            }
+            return false
+        }) != nil ? "https" : "http"
+        let pathComponent = apiConfigs.compactMap({
+            if case let .path(path) = $0 {
+                return path
+            }
+            return nil
+        }).first.map { $0 }
         do {
             let path = try BuildConfiguration.value(for: "BASE_API_URL")
             if let pathComponent = pathComponent {
