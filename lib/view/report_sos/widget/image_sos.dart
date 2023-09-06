@@ -1,9 +1,19 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
 
 class ImageSOS extends StatelessWidget {
-  const ImageSOS({Key? key}) : super(key: key);
+  const ImageSOS(
+      {Key? key,
+      required this.imageFile,
+      required this.captureCallback,
+      required this.deleteCallback})
+      : super(key: key);
+  final File? imageFile;
+  final VoidCallback captureCallback;
+  final VoidCallback deleteCallback;
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +21,9 @@ class ImageSOS extends StatelessWidget {
       aspectRatio: 16 / 9,
       child: Container(
         decoration: BoxDecoration(
-          border: Border.all(width: 1, color: AppColors.border),
+          border: imageFile == null
+              ? Border.all(width: 1, color: AppColors.border)
+              : null,
           borderRadius: const BorderRadius.all(Radius.circular(8)),
         ),
         clipBehavior: Clip.antiAlias,
@@ -19,12 +31,40 @@ class ImageSOS extends StatelessWidget {
         //   AppAsset.imTextTruct,
         //   fit: BoxFit.fill,
         // ),
-        child: const Center(
-          child: Text(
-            'Chụp ảnh sự cố',
-            style: textDefault,
-          ),
-        ),
+        child: imageFile != null
+            ? Stack(
+                fit: StackFit.expand,
+                alignment: Alignment.center,
+                children: [
+                  Image.file(
+                    imageFile!,
+                    fit: BoxFit.fitWidth,
+                  ),
+                  IconButton(
+                    onPressed: deleteCallback,
+                    icon: const Icon(
+                      Icons.delete,
+                      size: 40,
+                    ),
+                  )
+                ],
+              )
+            : GestureDetector(
+                onTap: captureCallback,
+                child: const Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.camera_alt_outlined,
+                      size: 40,
+                    ),
+                    Text(
+                      'Chụp ảnh sự cố',
+                      style: textDefault,
+                    ),
+                  ],
+                ),
+              ),
       ),
     );
   }

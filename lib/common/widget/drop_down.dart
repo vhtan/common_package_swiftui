@@ -1,5 +1,6 @@
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:flutter/material.dart';
+import 'package:mvvm_cubit/core/app_style.dart';
 
 class DropDown<T> extends StatefulWidget {
   const DropDown(
@@ -51,7 +52,7 @@ class _DropDownState<T> extends State<DropDown<T>> {
                 value: item,
                 child: Text(
                   checkType(item),
-                  style: const TextStyle(fontSize: 15),
+                  style: textDefault,
                 ),
               ),
             )

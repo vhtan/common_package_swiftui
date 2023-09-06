@@ -8,6 +8,7 @@ import 'package:mvvm_cubit/viewmodel/main/main_cubit.dart';
 import 'package:mvvm_cubit/common/network/dio_client.dart';
 import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
+import 'package:mvvm_cubit/viewmodel/report_sos/report_sos_cubit.dart';
 
 final getIt = GetIt.instance;
 
@@ -23,6 +24,7 @@ Future<void> init() async {
     () => MainRepository(mainApi: getIt<MainApi>()),
   );
   getIt.registerFactory(() => MainCubit(repository: getIt<MainRepository>()));
+  getIt.registerFactory(() => ReportSOSCubit());
 
   // Register Auth Components
   getIt.registerLazySingleton<AuthApi>(

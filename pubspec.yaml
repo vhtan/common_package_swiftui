@@ -46,6 +46,8 @@ dependencies:
   material_text_fields: ^1.0.3
   shrink_sidemenu: ^2.0.0+2-null-safety
   uuid: ^3.0.6
+  camera_camera: ^3.0.0
+  
 
 dev_dependencies:
   flutter_test:
