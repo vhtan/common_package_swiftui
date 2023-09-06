@@ -75,7 +75,7 @@ class _MainScreenState extends State<MainScreen> {
           switch (state.status) {
             case Status.failure:
               // return const SizedBox();
-              return deliveryList();
+              return itineraryList();
             case Status.empty:
               return const EmptyWidget(message: "No delivery!");
             case Status.loading:
@@ -85,16 +85,7 @@ class _MainScreenState extends State<MainScreen> {
                 shrinkWrap: true,
                 itemCount: state.data?.length ?? 0,
                 itemBuilder: (_, index) {
-                  // return renderListDelivery(delivery);
-                  return const ExpansionTile(
-                    title: Text('ExpansionTile 1'),
-                    subtitle: Text('Trailing expansion arrow icon'),
-                    children: <Widget>[
-                      ListTile(title: Text('This is tile number 1')),
-                      ListTile(title: Text('This is tile number 2')),
-                      ListTile(title: Text('This is tile number 3')),
-                    ],
-                  );
+                  return null;
                 },
               );
           }
@@ -103,94 +94,60 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  Widget renderListDelivery(Delivery delivery) {
-    return GestureDetector(
-      onTap: () => showDialog(
-        context: context,
-        builder: (context) => const CheckPointScreen(),
-        barrierDismissible: false,
+  Widget renderListItinerary(Itinerary itinerary) {
+    return ExpansionTile(
+      backgroundColor: AppColors.notificationUnread,
+      title: Text(
+        itinerary.title,
+        style: headLine2,
       ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Card(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('#${delivery.orderCode}', style: headLine4),
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.location_pin,
-                            color: AppColors.primary,
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Text(
-                              'Xuất phát: ${delivery.startAddress}',
-                              style: textDefault,
-                              maxLines: 2,
-                              overflow: TextOverflow.clip,
-                            ),
-                          )
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.pin_drop,
-                            color: AppColors.primary,
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Text(
-                              'Điểm đến: ${delivery.destinationAddress}',
-                              style: textDefault,
-                              maxLines: 2,
-                              overflow: TextOverflow.clip,
-                            ),
-                          )
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.access_time,
-                            color: AppColors.primary,
-                          ),
-                          const SizedBox(width: 10),
-                          Text(delivery.startedTime.toStringFormat(),
-                              style: textDefault)
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.car_crash,
-                            color: AppColors.primary,
-                          ),
-                          const SizedBox(width: 10),
-                          Text(delivery.type.name, style: textDefault),
-                          const Spacer(),
-                          StatusContainer(status: delivery.status),
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-              ],
+      subtitle: Text(
+        itinerary.name,
+        style: textDefault,
+      ),
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.only(left: 20, right: 20),
+          child: Row(
+            children: [
+              const Icon(Icons.map),
+              const SizedBox(width: 10),
+              Text(
+                itinerary.address,
+                style: textDefault,
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 10),
+        Padding(
+          padding: const EdgeInsets.only(left: 20, right: 20),
+          child: Row(
+            children: [
+              const Icon(Icons.phone),
+              const SizedBox(width: 10),
+              Text(
+                itinerary.phone,
+                style: textDefault,
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 10),
+        Padding(
+          padding: const EdgeInsets.only(left: 20, right: 20),
+          child: PrimaryButton(
+            title: 'Đến nơi',
+            buttonHeight: 50,
+            onPressed: () => showDialog(
+              context: context,
+              builder: (context) => const CheckPointScreen(),
+              barrierDismissible: false,
             ),
           ),
         ),
-      ),
+        const SizedBox(height: 10),
+      ],
     );
   }
 
@@ -206,63 +163,14 @@ class _MainScreenState extends State<MainScreen> {
 }
 
 extension _MainScreenDeliveryList on _MainScreenState {
-  Widget deliveryList() {
+  Widget itineraryList() {
     return ListView.separated(
       separatorBuilder: (context, index) => const SizedBox(height: 10),
       shrinkWrap: true,
       itemCount: _itineraries.length,
       itemBuilder: (_, index) {
         Itinerary itinerary = _itineraries[index];
-        return ExpansionTile(
-          backgroundColor: AppColors.notificationUnread,
-          title: Text(
-            itinerary.title,
-            style: headLine2,
-          ),
-          subtitle: Text(
-            itinerary.name,
-            style: textDefault,
-          ),
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(left: 20, right: 20),
-              child: Row(
-                children: [
-                  const Icon(Icons.map),
-                  const SizedBox(width: 10),
-                  Text(
-                    itinerary.address,
-                    style: textDefault,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.only(left: 20, right: 20),
-              child: Row(
-                children: [
-                  const Icon(Icons.phone),
-                  const SizedBox(width: 10),
-                  Text(
-                    itinerary.phone,
-                    style: textDefault,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.only(left: 20, right: 20),
-              child: PrimaryButton(
-                title: 'Đến nơi',
-                buttonHeight: 50,
-                onPressed: () {},
-              ),
-            ),
-            const SizedBox(height: 10),
-          ],
-        );
+        return renderListItinerary(itinerary);
       },
     );
   }
