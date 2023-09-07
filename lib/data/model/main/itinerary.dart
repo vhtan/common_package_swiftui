@@ -1,10 +1,12 @@
 abstract class Itinerary {
+  late int id;
   late String title;
   late String buttonTitle;
 }
 
 class PickUpItinerary implements Itinerary {
   PickUpItinerary({
+    required this.id,
     required this.title,
     required this.buttonTitle,
     required this.name,
@@ -12,6 +14,8 @@ class PickUpItinerary implements Itinerary {
     required this.phone,
   });
 
+  @override
+  int id;
   @override
   String title;
   @override
@@ -23,13 +27,15 @@ class PickUpItinerary implements Itinerary {
 
 class RequestFormItinerary implements Itinerary {
   RequestFormItinerary({
+    required this.id,
     required this.title,
     required this.buttonTitle,
     required this.requestFormId,
     required this.totalAmount,
     required this.type,
   });
-
+  @override
+  int id;
   @override
   String title;
   @override

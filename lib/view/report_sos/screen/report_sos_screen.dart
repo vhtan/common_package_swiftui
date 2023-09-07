@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/widget/drop_down.dart';
 import 'package:mvvm_cubit/common/widget/image_capture.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
+import 'package:mvvm_cubit/common/widget/text_input.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/viewmodel/report_sos/report_sos_cubit.dart';
 
@@ -97,14 +98,11 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
                               .didCapturePhoto(null),
                         ),
                         const SizedBox(height: 20),
-                        const TextField(
-                          decoration: InputDecoration(
-                              hintText: 'Mô tả sự cố',
-                              contentPadding: EdgeInsets.all(10)),
-                          minLines: 3, // Set this
+                        const TextInput(
+                          hint: 'Nhập mô tả sự cố',
+                          labelText: 'Mô tả sự cố',
                           maxLines: 6, // and this
                           keyboardType: TextInputType.multiline,
-                          style: textDefault,
                         ),
                         const SizedBox(height: 20),
                         PrimaryButton(

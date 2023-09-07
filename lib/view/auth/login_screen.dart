@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:material_text_fields/material_text_fields.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
+import 'package:mvvm_cubit/common/widget/text_input.dart';
 import 'package:mvvm_cubit/core/api_config.dart';
 import 'package:mvvm_cubit/core/app_asset.dart';
 import 'package:mvvm_cubit/data/model/auth/login_response.dart';
@@ -66,14 +66,23 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: 50,
                   ),
                   const SizedBox(height: 40),
-                  _UsernameField(
-                    usernameTextController: _usernameTextController,
+                  TextInput(
+                    hint: 'Nhập tên đăng nhập',
+                    labelText: 'Tên đăng nhập',
+                    icon: const Icon(Icons.person),
+                    controller: _usernameTextController,
+                    obscureText: false,
                     onChanged: (value) =>
                         context.read<AuthCubit>().usernameChanged(value),
                   ),
                   const SizedBox(height: 20),
-                  _PasswordField(
-                    passwordTextController: _passwordTextController,
+                  TextInput(
+                    hint: 'Nhập mật khẩu',
+                    labelText: 'Mật khẩu',
+                    icon: const Icon(Icons.lock),
+                    controller: _passwordTextController,
+                    obscureText: true,
+                    maxLines: 1,
                     onChanged: (value) =>
                         context.read<AuthCubit>().passwordChanged(value),
                   ),
@@ -97,46 +106,6 @@ class _LoginScreenState extends State<LoginScreen> {
           });
         },
       ),
-    );
-  }
-}
-
-class _UsernameField extends StatelessWidget {
-  final TextEditingController usernameTextController;
-  final ValueChanged<String>? onChanged;
-  const _UsernameField(
-      {required this.usernameTextController, required this.onChanged});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialTextField(
-        keyboardType: TextInputType.text,
-        hint: 'Nhập tên đăng nhập',
-        labelText: 'Tên đăng nhập',
-        textInputAction: TextInputAction.next,
-        prefixIcon: const Icon(Icons.person),
-        controller: usernameTextController,
-        onChanged: onChanged,
-        obscureText: false);
-  }
-}
-
-class _PasswordField extends StatelessWidget {
-  final TextEditingController passwordTextController;
-  final ValueChanged<String>? onChanged;
-  const _PasswordField(
-      {required this.passwordTextController, required this.onChanged});
-  @override
-  Widget build(BuildContext context) {
-    return MaterialTextField(
-      keyboardType: TextInputType.visiblePassword,
-      hint: 'Nhập mật khẩu',
-      labelText: 'Mật khẩu',
-      textInputAction: TextInputAction.next,
-      prefixIcon: const Icon(Icons.lock),
-      controller: passwordTextController,
-      onChanged: onChanged,
-      obscureText: true,
     );
   }
 }

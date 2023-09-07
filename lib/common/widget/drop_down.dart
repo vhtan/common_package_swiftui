@@ -50,10 +50,12 @@ class _DropDownState<T> extends State<DropDown<T>> {
             .map(
               (item) => DropdownMenuItem<T>(
                 value: item,
-                child: Text(
-                  checkType(item),
-                  style: textDefault,
-                ),
+                child: Container(
+                    padding: const EdgeInsets.only(left: 10, right: 10),
+                    child: Text(
+                      checkType(item),
+                      style: textDefault,
+                    )),
               ),
             )
             .toList(),

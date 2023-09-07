@@ -14,7 +14,6 @@ import 'di.dart';
 void main() async {
   await init();
   runApp(const MyApp());
-  // runApp(const ExpansionTileApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -37,75 +36,93 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: AppTheme.lightAppTheme,
         home: const ContainerScreen(),
+        // home: ExpansionPanelListRadioExampleApp(),
       ),
     );
   }
 }
 
-class ExpansionTileApp extends StatelessWidget {
-  const ExpansionTileApp({super.key});
+class ExpansionPanelListRadioExampleApp extends StatelessWidget {
+  const ExpansionPanelListRadioExampleApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(useMaterial3: true),
       home: Scaffold(
-        appBar: AppBar(title: const Text('ExpansionTile Sample')),
-        body: const ExpansionTileExample(),
+        appBar: AppBar(title: const Text('ExpansionPanelList.radio Sample')),
+        body: const ExpansionPanelListRadioExample(),
       ),
     );
   }
 }
 
-class ExpansionTileExample extends StatefulWidget {
-  const ExpansionTileExample({super.key});
+// stores ExpansionPanel state information
+class Item {
+  Item({
+    required this.id,
+    required this.expandedValue,
+    required this.headerValue,
+  });
 
-  @override
-  State<ExpansionTileExample> createState() => _ExpansionTileExampleState();
+  int id;
+  String expandedValue;
+  String headerValue;
 }
 
-class _ExpansionTileExampleState extends State<ExpansionTileExample> {
-  bool _customTileExpanded = false;
+List<Item> generateItems(int numberOfItems) {
+  return List<Item>.generate(numberOfItems, (int index) {
+    return Item(
+      id: index,
+      headerValue: 'Panel $index',
+      expandedValue: 'This is item number $index',
+    );
+  });
+}
+
+class ExpansionPanelListRadioExample extends StatefulWidget {
+  const ExpansionPanelListRadioExample({super.key});
+
+  @override
+  State<ExpansionPanelListRadioExample> createState() =>
+      _ExpansionPanelListRadioExampleState();
+}
+
+class _ExpansionPanelListRadioExampleState
+    extends State<ExpansionPanelListRadioExample> {
+  final List<Item> _data = generateItems(8);
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        const ExpansionTile(
-          title: Text('ExpansionTile 1'),
-          subtitle: Text('Trailing expansion arrow icon'),
-          children: <Widget>[
-            ListTile(title: Text('This is tile number 1')),
-            ListTile(title: Text('This is tile number 2')),
-            ListTile(title: Text('This is tile number 3')),
-          ],
-        ),
-        ExpansionTile(
-          title: const Text('ExpansionTile 2'),
-          subtitle: const Text('Custom expansion arrow icon'),
-          trailing: Icon(
-            _customTileExpanded
-                ? Icons.arrow_drop_down_circle
-                : Icons.arrow_drop_down,
-          ),
-          children: const <Widget>[
-            ListTile(title: Text('This is tile number 2')),
-          ],
-          onExpansionChanged: (bool expanded) {
-            setState(() {
-              _customTileExpanded = expanded;
-            });
-          },
-        ),
-        const ExpansionTile(
-          title: Text('ExpansionTile 3'),
-          subtitle: Text('Leading expansion arrow icon'),
-          controlAffinity: ListTileControlAffinity.leading,
-          children: <Widget>[
-            ListTile(title: Text('This is tile number 3')),
-          ],
-        ),
-      ],
+    return SingleChildScrollView(
+      child: Container(
+        child: _buildPanel(),
+      ),
+    );
+  }
+
+  Widget _buildPanel() {
+    return ExpansionPanelList.radio(
+      initialOpenPanelValue: 2,
+      children: _data.map<ExpansionPanelRadio>((Item item) {
+        return ExpansionPanelRadio(
+            value: item.id,
+            headerBuilder: (BuildContext context, bool isExpanded) {
+              return ListTile(
+                title: Text(item.headerValue),
+              );
+            },
+            body: ListTile(
+                title: Text(item.expandedValue),
+                subtitle:
+                    const Text('To delete this panel, tap the trash can icon'),
+                trailing: const Icon(Icons.delete),
+                onTap: () {
+                  setState(() {
+                    _data
+                        .removeWhere((Item currentItem) => item == currentItem);
+                  });
+                }));
+      }).toList(),
     );
   }
 }
