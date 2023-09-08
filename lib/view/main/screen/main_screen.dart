@@ -53,22 +53,6 @@ class _MainScreenState extends State<MainScreen> {
       totalAmount: 'Tổng tiền: 4 tỷ',
       type: 'Loại: trả quỷ',
     ),
-    RequestFormItinerary(
-      id: 5,
-      title: 'Xử lý phiếu yêu cầu',
-      buttonTitle: 'Hoàn thành',
-      requestFormId: 'PYC: 22909',
-      totalAmount: 'Tổng tiền: 4 tỷ',
-      type: 'Loại: trả quỷ',
-    ),
-    RequestFormItinerary(
-      id: 6,
-      title: 'Xử lý phiếu yêu cầu',
-      buttonTitle: 'Hoàn thành',
-      requestFormId: 'PYC: 22909',
-      totalAmount: 'Tổng tiền: 4 tỷ',
-      type: 'Loại: trả quỷ',
-    ),
   ];
   @override
   void initState() {
@@ -136,7 +120,7 @@ extension _MainScreenDeliveryList on _MainScreenState {
       itineraries: _itineraries,
       onPressed: () => showDialog(
         context: context,
-        builder: (context) => const AddRequestFormScreen(),
+        builder: (context) => const CheckPointScreen(),
         barrierDismissible: false,
       ),
     );
