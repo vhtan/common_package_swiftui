@@ -78,7 +78,7 @@ private extension Publisher where Output == URLSession.DataTaskPublisher.Output 
     func requestJSON<Value: Decodable>(decoder: JSONDecoder) -> AnyPublisher<Response<Value>, Error> {
         return tryMap {
             assert(!Thread.isMainThread)
-            self.logData(url: "", data: $0.data)
+            self.logData(url: $0.response.url?.absoluteString ?? "Nil", data: $0.data)
             return $0.data
         }
         .extractUnderlyingError()
@@ -103,7 +103,7 @@ private extension Publisher where Output == URLSession.DataTaskPublisher.Output 
               let json = data.toDictionary?.json else {
             return
         }
-        log.info("RESPONSE: \(url) \nBODY: \(json)")
+        log.info("RESPONSE: \(url) ==>\nBODY: \(json)")
     }
 }
 

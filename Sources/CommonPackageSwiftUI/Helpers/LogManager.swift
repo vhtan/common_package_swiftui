@@ -55,10 +55,10 @@ public struct LogManager {
 
         // Optionally set some configuration options
         fileDestination.outputLevel = level
-        fileDestination.showLogIdentifier = true
-        fileDestination.showFunctionName = true
-        fileDestination.showThreadName = true
-        fileDestination.showLevel = true
+        fileDestination.showLogIdentifier = false
+        fileDestination.showFunctionName = false
+        fileDestination.showThreadName = false
+        fileDestination.showLevel = false
         fileDestination.showFileName = true
         fileDestination.showLineNumber = true
         fileDestination.showDate = true
