@@ -103,7 +103,7 @@ private extension Publisher where Output == URLSession.DataTaskPublisher.Output 
               let json = data.toDictionary?.json else {
             return
         }
-        log.info("RESPONSE: \(url) ==>\nBODY: \(json)")
+        log.info("RESPONSE: \(url)\n==>BODY: \(json)")
     }
 }
 
