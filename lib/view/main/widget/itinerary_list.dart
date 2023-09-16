@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/data/model/main/itinerary.dart';
 import 'package:mvvm_cubit/view/main/widget/itinerary_container.dart';
+import 'package:mvvm_cubit/view/main/widget/itinerary_info_widget.dart';
 
 class ItineraryList extends StatefulWidget {
   const ItineraryList({
@@ -31,7 +32,10 @@ class _ItineraryList extends State<ItineraryList> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: _buildPanel(),
+      child: Column(children: [
+        const ItineraryInfo(),
+        _buildPanel(),
+      ]),
     );
   }
 

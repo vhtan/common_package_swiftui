@@ -12,42 +12,40 @@ class AccountScreen extends StatefulWidget {
 class _AccountScreenState extends State<AccountScreen> {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(10),
-      child: Container(
-        alignment: Alignment.center,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Image.asset(
-              AppAsset.user,
-              width: 160,
-              height: 160,
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            const Text(
-              'Nguyễn An',
-              style: headLine1,
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            const Text(
-              "annguyen@gmail.com",
-              style: textDefault,
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            const Text(
-              "Nhân viên giám sát",
-              style: textDefault,
-            )
-          ],
-        ),
+    return Container(
+      padding: const EdgeInsets.all(20),
+      alignment: Alignment.center,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Image.asset(
+            AppAsset.user,
+            width: 160,
+            height: 160,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          const Text(
+            'Nguyễn An',
+            style: headLine1,
+          ),
+          const SizedBox(
+            height: 8,
+          ),
+          const Text(
+            "annguyen@gmail.com",
+            style: textDefault,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          const Text(
+            "Nhân viên giám sát",
+            style: textDefault,
+          )
+        ],
       ),
     );
   }

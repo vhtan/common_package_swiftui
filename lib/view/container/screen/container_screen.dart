@@ -52,7 +52,6 @@ class _ContainerScreenState extends State<ContainerScreen> {
           builder: (context, state) {
             return SideMenu(
               key: _sideMenuKey,
-              inverse: false, // end side menu
               background: AppColors.primary,
               type: SideMenuType.slide,
               maxMenuWidth: 230,
@@ -77,20 +76,27 @@ class _ContainerScreenState extends State<ContainerScreen> {
                       onPressed: () => toggleMenu(true),
                     ),
                     actions: [
-                      IconButton(
-                        icon: const Icon(
-                          Icons.sos,
-                          color: AppColors.error,
-                          size: Dimension.menuIconSize,
+                      Padding(
+                        padding: const EdgeInsets.only(right: 10),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 5),
+                              backgroundColor: AppColors.error),
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => const ReportSOSScreen(),
+                              barrierDismissible: false,
+                            );
+                          },
+                          child: const Icon(
+                            Icons.sos,
+                            color: AppColors.white,
+                            size: Dimension.menuIconSize,
+                          ),
                         ),
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) => const ReportSOSScreen(),
-                            barrierDismissible: false,
-                          );
-                        },
-                      )
+                      ),
                     ],
                     title: Text(title),
                   ),

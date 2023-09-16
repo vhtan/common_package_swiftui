@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/common/widget/empty_widget.dart';
+import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/common/widget/spinkit_indicator.dart';
 import 'package:mvvm_cubit/core/api_config.dart';
 import 'package:mvvm_cubit/data/model/main/delivery.dart';
@@ -10,6 +11,7 @@ import 'package:mvvm_cubit/view/add_request_form/add_request_form.dart';
 import 'package:mvvm_cubit/view/auth/login_screen.dart';
 import 'package:mvvm_cubit/view/check_point/check_point_screen.dart';
 import 'package:mvvm_cubit/view/main/widget/itinerary_list.dart';
+import 'package:mvvm_cubit/view/pending_request_form/pending_request_form_screen.dart';
 import 'package:mvvm_cubit/viewmodel/main/main_cubit.dart';
 
 class MainScreen extends StatefulWidget {
@@ -54,6 +56,7 @@ class _MainScreenState extends State<MainScreen> {
       type: 'Loại: trả quỷ',
     ),
   ];
+
   @override
   void initState() {
     BlocProvider.of<MainCubit>(context).getListDelivery();
@@ -85,6 +88,7 @@ class _MainScreenState extends State<MainScreen> {
             case Status.failure:
               // return const SizedBox();
               return itineraryList();
+            // return pendingItinerary();
             case Status.empty:
               return const EmptyWidget(message: "No delivery!");
             case Status.loading:
@@ -115,6 +119,43 @@ class _MainScreenState extends State<MainScreen> {
 }
 
 extension _MainScreenDeliveryList on _MainScreenState {
+  Widget noItinerary() {
+    return Padding(
+      padding: const EdgeInsets.only(left: 40, right: 40),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const EmptyWidget(message: 'Chưa có lộ trình'),
+          const SizedBox(height: 20),
+          PrimaryButton(
+            title: 'Thêm phiếu yêu cầu',
+            buttonHeight: 50,
+            onPressed: () => showDialog(
+              context: context,
+              builder: (context) => const AddRequestFormScreen(),
+              barrierDismissible: false,
+            ),
+          ),
+          const SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
+
+  Widget pendingItinerary() {
+    return const Padding(
+      padding: EdgeInsets.all(20),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          PendingRequestFormScreen(),
+          SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
+
   Widget itineraryList() {
     return ItineraryList(
       itineraries: _itineraries,

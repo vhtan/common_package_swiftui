@@ -88,8 +88,15 @@ final filledButtonTheme = FilledButtonThemeData(
 ));
 
 const textDefault = TextStyle(
-  fontSize: 15,
+  fontSize: 16,
   fontWeight: FontWeight.w500,
+  color: AppColors.textDefault,
+  overflow: TextOverflow.ellipsis,
+);
+
+const textDefaultLight = TextStyle(
+  fontSize: 15,
+  fontWeight: FontWeight.w400,
   color: AppColors.textDefault,
   overflow: TextOverflow.ellipsis,
 );
