@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mvvm_cubit/common/dialog/delete_dialog.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/view/add_request_form/add_request_form.dart';
+import 'package:mvvm_cubit/view/pending_request_form/widget/delete_request_form.dart';
 
 class PendingRequestFormScreen extends StatelessWidget {
   const PendingRequestFormScreen({
@@ -113,7 +113,11 @@ class PendingRequestFormScreen extends StatelessWidget {
               child: PrimaryButton(
                 title: 'Huỷ PYC',
                 buttonHeight: 50,
-                onPressed: () => deleteDialog(context),
+                onPressed: () => deleteRequestFormDialog(
+                  'Xoá phiếu yêu cầu',
+                  'Bạn có chắc là muốn xoá phiếu yêu cầu',
+                  context,
+                ),
               ),
             ),
           ],
