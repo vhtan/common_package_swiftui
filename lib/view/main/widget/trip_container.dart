@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
-import 'package:mvvm_cubit/data/model/main/itinerary.dart';
-import 'package:mvvm_cubit/view/main/widget/itinerary_container.dart';
-import 'package:mvvm_cubit/view/main/widget/itinerary_info_widget.dart';
+import 'package:mvvm_cubit/data/model/main/duty.dart';
+import 'package:mvvm_cubit/view/main/widget/duty_container.dart';
+import 'package:mvvm_cubit/view/main/widget/duty_info_widget.dart';
 
-class ItineraryList extends StatefulWidget {
-  const ItineraryList({
+class TripContainer extends StatefulWidget {
+  const TripContainer({
     super.key,
     required this.itineraries,
     required this.onPressed,
   });
 
-  final List<Itinerary> itineraries;
+  final List<Duty> itineraries;
   final VoidCallback onPressed;
 
   @override
-  State<ItineraryList> createState() => _ItineraryList();
+  State<TripContainer> createState() => _TripContainer();
 }
 
-class _ItineraryList extends State<ItineraryList> {
-  List<Itinerary> _itineraries = [];
+class _TripContainer extends State<TripContainer> {
+  List<Duty> _itineraries = [];
   VoidCallback _onPressed = () {};
 
   @override
@@ -33,7 +33,7 @@ class _ItineraryList extends State<ItineraryList> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(children: [
-        const ItineraryInfo(),
+        const TripInfo(),
         _buildPanel(),
       ]),
     );
@@ -43,7 +43,7 @@ class _ItineraryList extends State<ItineraryList> {
     return ExpansionPanelList.radio(
       initialOpenPanelValue: 0,
       children: _itineraries.map<ExpansionPanelRadio>(
-        (Itinerary item) {
+        (Duty item) {
           return ExpansionPanelRadio(
             value: item.id,
             headerBuilder: (context, isExpanded) => ListTile(
@@ -52,8 +52,8 @@ class _ItineraryList extends State<ItineraryList> {
                 style: headLine2,
               ),
             ),
-            body: ItineraryContainer(
-              itinerary: item,
+            body: DutyContainer(
+              duty: item,
               onPressed: _onPressed,
             ),
           );

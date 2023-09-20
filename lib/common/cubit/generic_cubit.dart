@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 enum ApiOperation { select, create, update, delete }
 
-class GenericCubit<T> extends Cubit<GenericCubitState<List<T>>> {
+class GenericCubit<T> extends Cubit<GenericCubitState<T>> {
   GenericCubit() : super(GenericCubitState.loading());
 
   ApiOperation operation = ApiOperation.select;
@@ -54,7 +54,7 @@ class GenericCubit<T> extends Cubit<GenericCubitState<List<T>>> {
         if (items.isEmpty) {
           emit(GenericCubitState.empty());
         } else {
-          emit(GenericCubitState.success(items));
+          // emit(GenericCubitState.success(items));
         }
       },
     );

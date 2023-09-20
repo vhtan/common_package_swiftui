@@ -43,7 +43,7 @@ class MenuScreen extends StatelessWidget {
           _MenuListTile(
             title: 'Lộ trình',
             icon: Icons.home,
-            onTap: () => valueChanged(MenuType.route),
+            onTap: () => valueChanged(MenuType.trip),
           ),
           _MenuListTile(
             title: 'Tài khoản',

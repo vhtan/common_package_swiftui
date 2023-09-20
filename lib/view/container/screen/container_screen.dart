@@ -116,7 +116,7 @@ class _ContainerScreenState extends State<ContainerScreen> {
   void titlePage(MenuType? menuType) {
     toggleMenu();
     switch (menuType) {
-      case MenuType.route:
+      case MenuType.trip:
         title = 'Lộ trình';
       case MenuType.account:
         title = 'Tài khoản';
@@ -132,7 +132,7 @@ class _ContainerScreenState extends State<ContainerScreen> {
 
   Widget contentWidget(MenuType? menuType) {
     switch (menuType) {
-      case MenuType.route:
+      case MenuType.trip:
         return const MainScreen();
       case MenuType.account:
         return const AccountScreen();

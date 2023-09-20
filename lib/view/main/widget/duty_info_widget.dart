@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
 
-class ItineraryInfo extends StatelessWidget {
-  const ItineraryInfo({
+class TripInfo extends StatelessWidget {
+  const TripInfo({
     Key? key,
   }) : super(key: key);
 

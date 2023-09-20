@@ -1,5 +1,6 @@
 import 'package:mvvm_cubit/view/auth/login_screen.dart';
 import 'package:mvvm_cubit/view/container/screen/container_screen.dart';
+import 'package:mvvm_cubit/viewmodel/add_trip/add_trip_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/auth/auth_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/check_point/check_point_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/container/container_cubit.dart';
@@ -30,7 +31,8 @@ class MyApp extends StatelessWidget {
         BlocProvider<ReportSOSCubit>(
             create: (context) => getIt<ReportSOSCubit>()),
         BlocProvider<CheckPointCubit>(
-            create: (context) => getIt<CheckPointCubit>())
+            create: (context) => getIt<CheckPointCubit>()),
+        BlocProvider<AddTripCubit>(create: (context) => getIt<AddTripCubit>()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

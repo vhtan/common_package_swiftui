@@ -1,7 +1,10 @@
+import 'package:mvvm_cubit/data/api/add_trip/add_trip.dart';
 import 'package:mvvm_cubit/data/api/auth/auth_api.dart';
 import 'package:mvvm_cubit/data/api/main/main_api.dart';
+import 'package:mvvm_cubit/repository/add_trip/add_trip_repository.dart';
 import 'package:mvvm_cubit/repository/auth/auth_repository.dart';
 import 'package:mvvm_cubit/repository/main/main_repository.dart';
+import 'package:mvvm_cubit/viewmodel/add_trip/add_trip_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/auth/auth_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/check_point/check_point_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/container/container_cubit.dart';
@@ -25,8 +28,6 @@ Future<void> init() async {
     () => MainRepository(mainApi: getIt<MainApi>()),
   );
   getIt.registerFactory(() => MainCubit(repository: getIt<MainRepository>()));
-  getIt.registerFactory(() => ReportSOSCubit());
-  getIt.registerFactory(() => CheckPointCubit());
 
   // Register Auth Components
   getIt.registerLazySingleton<AuthApi>(
@@ -34,6 +35,18 @@ Future<void> init() async {
   getIt.registerLazySingleton<AuthRepository>(
       () => AuthRepository(api: getIt<AuthApi>()));
   getIt.registerFactory(() => AuthCubit(repository: getIt<AuthRepository>()));
+
+  getIt.registerFactory(() => ReportSOSCubit());
+  getIt.registerFactory(() => CheckPointCubit());
+
   getIt.registerFactory(
       () => ContainerCubit(repository: getIt<MainRepository>()));
+  getIt.registerFactory(
+      () => AddTripCubit(repository: getIt<AddTripRepository>()));
+
+// Register Add trip Components
+  getIt.registerLazySingleton<AddTripApi>(
+      () => AddTripApi(client: getIt<DioClient>()));
+  getIt.registerLazySingleton<AddTripRepository>(
+      () => AddTripRepository(api: getIt<AddTripApi>()));
 }

@@ -7,7 +7,8 @@ class ApiConfig {
   static const String baseUrl = "http://45.119.213.78:32181/app/api/v1";
   static const Duration receiveTimeout = Duration(milliseconds: 15000);
   static const Duration connectionTimeout = Duration(milliseconds: 15000);
-  static const String listDelivery = '/delivery';
+  static const String getTrip = '/trip';
+  static const String createTrip = '/create_trip';
   static const String login = '/user/login';
   static const String logout = '/user/logout';
   static Map<String, String?> header = {
