@@ -5,10 +5,30 @@ import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/view/add_trip/add_trip_screen.dart';
 import 'package:mvvm_cubit/view/pending_trip/widget/delete_request_form.dart';
 
-class PendingTripScreen extends StatelessWidget {
+class PendingTripScreen extends StatefulWidget {
+  final VoidCallback onDelete;
+  final VoidCallback onEdit;
+
   const PendingTripScreen({
     Key? key,
+    required this.onDelete,
+    required this.onEdit,
   }) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => _PendingTripScreen();
+}
+
+class _PendingTripScreen extends State<PendingTripScreen> {
+  late VoidCallback _onDelete;
+  late VoidCallback _onEdit;
+
+  @override
+  void initState() {
+    _onDelete = widget.onDelete;
+    _onEdit = widget.onEdit;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -101,11 +121,12 @@ class PendingTripScreen extends StatelessWidget {
               child: PrimaryButton(
                 title: 'Sửa PYC',
                 buttonHeight: 50,
-                onPressed: () => showDialog(
-                  context: context,
-                  builder: (context) => const AddTripScreen(),
-                  barrierDismissible: false,
-                ),
+                // onPressed: () => showDialog(
+                //   context: context,
+                //   builder: (context) => const AddTripScreen(),
+                //   barrierDismissible: false,
+                // ),
+                onPressed: _onEdit,
               ),
             ),
             const SizedBox(width: 20),
@@ -113,11 +134,16 @@ class PendingTripScreen extends StatelessWidget {
               child: PrimaryButton(
                 title: 'Huỷ PYC',
                 buttonHeight: 50,
-                onPressed: () => deleteRequestFormDialog(
-                  'Xoá phiếu yêu cầu',
-                  'Bạn có chắc là muốn xoá phiếu yêu cầu',
-                  context,
-                ),
+                onPressed: () async {
+                  bool delete = await deleteRequestFormDialog(
+                    'Xoá phiếu yêu cầu',
+                    'Bạn có chắc là muốn xoá phiếu yêu cầu',
+                    context,
+                  );
+                  if (delete) {
+                    _onDelete();
+                  }
+                },
               ),
             ),
           ],

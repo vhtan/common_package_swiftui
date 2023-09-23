@@ -19,6 +19,14 @@ class MainCubit extends GenericCubit<MainState> {
     emit(GenericCubitState.success(MainState(pendingTrip: trip, trip: null)));
   }
 
+  void deleteNewTrip() {
+    emit(GenericCubitState.success(MainState(pendingTrip: null, trip: null)));
+  }
+
+  void editNewTrip() {
+    emit(GenericCubitState.success(MainState(pendingTrip: null, trip: null)));
+  }
+
   Future<void> logout(String username) async {
     emit(GenericCubitState.loading());
     final response =

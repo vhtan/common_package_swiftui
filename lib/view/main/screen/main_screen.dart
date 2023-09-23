@@ -159,13 +159,16 @@ extension _MainScreenDeliveryList on _MainScreenState {
   }
 
   Widget pendingTrip() {
-    return const Padding(
-      padding: EdgeInsets.all(20),
+    return Padding(
+      padding: const EdgeInsets.all(20),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          PendingTripScreen(),
-          SizedBox(height: 20),
+          PendingTripScreen(
+            onDelete: () => context.read<MainCubit>().deleteNewTrip(),
+            onEdit: () => context.read<MainCubit>().editNewTrip(),
+          ),
+          const SizedBox(height: 20),
         ],
       ),
     );

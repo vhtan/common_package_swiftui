@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-Future<dynamic> deleteDialog(BuildContext context) {
+Future<dynamic> deleteDialog(
+    BuildContext context, VoidCallback? cancelCallback) {
   Future<dynamic> dialog = showDialog(
     context: context,
     builder: (_) {
@@ -30,6 +31,7 @@ Future<dynamic> deleteDialog(BuildContext context) {
                 TextButton(
                   onPressed: () {
                     Navigator.pop(context, false);
+                    cancelCallback;
                   },
                   child: const Text("No"),
                 ),
