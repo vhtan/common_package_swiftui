@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:material_text_fields/utils/extensions.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/common/widget/text_input.dart';
@@ -9,6 +10,7 @@ import 'package:mvvm_cubit/data/model/auth/login_response.dart';
 import 'package:mvvm_cubit/data/request/auth/login_request.dart';
 import 'package:mvvm_cubit/view/container/screen/container_screen.dart';
 import 'package:mvvm_cubit/viewmodel/auth/auth_cubit.dart';
+import 'package:mvvm_cubit/viewmodel/auth/auth_state.dart';
 import 'package:uuid/uuid.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -52,9 +54,8 @@ class _LoginScreenState extends State<LoginScreen> {
           }
         },
         builder: (context, state) {
-          return BlocBuilder<AuthCubit, GenericCubitState<LoginResponse>>(
-              builder: (BuildContext context,
-                  GenericCubitState<LoginResponse> state) {
+          return BlocBuilder<AuthCubit, GenericCubitState<AuthState>>(builder:
+              (BuildContext context, GenericCubitState<AuthState> state) {
             return Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
@@ -72,6 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     icon: const Icon(Icons.person),
                     controller: _usernameTextController,
                     obscureText: false,
+                    validator: (value) => state.data?.errorText(),
                     onChanged: (value) =>
                         context.read<AuthCubit>().usernameChanged(value),
                   ),
@@ -92,13 +94,16 @@ class _LoginScreenState extends State<LoginScreen> {
                   PrimaryButton(
                     title: 'Đăng nhập',
                     buttonHeight: 50,
-                    onPressed: () {
-                      context.read<AuthCubit>().login(LoginRequest(
-                          username: _usernameTextController.text,
-                          password: _passwordTextController.text,
-                          requestId: const Uuid().v4(),
-                          requestTime: DateTime.now().microsecondsSinceEpoch));
-                    },
+                    onPressed: (state.data?.isValid()) == true
+                        ? () {
+                            context.read<AuthCubit>().login(LoginRequest(
+                                username: _usernameTextController.text,
+                                password: _passwordTextController.text,
+                                requestId: const Uuid().v4(),
+                                requestTime:
+                                    DateTime.now().microsecondsSinceEpoch));
+                          }
+                        : null,
                   ),
                 ],
               ),

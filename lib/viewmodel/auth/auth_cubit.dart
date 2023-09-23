@@ -3,8 +3,9 @@ import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/data/model/auth/login_response.dart';
 import 'package:mvvm_cubit/data/request/auth/login_request.dart';
 import 'package:mvvm_cubit/repository/auth/auth_repository.dart';
+import 'package:mvvm_cubit/viewmodel/auth/auth_state.dart';
 
-class AuthCubit extends Cubit<GenericCubitState<LoginResponse>> {
+class AuthCubit extends Cubit<GenericCubitState<AuthState>> {
   final AuthRepository repository;
 
   AuthCubit({required this.repository}) : super(GenericCubitState.loading());
@@ -15,8 +16,9 @@ class AuthCubit extends Cubit<GenericCubitState<LoginResponse>> {
     if (response != null) {
       final user = LoginResponse.fromJson(response);
       print("login data = $user");
-      emit(
-          GenericCubitState.success(user.copyWith(username: request.username)));
+      // emit(
+      //   GenericCubitState.success(user.copyWith(username: request.username)),
+      // );
     } else {
       emit(GenericCubitState.failure("Error"));
     }
@@ -25,7 +27,7 @@ class AuthCubit extends Cubit<GenericCubitState<LoginResponse>> {
   void usernameChanged(String value) {
     final password = state.data?.password ?? '';
     emit(GenericCubitState(
-        data: LoginResponse(username: value, password: password),
+        data: AuthState(username: value, password: password),
         error: null,
         status: Status.empty));
   }
@@ -33,7 +35,7 @@ class AuthCubit extends Cubit<GenericCubitState<LoginResponse>> {
   void passwordChanged(String value) {
     final username = state.data?.username ?? '';
     emit(GenericCubitState(
-        data: LoginResponse(username: username, password: value),
+        data: AuthState(username: username, password: value),
         error: null,
         status: Status.empty));
   }
