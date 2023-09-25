@@ -5,6 +5,8 @@ import 'package:mvvm_cubit/common/widget/empty_widget.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/common/widget/spinkit_indicator.dart';
 import 'package:mvvm_cubit/core/api_config.dart';
+import 'package:mvvm_cubit/core/app_extension.dart';
+import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/data/model/main/duty.dart';
 import 'package:mvvm_cubit/data/model/main/trip.dart';
 import 'package:mvvm_cubit/view/add_trip/add_trip_screen.dart';
@@ -12,6 +14,8 @@ import 'package:mvvm_cubit/view/auth/login_screen.dart';
 import 'package:mvvm_cubit/view/check_point/check_point_screen.dart';
 import 'package:mvvm_cubit/view/main/widget/trip_container.dart';
 import 'package:mvvm_cubit/view/pending_trip/screen/pending_trip_screen.dart';
+import 'package:mvvm_cubit/view/report_sos/screen/report_sos_screen.dart';
+import 'package:mvvm_cubit/view/warnings_handler/screen/warnings_handler_screen.dart';
 import 'package:mvvm_cubit/viewmodel/main/main_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/main/main_state.dart';
 
@@ -99,11 +103,24 @@ class _MainScreenState extends State<MainScreen> {
                   var trip = state.data?.trip;
                   var pendTrip = state.data?.pendingTrip;
                   if (trip != null) {
-                    return currentTrip();
+                    return Column(
+                      children: [
+                        warningStopTooLong(),
+                        currentTrip(),
+                      ],
+                    );
                   } else if (pendTrip != null) {
                     return pendingTrip();
                   } else {
-                    return noTrip();
+                    return Column(
+                      children: [
+                        warningNoTrip(),
+                        const SizedBox(height: 4),
+                        // warningStopTooLong(),
+                        noTrip(),
+                      ],
+                    );
+                    // return noTrip();
                   }
               }
             },
@@ -127,10 +144,10 @@ class _MainScreenState extends State<MainScreen> {
 extension _MainScreenDeliveryList on _MainScreenState {
   Widget noTrip() {
     return Padding(
-      padding: const EdgeInsets.only(left: 40, right: 40),
+      padding: const EdgeInsets.only(left: 30, right: 30),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const EmptyWidget(message: 'Chưa có lộ trình'),
           const SizedBox(height: 20),
@@ -181,6 +198,90 @@ extension _MainScreenDeliveryList on _MainScreenState {
         context: context,
         builder: (context) => const CheckPointScreen(),
         barrierDismissible: false,
+      ),
+    );
+  }
+
+  Widget warningNoTrip() {
+    return Container(
+      padding: const EdgeInsets.all(10),
+      decoration: const BoxDecoration(
+        color: AppColors.warning,
+        // borderRadius: BorderRadius.all(Radius.circular(8)),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () {},
+        child: Row(
+          children: [
+            const Icon(
+              Icons.warning,
+              color: AppColors.red,
+              size: 24.0,
+            ),
+            const SizedBox(width: 8.0), // Add spacing between elements
+            const Expanded(
+              child: Text(
+                'Di chuyển không có phiếu yêu cầu',
+                style: textDefault,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis, // Specify an overflow property
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {},
+              child: const Text(
+                "Thêm PYC",
+                style: textDefault,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget warningStopTooLong() {
+    return Container(
+      padding: const EdgeInsets.all(10),
+      decoration: const BoxDecoration(
+        color: AppColors.warningHigh,
+        // borderRadius: BorderRadius.all(Radius.circular(8)),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () {},
+        child: Row(
+          children: [
+            const Icon(
+              Icons.warning,
+              color: AppColors.red,
+              size: 24.0,
+            ),
+            const SizedBox(width: 8.0), // Add spacing between elements
+            const Expanded(
+              child: Text(
+                'Cánh báo: Dừng quá lâu',
+                style: textDefault,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis, // Specify an overflow property
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => const WarningsHandlerScreen(),
+                  barrierDismissible: false,
+                );
+              },
+              child: const Text(
+                "Xử lý",
+                style: textDefault,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

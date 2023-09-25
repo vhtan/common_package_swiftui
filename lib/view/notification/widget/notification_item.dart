@@ -40,7 +40,7 @@ class NotificationItem extends StatelessWidget {
                   overflow: TextOverflow.clip,
                 ),
                 Text(
-                  'Ngân hàng Nhà nước: Lãi suất cho vay sẽ tiếp tục giảm',
+                  'Cảnh báo sai lộ trình, đề nghị khắc phục',
                   style: textDefault,
                   maxLines: 2,
                   overflow: TextOverflow.clip,

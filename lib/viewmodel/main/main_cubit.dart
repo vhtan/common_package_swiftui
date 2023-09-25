@@ -12,7 +12,13 @@ class MainCubit extends GenericCubit<MainState> {
   MainCubit({required this.repository});
 
   Future<void> getTrip() async {
-    emit(GenericCubitState.success(null));
+    // emit(GenericCubitState.success(null));
+
+    // emit(GenericCubitState.success(
+    //     MainState(pendingTrip: Trip(title: '', duties: []))));
+
+    emit(GenericCubitState.success(
+        MainState(trip: Trip(title: '', duties: []))));
   }
 
   void addNewTrip(Trip trip) {
