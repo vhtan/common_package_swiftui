@@ -14,7 +14,7 @@ import Combine
 public class ErrorTracker {
     private let subject = PassthroughSubject<Error, Never>()
     
-    var errorPublisher: AnyPublisher<Error, Never> {
+    public var error: AnyPublisher<Error, Never> {
         subject.eraseToAnyPublisher()
     }
     
@@ -23,7 +23,7 @@ public class ErrorTracker {
     }
 }
 
-extension Publisher {
+public extension Publisher {
     func trackError<Tracker: ErrorTracker>(_ tracker: Tracker) -> AnyPublisher<Self.Output, Never> where Self.Failure == Error {
         self.catch { error -> Empty<Self.Output, Never> in
             tracker.track(error)
