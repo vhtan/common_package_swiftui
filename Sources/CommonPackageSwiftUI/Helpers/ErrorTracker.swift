@@ -14,6 +14,8 @@ import Combine
 public class ErrorTracker {
     private let subject = PassthroughSubject<Error, Never>()
     
+    public init() {}
+    
     public var error: AnyPublisher<Error, Never> {
         subject.eraseToAnyPublisher()
     }
