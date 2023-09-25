@@ -11,46 +11,24 @@ import Combine
 /**
  Enables monitoring error of sequence computation.
  */
-public final class ErrorTracker {
-    private struct ActivityToken<Source: Publisher> {
-        let source: Source
-        let errorAction: (Source.Failure) -> Void
-        
-        func asPublisher() -> AnyPublisher<Source.Output, Never> {
-            source.handleEvents(receiveCompletion: { completion in
-                switch completion {
-                case .finished:
-                    break
-                case .failure(let error):
-                    errorAction(error)
-                }
-            })
-            .catch { _ in Empty(completeImmediately: true) }
-            .eraseToAnyPublisher()
-        }
+public class ErrorTracker {
+    private let subject = PassthroughSubject<Error, Never>()
+    
+    var errorPublisher: AnyPublisher<Error, Never> {
+        subject.eraseToAnyPublisher()
     }
     
-    @Published
-    private var relay: Error?
-    private let lock = NSRecursiveLock()
-    
-    public var error: AnyPublisher<Error, Never> {
-        $relay.compactMap { $0 }.eraseToAnyPublisher()
-    }
-    
-    public init() {}
-    
-    func trackErrorOfPublisher<Source: Publisher>(source: Source) -> AnyPublisher<Source.Output, Never> {
-        return ActivityToken(source: source) { error in
-            self.lock.lock()
-            self.relay = error
-            self.lock.unlock()
-        }.asPublisher()
+    func track(_ error: Error) {
+        subject.send(error)
     }
 }
 
 extension Publisher {
-    public func trackError(_ errorTracker: ErrorTracker) -> AnyPublisher<Self.Output, Never> {
-        errorTracker.trackErrorOfPublisher(source: self)
+    func trackError<Tracker: ErrorTracker>(_ tracker: Tracker) -> AnyPublisher<Self.Output, Never> where Self.Failure == Error {
+        self.catch { error -> Empty<Self.Output, Never> in
+            tracker.track(error)
+            return Empty()
+        }
+        .eraseToAnyPublisher()
     }
 }
