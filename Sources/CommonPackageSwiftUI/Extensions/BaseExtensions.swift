@@ -137,12 +137,6 @@ public enum ScreenSize {
     public static let height = UIScreen.main.bounds.height
 }
 
-public extension SwiftUI.Color {
-    var uiColor: UIColor {
-        return UIColor(self)
-    }
-}
-
 public extension Color {
     init(hex: String) {
         let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)

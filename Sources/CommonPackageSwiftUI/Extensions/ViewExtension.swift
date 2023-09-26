@@ -7,16 +7,6 @@
 
 import SwiftUI
 
-public extension View {
-    func loadingView() -> some View {
-        return EmptyView()
-    }
-    
-    func failedView(_ error: Error) -> some View {
-        ErrorView(error: error, retryAction: { })
-    }
-}
-
 private struct SafeAreaInsetsKey: EnvironmentKey {
     static var defaultValue: EdgeInsets {
         (UIApplication.shared.windows.first(where: { $0.isKeyWindow })?.safeAreaInsets ?? .zero).insets
