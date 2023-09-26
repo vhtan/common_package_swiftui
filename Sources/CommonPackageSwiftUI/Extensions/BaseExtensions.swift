@@ -143,12 +143,6 @@ public extension SwiftUI.Color {
     }
 }
 
-public extension Image {
-    var icAccount: Image {
-        return .init("ic_account")
-    }
-}
-
 public extension Color {
     init(hex: String) {
         let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
