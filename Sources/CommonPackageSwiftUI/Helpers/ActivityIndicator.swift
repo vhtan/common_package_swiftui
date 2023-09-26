@@ -15,9 +15,9 @@ public final class ActivityIndicator {
     public init() {}
     
     public var loading: AnyPublisher<Bool, Never> {
-        $count.print("loading")
+        $count.print("loading 18")
             .map({$0 > 0})
-            .print("loading")
+            .print("loading 20")
             .eraseToAnyPublisher()
     }
     
