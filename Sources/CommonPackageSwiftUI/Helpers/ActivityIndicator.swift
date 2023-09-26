@@ -14,7 +14,7 @@ public final class ActivityIndicator {
     
     public init() {}
     
-    var loading: AnyPublisher<Bool, Never> {
+    public var loading: AnyPublisher<Bool, Never> {
         $count.print("loading")
             .map({$0 > 0})
             .print("loading")
