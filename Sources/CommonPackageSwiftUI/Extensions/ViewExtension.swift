@@ -65,3 +65,102 @@ public extension View {
         }
     }
 }
+
+public extension View {
+    func backgroundLinearGradient(colors: [Color],
+                                  startPoint: UnitPoint = .topLeading,
+                                  endPoint: UnitPoint = .bottomTrailing) -> some View {
+        return self.background(
+            LinearGradient(gradient: .init(colors: colors),
+                           startPoint: startPoint, endPoint: endPoint)
+            .ignoresSafeArea()
+        )
+    }
+    
+    func borderAndCorner(cornerRadius: CGFloat = 8,
+                         lineWidth: CGFloat = 1,
+                         color: Color = Color.gray) -> some View {
+        return self.overlay(
+            RoundedRectangle(cornerRadius: cornerRadius)
+                .strokeBorder(lineWidth: lineWidth)
+                .foregroundColor(color)
+                .clipped()
+        )
+        .cornerRadius(cornerRadius)
+        .clipped()
+    }
+    
+    func borderAndCornerDashLine(cornerRadius: CGFloat = 8,
+                                 lineWidth: CGFloat = 1,
+                                 color: Color = Color.gray,
+                                 dash: CGFloat = 8) -> some View {
+        return self.overlay(
+            RoundedRectangle(cornerRadius: cornerRadius)
+                .strokeBorder(style: StrokeStyle(lineWidth: lineWidth, dash: [dash]))
+                .foregroundColor(color)
+                .clipped()
+        )
+        .cornerRadius(cornerRadius)
+        .clipped()
+    }
+}
+
+private struct ContainerPresentingView<Content: View>: View {
+    
+    @ViewBuilder var content: () -> Content
+    
+    init(content: @escaping () -> Content) {
+        UIView.setAnimationsEnabled(false)
+        self.content = content
+    }
+    
+    var body: some View {
+        ZStack {
+            Color.black.opacity(0.5)
+            VStack {
+                content()
+            }
+        }
+        .ignoresSafeArea()
+        .background(ClearBackgroundView())
+        .onDisappear {
+            UIView.setAnimationsEnabled(true)
+        }
+    }
+}
+
+fileprivate struct ClearBackgroundView: UIViewRepresentable {
+    func makeUIView(context: Context) -> UIView {
+        return InnerView()
+    }
+    
+    func updateUIView(_ uiView: UIView, context: Context) { }
+    
+    private class InnerView: UIView {
+        override func didMoveToWindow() {
+            super.didMoveToWindow()
+            superview?.superview?.backgroundColor = .clear
+        }
+    }
+}
+
+public extension View {
+    
+    func fullScreenCoverCustomPresenting<Content>(isPresented: Binding<Bool>,
+                                            onDismiss: (Completion)? = nil,
+                                            @ViewBuilder content: @escaping () -> Content) -> some View where Content : View {
+         self.fullScreenCoverCustom(isPresented: isPresented, onDismiss: onDismiss) {
+             ContainerPresentingView(content: content)
+         }
+     }
+    
+    func fullScreenCoverCustomPresenting<Item, Content>(item: Binding<Item?>,
+                                                        onDismiss: (() -> Void)? = nil,
+                                                        @ViewBuilder content: @escaping (Item) -> Content) -> some View where Item : Swift.Identifiable, Content : View {
+        self.fullScreenCoverCustom(item: item, onDismiss: onDismiss) { it in
+            ContainerPresentingView {
+                content(it)
+            }
+        }
+    }
+}

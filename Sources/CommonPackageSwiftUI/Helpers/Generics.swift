@@ -7,6 +7,8 @@
 
 import Foundation
 
+public typealias Completion = () -> Void
+
 public struct Stack<Element> {
     private var stack = [Element]()
     
