@@ -5,7 +5,6 @@ import 'package:mvvm_cubit/common/widget/drop_down.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/common/widget/text_input.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
-import 'package:mvvm_cubit/data/model/main/trip.dart';
 import 'package:mvvm_cubit/viewmodel/add_trip/add_trip_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/add_trip/add_trip_state.dart';
 import 'package:mvvm_cubit/viewmodel/main/main_cubit.dart';

@@ -1,6 +1,5 @@
 import 'package:mvvm_cubit/common/cubit/generic_cubit.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
-import 'package:mvvm_cubit/data/model/main/trip.dart';
 import 'package:mvvm_cubit/repository/add_trip/add_trip_repository.dart';
 import 'package:mvvm_cubit/viewmodel/add_trip/add_trip_state.dart';
 

@@ -1,6 +1,5 @@
 import 'package:mvvm_cubit/common/cubit/generic_cubit.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
-import 'package:mvvm_cubit/data/model/main/duty.dart';
 import 'package:mvvm_cubit/data/model/main/trip.dart';
 import 'package:mvvm_cubit/data/request/auth/logout_request.dart';
 import 'package:mvvm_cubit/repository/main/main_repository.dart';

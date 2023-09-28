@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
-import 'package:mvvm_cubit/view/add_trip/add_trip_screen.dart';
 import 'package:mvvm_cubit/view/pending_trip/widget/delete_request_form.dart';
 
 class PendingTripScreen extends StatefulWidget {

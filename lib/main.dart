@@ -1,4 +1,3 @@
-import 'package:mvvm_cubit/view/auth/login_screen.dart';
 import 'package:mvvm_cubit/view/container/screen/container_screen.dart';
 import 'package:mvvm_cubit/viewmodel/add_trip/add_trip_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/auth/auth_cubit.dart';
