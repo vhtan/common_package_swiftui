@@ -12,13 +12,13 @@ class MainCubit extends GenericCubit<MainState> {
   MainCubit({required this.repository});
 
   Future<void> getTrip() async {
-    // emit(GenericCubitState.success(null));
+    emit(GenericCubitState.success(null));
 
     // emit(GenericCubitState.success(
     //     MainState(pendingTrip: Trip(title: '', duties: []))));
 
-    emit(GenericCubitState.success(
-        MainState(trip: Trip(title: '', duties: []))));
+    // emit(GenericCubitState.success(
+    //     MainState(trip: Trip(title: '', duties: []))));
   }
 
   void addNewTrip(Trip trip) {
@@ -33,10 +33,10 @@ class MainCubit extends GenericCubit<MainState> {
     emit(GenericCubitState.success(MainState(pendingTrip: null, trip: null)));
   }
 
-  Future<void> logout(String username) async {
+  Future<void> logout() async {
     emit(GenericCubitState.loading());
     final response =
-        await repository.mainApi.logout(LogoutRequest(username: username));
+        await repository.mainApi.logout(const LogoutRequest(username: 'acb'));
     if (response != null) {
       print("logout response = $response");
       emit(GenericCubitState.success(null));

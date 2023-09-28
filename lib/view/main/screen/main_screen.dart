@@ -114,8 +114,8 @@ class _MainScreenState extends State<MainScreen> {
                   } else {
                     return Column(
                       children: [
-                        warningNoTrip(),
-                        const SizedBox(height: 4),
+                        // warningNoTrip(),
+                        // const SizedBox(height: 4),
                         // warningStopTooLong(),
                         noTrip(),
                       ],

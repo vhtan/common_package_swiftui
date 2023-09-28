@@ -1,17 +1,17 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:flutter/foundation.dart' show immutable;
+import 'package:uuid/uuid.dart';
 
 part 'login_request.g.dart';
 
 @immutable
 @JsonSerializable()
 class LoginRequest {
-  const LoginRequest({
+  LoginRequest({
     required this.username,
     required this.password,
-    required this.requestId,
-    required this.requestTime,
-  });
+  })  : requestId = const Uuid().v4(),
+        requestTime = DateTime.now().millisecondsSinceEpoch;
 
   @JsonKey(name: "username")
   final String username;

@@ -7,9 +7,8 @@ import 'package:mvvm_cubit/common/widget/text_input.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/data/model/main/trip.dart';
 import 'package:mvvm_cubit/viewmodel/add_trip/add_trip_cubit.dart';
+import 'package:mvvm_cubit/viewmodel/add_trip/add_trip_state.dart';
 import 'package:mvvm_cubit/viewmodel/main/main_cubit.dart';
-
-typedef DidAddTrip<T> = void Function(T value);
 
 class AddTripScreen extends StatefulWidget {
   const AddTripScreen({
@@ -22,20 +21,29 @@ class AddTripScreen extends StatefulWidget {
 
 class _AddTripScreen extends State<AddTripScreen> {
   @override
+  void initState() {
+    BlocProvider.of<AddTripCubit>(context).getReasonList();
+    BlocProvider.of<AddTripCubit>(context).getVehicleTypeList();
+    BlocProvider.of<AddTripCubit>(context).getGuardGuyList();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocConsumer<AddTripCubit, GenericCubitState<Trip>>(
+    return BlocConsumer<AddTripCubit, GenericCubitState<AddTripState>>(
       listener: (context, state) {
         switch (state.status) {
           case Status.success:
-            context.read<MainCubit>().addNewTrip(state.data!);
+            context.read<MainCubit>().addNewTrip(state.data!.trip!);
             Navigator.pop(context);
           default:
             break;
         }
       },
       builder: (context, state) {
-        return BlocBuilder<AddTripCubit, GenericCubitState<Trip>>(
-          builder: (BuildContext context, GenericCubitState<Trip> state) {
+        return BlocBuilder<AddTripCubit, GenericCubitState<AddTripState>>(
+          builder:
+              (BuildContext context, GenericCubitState<AddTripState> state) {
             return Material(
               color: Colors.transparent,
               child: Container(
@@ -76,55 +84,66 @@ class _AddTripScreen extends State<AddTripScreen> {
                           ],
                         ),
                         const SizedBox(height: 20),
-                        DropDown<String>(
-                          items: const [
-                            'Mục đích',
-                            'Đổ xăng',
-                            'Sửa xe',
-                            'Mục đích khác'
-                          ],
-                          onChanged: (value) {},
-                        ),
+                        if (state.data!.reasons != null)
+                          DropDown<String>(
+                            items: state.data!.reasons!,
+                            onChanged: (value) => context
+                                .read<AddTripCubit>()
+                                .reasonChanged(value),
+                          ),
                         const SizedBox(height: 20),
-                        const TextInput(
+                        TextInput(
                           hint: 'Nhập điểm dừng',
                           labelText: 'Điểm dừng',
                           keyboardType: TextInputType.number,
+                          onChanged: (value) => context
+                              .read<AddTripCubit>()
+                              .stopPlaceChanged(value),
                         ),
                         const SizedBox(height: 20),
-                        const TextInput(
+                        TextInput(
                           hint: 'Nhập số tiền',
                           labelText: 'Số tiền',
                           keyboardType: TextInputType.number,
+                          onChanged: (value) =>
+                              context.read<AddTripCubit>().amountChanged(
+                                    int.parse(value),
+                                  ),
                         ),
                         const SizedBox(height: 20),
-                        DropDown<String>(
-                          items: const [
-                            'Loại xe',
-                            'For',
-                            'Toyota',
-                            'Chevrolet'
-                          ],
-                          onChanged: (value) {},
-                        ),
+                        if (state.data!.vehicleTypes != null)
+                          DropDown<String>(
+                            items: state.data!.vehicleTypes!,
+                            onChanged: (value) => context
+                                .read<AddTripCubit>()
+                                .vehicleChanged(value),
+                          ),
                         const SizedBox(height: 20),
-                        DropDown<String>(
-                          items: const ['Bảo vệ', 'For', 'Toyota', 'Chevrolet'],
-                          onChanged: (value) {},
-                        ),
+                        if (state.data!.guardGuys != null)
+                          DropDown<String>(
+                            items: state.data!.guardGuys!,
+                            onChanged: (value) => context
+                                .read<AddTripCubit>()
+                                .guardChanged(value),
+                          ),
                         const SizedBox(height: 20),
-                        const TextInput(
+                        TextInput(
                           hint: 'Nhập biển số xe',
                           labelText: 'Biển số xe',
                           keyboardType: TextInputType.number,
+                          onChanged: (value) => context
+                              .read<AddTripCubit>()
+                              .licensePlateChanged(value),
                         ),
                         const SizedBox(height: 20),
                         PrimaryButton(
                           title: 'Gửi',
                           buttonHeight: 50,
-                          onPressed: () {
-                            context.read<AddTripCubit>().createTrip();
-                          },
+                          onPressed: state.data?.isValid() == true
+                              ? () {
+                                  context.read<AddTripCubit>().createTrip();
+                                }
+                              : null,
                         )
                       ],
                     ),

@@ -97,11 +97,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     onPressed: (state.data?.isValid()) == true
                         ? () {
                             context.read<AuthCubit>().login(LoginRequest(
-                                username: _usernameTextController.text,
-                                password: _passwordTextController.text,
-                                requestId: const Uuid().v4(),
-                                requestTime:
-                                    DateTime.now().microsecondsSinceEpoch));
+                                  username: _usernameTextController.text,
+                                  password: _passwordTextController.text,
+                                ));
                           }
                         : null,
                   ),

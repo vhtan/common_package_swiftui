@@ -37,7 +37,7 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen> {
                     const Align(
                       alignment: Alignment.center,
                       child: Text(
-                        'Báo cáo sự cố',
+                        'Cảnh báo',
                         style: headLine1,
                       ),
                     ),
@@ -53,6 +53,17 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen> {
                     ),
                   ],
                 ),
+                const SizedBox(height: 10.0),
+                const Row(
+                  children: [
+                    Text(
+                      'Cảnh báo sai lộ trình',
+                      style: headLine4,
+                    ),
+                    Spacer(),
+                  ],
+                ),
+                const SizedBox(height: 20.0),
                 const Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -65,8 +76,7 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen> {
                       '03:45, 10/09/2023',
                       style: TextStyle(
                         fontStyle: FontStyle.italic,
-                        fontSize: 12, // You can adjust the font size as needed.
-                        // You can also set other properties like color, fontWeight, etc.
+                        fontSize: 12,
                       ),
                     ),
                   ],
@@ -77,7 +87,7 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text(
-                      'Nhân viên giám sát',
+                      'NVGS Nguyễn Văn A',
                       style: headLine6,
                     ),
                     Spacer(),
@@ -85,8 +95,7 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen> {
                       '03:45, 11/09/2023',
                       style: TextStyle(
                         fontStyle: FontStyle.italic,
-                        fontSize: 12, // You can adjust the font size as needed.
-                        // You can also set other properties like color, fontWeight, etc.
+                        fontSize: 12,
                       ),
                     ),
                   ],
@@ -97,7 +106,7 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text(
-                      'Nhân viên giám sát',
+                      'NVGS Nguyễn Văn A',
                       style: headLine6,
                     ),
                     Spacer(),
@@ -105,8 +114,7 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen> {
                       '03:45, 11/09/2023',
                       style: TextStyle(
                         fontStyle: FontStyle.italic,
-                        fontSize: 12, // You can adjust the font size as needed.
-                        // You can also set other properties like color, fontWeight, etc.
+                        fontSize: 12,
                       ),
                     ),
                   ],
@@ -116,7 +124,7 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen> {
                 const TextInput(
                   hint: 'Nhập ý kiến',
                   labelText: 'Nhập ý kiến',
-                  maxLines: 6, // and this
+                  maxLines: 6,
                   keyboardType: TextInputType.multiline,
                 ),
                 const SizedBox(height: 20),
@@ -152,13 +160,13 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen> {
               color: AppColors.red,
               size: 24.0,
             ),
-            SizedBox(width: 8.0), // Add spacing between elements
+            SizedBox(width: 8.0),
             Expanded(
               child: Text(
                 'Hệ thống gửi cảnh báo cấp 1',
                 style: textDefault,
                 maxLines: 2,
-                overflow: TextOverflow.ellipsis, // Specify an overflow property
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
@@ -184,13 +192,13 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen> {
               color: AppColors.red,
               size: 24.0,
             ),
-            SizedBox(width: 8.0), // Add spacing between elements
+            SizedBox(width: 8.0),
             Expanded(
               child: Text(
                 'Yêu cầu giải trình',
                 style: textDefault,
                 maxLines: 2,
-                overflow: TextOverflow.ellipsis, // Specify an overflow property
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
@@ -216,13 +224,13 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen> {
               color: AppColors.red,
               size: 24.0,
             ),
-            SizedBox(width: 8.0), // Add spacing between elements
+            SizedBox(width: 8.0),
             Expanded(
               child: Text(
                 'Xin ý kiến TĐV',
                 style: textDefault,
                 maxLines: 2,
-                overflow: TextOverflow.ellipsis, // Specify an overflow property
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],

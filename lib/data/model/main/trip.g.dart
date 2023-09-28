@@ -7,13 +7,19 @@ part of 'trip.dart';
 // **************************************************************************
 
 Trip _$TripFromJson(Map<String, dynamic> json) => Trip(
-      title: json['title'] as String,
-      duties: (json['duties'] as List<dynamic>)
-          .map((e) => PickUpDuty.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      reason: json['reason'] as String?,
+      stopPlace: json['stopPlace'] as String?,
+      amount: json['amount'] as int?,
+      vehicle: json['vehicle'] as String?,
+      guard: json['guard'] as String?,
+      licensePlates: json['licensePlates'] as String?,
     );
 
 Map<String, dynamic> _$TripToJson(Trip instance) => <String, dynamic>{
-      'title': instance.title,
-      'duties': instance.duties,
+      'reason': instance.reason,
+      'stopPlace': instance.stopPlace,
+      'amount': instance.amount,
+      'vehicle': instance.vehicle,
+      'guard': instance.guard,
+      'licensePlates': instance.licensePlates,
     };
