@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
+import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/data/model/container/menu_type.dart';
 import 'package:mvvm_cubit/data/request/auth/logout_request.dart';
 import 'package:mvvm_cubit/repository/main/main_repository.dart';
@@ -24,7 +25,7 @@ class ContainerCubit extends Cubit<GenericCubitState<MenuType>> {
     final response = await repository.mainApi
         .logout(const LogoutRequest(username: 'username'));
     if (response != null) {
-      print("logout response = $response");
+      logger.d("logout response = $response");
       // emit(GenericCubitState.success(null));
     } else {
       // emit(GenericCubitState.failure("Error"));

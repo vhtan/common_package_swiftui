@@ -1,5 +1,4 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mvvm_cubit/data/model/main/duty.dart';
 
 part 'trip.g.dart';
 

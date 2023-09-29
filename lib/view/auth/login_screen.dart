@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
+import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/common/widget/text_input.dart';
 import 'package:mvvm_cubit/core/api_config.dart';
@@ -41,7 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
           if (state.status == Status.success) {
             // cached login response success
             ApiConfig.loginResponse = state.data;
-            print('login success ${ApiConfig.loginResponse}');
+            logger.d('login success ${ApiConfig.loginResponse}');
             Navigator.push(
               context,
               MaterialPageRoute(

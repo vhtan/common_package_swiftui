@@ -1,3 +1,4 @@
+import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/data/model/main/trip.dart';
 
 class AddTripState {
@@ -53,11 +54,13 @@ class AddTripState {
   }
 
   bool isValid() {
-    return (reason != null) &&
-        (stopPlace != null) &&
-        (amount != null) &&
-        (vehicle != null) &&
-        (guard != null) &&
-        (licensePlate != null);
+    final flag = (reason?.isNotEmpty == true) &&
+        (stopPlace?.isNotEmpty == true) &&
+        (amount != null && amount! > 0) &&
+        (vehicle?.isNotEmpty == true) &&
+        (guard?.isNotEmpty == true) &&
+        (licensePlate?.isNotEmpty == true);
+    logger.d(flag);
+    return flag;
   }
 }

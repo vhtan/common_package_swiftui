@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/common/widget/drop_down.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
@@ -19,12 +20,26 @@ class AddTripScreen extends StatefulWidget {
 }
 
 class _AddTripScreen extends State<AddTripScreen> {
+  final TextEditingController _amountController = TextEditingController();
+  final NumberFormat _numberFormat = NumberFormat('#,###');
+
   @override
   void initState() {
     BlocProvider.of<AddTripCubit>(context).getReasonList();
     BlocProvider.of<AddTripCubit>(context).getVehicleTypeList();
     BlocProvider.of<AddTripCubit>(context).getGuardGuyList();
     super.initState();
+    _amountController.addListener(
+      () {
+        final text = _amountController.text;
+        final number = _numberFormat.parse(text.replaceAll(',', ''));
+        _amountController.value = TextEditingValue(
+          text: _numberFormat.format(number),
+          selection:
+              TextSelection.collapsed(offset: _amountController.text.length),
+        );
+      },
+    );
   }
 
   @override
@@ -104,6 +119,7 @@ class _AddTripScreen extends State<AddTripScreen> {
                           hint: 'Nhập số tiền',
                           labelText: 'Số tiền',
                           keyboardType: TextInputType.number,
+                          controller: _amountController,
                           onChanged: (value) =>
                               context.read<AddTripCubit>().amountChanged(
                                     int.parse(value),

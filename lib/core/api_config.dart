@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:mvvm_cubit/data/model/auth/login_response.dart';
 
 class ApiConfig {
@@ -15,5 +17,15 @@ class ApiConfig {
     'Content-Type': 'application/json',
     'X-CLIENT-ID': 'vndeli_app',
     'X-API-KEY': 'mgpV4rgh1otK3wfLBgSlpnC8eKAo8m4M',
+    'os-type': getOSType(),
   };
+
+  static String getOSType() {
+    if (Platform.isIOS) {
+      return 'iOS';
+    } else if (Platform.isAndroid) {
+      return 'Android';
+    }
+    return 'unsupport';
+  }
 }

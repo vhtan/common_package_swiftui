@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
+import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/data/model/auth/login_response.dart';
 import 'package:mvvm_cubit/data/request/auth/login_request.dart';
 import 'package:mvvm_cubit/repository/auth/auth_repository.dart';
@@ -15,7 +16,7 @@ class AuthCubit extends Cubit<GenericCubitState<AuthState>> {
     final response = await repository.api.login(request);
     if (response != null) {
       final user = LoginResponse.fromJson(response);
-      print("login data = $user");
+      logger.d("login data = $user");
       // emit(
       //   GenericCubitState.success(user.copyWith(username: request.username)),
       // );

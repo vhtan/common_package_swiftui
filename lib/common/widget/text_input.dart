@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
 
 class TextInput extends StatelessWidget {
@@ -16,6 +17,7 @@ class TextInput extends StatelessWidget {
     this.obscureText = false,
     required this.hint,
     required this.labelText,
+    this.inputFormatters,
   }) : super(key: key);
 
   final String? initialValue;
@@ -30,6 +32,7 @@ class TextInput extends StatelessWidget {
   final FocusNode? focusNode;
   final TextInputType? keyboardType;
   final bool obscureText;
+  final List<TextInputFormatter>? inputFormatters;
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +57,7 @@ class TextInput extends StatelessWidget {
       keyboardType: keyboardType,
       obscureText: obscureText,
       style: textDefault,
+      inputFormatters: inputFormatters,
     );
   }
 }
