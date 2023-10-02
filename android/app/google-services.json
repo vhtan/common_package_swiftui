@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "684147607119",
+    "project_id": "acb-gsxcd",
+    "storage_bucket": "acb-gsxcd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:684147607119:android:ec2a31466acf086f458c3a",
+        "android_client_info": {
+          "package_name": "com.sinasys.gorest.mvvm_cubit"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCf-xx4-EEyLYhnKJAVI2ZH_WLOcZqm2VU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

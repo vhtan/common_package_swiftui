@@ -1,6 +1,8 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
+import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/widget/empty_widget.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/common/widget/spinkit_indicator.dart';
@@ -63,6 +65,9 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     BlocProvider.of<MainCubit>(context).getTrip();
+    FirebaseMessaging.instance.getToken().then(
+          (value) => {logger.d(value)},
+        );
     super.initState();
   }
 

@@ -1,0 +1,64 @@
+import 'package:flutter/material.dart';
+import 'package:mvvm_cubit/core/app_extension.dart';
+import 'package:mvvm_cubit/core/app_style.dart';
+
+class ManagerRoleWarningItem extends StatelessWidget {
+  final bool isProcessed;
+  const ManagerRoleWarningItem({
+    Key? key,
+    required this.isProcessed,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return warningItem();
+  }
+
+  Widget warningItem() {
+    return Container(
+      padding: const EdgeInsets.all(10),
+      decoration: const BoxDecoration(
+        color: AppColors.white,
+        // borderRadius: BorderRadius.all(Radius.circular(8)),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () {},
+        child: Row(
+          children: [
+            const Icon(
+              Icons.warning,
+              color: AppColors.red,
+              size: 24.0,
+            ),
+            const SizedBox(width: 8.0), // Add spacing between elements
+            const Expanded(
+              child: Text(
+                'Cánh báo: Dừng quá lâu',
+                style: textDefault,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis, // Specify an overflow property
+              ),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor:
+                    isProcessed ? AppColors.primary : AppColors.error,
+              ),
+              onPressed: () {},
+              child: Text(
+                isProcessed ? 'Đã xử lý' : 'Cần xử lý',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: isProcessed ? AppColors.white : AppColors.textDefault,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

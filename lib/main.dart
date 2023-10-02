@@ -1,5 +1,6 @@
 import 'package:mvvm_cubit/view/auth/login_screen.dart';
 import 'package:mvvm_cubit/view/container/screen/container_screen.dart';
+import 'package:mvvm_cubit/view/manager_role/warning_list/screen/manager_role_warning_list_screen.dart';
 import 'package:mvvm_cubit/viewmodel/add_trip/add_trip_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/auth/auth_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/check_point/check_point_cubit.dart';
@@ -37,8 +38,9 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: AppTheme.lightAppTheme,
-        // home: const ContainerScreen(),
-        home: const LoginScreen(),
+        home: const ContainerScreen(),
+        // home: const LoginScreen(),
+        // home: const ManagerRoleWrningListScreen(),
       ),
     );
   }
