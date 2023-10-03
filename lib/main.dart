@@ -1,6 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/widget/empty_widget.dart';
+import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/firebase_options.dart';
 import 'package:mvvm_cubit/view/auth/login_screen.dart';
 import 'package:mvvm_cubit/view/container/screen/container_screen.dart';
@@ -19,11 +21,23 @@ import 'di.dart';
 
 void main() async {
   await init();
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  FlutterSecureStorage secureStorage = const FlutterSecureStorage();
+  String? loginToken = await secureStorage.read(key: StoreKey.loginToken);
+  runApp(
+    MyApp(
+      token: loginToken,
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  final String? token;
+
+  const MyApp({
+    Key? key,
+    required this.token,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -55,9 +69,11 @@ class MyApp extends StatelessWidget {
               child: MaterialApp(
                 debugShowCheckedModeBanner: false,
                 theme: AppTheme.lightAppTheme,
-                // home: const ContainerScreen(),
+                home: (token == null)
+                    ? const LoginScreen()
+                    : const ContainerScreen(),
                 // home: const LoginScreen(),
-                home: const ManagerRoleWrningListScreen(),
+                // home: const ManagerRoleWrningListScreen(),
               ),
             );
           } else {

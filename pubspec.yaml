@@ -50,6 +50,8 @@ dependencies:
   device_info_plus: ^9.0.3
   firebase_core: ^2.16.0
   firebase_messaging: ^14.6.8
+  flutter_secure_storage: ^9.0.0
+  http: ^1.1.0
   
 dev_dependencies:
   flutter_test:

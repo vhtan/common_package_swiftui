@@ -88,6 +88,10 @@ extension DateTimeFormatCustom on DateTime {
   }
 }
 
+extension StoreKey on String {
+  // Store key
+  static const loginToken = 'login_token';
+}
 
 // import 'package:flutter/material.dart';
 //

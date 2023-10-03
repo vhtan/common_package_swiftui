@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
+import 'package:mvvm_cubit/view/manager_role/warning_list/widget/accept_warning_dialog.dart';
 import 'package:mvvm_cubit/view/manager_role/warning_list/widget/manager_role_warning_item.dart';
 
 class ManagerRoleWrningListScreen extends StatefulWidget {
@@ -65,8 +66,16 @@ extension _TabBarView on _ManagerRoleWrningListScreen {
       shrinkWrap: true,
       itemCount: 10,
       itemBuilder: (_, index) {
-        return const ManagerRoleWarningItem(
+        return ManagerRoleWarningItem(
           isProcessed: false,
+          onTap: () async {
+            bool isAccepted = await showAcceptWarningDialog(
+              'Chấp nhận cảnh báo',
+              'Bạn có chắc là muốn chấp nhận cảnh báo',
+              context,
+            );
+            if (isAccepted) {}
+          },
         );
       },
     );
@@ -81,8 +90,9 @@ extension _TabBarView on _ManagerRoleWrningListScreen {
       shrinkWrap: true,
       itemCount: 10,
       itemBuilder: (_, index) {
-        return const ManagerRoleWarningItem(
+        return ManagerRoleWarningItem(
           isProcessed: true,
+          onTap: () => {},
         );
       },
     );

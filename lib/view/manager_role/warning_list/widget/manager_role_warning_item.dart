@@ -4,9 +4,12 @@ import 'package:mvvm_cubit/core/app_style.dart';
 
 class ManagerRoleWarningItem extends StatelessWidget {
   final bool isProcessed;
+  final VoidCallback onTap;
+
   const ManagerRoleWarningItem({
     Key? key,
     required this.isProcessed,
+    required this.onTap,
   }) : super(key: key);
 
   @override
@@ -45,7 +48,7 @@ class ManagerRoleWarningItem extends StatelessWidget {
                 backgroundColor:
                     isProcessed ? AppColors.primary : AppColors.error,
               ),
-              onPressed: () {},
+              onPressed: onTap,
               child: Text(
                 isProcessed ? 'Đã xử lý' : 'Cần xử lý',
                 style: TextStyle(

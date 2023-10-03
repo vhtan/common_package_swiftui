@@ -14,9 +14,24 @@ class DioInterceptor extends Interceptor {
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     logger.i('====================START====================');
     logger.i('HTTP method => ${options.method} ');
-    logger.i('Request => ${options.baseUrl}${options.path}${options.queryParameters.format}');
+    logger.i(
+        'Request => ${options.baseUrl}${options.path}${options.queryParameters.format}');
     logger.i('Header  => ${options.headers}');
+    final curlCommand = _dioOptionsToCurl(options);
+    logger.i(curlCommand);
     return super.onRequest(options, handler);
+  }
+
+  String _dioOptionsToCurl(RequestOptions options) {
+    final method = options.method;
+    final uri = options.uri.toString();
+    final headers = options.headers;
+
+    final headerStrings = headers.entries
+        .map((entry) => '-H "${entry.key}: ${entry.value}"')
+        .join(' ');
+
+    return 'curl -X $method $headerStrings $uri';
   }
 
   @override
