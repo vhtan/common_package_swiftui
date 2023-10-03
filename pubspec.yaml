@@ -48,9 +48,9 @@ dependencies:
   uuid: ^4.1.0
   camera_camera: ^3.0.0
   device_info_plus: ^9.0.3
+  firebase_core: ^2.16.0
   firebase_messaging: ^14.6.8
   
-
 dev_dependencies:
   flutter_test:
     sdk: flutter

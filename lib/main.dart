@@ -1,3 +1,7 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:mvvm_cubit/common/logger/logger.dart';
+import 'package:mvvm_cubit/common/widget/empty_widget.dart';
+import 'package:mvvm_cubit/firebase_options.dart';
 import 'package:mvvm_cubit/view/auth/login_screen.dart';
 import 'package:mvvm_cubit/view/container/screen/container_screen.dart';
 import 'package:mvvm_cubit/view/manager_role/warning_list/screen/manager_role_warning_list_screen.dart';
@@ -23,25 +27,42 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<MainCubit>(create: (context) => getIt<MainCubit>()),
-        BlocProvider<AuthCubit>(create: (context) => getIt<AuthCubit>()),
-        BlocProvider<ContainerCubit>(
-            create: (context) => getIt<ContainerCubit>()),
-        BlocProvider<ReportSOSCubit>(
-            create: (context) => getIt<ReportSOSCubit>()),
-        BlocProvider<CheckPointCubit>(
-            create: (context) => getIt<CheckPointCubit>()),
-        BlocProvider<AddTripCubit>(create: (context) => getIt<AddTripCubit>()),
-      ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.lightAppTheme,
-        home: const ContainerScreen(),
-        // home: const LoginScreen(),
-        // home: const ManagerRoleWrningListScreen(),
-      ),
-    );
+    return FutureBuilder(
+        future: Firebase.initializeApp(
+            options: DefaultFirebaseOptions.currentPlatform),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            logger.d(
+              snapshot.hasError.toString(),
+            );
+            return EmptyWidget(message: snapshot.hasError.toString());
+          } else if (snapshot.hasData) {
+            return MultiBlocProvider(
+              providers: [
+                BlocProvider<MainCubit>(
+                    create: (context) => getIt<MainCubit>()),
+                BlocProvider<AuthCubit>(
+                    create: (context) => getIt<AuthCubit>()),
+                BlocProvider<ContainerCubit>(
+                    create: (context) => getIt<ContainerCubit>()),
+                BlocProvider<ReportSOSCubit>(
+                    create: (context) => getIt<ReportSOSCubit>()),
+                BlocProvider<CheckPointCubit>(
+                    create: (context) => getIt<CheckPointCubit>()),
+                BlocProvider<AddTripCubit>(
+                    create: (context) => getIt<AddTripCubit>()),
+              ],
+              child: MaterialApp(
+                debugShowCheckedModeBanner: false,
+                theme: AppTheme.lightAppTheme,
+                // home: const ContainerScreen(),
+                // home: const LoginScreen(),
+                home: const ManagerRoleWrningListScreen(),
+              ),
+            );
+          } else {
+            return const EmptyWidget(message: 'message');
+          }
+        });
   }
 }

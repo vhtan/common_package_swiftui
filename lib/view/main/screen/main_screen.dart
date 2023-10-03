@@ -61,14 +61,23 @@ class _MainScreenState extends State<MainScreen> {
       type: 'Loại: trả quỷ',
     ),
   ];
+  FirebaseMessaging _messaging = FirebaseMessaging.instance;
 
   @override
   void initState() {
+    Future<NotificationSettings> settings = _messaging.requestPermission();
     BlocProvider.of<MainCubit>(context).getTrip();
-    FirebaseMessaging.instance.getToken().then(
-          (value) => {logger.d(value)},
-        );
+    getFCMToken().then((value) {
+      logger.d(value);
+    });
     super.initState();
+  }
+
+  String? _fcmToken;
+  Future<String> getFCMToken() async {
+    _fcmToken = await _messaging.getToken();
+    print('FCM Token: $_fcmToken');
+    return '';
   }
 
   @override
