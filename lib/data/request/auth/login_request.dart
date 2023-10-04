@@ -10,6 +10,8 @@ class LoginRequest {
   LoginRequest({
     required this.username,
     required this.password,
+    String? requestId,
+    int? requestTime,
   })  : requestId = const Uuid().v4(),
         requestTime = DateTime.now().millisecondsSinceEpoch;
 

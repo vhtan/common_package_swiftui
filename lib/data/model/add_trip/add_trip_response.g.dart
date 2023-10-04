@@ -6,12 +6,14 @@ part of 'add_trip_response.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_AddTripResponse _$$_AddTripResponseFromJson(Map<String, dynamic> json) =>
-    _$_AddTripResponse(
+_$AddTripResponseImpl _$$AddTripResponseImplFromJson(
+        Map<String, dynamic> json) =>
+    _$AddTripResponseImpl(
       title: json['title'] as String?,
     );
 
-Map<String, dynamic> _$$_AddTripResponseToJson(_$_AddTripResponse instance) =>
+Map<String, dynamic> _$$AddTripResponseImplToJson(
+        _$AddTripResponseImpl instance) =>
     <String, dynamic>{
       'title': instance.title,
     };

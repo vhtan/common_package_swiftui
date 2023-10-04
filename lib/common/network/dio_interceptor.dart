@@ -1,9 +1,10 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 
 class DioInterceptor extends Interceptor {
-  final Logger logger = Logger(
+  final Logger _logger = Logger(
     printer: PrettyPrinter(
       methodCount: 0,
       printTime: false,
@@ -12,40 +13,48 @@ class DioInterceptor extends Interceptor {
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    logger.i('====================START====================');
-    logger.i('HTTP method => ${options.method} ');
-    logger.i(
+    _logger.i('====================START====================');
+    _logger.i('HTTP method => ${options.method} ');
+    _logger.i(
         'Request => ${options.baseUrl}${options.path}${options.queryParameters.format}');
-    logger.i('Header  => ${options.headers}');
-    final curlCommand = _dioOptionsToCurl(options);
-    logger.i(curlCommand);
+    _logger.i('Header  => ${options.headers}');
+    final curlCommand = _generateCurlCommand(options);
+    debugPrint('cURL Request: $curlCommand');
+
     return super.onRequest(options, handler);
-  }
-
-  String _dioOptionsToCurl(RequestOptions options) {
-    final method = options.method;
-    final uri = options.uri.toString();
-    final headers = options.headers;
-
-    final headerStrings = headers.entries
-        .map((entry) => '-H "${entry.key}: ${entry.value}"')
-        .join(' ');
-
-    return 'curl -X $method $headerStrings $uri';
   }
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
     final options = err.requestOptions;
-    logger.e(options.method); // Debug log
-    logger.e('Error: ${err.error}, Message: ${err.message}'); // Error log
+    _logger.e(options.method); // Debug log
+    _logger.e('Error: ${err.error}, Message: ${err.message}'); // Error log
     return super.onError(err, handler);
   }
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
-    logger.d('Response => StatusCode: ${response.statusCode}'); // Debug log
-    logger.d('Response => Body: ${response.data}'); // Debug log
+    _logger.d('Response => StatusCode: ${response.statusCode}'); // Debug log
+    _logger.d('Response => Body: ${response.data}'); // Debug log
     return super.onResponse(response, handler);
+  }
+
+  String _generateCurlCommand(RequestOptions options) {
+    final method = options.method;
+    final url = options.uri.toString();
+    final headers = options.headers;
+
+    final headerParams = headers.entries
+        .map((entry) => '-H "${entry.key}: ${entry.value}"')
+        .join(' ');
+    String data = '';
+    try {
+      Object? object = options.data as Object;
+      data = ' --data \'${object.toJsonString()}\' ';
+    } catch (e) {
+      _logger.d("Failed to cast dynamicObject to Object: $e");
+    }
+
+    return 'curl -X $method $headerParams$data$url';
   }
 }

@@ -65,12 +65,20 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   void initState() {
-    Future<NotificationSettings> settings = _messaging.requestPermission();
+    Future<NotificationSettings> settings = _messaging.requestPermission(
+        alert: true,
+        announcement: false,
+        badge: true,
+        carPlay: false,
+        criticalAlert: false,
+        provisional: false,
+        sound: true);
     BlocProvider.of<MainCubit>(context).getTrip();
     getFCMToken().then((value) {
       logger.d(value);
     });
     super.initState();
+    setupInteractedMessage();
   }
 
   String? _fcmToken;
@@ -296,5 +304,28 @@ extension _MainScreenDeliveryList on _MainScreenState {
         ),
       ),
     );
+  }
+}
+
+extension _RemoteMessageMainScreen on _MainScreenState {
+  Future<void> setupInteractedMessage() async {
+    // Get any messages which caused the application to open from
+    // a terminated state.
+    RemoteMessage? initialMessage =
+        await FirebaseMessaging.instance.getInitialMessage();
+
+    // If the message also contains a data property with a "type" of "chat",
+    // navigate to a chat screen
+    if (initialMessage != null) {
+      _handleMessage(initialMessage);
+    }
+
+    // Also handle any interaction when the app is in the background via a
+    // Stream listener
+    FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
+  }
+
+  void _handleMessage(RemoteMessage message) {
+    logger.d('handle message ${message.data})');
   }
 }

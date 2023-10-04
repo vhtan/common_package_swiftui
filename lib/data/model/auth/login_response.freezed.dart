@@ -91,11 +91,11 @@ class _$LoginResponseCopyWithImpl<$Res, $Val extends LoginResponse>
 }
 
 /// @nodoc
-abstract class _$$_LoginResponseCopyWith<$Res>
+abstract class _$$LoginResponseImplCopyWith<$Res>
     implements $LoginResponseCopyWith<$Res> {
-  factory _$$_LoginResponseCopyWith(
-          _$_LoginResponse value, $Res Function(_$_LoginResponse) then) =
-      __$$_LoginResponseCopyWithImpl<$Res>;
+  factory _$$LoginResponseImplCopyWith(
+          _$LoginResponseImpl value, $Res Function(_$LoginResponseImpl) then) =
+      __$$LoginResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -107,11 +107,11 @@ abstract class _$$_LoginResponseCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_LoginResponseCopyWithImpl<$Res>
-    extends _$LoginResponseCopyWithImpl<$Res, _$_LoginResponse>
-    implements _$$_LoginResponseCopyWith<$Res> {
-  __$$_LoginResponseCopyWithImpl(
-      _$_LoginResponse _value, $Res Function(_$_LoginResponse) _then)
+class __$$LoginResponseImplCopyWithImpl<$Res>
+    extends _$LoginResponseCopyWithImpl<$Res, _$LoginResponseImpl>
+    implements _$$LoginResponseImplCopyWith<$Res> {
+  __$$LoginResponseImplCopyWithImpl(
+      _$LoginResponseImpl _value, $Res Function(_$LoginResponseImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -123,7 +123,7 @@ class __$$_LoginResponseCopyWithImpl<$Res>
     Object? username = freezed,
     Object? password = freezed,
   }) {
-    return _then(_$_LoginResponse(
+    return _then(_$LoginResponseImpl(
       code: freezed == code
           ? _value.code
           : code // ignore: cast_nullable_to_non_nullable
@@ -150,16 +150,16 @@ class __$$_LoginResponseCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_LoginResponse implements _LoginResponse {
-  const _$_LoginResponse(
+class _$LoginResponseImpl implements _LoginResponse {
+  const _$LoginResponseImpl(
       {this.code,
       this.responseTime,
       this.session,
       this.username,
       this.password});
 
-  factory _$_LoginResponse.fromJson(Map<String, dynamic> json) =>
-      _$$_LoginResponseFromJson(json);
+  factory _$LoginResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$LoginResponseImplFromJson(json);
 
   @override
   final String? code;
@@ -181,7 +181,7 @@ class _$_LoginResponse implements _LoginResponse {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_LoginResponse &&
+            other is _$LoginResponseImpl &&
             (identical(other.code, code) || other.code == code) &&
             (identical(other.responseTime, responseTime) ||
                 other.responseTime == responseTime) &&
@@ -200,12 +200,12 @@ class _$_LoginResponse implements _LoginResponse {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_LoginResponseCopyWith<_$_LoginResponse> get copyWith =>
-      __$$_LoginResponseCopyWithImpl<_$_LoginResponse>(this, _$identity);
+  _$$LoginResponseImplCopyWith<_$LoginResponseImpl> get copyWith =>
+      __$$LoginResponseImplCopyWithImpl<_$LoginResponseImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_LoginResponseToJson(
+    return _$$LoginResponseImplToJson(
       this,
     );
   }
@@ -217,10 +217,10 @@ abstract class _LoginResponse implements LoginResponse {
       final int? responseTime,
       final String? session,
       final String? username,
-      final String? password}) = _$_LoginResponse;
+      final String? password}) = _$LoginResponseImpl;
 
   factory _LoginResponse.fromJson(Map<String, dynamic> json) =
-      _$_LoginResponse.fromJson;
+      _$LoginResponseImpl.fromJson;
 
   @override
   String? get code;
@@ -234,6 +234,6 @@ abstract class _LoginResponse implements LoginResponse {
   String? get password;
   @override
   @JsonKey(ignore: true)
-  _$$_LoginResponseCopyWith<_$_LoginResponse> get copyWith =>
+  _$$LoginResponseImplCopyWith<_$LoginResponseImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

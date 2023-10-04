@@ -1,6 +1,8 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
+import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/data/model/container/menu_type.dart';
 import 'package:mvvm_cubit/view/account/account_screen.dart';
@@ -151,5 +153,32 @@ class _ContainerScreenState extends State<ContainerScreen> {
         builder: (context) => screen,
       ),
     );
+  }
+}
+
+class PushNotificationService {
+  final FirebaseMessaging _fcm = FirebaseMessaging.instance;
+
+  Future<void> initialize() async {
+    // Request permission for receiving notifications (optional)
+    await _fcm.requestPermission(sound: true, badge: true, alert: true);
+
+    // Configure the callback for handling incoming messages
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      // Handle the incoming message
+      _handleMessage(message);
+    });
+
+    // Also, handle messages that caused the app to open from a terminated state
+    RemoteMessage? initialMessage =
+        await FirebaseMessaging.instance.getInitialMessage();
+    if (initialMessage != null) {
+      _handleMessage(initialMessage);
+    }
+  }
+
+  void _handleMessage(RemoteMessage message) {
+    // Handle the incoming message here
+    logger.d('Received message: ${message.notification?.title}');
   }
 }

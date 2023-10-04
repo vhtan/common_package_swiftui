@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ffi';
 
 import 'package:mvvm_cubit/core/app_asset.dart';
@@ -91,6 +92,16 @@ extension DateTimeFormatCustom on DateTime {
 extension StoreKey on String {
   // Store key
   static const loginToken = 'login_token';
+}
+
+extension ObjectToJsonExtension on Object? {
+  String toJsonString() {
+    if (this == null) {
+      return '{}'; // You can choose a default representation for null.
+    }
+    final jsonString = json.encode(this);
+    return jsonString;
+  }
 }
 
 // import 'package:flutter/material.dart';

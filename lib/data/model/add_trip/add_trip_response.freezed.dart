@@ -62,22 +62,22 @@ class _$AddTripResponseCopyWithImpl<$Res, $Val extends AddTripResponse>
 }
 
 /// @nodoc
-abstract class _$$_AddTripResponseCopyWith<$Res>
+abstract class _$$AddTripResponseImplCopyWith<$Res>
     implements $AddTripResponseCopyWith<$Res> {
-  factory _$$_AddTripResponseCopyWith(
-          _$_AddTripResponse value, $Res Function(_$_AddTripResponse) then) =
-      __$$_AddTripResponseCopyWithImpl<$Res>;
+  factory _$$AddTripResponseImplCopyWith(_$AddTripResponseImpl value,
+          $Res Function(_$AddTripResponseImpl) then) =
+      __$$AddTripResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({String? title});
 }
 
 /// @nodoc
-class __$$_AddTripResponseCopyWithImpl<$Res>
-    extends _$AddTripResponseCopyWithImpl<$Res, _$_AddTripResponse>
-    implements _$$_AddTripResponseCopyWith<$Res> {
-  __$$_AddTripResponseCopyWithImpl(
-      _$_AddTripResponse _value, $Res Function(_$_AddTripResponse) _then)
+class __$$AddTripResponseImplCopyWithImpl<$Res>
+    extends _$AddTripResponseCopyWithImpl<$Res, _$AddTripResponseImpl>
+    implements _$$AddTripResponseImplCopyWith<$Res> {
+  __$$AddTripResponseImplCopyWithImpl(
+      _$AddTripResponseImpl _value, $Res Function(_$AddTripResponseImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -85,7 +85,7 @@ class __$$_AddTripResponseCopyWithImpl<$Res>
   $Res call({
     Object? title = freezed,
   }) {
-    return _then(_$_AddTripResponse(
+    return _then(_$AddTripResponseImpl(
       title: freezed == title
           ? _value.title
           : title // ignore: cast_nullable_to_non_nullable
@@ -96,11 +96,11 @@ class __$$_AddTripResponseCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_AddTripResponse implements _AddTripResponse {
-  const _$_AddTripResponse({this.title});
+class _$AddTripResponseImpl implements _AddTripResponse {
+  const _$AddTripResponseImpl({this.title});
 
-  factory _$_AddTripResponse.fromJson(Map<String, dynamic> json) =>
-      _$$_AddTripResponseFromJson(json);
+  factory _$AddTripResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AddTripResponseImplFromJson(json);
 
   @override
   final String? title;
@@ -114,7 +114,7 @@ class _$_AddTripResponse implements _AddTripResponse {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_AddTripResponse &&
+            other is _$AddTripResponseImpl &&
             (identical(other.title, title) || other.title == title));
   }
 
@@ -125,27 +125,28 @@ class _$_AddTripResponse implements _AddTripResponse {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_AddTripResponseCopyWith<_$_AddTripResponse> get copyWith =>
-      __$$_AddTripResponseCopyWithImpl<_$_AddTripResponse>(this, _$identity);
+  _$$AddTripResponseImplCopyWith<_$AddTripResponseImpl> get copyWith =>
+      __$$AddTripResponseImplCopyWithImpl<_$AddTripResponseImpl>(
+          this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_AddTripResponseToJson(
+    return _$$AddTripResponseImplToJson(
       this,
     );
   }
 }
 
 abstract class _AddTripResponse implements AddTripResponse {
-  const factory _AddTripResponse({final String? title}) = _$_AddTripResponse;
+  const factory _AddTripResponse({final String? title}) = _$AddTripResponseImpl;
 
   factory _AddTripResponse.fromJson(Map<String, dynamic> json) =
-      _$_AddTripResponse.fromJson;
+      _$AddTripResponseImpl.fromJson;
 
   @override
   String? get title;
   @override
   @JsonKey(ignore: true)
-  _$$_AddTripResponseCopyWith<_$_AddTripResponse> get copyWith =>
+  _$$AddTripResponseImplCopyWith<_$AddTripResponseImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
