@@ -45,6 +45,20 @@ class _ContainerScreenState extends State<ContainerScreen> {
     }
   }
 
+  final _pushNotificationService = PushNotificationService();
+
+  @override
+  void initState() {
+    _initializePushNotifications();
+    super.initState();
+  }
+
+  Future<void> _initializePushNotifications() async {
+    await _pushNotificationService.initialize();
+    final token = await _pushNotificationService.getFCMToken();
+    logger.d(token);
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ContainerCubit, GenericCubitState<MenuType>>(
@@ -160,16 +174,12 @@ class PushNotificationService {
   final FirebaseMessaging _fcm = FirebaseMessaging.instance;
 
   Future<void> initialize() async {
-    // Request permission for receiving notifications (optional)
     await _fcm.requestPermission(sound: true, badge: true, alert: true);
 
-    // Configure the callback for handling incoming messages
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      // Handle the incoming message
       _handleMessage(message);
     });
 
-    // Also, handle messages that caused the app to open from a terminated state
     RemoteMessage? initialMessage =
         await FirebaseMessaging.instance.getInitialMessage();
     if (initialMessage != null) {
@@ -177,8 +187,16 @@ class PushNotificationService {
     }
   }
 
+  Future<String?> getFCMToken() async {
+    try {
+      final token = await _fcm.getToken();
+      return token;
+    } catch (e) {
+      return null;
+    }
+  }
+
   void _handleMessage(RemoteMessage message) {
-    // Handle the incoming message here
     logger.d('Received message: ${message.notification?.title}');
   }
 }

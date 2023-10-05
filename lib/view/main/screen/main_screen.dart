@@ -1,8 +1,6 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
-import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/widget/empty_widget.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/common/widget/spinkit_indicator.dart';
@@ -61,31 +59,11 @@ class _MainScreenState extends State<MainScreen> {
       type: 'Loại: trả quỷ',
     ),
   ];
-  FirebaseMessaging _messaging = FirebaseMessaging.instance;
 
   @override
   void initState() {
-    Future<NotificationSettings> settings = _messaging.requestPermission(
-        alert: true,
-        announcement: false,
-        badge: true,
-        carPlay: false,
-        criticalAlert: false,
-        provisional: false,
-        sound: true);
     BlocProvider.of<MainCubit>(context).getTrip();
-    getFCMToken().then((value) {
-      logger.d(value);
-    });
     super.initState();
-    setupInteractedMessage();
-  }
-
-  String? _fcmToken;
-  Future<String> getFCMToken() async {
-    _fcmToken = await _messaging.getToken();
-    print('FCM Token: $_fcmToken');
-    return '';
   }
 
   @override
@@ -182,13 +160,14 @@ extension _MainScreenDeliveryList on _MainScreenState {
           ),
           const SizedBox(height: 20),
           PrimaryButton(
-              title: 'Thêm phiếu yêu cầu',
-              buttonHeight: 50,
-              onPressed: () => showDialog<Trip>(
-                    context: context,
-                    builder: (context) => const AddTripScreen(),
-                    barrierDismissible: false,
-                  )),
+            title: 'Thêm phiếu yêu cầu',
+            buttonHeight: 50,
+            onPressed: () => showDialog<Trip>(
+              context: context,
+              builder: (context) => const AddTripScreen(),
+              barrierDismissible: false,
+            ),
+          ),
           const SizedBox(height: 20),
         ],
       ),
@@ -304,28 +283,5 @@ extension _MainScreenDeliveryList on _MainScreenState {
         ),
       ),
     );
-  }
-}
-
-extension _RemoteMessageMainScreen on _MainScreenState {
-  Future<void> setupInteractedMessage() async {
-    // Get any messages which caused the application to open from
-    // a terminated state.
-    RemoteMessage? initialMessage =
-        await FirebaseMessaging.instance.getInitialMessage();
-
-    // If the message also contains a data property with a "type" of "chat",
-    // navigate to a chat screen
-    if (initialMessage != null) {
-      _handleMessage(initialMessage);
-    }
-
-    // Also handle any interaction when the app is in the background via a
-    // Stream listener
-    FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
-  }
-
-  void _handleMessage(RemoteMessage message) {
-    logger.d('handle message ${message.data})');
   }
 }
