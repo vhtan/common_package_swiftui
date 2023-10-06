@@ -1,16 +1,17 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/data/model/container/menu_type.dart';
+import 'package:mvvm_cubit/data/notification_service/notification_service.dart';
 import 'package:mvvm_cubit/view/account/account_screen.dart';
 import 'package:mvvm_cubit/view/auth/login_screen.dart';
 import 'package:mvvm_cubit/view/container/widget/menu_widget.dart';
 import 'package:mvvm_cubit/view/main/screen/main_screen.dart';
 import 'package:mvvm_cubit/view/notification/screen/notification_screen.dart';
 import 'package:mvvm_cubit/view/report_sos/screen/report_sos_screen.dart';
+import 'package:mvvm_cubit/viewmodel/auth/auth_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/container/container_cubit.dart';
 import 'package:shrink_sidemenu/shrink_sidemenu.dart';
 
@@ -74,8 +75,12 @@ class _ContainerScreenState extends State<ContainerScreen> {
               menu: Padding(
                 padding: const EdgeInsets.only(left: 10.0),
                 child: MenuScreen(
-                  valueChanged: (value) =>
-                      context.read<ContainerCubit>().menuAction(value),
+                  valueChanged: (value) {
+                    context.read<ContainerCubit>().menuAction(value);
+                    if (value == MenuType.logOut) {
+                      context.read<AuthCubit>().logout();
+                    }
+                  },
                 ),
               ),
               onChange: (isOpened) {
@@ -167,36 +172,5 @@ class _ContainerScreenState extends State<ContainerScreen> {
         builder: (context) => screen,
       ),
     );
-  }
-}
-
-class PushNotificationService {
-  final FirebaseMessaging _fcm = FirebaseMessaging.instance;
-
-  Future<void> initialize() async {
-    await _fcm.requestPermission(sound: true, badge: true, alert: true);
-
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      _handleMessage(message);
-    });
-
-    RemoteMessage? initialMessage =
-        await FirebaseMessaging.instance.getInitialMessage();
-    if (initialMessage != null) {
-      _handleMessage(initialMessage);
-    }
-  }
-
-  Future<String?> getFCMToken() async {
-    try {
-      final token = await _fcm.getToken();
-      return token;
-    } catch (e) {
-      return null;
-    }
-  }
-
-  void _handleMessage(RemoteMessage message) {
-    logger.d('Received message: ${message.notification?.title}');
   }
 }

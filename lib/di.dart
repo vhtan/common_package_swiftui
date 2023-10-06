@@ -37,7 +37,7 @@ Future<void> init() async {
     () => MainApi(client: getIt<DioClient>()),
   );
   getIt.registerLazySingleton<MainRepository>(
-    () => MainRepository(mainApi: getIt<MainApi>()),
+    () => MainRepository(api: getIt<MainApi>()),
   );
   getIt.registerFactory(
     () => MainCubit(repository: getIt<MainRepository>()),

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
+import 'package:mvvm_cubit/common/snack_bar/error_snack_bar.dart';
 import 'package:mvvm_cubit/common/widget/empty_widget.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/common/widget/spinkit_indicator.dart';
-import 'package:mvvm_cubit/core/api_config.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
+import 'package:mvvm_cubit/core/app_string.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/data/model/main/duty.dart';
 import 'package:mvvm_cubit/data/model/main/trip.dart';
@@ -73,11 +74,13 @@ class _MainScreenState extends State<MainScreen> {
         listener: (context, state) {
           switch (state.status) {
             case Status.failure:
-              // navigateTo(const LoginScreen());
+              showErrorSnackBar(
+                context,
+                state.error ?? AppString.sendTimeOut,
+              );
               break;
             case Status.success:
               // clear cached login
-              ApiConfig.loginResponse = null;
               // navigateTo(const LoginScreen());
               break;
             default:

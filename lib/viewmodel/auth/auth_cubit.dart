@@ -1,7 +1,9 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
-import 'package:mvvm_cubit/common/logger/logger.dart';
+import 'package:mvvm_cubit/core/app_extension.dart';
+import 'package:mvvm_cubit/core/app_string.dart';
 import 'package:mvvm_cubit/data/model/auth/login_response.dart';
 import 'package:mvvm_cubit/data/request/auth/login_request.dart';
 import 'package:mvvm_cubit/di.dart';
@@ -14,24 +16,67 @@ class AuthCubit extends Cubit<GenericCubitState<AuthState>> {
   AuthCubit({required this.repository}) : super(GenericCubitState.loading());
 
   Future<void> login(LoginRequest request) async {
-    emit(GenericCubitState.loading());
-    final response = await repository.api.login(request);
-    if (response != null) {
-      final user = LoginResponse.fromJson(response);
-      logger.d("login data = $user");
-      if (user.session != null) {
-        _saveLoginToken(user.session!);
+    try {
+      emit(
+        GenericCubitState.loading(),
+      );
+      final response = await repository.api.login(request);
+      if (response != null) {
+        final user = LoginResponse.fromJson(response);
+        if (user.session != null) {
+          _saveLoginToken(user.session!);
+        }
+        emit(
+          GenericCubitState.success(null),
+        );
+      } else {
+        emit(
+          GenericCubitState.failure("Error"),
+        );
       }
-      // emit(
-      //   GenericCubitState.success(user.copyWith(username: request.username)),
-      // );
-    } else {
-      emit(GenericCubitState.failure("Error"));
+    } on DioException catch (e) {
+      emit(
+        GenericCubitState.failure(e.message ?? 'Error'),
+      );
     }
   }
 
   Future<void> _saveLoginToken(String token) async {
-    await getIt<FlutterSecureStorage>().write(key: 'login_token', value: token);
+    await getIt<FlutterSecureStorage>().write(
+      key: StoreKey.loginToken,
+      value: token,
+    );
+  }
+
+  Future<void> logout() async {
+    try {
+      emit(
+        GenericCubitState.loading(),
+      );
+      final response = await repository.logout();
+      if (response != null) {
+        emit(
+          GenericCubitState.success(null),
+        );
+      } else {
+        emit(
+          GenericCubitState.failure('Error'),
+        );
+      }
+    } on DioException catch (e) {
+      emit(
+        GenericCubitState.failure(
+          e.message ?? 'Error',
+        ),
+      );
+    }
+    _clearLoginToken();
+  }
+
+  Future<void> _clearLoginToken() async {
+    await getIt<FlutterSecureStorage>().delete(
+      key: StoreKey.loginToken,
+    );
   }
 
   void usernameChanged(String value) {

@@ -11,6 +11,18 @@ class AuthApi with ApiHelper<LoginResponse> {
 
   Future<dynamic> login(LoginRequest request) async {
     return await makePostRequest(
-        client.dio.post(ApiConfig.login, data: request));
+      client.dio.post(
+        ApiConfig.login,
+        data: request,
+      ),
+    );
+  }
+
+  Future<dynamic> logout() async {
+    return await get(
+      client.dio.get(
+        ApiConfig.logout,
+      ),
+    );
   }
 }

@@ -20,11 +20,10 @@ LoginResponse _$LoginResponseFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$LoginResponse {
-  String? get code => throw _privateConstructorUsedError;
-  int? get responseTime => throw _privateConstructorUsedError;
   String? get session => throw _privateConstructorUsedError;
-  String? get username => throw _privateConstructorUsedError;
-  String? get password => throw _privateConstructorUsedError;
+  String? get name => throw _privateConstructorUsedError;
+  String? get email => throw _privateConstructorUsedError;
+  RoleResponse? get role => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -38,12 +37,9 @@ abstract class $LoginResponseCopyWith<$Res> {
           LoginResponse value, $Res Function(LoginResponse) then) =
       _$LoginResponseCopyWithImpl<$Res, LoginResponse>;
   @useResult
-  $Res call(
-      {String? code,
-      int? responseTime,
-      String? session,
-      String? username,
-      String? password});
+  $Res call({String? session, String? name, String? email, RoleResponse? role});
+
+  $RoleResponseCopyWith<$Res>? get role;
 }
 
 /// @nodoc
@@ -59,34 +55,41 @@ class _$LoginResponseCopyWithImpl<$Res, $Val extends LoginResponse>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? code = freezed,
-    Object? responseTime = freezed,
     Object? session = freezed,
-    Object? username = freezed,
-    Object? password = freezed,
+    Object? name = freezed,
+    Object? email = freezed,
+    Object? role = freezed,
   }) {
     return _then(_value.copyWith(
-      code: freezed == code
-          ? _value.code
-          : code // ignore: cast_nullable_to_non_nullable
-              as String?,
-      responseTime: freezed == responseTime
-          ? _value.responseTime
-          : responseTime // ignore: cast_nullable_to_non_nullable
-              as int?,
       session: freezed == session
           ? _value.session
           : session // ignore: cast_nullable_to_non_nullable
               as String?,
-      username: freezed == username
-          ? _value.username
-          : username // ignore: cast_nullable_to_non_nullable
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
               as String?,
-      password: freezed == password
-          ? _value.password
-          : password // ignore: cast_nullable_to_non_nullable
+      email: freezed == email
+          ? _value.email
+          : email // ignore: cast_nullable_to_non_nullable
               as String?,
+      role: freezed == role
+          ? _value.role
+          : role // ignore: cast_nullable_to_non_nullable
+              as RoleResponse?,
     ) as $Val);
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $RoleResponseCopyWith<$Res>? get role {
+    if (_value.role == null) {
+      return null;
+    }
+
+    return $RoleResponseCopyWith<$Res>(_value.role!, (value) {
+      return _then(_value.copyWith(role: value) as $Val);
+    });
   }
 }
 
@@ -98,12 +101,10 @@ abstract class _$$LoginResponseImplCopyWith<$Res>
       __$$LoginResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String? code,
-      int? responseTime,
-      String? session,
-      String? username,
-      String? password});
+  $Res call({String? session, String? name, String? email, RoleResponse? role});
+
+  @override
+  $RoleResponseCopyWith<$Res>? get role;
 }
 
 /// @nodoc
@@ -117,33 +118,28 @@ class __$$LoginResponseImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? code = freezed,
-    Object? responseTime = freezed,
     Object? session = freezed,
-    Object? username = freezed,
-    Object? password = freezed,
+    Object? name = freezed,
+    Object? email = freezed,
+    Object? role = freezed,
   }) {
     return _then(_$LoginResponseImpl(
-      code: freezed == code
-          ? _value.code
-          : code // ignore: cast_nullable_to_non_nullable
-              as String?,
-      responseTime: freezed == responseTime
-          ? _value.responseTime
-          : responseTime // ignore: cast_nullable_to_non_nullable
-              as int?,
       session: freezed == session
           ? _value.session
           : session // ignore: cast_nullable_to_non_nullable
               as String?,
-      username: freezed == username
-          ? _value.username
-          : username // ignore: cast_nullable_to_non_nullable
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
               as String?,
-      password: freezed == password
-          ? _value.password
-          : password // ignore: cast_nullable_to_non_nullable
+      email: freezed == email
+          ? _value.email
+          : email // ignore: cast_nullable_to_non_nullable
               as String?,
+      role: freezed == role
+          ? _value.role
+          : role // ignore: cast_nullable_to_non_nullable
+              as RoleResponse?,
     ));
   }
 }
@@ -151,30 +147,23 @@ class __$$LoginResponseImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$LoginResponseImpl implements _LoginResponse {
-  const _$LoginResponseImpl(
-      {this.code,
-      this.responseTime,
-      this.session,
-      this.username,
-      this.password});
+  const _$LoginResponseImpl({this.session, this.name, this.email, this.role});
 
   factory _$LoginResponseImpl.fromJson(Map<String, dynamic> json) =>
       _$$LoginResponseImplFromJson(json);
 
   @override
-  final String? code;
-  @override
-  final int? responseTime;
-  @override
   final String? session;
   @override
-  final String? username;
+  final String? name;
   @override
-  final String? password;
+  final String? email;
+  @override
+  final RoleResponse? role;
 
   @override
   String toString() {
-    return 'LoginResponse(code: $code, responseTime: $responseTime, session: $session, username: $username, password: $password)';
+    return 'LoginResponse(session: $session, name: $name, email: $email, role: $role)';
   }
 
   @override
@@ -182,20 +171,15 @@ class _$LoginResponseImpl implements _LoginResponse {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$LoginResponseImpl &&
-            (identical(other.code, code) || other.code == code) &&
-            (identical(other.responseTime, responseTime) ||
-                other.responseTime == responseTime) &&
             (identical(other.session, session) || other.session == session) &&
-            (identical(other.username, username) ||
-                other.username == username) &&
-            (identical(other.password, password) ||
-                other.password == password));
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.email, email) || other.email == email) &&
+            (identical(other.role, role) || other.role == role));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, code, responseTime, session, username, password);
+  int get hashCode => Object.hash(runtimeType, session, name, email, role);
 
   @JsonKey(ignore: true)
   @override
@@ -213,27 +197,177 @@ class _$LoginResponseImpl implements _LoginResponse {
 
 abstract class _LoginResponse implements LoginResponse {
   const factory _LoginResponse(
-      {final String? code,
-      final int? responseTime,
-      final String? session,
-      final String? username,
-      final String? password}) = _$LoginResponseImpl;
+      {final String? session,
+      final String? name,
+      final String? email,
+      final RoleResponse? role}) = _$LoginResponseImpl;
 
   factory _LoginResponse.fromJson(Map<String, dynamic> json) =
       _$LoginResponseImpl.fromJson;
 
   @override
-  String? get code;
-  @override
-  int? get responseTime;
-  @override
   String? get session;
   @override
-  String? get username;
+  String? get name;
   @override
-  String? get password;
+  String? get email;
+  @override
+  RoleResponse? get role;
   @override
   @JsonKey(ignore: true)
   _$$LoginResponseImplCopyWith<_$LoginResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+RoleResponse _$RoleResponseFromJson(Map<String, dynamic> json) {
+  return _RoleResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$RoleResponse {
+  String? get name => throw _privateConstructorUsedError;
+  String? get code => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $RoleResponseCopyWith<RoleResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $RoleResponseCopyWith<$Res> {
+  factory $RoleResponseCopyWith(
+          RoleResponse value, $Res Function(RoleResponse) then) =
+      _$RoleResponseCopyWithImpl<$Res, RoleResponse>;
+  @useResult
+  $Res call({String? name, String? code});
+}
+
+/// @nodoc
+class _$RoleResponseCopyWithImpl<$Res, $Val extends RoleResponse>
+    implements $RoleResponseCopyWith<$Res> {
+  _$RoleResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? name = freezed,
+    Object? code = freezed,
+  }) {
+    return _then(_value.copyWith(
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String?,
+      code: freezed == code
+          ? _value.code
+          : code // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$RoleResponseImplCopyWith<$Res>
+    implements $RoleResponseCopyWith<$Res> {
+  factory _$$RoleResponseImplCopyWith(
+          _$RoleResponseImpl value, $Res Function(_$RoleResponseImpl) then) =
+      __$$RoleResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String? name, String? code});
+}
+
+/// @nodoc
+class __$$RoleResponseImplCopyWithImpl<$Res>
+    extends _$RoleResponseCopyWithImpl<$Res, _$RoleResponseImpl>
+    implements _$$RoleResponseImplCopyWith<$Res> {
+  __$$RoleResponseImplCopyWithImpl(
+      _$RoleResponseImpl _value, $Res Function(_$RoleResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? name = freezed,
+    Object? code = freezed,
+  }) {
+    return _then(_$RoleResponseImpl(
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String?,
+      code: freezed == code
+          ? _value.code
+          : code // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$RoleResponseImpl implements _RoleResponse {
+  const _$RoleResponseImpl({this.name, this.code});
+
+  factory _$RoleResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$RoleResponseImplFromJson(json);
+
+  @override
+  final String? name;
+  @override
+  final String? code;
+
+  @override
+  String toString() {
+    return 'RoleResponse(name: $name, code: $code)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$RoleResponseImpl &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.code, code) || other.code == code));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, name, code);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$RoleResponseImplCopyWith<_$RoleResponseImpl> get copyWith =>
+      __$$RoleResponseImplCopyWithImpl<_$RoleResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$RoleResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _RoleResponse implements RoleResponse {
+  const factory _RoleResponse({final String? name, final String? code}) =
+      _$RoleResponseImpl;
+
+  factory _RoleResponse.fromJson(Map<String, dynamic> json) =
+      _$RoleResponseImpl.fromJson;
+
+  @override
+  String? get name;
+  @override
+  String? get code;
+  @override
+  @JsonKey(ignore: true)
+  _$$RoleResponseImplCopyWith<_$RoleResponseImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

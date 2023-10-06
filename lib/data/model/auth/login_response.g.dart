@@ -8,18 +8,30 @@ part of 'login_response.dart';
 
 _$LoginResponseImpl _$$LoginResponseImplFromJson(Map<String, dynamic> json) =>
     _$LoginResponseImpl(
-      code: json['code'] as String?,
-      responseTime: json['responseTime'] as int?,
       session: json['session'] as String?,
-      username: json['username'] as String?,
-      password: json['password'] as String?,
+      name: json['name'] as String?,
+      email: json['email'] as String?,
+      role: json['role'] == null
+          ? null
+          : RoleResponse.fromJson(json['role'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$LoginResponseImplToJson(_$LoginResponseImpl instance) =>
     <String, dynamic>{
-      'code': instance.code,
-      'responseTime': instance.responseTime,
       'session': instance.session,
-      'username': instance.username,
-      'password': instance.password,
+      'name': instance.name,
+      'email': instance.email,
+      'role': instance.role,
+    };
+
+_$RoleResponseImpl _$$RoleResponseImplFromJson(Map<String, dynamic> json) =>
+    _$RoleResponseImpl(
+      name: json['name'] as String?,
+      code: json['code'] as String?,
+    );
+
+Map<String, dynamic> _$$RoleResponseImplToJson(_$RoleResponseImpl instance) =>
+    <String, dynamic>{
+      'name': instance.name,
+      'code': instance.code,
     };

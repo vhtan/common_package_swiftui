@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
-import 'package:mvvm_cubit/common/logger/logger.dart';
+import 'package:mvvm_cubit/common/snack_bar/error_snack_bar.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/common/widget/text_input.dart';
-import 'package:mvvm_cubit/core/api_config.dart';
 import 'package:mvvm_cubit/core/app_asset.dart';
+import 'package:mvvm_cubit/core/app_string.dart';
 import 'package:mvvm_cubit/data/request/auth/login_request.dart';
 import 'package:mvvm_cubit/view/container/screen/container_screen.dart';
 import 'package:mvvm_cubit/viewmodel/auth/auth_cubit.dart';
@@ -39,16 +39,21 @@ class _LoginScreenState extends State<LoginScreen> {
       appBar: _appBar,
       body: BlocConsumer<AuthCubit, GenericCubitState>(
         listener: (context, state) {
-          if (state.status == Status.success) {
-            // cached login response success
-            ApiConfig.loginResponse = state.data;
-            logger.d('login success ${ApiConfig.loginResponse}');
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const ContainerScreen(),
-              ),
-            );
+          switch (state.status) {
+            case Status.failure:
+              showErrorSnackBar(
+                context,
+                state.error ?? AppString.sendTimeOut,
+              );
+            case Status.success:
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ContainerScreen(),
+                ),
+              );
+            default:
+              break;
           }
         },
         builder: (context, state) {

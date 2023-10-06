@@ -5,13 +5,23 @@ part 'login_response.freezed.dart';
 @freezed
 abstract class LoginResponse with _$LoginResponse {
   const factory LoginResponse({
-    String? code,
-    int? responseTime,
     String? session,
-    String? username,
-    String? password,
+    String? name,
+    String? email,
+    RoleResponse? role,
   }) = _LoginResponse;
 
   factory LoginResponse.fromJson(Map<String, dynamic> json) =>
       _$LoginResponseFromJson(json);
+}
+
+@freezed
+abstract class RoleResponse with _$RoleResponse {
+  const factory RoleResponse({
+    String? name,
+    String? code,
+  }) = _RoleResponse;
+
+  factory RoleResponse.fromJson(Map<String, dynamic> json) =>
+      _$RoleResponseFromJson(json);
 }

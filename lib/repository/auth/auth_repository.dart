@@ -11,4 +11,8 @@ class AuthRepository with RepositoryHelper<LoginResponse> {
   Future<dynamic> login(LoginRequest request) async {
     return api.login(request);
   }
+
+  Future<dynamic> logout() async {
+    return api.logout();
+  }
 }

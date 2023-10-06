@@ -13,10 +13,7 @@ class DioClient {
 
   DioClient(this.dio, this.secureStorage) {
     updateHeaders();
-    if (ApiConfig.loginResponse != null) {
-      // add session in case login success
-      ApiConfig.header['Authorization'] = ApiConfig.loginResponse?.session;
-    }
+
     dio
       ..options.baseUrl = ApiConfig.baseUrl
       ..options.headers = ApiConfig.header
@@ -29,11 +26,8 @@ class DioClient {
   void updateHeaders() async {
     final osVersion = await getOSVersion();
     final loginToken = await getLoginToken();
-
     ApiConfig.header['os-version'] = osVersion;
-    if (ApiConfig.loginResponse != null) {
-      ApiConfig.header['Authorization'] = loginToken;
-    }
+    ApiConfig.header['Authorization'] = loginToken;
   }
 
   Future<String?> getLoginToken() async {
