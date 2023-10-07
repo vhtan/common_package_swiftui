@@ -16,6 +16,7 @@ abstract mixin class ApiHelper<T> {
       if (apiResponse.code == ErrorCode.SUCCESS) {
         return apiResponse.detail;
       }
+      throw Error();
     } else {
       throw DioExceptions;
     }
