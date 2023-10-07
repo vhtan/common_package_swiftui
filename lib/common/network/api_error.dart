@@ -12,10 +12,3 @@ enum ErrorCode {
   FILE_NOT_SUPPORT,
   PERMISSION_DENIED
 }
-
-class ApiResponse<T> {
-  final ErrorCode? code;
-  final T? detail;
-
-  ApiResponse({this.code, this.detail});
-}
