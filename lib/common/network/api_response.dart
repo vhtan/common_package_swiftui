@@ -1,33 +1,17 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-// part 'api_response.freezed.dart';
+import 'package:mvvm_cubit/common/network/api_error.dart';
 
-// @freezed
-// @JsonSerializable(genericArgumentFactories: true)
-// abstract class ApiResponse<T> with _$ApiResponse<T> {
-//   factory ApiResponse({
-//     String? code,
-//     int? responseTime,
-//     T? detail,
-//   }) = _ApiResponse<T>;
+part 'api_response.g.dart';
+part 'api_response.freezed.dart';
 
-//   factory ApiResponse.fromJson(Map<String, dynamic> json) =>
-//       _$ApiResponseFromJson(json);
-// }
+@freezed
+abstract class ApiResponse with _$ApiResponse {
+  factory ApiResponse({
+    ErrorCode? code,
+    int? responseTime,
+    dynamic detail,
+  }) = _ApiResponse;
 
-class ApiResponse<T> {
-  final String code;
-  final T? detail;
-
-  ApiResponse({
-    required this.code,
-    required this.detail,
-  });
-
-  factory ApiResponse.fromJson(
-      Map<String, dynamic> json, T Function(dynamic) fromJsonT) {
-    return ApiResponse(
-      code: json['code'] as String,
-      detail: fromJsonT(json['detail']),
-    );
-  }
+  factory ApiResponse.fromJson(Map<String, dynamic> json) =>
+      _$ApiResponseFromJson(json);
 }

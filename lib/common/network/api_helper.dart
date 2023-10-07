@@ -1,25 +1,33 @@
 import 'package:mvvm_cubit/common/logger/logger.dart';
-import 'package:mvvm_cubit/common/network/api_response.dart';
+// import 'package:mvvm_cubit/common/network/api_error.dart';
+// import 'package:mvvm_cubit/common/network/api_response.dart';
 import 'package:mvvm_cubit/common/network/dio_exception.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:dio/dio.dart';
 import 'dart:convert';
 
+import 'package:mvvm_cubit/data/model/auth/login_response.dart';
+
 abstract mixin class ApiHelper<T> {
   late final T data;
 
-  Future<ApiResponse<dynamic>> _requestMethodTemplate(
+  Future<ApiResponse> _requestMethodTemplate(
       Future<Response<dynamic>> apiCallback) async {
     final Response response = await apiCallback;
     if (response.statusCode.success) {
-      return response.data;
+      final apiResponse = ApiResponse.fromJson(response.data);
+      if (apiResponse.code == ErrorCode.SUCCESS) {
+        return apiResponse.detail;
+      }
+      throw Error();
     } else {
       throw DioExceptions;
     }
   }
 
   //Generic method template for create item on server
-  Future<dynamic> makePostRequest(Future<Response<dynamic>> apiCallback) async {
+  Future<ApiResponse> makePostRequest(
+      Future<Response<dynamic>> apiCallback) async {
     return _requestMethodTemplate(apiCallback);
   }
 
@@ -54,4 +62,24 @@ abstract mixin class ApiHelper<T> {
       throw DioExceptions;
     }
   }
+}
+
+enum ErrorCode {
+  SUCCESS,
+  ERROR,
+  BAD_REQUEST,
+  DOCUMENT_NOT_FOUND,
+  AUTHENTICATION_FAIL,
+  USER_NOT_FOUND,
+  NONE_UNIQUE_CONSTRAIN,
+  MAX_SIZE_EXCEED,
+  FILE_NOT_SUPPORT,
+  PERMISSION_DENIED
+}
+
+class ApiResponse<T> {
+  final ErrorCode? code;
+  final T? detail;
+
+  ApiResponse({this.code, this.detail});
 }

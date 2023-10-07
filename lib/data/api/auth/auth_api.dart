@@ -10,7 +10,7 @@ class AuthApi with ApiHelper<LoginResponse> {
   AuthApi({required this.client});
 
   Future<dynamic> login(LoginRequest request) async {
-    return await makePostRequest(
+    return makePostRequest(
       client.dio.post(
         ApiConfig.login,
         data: request,

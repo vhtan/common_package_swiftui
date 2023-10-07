@@ -1,0 +1,21 @@
+// ignore_for_file: constant_identifier_names
+
+enum ErrorCode {
+  SUCCESS,
+  ERROR,
+  BAD_REQUEST,
+  DOCUMENT_NOT_FOUND,
+  AUTHENTICATION_FAIL,
+  USER_NOT_FOUND,
+  NONE_UNIQUE_CONSTRAIN,
+  MAX_SIZE_EXCEED,
+  FILE_NOT_SUPPORT,
+  PERMISSION_DENIED
+}
+
+class ApiResponse<T> {
+  final ErrorCode? code;
+  final T? detail;
+
+  ApiResponse({this.code, this.detail});
+}
