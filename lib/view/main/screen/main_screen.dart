@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:location/location.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
-import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/snack_bar/error_snack_bar.dart';
 import 'package:mvvm_cubit/common/widget/empty_widget.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
@@ -10,7 +9,7 @@ import 'package:mvvm_cubit/common/widget/spinkit_indicator.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_string.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
-import 'package:mvvm_cubit/data/model/main/duty.dart';
+import 'package:mvvm_cubit/data/model/main/stop_point/stop_point_response.dart';
 import 'package:mvvm_cubit/data/model/main/trip.dart';
 import 'package:mvvm_cubit/di.dart';
 import 'package:mvvm_cubit/view/add_trip/add_trip_screen.dart';
@@ -36,39 +35,40 @@ class _MainScreenState extends State<MainScreen> {
   LocationData? _locationData;
   final cubit = MainCubit(repository: di());
 
-  final List<Duty> _itineraries = [
-    PickUpDuty(
-      id: 1,
-      title: 'Đón áp tải',
-      buttonTitle: 'Đến nơi',
-      name: 'Nguyễn Văn Thắng',
-      address: '123 Nguyên Công Trứ, P1, Quận 10',
-      phone: '0987654321',
-    ),
-    PickUpDuty(
-      id: 2,
-      title: 'Đón bảo vệ',
-      buttonTitle: 'Đến nơi',
-      name: 'Nguyễn Văn Thắng',
-      address: '123 Nguyên Công Trứ, P1, Quận 10',
-      phone: '0987654321',
-    ),
-    DeliveryDuty(
-      id: 3,
-      title: 'Xử lý phiếu yêu cầu',
-      buttonTitle: 'Hoàn thành',
-      requestFormId: 'PYC: 78909',
-      totalAmount: 'Tổng tiền: 3 tỷ',
-      type: 'Loại: tiếp quỹ',
-    ),
-    DeliveryDuty(
-      id: 4,
-      title: 'Xử lý phiếu yêu cầu',
-      buttonTitle: 'Hoàn thành',
-      requestFormId: 'PYC: 22909',
-      totalAmount: 'Tổng tiền: 4 tỷ',
-      type: 'Loại: trả quỷ',
-    ),
+  final List<StopPointResponse> _itineraries = [
+    StopPointResponse(id: ''),
+    // PickUpDuty(
+    //   id: 1,
+    //   title: 'Đón áp tải',
+    //   buttonTitle: 'Đến nơi',
+    //   name: 'Nguyễn Văn Thắng',
+    //   address: '123 Nguyên Công Trứ, P1, Quận 10',
+    //   phone: '0987654321',
+    // ),
+    // PickUpDuty(
+    //   id: 2,
+    //   title: 'Đón bảo vệ',
+    //   buttonTitle: 'Đến nơi',
+    //   name: 'Nguyễn Văn Thắng',
+    //   address: '123 Nguyên Công Trứ, P1, Quận 10',
+    //   phone: '0987654321',
+    // ),
+    // DeliveryDuty(
+    //   id: 3,
+    //   title: 'Xử lý phiếu yêu cầu',
+    //   buttonTitle: 'Hoàn thành',
+    //   requestFormId: 'PYC: 78909',
+    //   totalAmount: 'Tổng tiền: 3 tỷ',
+    //   type: 'Loại: tiếp quỹ',
+    // ),
+    // DeliveryDuty(
+    //   id: 4,
+    //   title: 'Xử lý phiếu yêu cầu',
+    //   buttonTitle: 'Hoàn thành',
+    //   requestFormId: 'PYC: 22909',
+    //   totalAmount: 'Tổng tiền: 4 tỷ',
+    //   type: 'Loại: trả quỷ',
+    // ),
   ];
 
   @override

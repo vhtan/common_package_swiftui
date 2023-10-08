@@ -164,5 +164,5 @@ app.*.symbols
 !/dev/ci/**/Gemfile.lock
 !.vscode/settings.json
 
-# **/*.freezed.dart
-# **/*.g.dart
+**/*.freezed.dart
+**/*.g.dart

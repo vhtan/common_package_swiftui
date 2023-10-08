@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
-import 'package:mvvm_cubit/data/model/main/duty.dart';
+import 'package:mvvm_cubit/data/model/main/stop_point/stop_point_response.dart';
 import 'package:mvvm_cubit/view/main/widget/duty_container.dart';
 import 'package:mvvm_cubit/view/main/widget/duty_info_widget.dart';
 
@@ -11,7 +11,7 @@ class TripContainer extends StatefulWidget {
     required this.onPressed,
   });
 
-  final List<Duty> itineraries;
+  final List<StopPointResponse> itineraries;
   final VoidCallback onPressed;
 
   @override
@@ -19,7 +19,7 @@ class TripContainer extends StatefulWidget {
 }
 
 class _TripContainer extends State<TripContainer> {
-  List<Duty> _itineraries = [];
+  List<StopPointResponse> _itineraries = [];
   VoidCallback _onPressed = () {};
 
   @override
@@ -43,17 +43,17 @@ class _TripContainer extends State<TripContainer> {
     return ExpansionPanelList.radio(
       initialOpenPanelValue: 0,
       children: _itineraries.map<ExpansionPanelRadio>(
-        (Duty item) {
+        (StopPointResponse item) {
           return ExpansionPanelRadio(
             value: item.id,
             headerBuilder: (context, isExpanded) => ListTile(
               title: Text(
-                item.title,
+                item.stopPointType ?? '',
                 style: headLine2,
               ),
             ),
             body: DutyContainer(
-              duty: item,
+              stopPoint: item,
               onPressed: _onPressed,
             ),
           );

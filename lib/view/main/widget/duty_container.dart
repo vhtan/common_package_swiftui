@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mvvm_cubit/common/widget/empty_widget.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
-import 'package:mvvm_cubit/data/model/main/stop_point_response/stop_point_response.dart';
+import 'package:mvvm_cubit/data/model/main/stop_point/stop_point_response.dart';
 
 class DutyContainer extends StatelessWidget {
   const DutyContainer({
@@ -39,7 +39,7 @@ class DutyContainer extends StatelessWidget {
               const Icon(Icons.map),
               const SizedBox(width: 10),
               Text(
-                'duty.address',
+                stopPoint.stopPointType ?? '',
                 style: textDefault,
               ),
             ],
@@ -53,7 +53,7 @@ class DutyContainer extends StatelessWidget {
               const Icon(Icons.phone),
               const SizedBox(width: 10),
               Text(
-                duty.phone,
+                stopPoint.stopPointAction ?? '',
                 style: textDefault,
               ),
             ],
@@ -63,7 +63,7 @@ class DutyContainer extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(left: 20, right: 20),
           child: PrimaryButton(
-            title: duty.buttonTitle,
+            title: stopPoint.stopPointAction ?? '',
             buttonHeight: 50,
             onPressed: onPressed,
           ),

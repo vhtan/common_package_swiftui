@@ -6,7 +6,7 @@ part 'stop_point_response.freezed.dart';
 @freezed
 abstract class StopPointResponse with _$StopPointResponse {
   const factory StopPointResponse({
-    String? id,
+    required String id,
     String? detailId,
     String? createBy,
     String? stopPointType,
