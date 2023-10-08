@@ -15,63 +15,63 @@ import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
 import 'package:mvvm_cubit/viewmodel/report_sos/report_sos_cubit.dart';
 
-final getIt = GetIt.instance;
+final di = GetIt.instance;
 
 Future<void> init() async {
   //Dio
-  getIt.registerFactory<Dio>(
+  di.registerFactory<Dio>(
     () => Dio(),
   );
-  getIt.registerFactory<FlutterSecureStorage>(
+  di.registerFactory<FlutterSecureStorage>(
     () => const FlutterSecureStorage(),
   );
-  getIt.registerFactory<DioClient>(
+  di.registerFactory<DioClient>(
     () => DioClient(
-      getIt<Dio>(),
-      getIt<FlutterSecureStorage>(),
+      di(),
+      di(),
     ),
   );
 
   // Register Main Components
-  getIt.registerLazySingleton<MainApi>(
-    () => MainApi(client: getIt<DioClient>()),
+  di.registerLazySingleton<MainApi>(
+    () => MainApi(client: di()),
   );
-  getIt.registerLazySingleton<MainRepository>(
-    () => MainRepository(api: getIt<MainApi>()),
+  di.registerLazySingleton<MainRepository>(
+    () => MainRepository(api: di()),
   );
-  getIt.registerFactory(
-    () => MainCubit(repository: getIt<MainRepository>()),
+  di.registerFactory(
+    () => MainCubit(repository: di()),
   );
 
   // Register Auth Components
-  getIt.registerLazySingleton<AuthApi>(
-    () => AuthApi(client: getIt<DioClient>()),
+  di.registerLazySingleton<AuthApi>(
+    () => AuthApi(client: di()),
   );
-  getIt.registerLazySingleton<AuthRepository>(
-    () => AuthRepository(api: getIt<AuthApi>()),
+  di.registerLazySingleton<AuthRepository>(
+    () => AuthRepository(api: di()),
   );
-  getIt.registerFactory(
-    () => AuthCubit(repository: getIt<AuthRepository>()),
+  di.registerFactory(
+    () => AuthCubit(repository: di()),
   );
-  getIt.registerFactory(
+  di.registerFactory(
     () => ReportSOSCubit(),
   );
-  getIt.registerFactory(
+  di.registerFactory(
     () => CheckPointCubit(),
   );
 
-  getIt.registerFactory(
-    () => ContainerCubit(repository: getIt<MainRepository>()),
+  di.registerFactory(
+    () => ContainerCubit(repository: di()),
   );
-  getIt.registerFactory(
-    () => AddTripCubit(repository: getIt<AddTripRepository>()),
+  di.registerFactory(
+    () => AddTripCubit(repository: di()),
   );
 
 // Register Add trip Components
-  getIt.registerLazySingleton<AddTripApi>(
-    () => AddTripApi(client: getIt<DioClient>()),
+  di.registerLazySingleton<AddTripApi>(
+    () => AddTripApi(client: di()),
   );
-  getIt.registerLazySingleton<AddTripRepository>(
-    () => AddTripRepository(api: getIt<AddTripApi>()),
+  di.registerLazySingleton<AddTripRepository>(
+    () => AddTripRepository(api: di()),
   );
 }

@@ -41,19 +41,19 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<MainCubit>(create: (context) => getIt<MainCubit>()),
-        BlocProvider<AuthCubit>(create: (context) => getIt<AuthCubit>()),
+        BlocProvider<MainCubit>(create: (context) => di()),
+        BlocProvider<AuthCubit>(create: (context) => di()),
         BlocProvider<ContainerCubit>(
-          create: (context) => getIt<ContainerCubit>(),
+          create: (context) => di(),
         ),
         BlocProvider<ReportSOSCubit>(
-          create: (context) => getIt<ReportSOSCubit>(),
+          create: (context) => di(),
         ),
         BlocProvider<CheckPointCubit>(
-          create: (context) => getIt<CheckPointCubit>(),
+          create: (context) => di(),
         ),
         BlocProvider<AddTripCubit>(
-          create: (context) => getIt<AddTripCubit>(),
+          create: (context) => di(),
         ),
       ],
       child: MaterialApp(

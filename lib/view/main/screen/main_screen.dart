@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:location/location.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
+import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/snack_bar/error_snack_bar.dart';
 import 'package:mvvm_cubit/common/widget/empty_widget.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
@@ -10,6 +12,7 @@ import 'package:mvvm_cubit/core/app_string.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/data/model/main/duty.dart';
 import 'package:mvvm_cubit/data/model/main/trip.dart';
+import 'package:mvvm_cubit/di.dart';
 import 'package:mvvm_cubit/view/add_trip/add_trip_screen.dart';
 import 'package:mvvm_cubit/view/check_point/check_point_screen.dart';
 import 'package:mvvm_cubit/view/main/widget/trip_container.dart';
@@ -26,6 +29,13 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  Location location = Location();
+
+  bool _serviceEnabled = false;
+  PermissionStatus? _permissionGranted;
+  LocationData? _locationData;
+  final cubit = MainCubit(repository: di());
+
   final List<Duty> _itineraries = [
     PickUpDuty(
       id: 1,
@@ -63,70 +73,102 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   void initState() {
-    BlocProvider.of<MainCubit>(context).getTrip();
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      cubit.getTrip();
+      checkLocationPermission();
+      Future.delayed(const Duration(milliseconds: 5000), () {
+        getCurrentLocation();
+      });
+    });
+  }
+
+  void getCurrentLocation() async {
+    if (_serviceEnabled && _permissionGranted == PermissionStatus.granted) {
+      _locationData = await location.getLocation();
+    }
+  }
+
+  void checkLocationPermission() async {
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: BlocConsumer<MainCubit, GenericCubitState>(
-        listener: (context, state) {
-          switch (state.status) {
-            case Status.failure:
-              showErrorSnackBar(
-                context,
-                state.error ?? AppString.sendTimeOut,
-              );
-              break;
-            case Status.success:
-              // clear cached login
-              // navigateTo(const LoginScreen());
-              break;
-            default:
-              break;
-          }
-        },
-        builder: (context, state) {
-          return BlocBuilder<MainCubit, GenericCubitState<MainState>>(
-            builder: (context, state) {
-              switch (state.status) {
-                case Status.failure:
-                  // return const SizedBox();
-                  // return tripList();
-                  // return pendingTrip();
-                  return noTrip();
-                case Status.empty:
-                  return const EmptyWidget(message: "No delivery!");
-                case Status.loading:
-                  return const SpinKitIndicator(type: SpinKitType.circle);
-                case Status.success:
-                  var trip = state.data?.trip;
-                  var pendTrip = state.data?.pendingTrip;
-                  if (trip != null) {
-                    return Column(
-                      children: [
-                        warningStopTooLong(),
-                        currentTrip(),
-                      ],
-                    );
-                  } else if (pendTrip != null) {
-                    return pendingTrip();
-                  } else {
-                    return Column(
-                      children: [
-                        // warningNoTrip(),
-                        // const SizedBox(height: 4),
-                        // warningStopTooLong(),
-                        noTrip(),
-                      ],
-                    );
-                    // return noTrip();
-                  }
-              }
-            },
-          );
-        },
+    return BlocProvider(
+      create: (_) => cubit,
+      child: Scaffold(
+        body: BlocConsumer<MainCubit, GenericCubitState>(
+          listener: (context, state) {
+            switch (state.status) {
+              case Status.failure:
+                showErrorSnackBar(
+                  context,
+                  state.error ?? AppString.sendTimeOut,
+                );
+                break;
+              case Status.success:
+                // clear cached login
+                // navigateTo(const LoginScreen());
+                break;
+              default:
+                break;
+            }
+          },
+          builder: (context, state) {
+            return BlocBuilder<MainCubit, GenericCubitState<MainState>>(
+              builder: (context, state) {
+                switch (state.status) {
+                  case Status.failure:
+                    // return const SizedBox();
+                    // return tripList();
+                    // return pendingTrip();
+                    return noTrip();
+                  case Status.empty:
+                    return const EmptyWidget(message: "No delivery!");
+                  case Status.loading:
+                    return const SpinKitIndicator(type: SpinKitType.circle);
+                  case Status.success:
+                    var trip = state.data?.trip;
+                    var pendTrip = state.data?.pendingTrip;
+                    if (trip != null) {
+                      return Column(
+                        children: [
+                          warningStopTooLong(),
+                          currentTrip(),
+                        ],
+                      );
+                    } else if (pendTrip != null) {
+                      return pendingTrip();
+                    } else {
+                      return Column(
+                        children: [
+                          // warningNoTrip(),
+                          // const SizedBox(height: 4),
+                          // warningStopTooLong(),
+                          noTrip(),
+                        ],
+                      );
+                      // return noTrip();
+                    }
+                }
+              },
+            );
+          },
+        ),
       ),
     );
   }
@@ -184,8 +226,8 @@ extension _MainScreenDeliveryList on _MainScreenState {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           PendingTripScreen(
-            onDelete: () => context.read<MainCubit>().deleteNewTrip(),
-            onEdit: () => context.read<MainCubit>().editNewTrip(),
+            onDelete: () => cubit.deleteNewTrip(),
+            onEdit: () => cubit.editNewTrip(),
           ),
           const SizedBox(height: 20),
         ],

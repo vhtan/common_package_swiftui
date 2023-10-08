@@ -42,7 +42,7 @@ class AuthCubit extends Cubit<GenericCubitState<AuthState>> {
   }
 
   Future<void> _saveLoginToken(String token) async {
-    await getIt<FlutterSecureStorage>().write(
+    await di<FlutterSecureStorage>().write(
       key: StoreKey.loginToken,
       value: token,
     );
@@ -74,7 +74,7 @@ class AuthCubit extends Cubit<GenericCubitState<AuthState>> {
   }
 
   Future<void> _clearLoginToken() async {
-    await getIt<FlutterSecureStorage>().delete(
+    await di<FlutterSecureStorage>().delete(
       key: StoreKey.loginToken,
     );
   }
