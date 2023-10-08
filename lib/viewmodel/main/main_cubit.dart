@@ -36,6 +36,31 @@ class MainCubit extends GenericCubit<MainState> {
     }
   }
 
+  Future<void> getCurrencyList() async {
+    try {
+      emit(
+        GenericCubitState.loading(),
+      );
+      logger.d('getTrip1');
+      final response = await repository.api.getCurrencyList();
+      logger.d('getTrip2');
+      if (response != null) {
+        emit(
+          GenericCubitState.success(null),
+        );
+      } else {
+        emit(
+          GenericCubitState.failure("Error"),
+        );
+      }
+    } on DioException catch (e) {
+      print(e.message);
+      emit(
+        GenericCubitState.failure(e.message ?? 'Error'),
+      );
+    }
+  }
+
   void addNewTrip(Trip trip) {
     emit(GenericCubitState.success(MainState(pendingTrip: trip, trip: null)));
   }

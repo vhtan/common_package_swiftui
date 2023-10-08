@@ -15,4 +15,12 @@ class MainApi with ApiHelper<Trip> {
       ),
     );
   }
+
+  Future<dynamic> getCurrencyList() async {
+    return await get(
+      client.dio.get(
+        ApiConfig.currencyList,
+      ),
+    );
+  }
 }

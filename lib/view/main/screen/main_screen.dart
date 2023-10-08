@@ -77,6 +77,7 @@ class _MainScreenState extends State<MainScreen> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       cubit.getTrip();
+      cubit.getCurrencyList();
       checkLocationPermission();
       Future.delayed(const Duration(milliseconds: 5000), () {
         getCurrentLocation();

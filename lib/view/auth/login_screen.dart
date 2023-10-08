@@ -80,8 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       controller: _usernameTextController,
                       obscureText: false,
                       validator: (value) => state.data?.errorText(),
-                      onChanged: (value) =>
-                          context.read<AuthCubit>().usernameChanged(value),
+                      onChanged: (value) => authCubit.usernameChanged(value),
                     ),
                     const SizedBox(height: 20),
                     TextInput(
@@ -91,8 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       controller: _passwordTextController,
                       obscureText: true,
                       maxLines: 1,
-                      onChanged: (value) =>
-                          context.read<AuthCubit>().passwordChanged(value),
+                      onChanged: (value) => authCubit.passwordChanged(value),
                     ),
                     const SizedBox(
                       height: 20,
@@ -102,10 +100,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       buttonHeight: 50,
                       onPressed: (state.data?.isValid()) == true
                           ? () {
-                              context.read<AuthCubit>().login(LoginRequest(
-                                    username: _usernameTextController.text,
-                                    password: _passwordTextController.text,
-                                  ));
+                              authCubit.login(LoginRequest(
+                                username: _usernameTextController.text,
+                                password: _passwordTextController.text,
+                              ));
                             }
                           : null,
                     ),

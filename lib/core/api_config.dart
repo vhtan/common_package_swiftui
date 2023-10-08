@@ -11,6 +11,8 @@ class ApiConfig {
   static const String createTrip = '/create_trip';
   static const String login = '/user/login';
   static const String logout = '/user/logout';
+  static const String currencyList = '/currency/list';
+
   static Map<String, String?> header = {
     'Content-Type': 'application/json',
     'X-CLIENT-ID': 'vndeli_app',
