@@ -60,57 +60,63 @@ class _LoginScreenState extends State<LoginScreen> {
             }
           },
           builder: (context, state) {
-            return BlocBuilder<AuthCubit, GenericCubitState<AuthState>>(builder:
-                (BuildContext context, GenericCubitState<AuthState> state) {
-              return Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 20),
-                    Image.asset(
-                      AppAsset.appLogo,
-                      height: 50,
+            return BlocBuilder<AuthCubit, GenericCubitState<AuthState>>(
+              builder:
+                  (BuildContext context, GenericCubitState<AuthState> state) {
+                return SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 20),
+                        Image.asset(
+                          AppAsset.appLogo,
+                          height: 50,
+                        ),
+                        const SizedBox(height: 40),
+                        TextInput(
+                          hint: 'Nhập tên đăng nhập',
+                          labelText: 'Tên đăng nhập',
+                          icon: const Icon(Icons.person),
+                          controller: _usernameTextController,
+                          obscureText: false,
+                          validator: (value) => state.data?.errorText(),
+                          onChanged: (value) =>
+                              authCubit.usernameChanged(value),
+                        ),
+                        const SizedBox(height: 20),
+                        TextInput(
+                          hint: 'Nhập mật khẩu',
+                          labelText: 'Mật khẩu',
+                          icon: const Icon(Icons.lock),
+                          controller: _passwordTextController,
+                          obscureText: true,
+                          maxLines: 1,
+                          onChanged: (value) =>
+                              authCubit.passwordChanged(value),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        PrimaryButton(
+                          title: 'Đăng nhập',
+                          buttonHeight: 50,
+                          onPressed: (state.data?.isValid()) == true
+                              ? () {
+                                  authCubit.login(LoginRequest(
+                                    username: _usernameTextController.text,
+                                    password: _passwordTextController.text,
+                                  ));
+                                }
+                              : null,
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 40),
-                    TextInput(
-                      hint: 'Nhập tên đăng nhập',
-                      labelText: 'Tên đăng nhập',
-                      icon: const Icon(Icons.person),
-                      controller: _usernameTextController,
-                      obscureText: false,
-                      validator: (value) => state.data?.errorText(),
-                      onChanged: (value) => authCubit.usernameChanged(value),
-                    ),
-                    const SizedBox(height: 20),
-                    TextInput(
-                      hint: 'Nhập mật khẩu',
-                      labelText: 'Mật khẩu',
-                      icon: const Icon(Icons.lock),
-                      controller: _passwordTextController,
-                      obscureText: true,
-                      maxLines: 1,
-                      onChanged: (value) => authCubit.passwordChanged(value),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    PrimaryButton(
-                      title: 'Đăng nhập',
-                      buttonHeight: 50,
-                      onPressed: (state.data?.isValid()) == true
-                          ? () {
-                              authCubit.login(LoginRequest(
-                                username: _usernameTextController.text,
-                                password: _passwordTextController.text,
-                              ));
-                            }
-                          : null,
-                    ),
-                  ],
-                ),
-              );
-            });
+                  ),
+                );
+              },
+            );
           },
         ),
       ),
