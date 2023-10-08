@@ -1,3 +1,4 @@
+import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/network/api_error.dart';
 import 'package:mvvm_cubit/common/network/api_response.dart';
 import 'package:mvvm_cubit/common/network/dio_exception.dart';
@@ -10,7 +11,9 @@ abstract mixin class ApiHelper<T> {
 
   Future<dynamic> _requestMethodTemplate(
       Future<Response<dynamic>> apiCallback) async {
+    logger.d('_requestMethodTemplate1');
     final Response response = await apiCallback;
+    logger.d('_requestMethodTemplate2');
     if (response.statusCode.success) {
       final apiResponse = ApiResponse.fromJson(response.data);
       if (apiResponse.code == ErrorCode.SUCCESS) {

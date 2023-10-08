@@ -5,6 +5,7 @@ import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/data/model/container/menu_type.dart';
 import 'package:mvvm_cubit/data/notification_service/notification_service.dart';
+import 'package:mvvm_cubit/di.dart';
 import 'package:mvvm_cubit/view/account/account_screen.dart';
 import 'package:mvvm_cubit/view/auth/login_screen.dart';
 import 'package:mvvm_cubit/view/container/widget/menu_widget.dart';
@@ -25,6 +26,8 @@ class ContainerScreen extends StatefulWidget {
 class _ContainerScreenState extends State<ContainerScreen> {
   bool isOpened = false;
   String title = 'Lộ trình';
+  ContainerCubit containerCubit = ContainerCubit(repository: di());
+  AuthCubit authCubit = AuthCubit(repository: di());
 
   final GlobalKey<SideMenuState> _sideMenuKey = GlobalKey<SideMenuState>();
 
@@ -62,75 +65,80 @@ class _ContainerScreenState extends State<ContainerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<ContainerCubit, GenericCubitState<MenuType>>(
-      listener: (context, state) => titlePage(state.data),
-      builder: (context, state) {
-        return BlocBuilder<ContainerCubit, GenericCubitState<MenuType>>(
-          builder: (context, state) {
-            return SideMenu(
-              key: _sideMenuKey,
-              background: AppColors.primary,
-              type: SideMenuType.slide,
-              maxMenuWidth: 230,
-              menu: Padding(
-                padding: const EdgeInsets.only(left: 10.0),
-                child: MenuScreen(
-                  valueChanged: (value) {
-                    context.read<ContainerCubit>().menuAction(value);
-                    if (value == MenuType.logOut) {
-                      context.read<AuthCubit>().logout();
-                    }
-                  },
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<ContainerCubit>(create: (context) => containerCubit),
+        BlocProvider<AuthCubit>(create: (context) => authCubit),
+      ],
+      child: BlocConsumer<ContainerCubit, GenericCubitState<MenuType>>(
+        listener: (context, state) => titlePage(state.data),
+        builder: (context, state) {
+          return BlocBuilder<ContainerCubit, GenericCubitState<MenuType>>(
+            builder: (context, state) {
+              return SideMenu(
+                key: _sideMenuKey,
+                background: AppColors.primary,
+                type: SideMenuType.slide,
+                maxMenuWidth: 230,
+                menu: Padding(
+                  padding: const EdgeInsets.only(left: 10.0),
+                  child: MenuScreen(
+                    valueChanged: (value) {
+                      containerCubit.menuAction(value);
+                      if (value == MenuType.logOut) {
+                        authCubit.logout();
+                      }
+                    },
+                  ),
                 ),
-              ),
-              onChange: (isOpened) {
-                setState(() => this.isOpened = isOpened);
-              },
-              child: IgnorePointer(
-                ignoring: isOpened,
-                child: Scaffold(
-                  appBar: AppBar(
-                    centerTitle: true,
-                    leading: IconButton(
-                      icon: const Icon(Icons.menu,
-                          size: Dimension.menuIconSize, color: Colors.white),
-                      onPressed: () => toggleMenu(true),
-                    ),
-                    actions: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 10),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 5),
-                              backgroundColor: AppColors.error),
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) => const ReportSOSScreen(),
-                              barrierDismissible: false,
-                            );
-                          },
-                          child: const Icon(
-                            Icons.sos,
-                            color: AppColors.white,
-                            size: Dimension.menuIconSize,
+                onChange: (isOpened) {
+                  setState(() => this.isOpened = isOpened);
+                },
+                child: IgnorePointer(
+                  ignoring: isOpened,
+                  child: Scaffold(
+                    appBar: AppBar(
+                      centerTitle: true,
+                      leading: IconButton(
+                        icon: const Icon(Icons.menu,
+                            size: Dimension.menuIconSize, color: Colors.white),
+                        onPressed: () => toggleMenu(true),
+                      ),
+                      actions: [
+                        Padding(
+                          padding: const EdgeInsets.only(right: 10),
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 5),
+                                backgroundColor: AppColors.error),
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => const ReportSOSScreen(),
+                                barrierDismissible: false,
+                              );
+                            },
+                            child: const Icon(
+                              Icons.sos,
+                              color: AppColors.white,
+                              size: Dimension.menuIconSize,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                    title: Text(title),
+                      ],
+                      title: Text(title),
+                    ),
+                    body: BlocBuilder<ContainerCubit,
+                            GenericCubitState<MenuType>>(
+                        builder: (context, state) => contentWidget(state.data)),
                   ),
-                  body:
-                      BlocBuilder<ContainerCubit, GenericCubitState<MenuType>>(
-                          builder: (context, state) =>
-                              contentWidget(state.data)),
                 ),
-              ),
-            );
-          },
-        );
-      },
+              );
+            },
+          );
+        },
+      ),
     );
   }
 

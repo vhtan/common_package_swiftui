@@ -28,7 +28,6 @@ Future<void> init() async {
   di.registerFactory<DioClient>(
     () => DioClient(
       di(),
-      di(),
     ),
   );
 

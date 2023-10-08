@@ -8,24 +8,10 @@ class MainApi with ApiHelper<Trip> {
 
   MainApi({required this.client});
 
-  Future<Trip> getTrip() async {
-    Map<String, String> queryParameters = <String, String>{};
-
-    // if (gender != null && gender != Gender.all) {
-    //   queryParameters.addAll({'gender': gender.name});
-    // }
-
-    // if (status != null && status != DeliveryStatus.all) {
-    //   queryParameters.addAll({'status': status.name});
-    // }
-
-    // return await makeGetRequest(
-    //     client.dio.get(ApiConfig.getTrip, queryParameters: queryParameters),
-    //     Trip.fromJson);
+  Future<dynamic> getTrip() async {
     return await get(
       client.dio.get(
         ApiConfig.getTrip,
-        queryParameters: queryParameters,
       ),
     );
   }

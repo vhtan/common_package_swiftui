@@ -7,7 +7,7 @@ class ApiConfig {
   static const String baseUrl = "http://localhost:8081/app/api/v1";
   static const Duration receiveTimeout = Duration(milliseconds: 5000);
   static const Duration connectionTimeout = Duration(milliseconds: 5000);
-  static const String getTrip = '/trip';
+  static const String getTrip = '/routing/detail';
   static const String createTrip = '/create_trip';
   static const String login = '/user/login';
   static const String logout = '/user/logout';

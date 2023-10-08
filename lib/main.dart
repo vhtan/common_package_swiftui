@@ -1,18 +1,15 @@
+import 'dart:io';
+
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:mvvm_cubit/common/logger/logger.dart';
+import 'package:mvvm_cubit/core/api_config.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/view/auth/login_screen.dart';
 import 'package:mvvm_cubit/view/container/screen/container_screen.dart';
-import 'package:mvvm_cubit/view/manager_role/warning_list/screen/manager_role_warning_list_screen.dart';
-import 'package:mvvm_cubit/viewmodel/add_trip/add_trip_cubit.dart';
-import 'package:mvvm_cubit/viewmodel/auth/auth_cubit.dart';
-import 'package:mvvm_cubit/viewmodel/check_point/check_point_cubit.dart';
-import 'package:mvvm_cubit/viewmodel/container/container_cubit.dart';
-import 'package:mvvm_cubit/viewmodel/main/main_cubit.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/core/app_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:mvvm_cubit/viewmodel/report_sos/report_sos_cubit.dart';
 
 import 'di.dart';
 
@@ -22,11 +19,30 @@ void main() async {
   await Firebase.initializeApp();
   FlutterSecureStorage secureStorage = const FlutterSecureStorage();
   String? loginToken = await secureStorage.read(key: StoreKey.loginToken);
+  ApiConfig.header['Authorization'] = loginToken;
+  final osVersion = await getOSVersion();
+  ApiConfig.header['os-version'] = osVersion;
   runApp(
     MyApp(
       token: loginToken,
     ),
   );
+}
+
+Future<String> getOSVersion() async {
+  DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+  try {
+    if (Platform.isIOS) {
+      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+      return iosInfo.systemVersion;
+    } else if (Platform.isAndroid) {
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      return androidInfo.version.release;
+    }
+  } catch (e) {
+    logger.d('Error getting device info: $e');
+  }
+  return 'unsupport';
 }
 
 class MyApp extends StatelessWidget {
@@ -39,30 +55,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<MainCubit>(create: (context) => di()),
-        BlocProvider<AuthCubit>(create: (context) => di()),
-        BlocProvider<ContainerCubit>(
-          create: (context) => di(),
-        ),
-        BlocProvider<ReportSOSCubit>(
-          create: (context) => di(),
-        ),
-        BlocProvider<CheckPointCubit>(
-          create: (context) => di(),
-        ),
-        BlocProvider<AddTripCubit>(
-          create: (context) => di(),
-        ),
-      ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.lightAppTheme,
-        home: (token == null) ? const LoginScreen() : const ContainerScreen(),
-        // home: const LoginScreen(),
-        // home: const ManagerRoleWrningListScreen(),
-      ),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.lightAppTheme,
+      home: (token == null) ? const LoginScreen() : const ContainerScreen(),
+      // home: const LoginScreen(),
+      // home: const ManagerRoleWrningListScreen(),
     );
   }
 }
