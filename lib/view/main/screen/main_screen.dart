@@ -113,7 +113,8 @@ class _MainScreenState extends State<MainScreen> {
                     if (trip != null) {
                       return Column(
                         children: [
-                          currentTrip(trip),
+                          // currentTrip(trip),
+                          noTrip()
                         ],
                       );
                     } else if (pendTrip != null) {

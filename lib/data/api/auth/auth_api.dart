@@ -1,5 +1,4 @@
 import 'package:mvvm_cubit/common/network/api_helper.dart';
-import 'package:mvvm_cubit/common/network/api_response.dart';
 import 'package:mvvm_cubit/common/network/dio_client.dart';
 import 'package:mvvm_cubit/core/api_config.dart';
 import 'package:mvvm_cubit/data/model/auth/login_response.dart';

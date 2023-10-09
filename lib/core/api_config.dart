@@ -12,7 +12,12 @@ class ApiConfig {
   static const String login = '/user/login';
   static const String logout = '/user/logout';
   static const String currencyList = '/currency/list';
-  static const String uploadImage = 'sos/upload/image';
+  static const String uploadImage = '/sos/upload/image';
+
+  static const String taskPurposeList = '/task-purpose/list';
+  static const String vehicleList = '/vehicle/list';
+  static const String userSearchList = '/user/search';
+
   static String arrivedStopPoint(String id) {
     return 'routing/routing-detail/$id/arrived';
   }
