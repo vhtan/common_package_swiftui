@@ -11,9 +11,22 @@ class CheckPointCubit extends Cubit<GenericCubitState<CheckPointData>> {
       : super(GenericCubitState.loading());
 
   void didCapturePhoto(File? file) {
-    emit(
-      GenericCubitState.success(CheckPointData(file: file)),
-    );
+    if (file == null) {
+      emit(
+        GenericCubitState.success(const CheckPointData(file: null)),
+      );
+      return;
+    }
+    final response = repository.uploadImage(file.path);
+    try {
+      emit(
+        GenericCubitState.success(CheckPointData(file: file)),
+      );
+    } catch (ex) {
+      emit(
+        GenericCubitState.failure(ex.toString()),
+      );
+    }
   }
 }
 

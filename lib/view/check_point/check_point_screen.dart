@@ -1,6 +1,7 @@
 import 'package:camera_camera/camera_camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:material_text_fields/utils/extensions.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/common/widget/image_capture.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
@@ -17,6 +18,42 @@ class CheckPointScreen extends StatefulWidget {
 
 class _CheckPointScreen extends State<CheckPointScreen> {
   CheckPointCubit cubit = CheckPointCubit(repository: di());
+
+  void openCamera(BuildContext context) async {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => Scaffold(
+          body: Stack(
+            children: [
+              CameraCamera(
+                onFile: (file) {
+                  if (file.path.isNotNullOrEmpty()) {
+                    // upload photo here
+                    cubit.didCapturePhoto(file);
+                  } else {
+                    // display error
+                  }
+                  Navigator.pop(context);
+                },
+              ),
+              Positioned(
+                top: 60,
+                left: 16,
+                child: FloatingActionButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  backgroundColor: Theme.of(context).colorScheme.onPrimary,
+                  child: const Icon(Icons.close),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,13 +105,12 @@ class _CheckPointScreen extends State<CheckPointScreen> {
                             ],
                           ),
                           ImageCapture(
-                            title: 'Chụp ảnh xác nhận đến nơi',
-                            imageFile: state.data?.file!,
-                            captureCallback: () => openCamera(context),
-                            deleteCallback: () => context
-                                .read<CheckPointCubit>()
-                                .didCapturePhoto(null),
-                          ),
+                              title: 'Chụp ảnh xác nhận đến nơi',
+                              imageFile: state.data?.file,
+                              captureCallback: () => openCamera(context),
+                              deleteCallback: () => {
+                                    cubit.didCapturePhoto(null),
+                                  }),
                           const SizedBox(height: 20),
                           PrimaryButton(
                             title: 'Gửi',
@@ -92,37 +128,6 @@ class _CheckPointScreen extends State<CheckPointScreen> {
             },
           );
         },
-      ),
-    );
-  }
-
-  void openCamera(BuildContext context) async {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => Scaffold(
-          body: Stack(
-            children: [
-              CameraCamera(
-                onFile: (file) {
-                  context.read<CheckPointCubit>().didCapturePhoto(file);
-                  Navigator.pop(context);
-                },
-              ),
-              Positioned(
-                top: 60,
-                left: 16,
-                child: FloatingActionButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  backgroundColor: Theme.of(context).colorScheme.onPrimary,
-                  child: const Icon(Icons.close),
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
