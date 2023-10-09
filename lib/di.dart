@@ -1,9 +1,11 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mvvm_cubit/data/api/add_trip/add_trip.dart';
 import 'package:mvvm_cubit/data/api/auth/auth_api.dart';
+import 'package:mvvm_cubit/data/api/check_point/check_point_api.dart';
 import 'package:mvvm_cubit/data/api/main/main_api.dart';
 import 'package:mvvm_cubit/repository/add_trip/add_trip_repository.dart';
 import 'package:mvvm_cubit/repository/auth/auth_repository.dart';
+import 'package:mvvm_cubit/repository/check_point/check_point_repository.dart';
 import 'package:mvvm_cubit/repository/main/main_repository.dart';
 import 'package:mvvm_cubit/viewmodel/add_trip/add_trip_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/auth/auth_cubit.dart';
@@ -56,7 +58,7 @@ Future<void> init() async {
     () => ReportSOSCubit(),
   );
   di.registerFactory(
-    () => CheckPointCubit(),
+    () => CheckPointCubit(repository: di()),
   );
 
   di.registerFactory(
@@ -72,5 +74,12 @@ Future<void> init() async {
   );
   di.registerLazySingleton<AddTripRepository>(
     () => AddTripRepository(api: di()),
+  );
+// Register check point Components
+  di.registerLazySingleton<CheckPointApi>(
+    () => CheckPointApi(client: di()),
+  );
+  di.registerLazySingleton<CheckPointRepository>(
+    () => CheckPointRepository(api: di()),
   );
 }

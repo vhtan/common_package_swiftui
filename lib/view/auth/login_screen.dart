@@ -23,6 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _usernameTextController = TextEditingController();
   final TextEditingController _passwordTextController = TextEditingController();
   AuthCubit authCubit = AuthCubit(repository: di());
+
   PreferredSizeWidget get _appBar {
     return AppBar(
       automaticallyImplyLeading: false,
