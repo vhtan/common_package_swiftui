@@ -77,6 +77,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         const SizedBox(height: 40),
                         TextInput(
+                          keyboardType: TextInputType.emailAddress,
                           hint: 'Nhập tên đăng nhập',
                           labelText: 'Tên đăng nhập',
                           icon: const Icon(Icons.person),

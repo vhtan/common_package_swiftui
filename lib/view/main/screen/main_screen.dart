@@ -113,7 +113,6 @@ class _MainScreenState extends State<MainScreen> {
                     if (trip != null) {
                       return Column(
                         children: [
-                          warningStopTooLong(),
                           currentTrip(trip),
                         ],
                       );
