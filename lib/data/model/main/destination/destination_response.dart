@@ -4,16 +4,14 @@ part 'destination_response.g.dart';
 part 'destination_response.freezed.dart';
 
 @freezed
-abstract class StopPointResponse with _$StopPointResponse {
-  const factory StopPointResponse({
+abstract class DestinationResponse with _$DestinationResponse {
+  const factory DestinationResponse({
     String? id,
-    String? detailId,
-    String? createBy,
-    String? stopPointType,
-    String? stopPointAction,
-    String? status,
+    String? address,
+    double? latitude,
+    double? longitude,
   }) = _StopPointResponse;
 
-  factory StopPointResponse.fromJson(Map<String, dynamic> json) =>
-      _$StopPointResponseFromJson(json);
+  factory DestinationResponse.fromJson(Map<String, dynamic> json) =>
+      _$DestinationResponseFromJson(json);
 }

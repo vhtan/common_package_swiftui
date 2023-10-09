@@ -45,7 +45,7 @@ class DioInterceptor extends Interceptor {
     final headers = options.headers;
 
     final headerParams = headers.entries
-        .map((entry) => '-H "${entry.key}: ${entry.value}"')
+        .map((entry) => '-H "${entry.key}: ${entry.value}" ')
         .join(' ');
     String data = '';
     try {

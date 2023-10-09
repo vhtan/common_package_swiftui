@@ -6,7 +6,10 @@ part 'trip_response.freezed.dart';
 
 @freezed
 abstract class TripResponse with _$TripResponse {
-  const factory TripResponse({
+  factory TripResponse({
+    String? id,
+    int? routeId,
+    int? startTime,
     String? transportType,
     String? createBy,
     String? routeStatus,

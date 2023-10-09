@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:mvvm_cubit/common/widget/empty_widget.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/data/model/main/stop_point/stop_point_response.dart';
 
-class DutyContainer extends StatelessWidget {
-  const DutyContainer({
+class StopPointContainer extends StatelessWidget {
+  const StopPointContainer({
     Key? key,
     required this.stopPoint,
     required this.onPressed,
@@ -26,10 +25,10 @@ class DutyContainer extends StatelessWidget {
     //   return const EmptyWidget(message: 'message');
     // }
 
-    return renderPickUpDuty(stopPoint);
+    return renderStopPoint(stopPoint);
   }
 
-  Widget renderPickUpDuty(StopPointResponse stopPoint) {
+  Widget renderStopPoint(StopPointResponse stopPoint) {
     return Column(
       children: [
         Padding(
@@ -38,9 +37,12 @@ class DutyContainer extends StatelessWidget {
             children: [
               const Icon(Icons.map),
               const SizedBox(width: 10),
-              Text(
-                stopPoint.stopPointType ?? '',
-                style: textDefault,
+              Expanded(
+                child: Text(
+                  stopPoint.destination?.address ?? '',
+                  style: textDefault,
+                  maxLines: 2,
+                ),
               ),
             ],
           ),
@@ -63,7 +65,7 @@ class DutyContainer extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(left: 20, right: 20),
           child: PrimaryButton(
-            title: stopPoint.stopPointAction ?? '',
+            title: 'Đến nói',
             buttonHeight: 50,
             onPressed: onPressed,
           ),

@@ -2,9 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
+import 'package:mvvm_cubit/core/api_config.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
-import 'package:mvvm_cubit/core/app_string.dart';
-import 'package:mvvm_cubit/data/model/auth/login_response.dart';
 import 'package:mvvm_cubit/data/request/auth/login_request.dart';
 import 'package:mvvm_cubit/di.dart';
 import 'package:mvvm_cubit/repository/auth/auth_repository.dart';
@@ -20,12 +19,10 @@ class AuthCubit extends Cubit<GenericCubitState<AuthState>> {
       emit(
         GenericCubitState.loading(),
       );
-      final response = await repository.api.login(request);
-      if (response != null) {
-        final user = LoginResponse.fromJson(response);
-        if (user.session != null) {
-          _saveLoginToken(user.session!);
-        }
+      final loginResponse = await repository.api.login(request);
+      if (loginResponse.session != null) {
+        _saveLoginToken(loginResponse.session!);
+        ApiConfig.header['Authorization'] = loginResponse.session;
         emit(
           GenericCubitState.success(null),
         );

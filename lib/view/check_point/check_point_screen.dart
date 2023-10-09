@@ -14,6 +14,8 @@ class CheckPointScreen extends StatefulWidget {
 }
 
 class _CheckPointScreen extends State<CheckPointScreen> {
+  CheckPointCubit authCubit = CheckPointCubit();
+
   @override
   Widget build(BuildContext context) {
     return Material(

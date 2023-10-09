@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/data/model/main/stop_point/stop_point_response.dart';
-import 'package:mvvm_cubit/view/main/widget/duty_container.dart';
-import 'package:mvvm_cubit/view/main/widget/duty_info_widget.dart';
+import 'package:mvvm_cubit/data/model/main/trip/trip_response.dart';
+import 'package:mvvm_cubit/view/main/widget/stop_point_container.dart';
+import 'package:mvvm_cubit/view/main/widget/trip_info_widget.dart';
 
 class TripContainer extends StatefulWidget {
   const TripContainer({
     super.key,
-    required this.itineraries,
+    required this.trip,
     required this.onPressed,
   });
 
-  final List<StopPointResponse> itineraries;
+  final TripResponse trip;
   final VoidCallback onPressed;
 
   @override
@@ -19,13 +21,13 @@ class TripContainer extends StatefulWidget {
 }
 
 class _TripContainer extends State<TripContainer> {
-  List<StopPointResponse> _itineraries = [];
+  TripResponse? _trip;
   VoidCallback _onPressed = () {};
 
   @override
   void initState() {
     super.initState();
-    _itineraries = widget.itineraries;
+    _trip = widget.trip;
     _onPressed = widget.onPressed;
   }
 
@@ -33,7 +35,11 @@ class _TripContainer extends State<TripContainer> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(children: [
-        const TripInfo(),
+        TripInfo(
+          tripCode: (_trip?.routeId)!,
+          createBy: (_trip?.createBy)!,
+          startDate: (_trip?.startTime?.date)!,
+        ),
         _buildPanel(),
       ]),
     );
@@ -42,7 +48,7 @@ class _TripContainer extends State<TripContainer> {
   Widget _buildPanel() {
     return ExpansionPanelList.radio(
       initialOpenPanelValue: 0,
-      children: _itineraries.map<ExpansionPanelRadio>(
+      children: (_trip?.routingDetails)!.map<ExpansionPanelRadio>(
         (StopPointResponse item) {
           return ExpansionPanelRadio(
             value: item.id,
@@ -52,7 +58,7 @@ class _TripContainer extends State<TripContainer> {
                 style: headLine2,
               ),
             ),
-            body: DutyContainer(
+            body: StopPointContainer(
               stopPoint: item,
               onPressed: _onPressed,
             ),

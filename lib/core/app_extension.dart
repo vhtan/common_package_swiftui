@@ -84,7 +84,7 @@ extension AppColors on Color {
 }
 
 extension DateTimeFormatCustom on DateTime {
-  String toStringFormat({String format = 'yyyy-MM-dd – kk:mm'}) {
+  String toStringFormat({String format = 'kk:mm, dd-MM-yyyy'}) {
     return DateFormat(format).format(this);
   }
 }
@@ -102,6 +102,10 @@ extension ObjectToJsonExtension on Object? {
     final jsonString = json.encode(this);
     return jsonString;
   }
+}
+
+extension IntToDateTime on int {
+  DateTime get date => DateTime.fromMillisecondsSinceEpoch(this);
 }
 
 // import 'package:flutter/material.dart';

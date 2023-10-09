@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
-import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/data/model/main/trip.dart';
 import 'package:mvvm_cubit/repository/main/main_repository.dart';
 import 'package:mvvm_cubit/viewmodel/main/main_state.dart';
@@ -16,12 +15,10 @@ class MainCubit extends GenericCubit<MainState> {
       emit(
         GenericCubitState.loading(),
       );
-      logger.d('getTrip1');
-      final response = await repository.api.getTrip();
-      logger.d('getTrip2');
-      if (response != null) {
+      final trip = await repository.api.getTrip();
+      if (trip != null) {
         emit(
-          GenericCubitState.success(null),
+          GenericCubitState.success(MainState(trip: trip)),
         );
       } else {
         emit(
@@ -29,7 +26,6 @@ class MainCubit extends GenericCubit<MainState> {
         );
       }
     } on DioException catch (e) {
-      print(e.message);
       emit(
         GenericCubitState.failure(e.message ?? 'Error'),
       );
@@ -41,9 +37,7 @@ class MainCubit extends GenericCubit<MainState> {
       emit(
         GenericCubitState.loading(),
       );
-      logger.d('getTrip1');
       final response = await repository.api.getCurrencyList();
-      logger.d('getTrip2');
       if (response != null) {
         emit(
           GenericCubitState.success(null),
@@ -54,7 +48,6 @@ class MainCubit extends GenericCubit<MainState> {
         );
       }
     } on DioException catch (e) {
-      print(e.message);
       emit(
         GenericCubitState.failure(e.message ?? 'Error'),
       );

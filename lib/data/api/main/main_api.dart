@@ -1,23 +1,26 @@
+import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/network/api_helper.dart';
 import 'package:mvvm_cubit/common/network/dio_client.dart';
 import 'package:mvvm_cubit/core/api_config.dart';
 import 'package:mvvm_cubit/data/model/main/trip.dart';
+import 'package:mvvm_cubit/data/model/main/trip/trip_response.dart';
 
 class MainApi with ApiHelper<Trip> {
   final DioClient client;
 
   MainApi({required this.client});
 
-  Future<dynamic> getTrip() async {
-    return await get(
+  Future<TripResponse?> getTrip() async {
+    final apiResponse = await makeGetRequest(
       client.dio.get(
         ApiConfig.getTrip,
       ),
     );
+    return TripResponse.fromJson(apiResponse.detail);
   }
 
   Future<dynamic> getCurrencyList() async {
-    return await get(
+    return await makeGetRequest(
       client.dio.get(
         ApiConfig.currencyList,
       ),

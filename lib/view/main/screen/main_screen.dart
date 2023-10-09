@@ -9,8 +9,8 @@ import 'package:mvvm_cubit/common/widget/spinkit_indicator.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_string.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
-import 'package:mvvm_cubit/data/model/main/stop_point/stop_point_response.dart';
 import 'package:mvvm_cubit/data/model/main/trip.dart';
+import 'package:mvvm_cubit/data/model/main/trip/trip_response.dart';
 import 'package:mvvm_cubit/di.dart';
 import 'package:mvvm_cubit/view/add_trip/add_trip_screen.dart';
 import 'package:mvvm_cubit/view/check_point/check_point_screen.dart';
@@ -34,42 +34,6 @@ class _MainScreenState extends State<MainScreen> {
   PermissionStatus? _permissionGranted;
   LocationData? _locationData;
   final cubit = MainCubit(repository: di());
-
-  final List<StopPointResponse> _itineraries = [
-    StopPointResponse(id: ''),
-    // PickUpDuty(
-    //   id: 1,
-    //   title: 'Đón áp tải',
-    //   buttonTitle: 'Đến nơi',
-    //   name: 'Nguyễn Văn Thắng',
-    //   address: '123 Nguyên Công Trứ, P1, Quận 10',
-    //   phone: '0987654321',
-    // ),
-    // PickUpDuty(
-    //   id: 2,
-    //   title: 'Đón bảo vệ',
-    //   buttonTitle: 'Đến nơi',
-    //   name: 'Nguyễn Văn Thắng',
-    //   address: '123 Nguyên Công Trứ, P1, Quận 10',
-    //   phone: '0987654321',
-    // ),
-    // DeliveryDuty(
-    //   id: 3,
-    //   title: 'Xử lý phiếu yêu cầu',
-    //   buttonTitle: 'Hoàn thành',
-    //   requestFormId: 'PYC: 78909',
-    //   totalAmount: 'Tổng tiền: 3 tỷ',
-    //   type: 'Loại: tiếp quỹ',
-    // ),
-    // DeliveryDuty(
-    //   id: 4,
-    //   title: 'Xử lý phiếu yêu cầu',
-    //   buttonTitle: 'Hoàn thành',
-    //   requestFormId: 'PYC: 22909',
-    //   totalAmount: 'Tổng tiền: 4 tỷ',
-    //   type: 'Loại: trả quỷ',
-    // ),
-  ];
 
   @override
   void initState() {
@@ -150,7 +114,7 @@ class _MainScreenState extends State<MainScreen> {
                       return Column(
                         children: [
                           warningStopTooLong(),
-                          currentTrip(),
+                          currentTrip(trip),
                         ],
                       );
                     } else if (pendTrip != null) {
@@ -199,11 +163,7 @@ extension _MainScreenDeliveryList on _MainScreenState {
           PrimaryButton(
             title: 'Kiểm tra lộ trình',
             buttonHeight: 50,
-            onPressed: () => showDialog(
-              context: context,
-              builder: (context) => const AddTripScreen(),
-              barrierDismissible: false,
-            ),
+            onPressed: () => cubit.getTrip(),
           ),
           const SizedBox(height: 20),
           PrimaryButton(
@@ -237,9 +197,9 @@ extension _MainScreenDeliveryList on _MainScreenState {
     );
   }
 
-  Widget currentTrip() {
+  Widget currentTrip(TripResponse trip) {
     return TripContainer(
-      itineraries: _itineraries,
+      trip: trip,
       onPressed: () => showDialog(
         context: context,
         builder: (context) => const CheckPointScreen(),

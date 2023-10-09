@@ -1,60 +1,67 @@
 import 'package:flutter/material.dart';
+import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
 
 class TripInfo extends StatelessWidget {
+  final int tripCode;
+  final DateTime startDate;
+  final String createBy;
   const TripInfo({
     Key? key,
+    required this.tripCode,
+    required this.startDate,
+    required this.createBy,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.all(10),
+    return Padding(
+      padding: const EdgeInsets.all(10),
       child: Column(
         children: [
           Row(
             children: [
-              Text(
+              const Text(
                 'Mã lộ trình:',
                 style: textDefault,
               ),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               Text(
-                'LT4019',
+                '$tripCode',
                 style: textDefault,
               ),
             ],
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Row(
             children: [
-              Text(
+              const Text(
                 'Thời gian bắt đầu:',
                 style: textDefault,
               ),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               Text(
-                '10:20, 10/09/2023',
+                startDate.toStringFormat(),
                 style: textDefault,
               ),
             ],
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Row(
             children: [
-              Text(
-                'Dự kiến hoàn thành:',
+              const Text(
+                'Tạo bởi:',
                 style: textDefault,
               ),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               Text(
-                '15:20, 10/09/2023',
+                createBy,
                 style: textDefault,
               ),
             ],
           ),
-          SizedBox(height: 10),
-          Row(
+          const SizedBox(height: 10),
+          const Row(
             children: [
               Text(
                 'Chi tiết lộ trình',
