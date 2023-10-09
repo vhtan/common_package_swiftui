@@ -1,9 +1,11 @@
+import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/network/api_helper.dart';
 import 'package:mvvm_cubit/common/network/dio_client.dart';
 import 'package:mvvm_cubit/core/api_config.dart';
 import 'package:mvvm_cubit/data/model/add_trip/add_trip_response.dart';
+import 'package:mvvm_cubit/data/model/purpose/purpose_response.dart';
+import 'package:mvvm_cubit/data/model/purpose/purpose_response_list.dart';
 import 'package:mvvm_cubit/data/request/add_trip/add_trip_request.dart';
-import 'package:mvvm_cubit/data/request/task_purpose/task_purpose_request.dart';
 
 class AddTripApi with ApiHelper<AddTripResponse> {
   final DioClient client;
@@ -19,18 +21,26 @@ class AddTripApi with ApiHelper<AddTripResponse> {
     );
   }
 
-  Future<dynamic> taskPurposeList() async {
-    return await makeGetRequest(
-      client.dio.post(ApiConfig.taskPurposeList),
+  Future<List<PurposeResponse>> taskPurposeList() async {
+    final apiResponse = await makeGetRequest(
+      client.dio.get(ApiConfig.taskPurposeList),
     );
+    List<PurposeResponse> purposes =
+        parsePurposeResponseList(apiResponse.detail);
+
+    return purposes;
   }
 
-  Future<dynamic> userSearchList(TaskPurposeRequest request) async {
-    return await makeGetRequest(
-      client.dio.post(
+  Future<dynamic> userSearchList() async {
+    final queryParameters = {
+      'roles': 'LXE,BVE',
+    };
+    final apiResponse = await makeGetRequest(
+      client.dio.get(
         ApiConfig.userSearchList,
-        data: request,
+        queryParameters: queryParameters,
       ),
     );
+    logger.d(apiResponse);
   }
 }

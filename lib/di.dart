@@ -1,5 +1,5 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:mvvm_cubit/data/api/add_trip/add_trip.dart';
+import 'package:mvvm_cubit/data/api/add_trip/add_trip_api.dart';
 import 'package:mvvm_cubit/data/api/auth/auth_api.dart';
 import 'package:mvvm_cubit/data/api/check_point/check_point_api.dart';
 import 'package:mvvm_cubit/data/api/main/main_api.dart';

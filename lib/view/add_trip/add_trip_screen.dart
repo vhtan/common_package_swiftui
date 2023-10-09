@@ -28,7 +28,7 @@ class _AddTripScreen extends State<AddTripScreen> {
   @override
   void initState() {
     super.initState();
-    cubit.getReasonList();
+    cubit.taskPurposeList();
     cubit.getVehicleTypeList();
     cubit.getGuardGuyList();
     _amountController.addListener(

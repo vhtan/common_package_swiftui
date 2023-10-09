@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/repository/add_trip/add_trip_repository.dart';
@@ -8,21 +9,12 @@ class AddTripCubit extends GenericCubit<AddTripState> {
 
   AddTripCubit({required this.repository});
 
-  Future<void> getReasonList() async {
-    final reasons = ['Mục đích', 'Đổ xăng', 'Sửa xe', 'Mục đích khác'];
-    if (state.data == null) {
+  Future<void> taskPurposeList() async {
+    try {
+      final list = repository.api.taskPurposeList();
+    } on DioException catch (e) {
       emit(
-        GenericCubitState.success(
-          AddTripState(reasons: reasons),
-        ),
-      );
-    } else {
-      emit(
-        GenericCubitState.success(
-          state.data?.copyWith(
-            reasons: reasons,
-          ),
-        ),
+        GenericCubitState.failure(e.message ?? 'Error'),
       );
     }
   }
@@ -47,20 +39,11 @@ class AddTripCubit extends GenericCubit<AddTripState> {
   }
 
   Future<void> getGuardGuyList() async {
-    final guardGuys = ['Bảo vệ', 'For', 'Toyota', 'Chevrolet'];
-    if (state.data == null) {
+    try {
+      final list = repository.api.userSearchList();
+    } on DioException catch (e) {
       emit(
-        GenericCubitState.success(
-          AddTripState(guardGuys: guardGuys),
-        ),
-      );
-    } else {
-      emit(
-        GenericCubitState.success(
-          state.data?.copyWith(
-            guardGuys: guardGuys,
-          ),
-        ),
+        GenericCubitState.failure(e.message ?? 'Error'),
       );
     }
   }
