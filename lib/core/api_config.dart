@@ -18,6 +18,7 @@ class ApiConfig {
   static const String vehicleList = '/vehicle/list';
   static const String userSearchList = '/user/search';
 
+  static const String uploadImage = '/sos/upload/image';
   static String arrivedStopPoint(String id) {
     return 'routing/routing-detail/$id/arrived';
   }

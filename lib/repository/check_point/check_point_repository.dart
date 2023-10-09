@@ -6,7 +6,7 @@ class CheckPointRepository with RepositoryHelper<dynamic> {
 
   const CheckPointRepository({required this.api});
 
-  Future<dynamic> uploadImage() async {
-    return api.uploadImage('path');
+  Future<dynamic> uploadImage(String path) async {
+    return api.uploadImage(path);
   }
 }

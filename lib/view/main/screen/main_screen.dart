@@ -111,12 +111,16 @@ class _MainScreenState extends State<MainScreen> {
                     var trip = state.data?.trip;
                     var pendTrip = state.data?.pendingTrip;
                     if (trip != null) {
+<<<<<<< HEAD
                       return Column(
                         children: [
                           // currentTrip(trip),
                           noTrip()
                         ],
                       );
+=======
+                      return currentTrip(trip);
+>>>>>>> ba351825fa9231f351250c9d94a92f9356ee68d8
                     } else if (pendTrip != null) {
                       return pendingTrip();
                     } else {

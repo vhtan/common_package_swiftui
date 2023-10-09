@@ -11,11 +11,13 @@ class CheckPointApi with ApiHelper<dynamic> {
 
   Future<String?> uploadImage(String path) async {
     try {
+      logger.e('uploadImage path= $path');
       FormData formData = FormData.fromMap({
         'image': await MultipartFile.fromFile(path, filename: 'image.jpg'),
       });
+      client.dio.options.headers['Content-Type'] = 'multipart/form-data';
       final apiResponse = await makePostRequest(
-        client.dio.post(ApiConfig.uploadImage, data: formData),
+        client.dio.get(ApiConfig.uploadImage, data: formData),
       );
       return apiResponse.detail['imgUrl'];
     } on Error catch (e) {
