@@ -16,110 +16,113 @@ class ReportSOSScreen extends StatefulWidget {
 }
 
 class _ReportSOSScreen extends State<ReportSOSScreen> {
+  final cubit = ReportSOSCubit();
+
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        alignment: Alignment.center,
-        child: IntrinsicHeight(
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              color: Colors.white,
-            ),
-            padding:
-                const EdgeInsets.only(left: 20, right: 20, bottom: 20, top: 10),
-            child: BlocConsumer<ReportSOSCubit, ReportSOSData>(
-              listener: (context, state) {},
-              builder: (context, state) {
-                return BlocBuilder<ReportSOSCubit, ReportSOSData>(
-                  builder: (context, state) {
-                    return Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Stack(
-                          alignment: AlignmentDirectional.center,
-                          children: [
-                            const Align(
-                              alignment: Alignment.center,
-                              child: Text(
-                                'Báo cáo sự cố',
-                                style: headLine1,
+    return BlocProvider(
+      create: (context) => cubit,
+      child: BlocConsumer<ReportSOSCubit, ReportSOSData>(
+        listener: (context, state) {},
+        builder: (context, state) {
+          return BlocBuilder<ReportSOSCubit, ReportSOSData>(
+            builder: (context, state) {
+              return Material(
+                color: Colors.transparent,
+                child: Container(
+                  padding: const EdgeInsets.all(20),
+                  alignment: Alignment.center,
+                  child: IntrinsicHeight(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        color: Colors.white,
+                      ),
+                      padding: const EdgeInsets.only(
+                          left: 20, right: 20, bottom: 20, top: 10),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Stack(
+                            alignment: AlignmentDirectional.center,
+                            children: [
+                              const Align(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  'Báo cáo sự cố',
+                                  style: headLine1,
+                                ),
                               ),
-                            ),
-                            Align(
-                              alignment: Alignment.topRight,
-                              child: IconButton(
-                                color: Colors.black,
-                                icon: const Icon(Icons.close),
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
+                              Align(
+                                alignment: Alignment.topRight,
+                                child: IconButton(
+                                  color: Colors.black,
+                                  icon: const Icon(Icons.close),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 20),
-                        DropDown<String>(
-                          items: const [
-                            'Xe hư',
-                            'Hết xăng',
-                            'Thủng lốp',
-                            'Sự cố khác'
-                          ],
-                          onChanged: (value) {},
-                        ),
-                        const SizedBox(height: 20),
-                        // if (state.file != null)
-                        //   AspectRatio(
-                        //     aspectRatio: 16 / 9,
-                        //     child: Container(
-                        //       clipBehavior: Clip.antiAlias,
-                        //       decoration: const BoxDecoration(
-                        //         borderRadius:
-                        //             BorderRadius.all(Radius.circular(8)),
-                        //       ),
-                        //       child: Image.file(
-                        //         state.file!,
-                        //         fit: BoxFit.fitWidth,
-                        //       ),
-                        //     ),
-                        //   ),
-                        // if (state.file != null) const SizedBox(height: 20),
-                        ImageCapture(
-                          title: 'Chụp ảnh sự cố',
-                          imageFile: state.file,
-                          captureCallback: () => openCamera(context),
-                          deleteCallback: () => context
-                              .read<ReportSOSCubit>()
-                              .didCapturePhoto(null),
-                        ),
-                        const SizedBox(height: 20),
-                        const TextInput(
-                          hint: 'Nhập mô tả sự cố',
-                          labelText: 'Mô tả sự cố',
-                          maxLines: 6, // and this
-                          keyboardType: TextInputType.multiline,
-                        ),
-                        const SizedBox(height: 20),
-                        PrimaryButton(
-                          title: 'Gửi',
-                          buttonHeight: 50,
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                        )
-                      ],
-                    );
-                  },
-                );
-              },
-            ),
-          ),
-        ),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
+                          DropDown<String>(
+                            items: const [
+                              'Xe hư',
+                              'Hết xăng',
+                              'Thủng lốp',
+                              'Sự cố khác'
+                            ],
+                            onChanged: (value) {},
+                          ),
+                          const SizedBox(height: 20),
+                          // if (state.file != null)
+                          //   AspectRatio(
+                          //     aspectRatio: 16 / 9,
+                          //     child: Container(
+                          //       clipBehavior: Clip.antiAlias,
+                          //       decoration: const BoxDecoration(
+                          //         borderRadius:
+                          //             BorderRadius.all(Radius.circular(8)),
+                          //       ),
+                          //       child: Image.file(
+                          //         state.file!,
+                          //         fit: BoxFit.fitWidth,
+                          //       ),
+                          //     ),
+                          //   ),
+                          // if (state.file != null) const SizedBox(height: 20),
+                          ImageCapture(
+                            title: 'Chụp ảnh sự cố',
+                            imageFile: state.file,
+                            captureCallback: () => openCamera(context),
+                            deleteCallback: () => cubit.didCapturePhoto(null),
+                          ),
+                          const SizedBox(height: 20),
+                          const TextInput(
+                            hint: 'Nhập mô tả sự cố',
+                            labelText: 'Mô tả sự cố',
+                            maxLines: 6, // and this
+                            keyboardType: TextInputType.multiline,
+                          ),
+                          const SizedBox(height: 20),
+                          PrimaryButton(
+                            title: 'Gửi',
+                            buttonHeight: 50,
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          );
+        },
       ),
     );
   }
@@ -133,7 +136,7 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
             children: [
               CameraCamera(
                 onFile: (file) {
-                  context.read<ReportSOSCubit>().didCapturePhoto(file);
+                  cubit.didCapturePhoto(file);
                   Navigator.pop(context);
                 },
               ),
