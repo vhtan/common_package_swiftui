@@ -4,8 +4,10 @@ import 'package:mvvm_cubit/common/network/dio_client.dart';
 import 'package:mvvm_cubit/core/api_config.dart';
 import 'package:mvvm_cubit/data/model/add_trip/add_trip_response.dart';
 import 'package:mvvm_cubit/data/model/purpose/purpose_response.dart';
-import 'package:mvvm_cubit/data/model/purpose/purpose_response_list.dart';
+import 'package:mvvm_cubit/data/model/user_role/user_role_response.dart';
+import 'package:mvvm_cubit/data/model/vehicle/vehicle_response.dart';
 import 'package:mvvm_cubit/data/request/add_trip/add_trip_request.dart';
+import 'package:mvvm_cubit/data/request/add_trip/user_type.dart';
 
 class AddTripApi with ApiHelper<AddTripResponse> {
   final DioClient client;
@@ -25,15 +27,22 @@ class AddTripApi with ApiHelper<AddTripResponse> {
     final apiResponse = await makeGetRequest(
       client.dio.get(ApiConfig.taskPurposeList),
     );
-    List<PurposeResponse> purposes =
-        parsePurposeResponseList(apiResponse.detail);
-
+    final purposes = parsePurposeResponseList(apiResponse.detail);
     return purposes;
   }
 
-  Future<dynamic> userSearchList() async {
+  Future<List<VehicleResponse>> vehicleList() async {
+    final apiResponse = await makeGetRequest(
+      client.dio.get(ApiConfig.vehicleList),
+    );
+    final list = parseVehicleResponseList(apiResponse.detail);
+    logger.d('vehicleList $list');
+    return list;
+  }
+
+  Future<List<UserRoleResponse>> userSearchList(List<RoleType> roles) async {
     final queryParameters = {
-      'roles': 'LXE,BVE',
+      'roles': roles.map((e) => e.roleTypeToString()).join(','),
     };
     final apiResponse = await makeGetRequest(
       client.dio.get(
@@ -41,6 +50,7 @@ class AddTripApi with ApiHelper<AddTripResponse> {
         queryParameters: queryParameters,
       ),
     );
-    logger.d(apiResponse);
+    final userRoles = userRoleResponseList(apiResponse.detail);
+    return userRoles;
   }
 }
