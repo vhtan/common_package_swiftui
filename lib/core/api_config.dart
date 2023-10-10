@@ -12,7 +12,7 @@ class ApiConfig {
   static const String login = '/user/login';
   static const String logout = '/user/logout';
   static const String currencyList = '/currency/list';
-  static const String uploadImage = '/sos/upload/image';
+  static const String uploadImage = '/sos/image/upload';
 
   static const String taskPurposeList = '/task-purpose/list';
   static const String vehicleList = '/vehicle/list';

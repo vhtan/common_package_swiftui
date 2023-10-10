@@ -44,7 +44,7 @@ class _CheckPointScreen extends State<CheckPointScreen> {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  backgroundColor: Theme.of(context).colorScheme.onPrimary,
+                  backgroundColor: Colors.black45,
                   child: const Icon(Icons.close),
                 ),
               ),

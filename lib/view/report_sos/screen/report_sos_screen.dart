@@ -1,11 +1,14 @@
 import 'package:camera_camera/camera_camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:material_text_fields/utils/extensions.dart';
+import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/common/widget/drop_down.dart';
 import 'package:mvvm_cubit/common/widget/image_capture.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/common/widget/text_input.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
+import 'package:mvvm_cubit/di.dart';
 import 'package:mvvm_cubit/viewmodel/report_sos/report_sos_cubit.dart';
 
 class ReportSOSScreen extends StatefulWidget {
@@ -16,16 +19,16 @@ class ReportSOSScreen extends StatefulWidget {
 }
 
 class _ReportSOSScreen extends State<ReportSOSScreen> {
-  final cubit = ReportSOSCubit();
+  final cubit = ReportSOSCubit(repository: di());
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => cubit,
-      child: BlocConsumer<ReportSOSCubit, ReportSOSData>(
+      child: BlocConsumer<ReportSOSCubit, GenericCubitState>(
         listener: (context, state) {},
         builder: (context, state) {
-          return BlocBuilder<ReportSOSCubit, ReportSOSData>(
+          return BlocBuilder<ReportSOSCubit, GenericCubitState<ReportSOSData>>(
             builder: (context, state) {
               return Material(
                 color: Colors.transparent,
@@ -95,9 +98,10 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
                           // if (state.file != null) const SizedBox(height: 20),
                           ImageCapture(
                             title: 'Chụp ảnh sự cố',
-                            imageFile: state.file,
+                            imageFile: state.data?.file,
                             captureCallback: () => openCamera(context),
-                            deleteCallback: () => cubit.didCapturePhoto(null),
+                            deleteCallback: () =>
+                                cubit.didCapturePhoto(null, ''),
                           ),
                           const SizedBox(height: 20),
                           const TextInput(
@@ -136,7 +140,12 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
             children: [
               CameraCamera(
                 onFile: (file) {
-                  cubit.didCapturePhoto(file);
+                  if (file.path.isNotNullOrEmpty()) {
+                    // upload photo here
+                    cubit.didCapturePhoto(file, '');
+                  } else {
+                    // display error
+                  }
                   Navigator.pop(context);
                 },
               ),
@@ -147,7 +156,7 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  backgroundColor: Theme.of(context).colorScheme.onPrimary,
+                  backgroundColor: Colors.black45,
                   child: const Icon(Icons.close),
                 ),
               ),

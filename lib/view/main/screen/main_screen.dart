@@ -111,7 +111,7 @@ class _MainScreenState extends State<MainScreen> {
                     var trip = state.data?.trip;
                     var pendTrip = state.data?.pendingTrip;
                     if (trip != null) {
-                      return noTrip();
+                      return currentTrip(trip);
                     } else if (pendTrip != null) {
                       return pendingTrip();
                     } else {
