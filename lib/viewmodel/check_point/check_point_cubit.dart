@@ -10,14 +10,14 @@ class CheckPointCubit extends Cubit<GenericCubitState<CheckPointData>> {
   CheckPointCubit({required this.repository})
       : super(GenericCubitState.loading());
 
-  void didCapturePhoto(File? file) {
+  void didCapturePhoto(File? file) async {
     if (file == null) {
       emit(
         GenericCubitState.success(const CheckPointData(file: null)),
       );
       return;
     }
-    final response = repository.uploadImage(file.path);
+    final response = await repository.uploadImage(file.path);
     try {
       emit(
         GenericCubitState.success(CheckPointData(file: file)),

@@ -11,10 +11,9 @@ mixin UploadImageExt {
       DioClient client, String path, ApiHelper<dynamic> apiHelper) async {
     try {
       logger.e('uploadImage path= $path');
-      FormData formData = FormData.fromMap({
-        'image': await MultipartFile.fromFile(path, filename: 'image.jpg'),
+      var formData = FormData.fromMap({
+        'image': await MultipartFile.fromFile(path, filename: ''),
       });
-      client.dio.options.headers['Content-Type'] = 'multipart/form-data';
       final apiResponse = await apiHelper.makePostRequest(
         client.dio.post(ApiConfig.uploadImage, data: formData),
       );
