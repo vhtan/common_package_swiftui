@@ -15,16 +15,10 @@ class MainCubit extends GenericCubit<MainState> {
       emit(
         GenericCubitState.loading(),
       );
-      final trip = await repository.api.getTrip();
-      if (trip != null) {
-        emit(
-          GenericCubitState.success(MainState(trip: trip)),
-        );
-      } else {
-        emit(
-          GenericCubitState.failure("Error"),
-        );
-      }
+      final trip = await repository.getTrip();
+      emit(
+        GenericCubitState.success(MainState(trip: trip)),
+      );
     } on DioException catch (e) {
       emit(
         GenericCubitState.failure(e.message ?? 'Error'),
@@ -32,21 +26,17 @@ class MainCubit extends GenericCubit<MainState> {
     }
   }
 
-  Future<void> getCurrencyList() async {
+  Future<void> getTempFormDetails() async {
     try {
       emit(
         GenericCubitState.loading(),
       );
-      final response = await repository.api.getCurrencyList();
-      if (response != null) {
-        emit(
-          GenericCubitState.success(null),
-        );
-      } else {
-        emit(
-          GenericCubitState.failure("Error"),
-        );
-      }
+      final tempForm = await repository.getTempFormDetails();
+      emit(
+        GenericCubitState.success(
+          MainState(tempForm: tempForm),
+        ),
+      );
     } on DioException catch (e) {
       emit(
         GenericCubitState.failure(e.message ?? 'Error'),
@@ -54,15 +44,25 @@ class MainCubit extends GenericCubit<MainState> {
     }
   }
 
-  void addNewTrip(Trip trip) {
-    emit(GenericCubitState.success(MainState(pendingTrip: trip, trip: null)));
-  }
-
   void deleteNewTrip() {
-    emit(GenericCubitState.success(MainState(pendingTrip: null, trip: null)));
+    emit(
+      GenericCubitState.success(
+        MainState(
+          tempForm: null,
+          trip: null,
+        ),
+      ),
+    );
   }
 
   void editNewTrip() {
-    emit(GenericCubitState.success(MainState(pendingTrip: null, trip: null)));
+    emit(
+      GenericCubitState.success(
+        MainState(
+          tempForm: null,
+          trip: null,
+        ),
+      ),
+    );
   }
 }

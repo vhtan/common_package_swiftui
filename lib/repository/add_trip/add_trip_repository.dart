@@ -1,6 +1,7 @@
 import 'package:mvvm_cubit/common/repository/repository_helper.dart';
 import 'package:mvvm_cubit/data/api/add_trip/add_trip_api.dart';
 import 'package:mvvm_cubit/data/model/main/trip.dart';
+import 'package:mvvm_cubit/data/model/map_location/map_location_response.dart';
 import 'package:mvvm_cubit/data/model/purpose/purpose_response.dart';
 import 'package:mvvm_cubit/data/model/user_role/user_role_response.dart';
 import 'package:mvvm_cubit/data/model/vehicle/vehicle_response.dart';
@@ -12,7 +13,7 @@ class AddTripRepository with RepositoryHelper<Trip> {
 
   const AddTripRepository({required AddTripApi api}) : _api = api;
 
-  Future<dynamic> getListDelivery(AddTripRequest request) async {
+  Future<String> createTrip(AddTripRequest request) async {
     return _api.createTrip(request);
   }
 
@@ -34,5 +35,13 @@ class AddTripRepository with RepositoryHelper<Trip> {
     return _api.userSearchList(
       [RoleType.guard],
     );
+  }
+
+  Future<MapLocationResponse> getMapLocation(String refId) async {
+    return _api.getMapLocation(refId);
+  }
+
+  Future<List<String>> getCurrencyList() async {
+    return _api.getCurrencyList();
   }
 }

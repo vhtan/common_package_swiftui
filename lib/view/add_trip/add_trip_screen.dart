@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart';
@@ -11,6 +12,9 @@ import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/common/widget/text_input.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
+import 'package:mvvm_cubit/data/model/purpose/purpose_response.dart';
+import 'package:mvvm_cubit/data/model/user_role/user_role_response.dart';
+import 'package:mvvm_cubit/data/model/vehicle/vehicle_response.dart';
 import 'package:mvvm_cubit/di.dart';
 import 'package:mvvm_cubit/viewmodel/add_trip/add_trip_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/add_trip/add_trip_state.dart';
@@ -18,8 +22,11 @@ import 'package:mvvm_cubit/viewmodel/main/main_cubit.dart';
 import 'package:search_choices/search_choices.dart';
 
 class AddTripScreen extends StatefulWidget {
+  final VoidCallback didAddTrip;
+
   const AddTripScreen({
     Key? key,
+    required this.didAddTrip,
   }) : super(key: key);
 
   @override
@@ -27,8 +34,6 @@ class AddTripScreen extends StatefulWidget {
 }
 
 class _AddTripScreen extends State<AddTripScreen> {
-  final TextEditingController _amountController = TextEditingController();
-  final NumberFormat _numberFormat = NumberFormat('#,###');
   final addTripCubit = AddTripCubit(repository: di());
   final mainCubit = MainCubit(repository: di());
   dynamic selectedValueSingleDialogFuture;
@@ -39,17 +44,7 @@ class _AddTripScreen extends State<AddTripScreen> {
     addTripCubit.getDriverList();
     addTripCubit.vehicleList();
     addTripCubit.getGuardGuyList();
-    _amountController.addListener(
-      () {
-        final text = _amountController.text;
-        final number = _numberFormat.parse(text.replaceAll(',', ''));
-        _amountController.value = TextEditingValue(
-          text: _numberFormat.format(number),
-          selection:
-              TextSelection.collapsed(offset: _amountController.text.length),
-        );
-      },
-    );
+    addTripCubit.getCurrencyList();
   }
 
   @override
@@ -61,13 +56,10 @@ class _AddTripScreen extends State<AddTripScreen> {
       ],
       child: BlocConsumer<AddTripCubit, GenericCubitState<AddTripState>>(
         listener: (context, state) {
-          // switch (state.status) {
-          //   case Status.success:
-          //     context.read<MainCubit>().addNewTrip(state.data!.trip!);
-          //     Navigator.pop(context);
-          //   default:
-          //     break;
-          // }
+          if (state.data?.tempForm != null) {
+            widget.didAddTrip();
+            Navigator.pop(context);
+          }
         },
         builder: (context, state) {
           return BlocBuilder<AddTripCubit, GenericCubitState<AddTripState>>(
@@ -122,11 +114,9 @@ class _AddTripScreen extends State<AddTripScreen> {
                           ),
                           const SizedBox(height: 10),
                           if (state.data?.purposes != null)
-                            DropDown<String>(
-                              items: state.data?.purposes
-                                      ?.map((e) => e.name ?? '')
-                                      .toList() ??
-                                  [],
+                            DropDown<PurposeResponse>(
+                              items: state.data?.purposes ?? [],
+                              displayTextBuilder: (value) => value.name ?? '',
                               onChanged: (value) =>
                                   addTripCubit.reasonChanged(value),
                             ),
@@ -152,14 +142,38 @@ class _AddTripScreen extends State<AddTripScreen> {
                             child: search(),
                           ),
                           const SizedBox(height: 20),
-                          TextInput(
-                            hint: 'Nhập số tiền',
-                            labelText: 'Số tiền',
-                            keyboardType: TextInputType.number,
-                            controller: _amountController,
-                            onChanged: (value) => addTripCubit.amountChanged(
-                              int.parse(value),
-                            ),
+                          Row(
+                            children: [
+                              Flexible(
+                                flex: 2,
+                                child: TextInput(
+                                  hint: 'Nhập số tiền',
+                                  labelText: 'Số tiền',
+                                  keyboardType: TextInputType.number,
+                                  onChanged: (value) =>
+                                      addTripCubit.amountChanged(
+                                          int.parse(value.replaceAll('.', ''))),
+                                  inputFormatters: [
+                                    CurrencyTextInputFormatter(
+                                      locale: 'vi',
+                                      decimalDigits: 0,
+                                      symbol: '',
+                                    )
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 16.0),
+                              if (state.data?.currencies != null)
+                                Flexible(
+                                  flex: 1,
+                                  child: DropDown<String>(
+                                    items: state.data?.currencies ?? [],
+                                    displayTextBuilder: (value) => value,
+                                    onChanged: (value) =>
+                                        addTripCubit.currencyChanged(value),
+                                  ),
+                                )
+                            ],
                           ),
                           const SizedBox(height: 20),
                           const Align(
@@ -171,11 +185,9 @@ class _AddTripScreen extends State<AddTripScreen> {
                           ),
                           const SizedBox(height: 10),
                           if (state.data?.guards != null)
-                            DropDown<String>(
-                              items: state.data?.guards
-                                      ?.map((e) => e.name ?? '')
-                                      .toList() ??
-                                  [],
+                            DropDown<UserRoleResponse>(
+                              items: state.data?.guards ?? [],
+                              displayTextBuilder: (value) => value.name ?? '',
                               onChanged: (value) =>
                                   addTripCubit.guardChanged(value),
                             ),
@@ -189,11 +201,9 @@ class _AddTripScreen extends State<AddTripScreen> {
                           ),
                           const SizedBox(height: 10),
                           if (state.data?.drivers != null)
-                            DropDown<String>(
-                              items: state.data?.drivers
-                                      ?.map((e) => e.name ?? '')
-                                      .toList() ??
-                                  [],
+                            DropDown<UserRoleResponse>(
+                              items: state.data?.drivers ?? [],
+                              displayTextBuilder: (value) => value.name ?? '',
                               onChanged: (value) =>
                                   addTripCubit.driverChanged(value),
                             ),
@@ -207,11 +217,10 @@ class _AddTripScreen extends State<AddTripScreen> {
                           ),
                           const SizedBox(height: 10),
                           if (state.data?.vehicles?.isNotEmpty == true)
-                            DropDown<String>(
-                              items: state.data?.vehicles
-                                      ?.map((e) => e.plateNumber ?? '')
-                                      .toList() ??
-                                  [],
+                            DropDown<VehicleResponse>(
+                              items: state.data?.vehicles ?? [],
+                              displayTextBuilder: (value) =>
+                                  value.plateNumber ?? '',
                               onChanged: (value) =>
                                   addTripCubit.vehicleChanged(value),
                             ),
@@ -241,42 +250,29 @@ class _AddTripScreen extends State<AddTripScreen> {
   Widget search() {
     return SearchChoices.single(
       style: textDefault,
-      underline: null,
-      padding: const EdgeInsets.only(top: 2, bottom: 2, left: 10, right: 10),
+      // padding: const EdgeInsets.only(top: 2, bottom: 2, left: 10, right: 10),
       displayClearIcon: false,
-      icon: null,
-      // fieldDecoration: BoxDecoration(
-      //   border: Border.all(color: Colors.white),
-      // ),
+
+      fieldDecoration: BoxDecoration(
+        border: Border.all(color: Colors.white),
+      ),
       value: selectedValueSingleDialogFuture,
       hint: 'Điểm dừng',
       searchHint: 'Điểm dừng',
       onChanged: (value) {
-        logger.d('onChanged $value');
         setState(
           () {
-            selectedValueSingleDialogFuture = 'value';
+            selectedValueSingleDialogFuture = value;
+            addTripCubit.getMapLocation(value['ref_id']);
           },
         );
       },
       isExpanded: true,
       selectedValueWidgetFn: (item) {
-        logger.d('selectedValueWidgetFn $item');
-        return Center(
-          child: Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(4),
-              side: const BorderSide(
-                color: Colors.red,
-                width: 1,
-              ),
-            ),
-            margin: const EdgeInsets.all(1),
-            child: Padding(
-              padding: const EdgeInsets.all(6),
-              child: Text(item["capital"]),
-            ),
-          ),
+        return Text(
+          item['address'],
+          style: textDefault,
+          maxLines: 2,
         );
       },
       futureSearchFn: (String? keyword, String? orderBy, bool? orderAsc,

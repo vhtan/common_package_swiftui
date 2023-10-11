@@ -41,7 +41,6 @@ class _MainScreenState extends State<MainScreen> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       cubit.getTrip();
-      cubit.getCurrencyList();
       checkLocationPermission();
       Future.delayed(const Duration(milliseconds: 5000), () {
         getCurrentLocation();
@@ -109,22 +108,15 @@ class _MainScreenState extends State<MainScreen> {
                     return const SpinKitIndicator(type: SpinKitType.circle);
                   case Status.success:
                     var trip = state.data?.trip;
-                    var pendTrip = state.data?.pendingTrip;
-                    if (trip != null) {
-                      return currentTrip(trip);
-                    } else if (pendTrip != null) {
-                      return pendingTrip();
-                    } else {
-                      return Column(
-                        children: [
-                          // warningNoTrip(),
-                          // const SizedBox(height: 4),
-                          // warningStopTooLong(),
-                          noTrip(),
-                        ],
-                      );
-                      // return noTrip();
-                    }
+                    var tempForm = state.data?.tempForm;
+                    // if (trip != null) {
+                    //   return currentTrip(trip);
+                    // } else if (pendTrip != null) {
+                    //   return pendingTrip();
+                    // } else {
+                    //   return noTrip();
+                    // }
+                    return noTrip();
                 }
               },
             );
@@ -166,7 +158,9 @@ extension _MainScreenDeliveryList on _MainScreenState {
             buttonHeight: 50,
             onPressed: () => showDialog<Trip>(
               context: context,
-              builder: (context) => const AddTripScreen(),
+              builder: (context) => AddTripScreen(
+                didAddTrip: () => cubit.getTempFormDetails(),
+              ),
               barrierDismissible: false,
             ),
           ),

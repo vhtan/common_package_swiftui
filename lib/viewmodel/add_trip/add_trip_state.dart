@@ -1,77 +1,99 @@
 import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/data/model/main/trip.dart';
+import 'package:mvvm_cubit/data/model/map_location/map_location_response.dart';
 import 'package:mvvm_cubit/data/model/purpose/purpose_response.dart';
 import 'package:mvvm_cubit/data/model/user_role/user_role_response.dart';
 import 'package:mvvm_cubit/data/model/vehicle/vehicle_response.dart';
+import 'package:mvvm_cubit/data/request/add_trip/add_trip_request.dart';
 
 class AddTripState {
-  final Trip? trip;
+  final String? tempForm;
   final List<PurposeResponse>? purposes;
   final List<UserRoleResponse>? drivers;
   final List<UserRoleResponse>? guards;
   final List<VehicleResponse>? vehicles;
+  final List<String>? currencies;
 
-  late String? purpose;
-  late String? stopPlace;
+  late PurposeResponse? purpose;
   late int? amount;
-  late String? driver;
-  late String? vehicle;
-  late String? guard;
-  late String? licensePlate;
+  late UserRoleResponse? driver;
+  late VehicleResponse? vehicle;
+  late UserRoleResponse? guard;
+  late MapLocationResponse? location;
+  late String? currency;
 
   AddTripState({
-    this.trip,
+    this.tempForm,
     this.purposes,
     this.drivers,
     this.guards,
     this.vehicles,
+    this.currencies,
     this.purpose,
-    this.stopPlace,
     this.amount,
     this.driver,
     this.vehicle,
     this.guard,
-    this.licensePlate,
+    this.location,
+    this.currency,
   });
 
   AddTripState copyWith({
-    Trip? trip,
+    String? tempForm,
     List<PurposeResponse>? purposes,
     List<UserRoleResponse>? drivers,
     List<UserRoleResponse>? guards,
     List<VehicleResponse>? vehicles,
-    String? purpose,
-    String? stopPlace,
+    List<String>? currencies,
+    PurposeResponse? purpose,
     int? amount,
-    String? driver,
-    String? vehicle,
-    String? guard,
+    UserRoleResponse? driver,
+    VehicleResponse? vehicle,
+    UserRoleResponse? guard,
     String? licensePlate,
+    MapLocationResponse? location,
+    String? currency,
   }) {
     return AddTripState(
-      trip: trip ?? this.trip,
+      tempForm: tempForm ?? this.tempForm,
       purposes: purposes ?? this.purposes,
       drivers: drivers ?? this.drivers,
       guards: guards ?? this.guards,
       vehicles: vehicles ?? this.vehicles,
       purpose: purpose ?? this.purpose,
-      stopPlace: stopPlace ?? this.stopPlace,
       amount: amount ?? this.amount,
       driver: driver ?? this.driver,
       vehicle: vehicle ?? this.vehicle,
       guard: guard ?? this.guard,
-      licensePlate: licensePlate ?? this.licensePlate,
+      location: location ?? this.location,
+      currency: currency ?? this.currency,
+      currencies: currencies ?? this.currencies,
     );
   }
 
   bool isValid() {
-    final flag = (purpose?.isNotEmpty == true) &&
-        (stopPlace?.isNotEmpty == true) &&
+    final flag = (purpose?.id?.isNotEmpty == true) &&
         (amount != null && amount! > 0) &&
-        (driver?.isNotEmpty == true) &&
-        (vehicle?.isNotEmpty == true) &&
-        (guard?.isNotEmpty == true) &&
-        (licensePlate?.isNotEmpty == true);
+        (driver?.id?.isNotEmpty == true) &&
+        (vehicle?.id?.isNotEmpty == true) &&
+        (guard?.id?.isNotEmpty == true) &&
+        (currency?.isNotEmpty == true);
+    logger.d(purpose?.id);
     return flag;
+  }
+
+  AddTripRequest toRequest() {
+    return AddTripRequest(
+      purposeId: purpose?.id ?? '',
+      stopPointAddress: location?.address ?? '',
+      latitude: location?.lat ?? 0,
+      longitude: location?.lng ?? 0,
+      quantity: double.parse(amount?.toString() ?? '0'),
+      currency: currency ?? '',
+      driverId: driver?.id ?? '',
+      bodyguardId: guard?.id ?? '',
+      vehicleId: vehicle?.id ?? '',
+      note: 'note',
+    );
   }
 }

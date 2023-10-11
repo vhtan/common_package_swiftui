@@ -3,16 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
 
 class DropDown<T> extends StatefulWidget {
-  const DropDown(
-      {Key? key,
-      required this.onChanged,
-      required this.items,
-      this.initialItem})
-      : super(key: key);
+  const DropDown({
+    Key? key,
+    required this.onChanged,
+    required this.items,
+    required this.displayTextBuilder,
+    this.initialItem,
+  }) : super(key: key);
 
   final ValueChanged<T> onChanged;
   final List<T> items;
   final T? initialItem;
+  final String Function(T) displayTextBuilder;
 
   @override
   State<DropDown> createState() => _DropDownState<T>();
@@ -53,7 +55,7 @@ class _DropDownState<T> extends State<DropDown<T>> {
                 child: Container(
                     padding: const EdgeInsets.only(left: 10, right: 10),
                     child: Text(
-                      checkType(item),
+                      widget.displayTextBuilder(item),
                       style: textDefault,
                     )),
               ),

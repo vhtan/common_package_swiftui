@@ -77,6 +77,7 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
                               'Thủng lốp',
                               'Sự cố khác'
                             ],
+                            displayTextBuilder: (value) => value,
                             onChanged: (value) {},
                           ),
                           const SizedBox(height: 20),
