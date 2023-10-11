@@ -23,6 +23,10 @@ extension IntegetExtension on int? {
     }
     return false;
   }
+
+  bool get tokenExpired {
+    return this == 401;
+  }
 }
 
 extension GeneralExtension<T> on T {

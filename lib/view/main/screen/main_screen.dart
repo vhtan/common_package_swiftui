@@ -109,14 +109,14 @@ class _MainScreenState extends State<MainScreen> {
                   case Status.success:
                     var trip = state.data?.trip;
                     var tempForm = state.data?.tempForm;
-                    // if (trip != null) {
-                    //   return currentTrip(trip);
-                    // } else if (pendTrip != null) {
-                    //   return pendingTrip();
-                    // } else {
-                    //   return noTrip();
-                    // }
-                    return noTrip();
+                    if (trip != null) {
+                      return currentTrip(trip);
+                    } else if (tempForm != null) {
+                      return pendingTrip();
+                    } else {
+                      return noTrip();
+                    }
+                  // return noTrip();
                 }
               },
             );

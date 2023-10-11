@@ -1,8 +1,10 @@
+import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/network/api_error.dart';
 import 'package:mvvm_cubit/common/network/api_response.dart';
 import 'package:mvvm_cubit/common/network/dio_exception.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:dio/dio.dart';
+import 'package:mvvm_cubit/main.dart';
 
 abstract mixin class ApiHelper<T> {
   late final T data;
@@ -10,12 +12,16 @@ abstract mixin class ApiHelper<T> {
   Future<ApiResponse> _requestMethodTemplate(
       Future<Response<dynamic>> apiCallback) async {
     final Response response = await apiCallback;
+    final apiResponse = ApiResponse.fromJson(response.data);
+    logger.d('_requestMethodTemplate ${apiResponse.code}');
     if (response.statusCode.success) {
-      final apiResponse = ApiResponse.fromJson(response.data);
       if (apiResponse.code == ErrorCode.SUCCESS) {
         return apiResponse;
       }
       throw Error();
+    } else if (response.statusCode.tokenExpired) {
+      AuthManager.notifyTokenExpired();
+      return apiResponse;
     } else {
       throw DioExceptions;
     }

@@ -22,6 +22,11 @@ void main() async {
   ApiConfig.header['Authorization'] = loginToken;
   final osVersion = await getOSVersion();
   ApiConfig.header['os-version'] = osVersion;
+
+  AuthManager.setTokenExpiredCallback(() {
+    logger.d('==setTokenExpiredCallback');
+  });
+
   runApp(
     MyApp(
       token: loginToken,
@@ -62,5 +67,19 @@ class MyApp extends StatelessWidget {
       // home: const LoginScreen(),
       // home: const ManagerRoleWrningListScreen(),
     );
+  }
+}
+
+class AuthManager {
+  static late Function? onTokenExpired;
+
+  static void setTokenExpiredCallback(Function callback) {
+    onTokenExpired = callback;
+  }
+
+  static void notifyTokenExpired() {
+    if (onTokenExpired != null) {
+      onTokenExpired!();
+    }
   }
 }
