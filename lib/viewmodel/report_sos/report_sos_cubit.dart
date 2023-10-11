@@ -10,14 +10,14 @@ class ReportSOSCubit extends Cubit<GenericCubitState<ReportSOSData>> {
   ReportSOSCubit({required this.repository})
       : super(GenericCubitState.loading());
 
-  void didCapturePhoto(File? file, String reason) {
+  void didCapturePhoto(File? file, String reason) async {
     if (file == null) {
       emit(
         GenericCubitState.success(ReportSOSData(file: null, reason: reason)),
       );
       return;
     }
-    final response = repository.uploadImage(file.path);
+    final response = await repository.uploadImage(file.path);
     try {
       emit(
         GenericCubitState.success(ReportSOSData(file: file, reason: reason)),
