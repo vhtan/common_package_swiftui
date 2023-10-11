@@ -28,6 +28,10 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>Application would get your camera take photo to upload user profile, check in event</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Application would get your location</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Application would get your location</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Application would get your microphone</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
@@ -53,9 +57,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Application would get your location</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Application would get your location</string>
 </dict>
 </plist>

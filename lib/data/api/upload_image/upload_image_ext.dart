@@ -12,7 +12,7 @@ mixin UploadImageExt {
     try {
       logger.e('uploadImage path= $path');
       var formData = FormData.fromMap({
-        'image': await MultipartFile.fromFile(path, filename: ''),
+        'image': await MultipartFile.fromFile(path, filename: 'image'),
       });
       final apiResponse = await apiHelper.makePostRequest(
         client.dio.post(ApiConfig.uploadImage, data: formData),
