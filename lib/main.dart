@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
@@ -20,11 +21,15 @@ void main() async {
   FlutterSecureStorage secureStorage = const FlutterSecureStorage();
   String? loginToken = await secureStorage.read(key: StoreKey.loginToken);
   ApiConfig.header['Authorization'] = loginToken;
-  final osVersion = await getOSVersion();
+  final osVersion = await _getOSVersion();
   ApiConfig.header['os-version'] = osVersion;
 
   AuthManager.setTokenExpiredCallback(() {
-    logger.d('==setTokenExpiredCallback');
+    runApp(
+      const MyApp(
+        token: null,
+      ),
+    );
   });
 
   runApp(
@@ -32,22 +37,6 @@ void main() async {
       token: loginToken,
     ),
   );
-}
-
-Future<String> getOSVersion() async {
-  DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-  try {
-    if (Platform.isIOS) {
-      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-      return iosInfo.systemVersion;
-    } else if (Platform.isAndroid) {
-      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-      return androidInfo.version.release;
-    }
-  } catch (e) {
-    logger.d('Error getting device info: $e');
-  }
-  return 'unsupport';
 }
 
 class MyApp extends StatelessWidget {
@@ -64,8 +53,6 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightAppTheme,
       home: (token == null) ? const LoginScreen() : const ContainerScreen(),
-      // home: const LoginScreen(),
-      // home: const ManagerRoleWrningListScreen(),
     );
   }
 }
@@ -78,8 +65,35 @@ class AuthManager {
   }
 
   static void notifyTokenExpired() {
+    _clearLoginToken();
     if (onTokenExpired != null) {
       onTokenExpired!();
     }
   }
+
+  static void _clearLoginToken() {
+    try {
+      di<FlutterSecureStorage>().delete(
+        key: StoreKey.loginToken,
+      );
+    } on DioException catch (e) {
+      logger.e(e.message);
+    }
+  }
+}
+
+Future<String> _getOSVersion() async {
+  DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+  try {
+    if (Platform.isIOS) {
+      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+      return iosInfo.systemVersion;
+    } else if (Platform.isAndroid) {
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      return androidInfo.version.release;
+    }
+  } catch (e) {
+    logger.d('Error getting device info: $e');
+  }
+  return 'unsupport';
 }

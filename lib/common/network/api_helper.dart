@@ -11,19 +11,23 @@ abstract mixin class ApiHelper<T> {
 
   Future<ApiResponse> _requestMethodTemplate(
       Future<Response<dynamic>> apiCallback) async {
-    final Response response = await apiCallback;
-    final apiResponse = ApiResponse.fromJson(response.data);
-    logger.d('_requestMethodTemplate ${apiResponse.code}');
-    if (response.statusCode.success) {
-      if (apiResponse.code == ErrorCode.SUCCESS) {
-        return apiResponse;
+    try {
+      final Response response = await apiCallback;
+      final apiResponse = ApiResponse.fromJson(response.data);
+      logger.d('_requestMethodTemplate ${apiResponse.code}');
+      if (response.statusCode.success) {
+        if (apiResponse.code == ErrorCode.SUCCESS) {
+          return apiResponse;
+        }
+        throw Error();
+      } else {
+        throw DioExceptions;
       }
-      throw Error();
-    } else if (response.statusCode.tokenExpired) {
-      AuthManager.notifyTokenExpired();
-      return apiResponse;
-    } else {
-      throw DioExceptions;
+    } on DioException catch (e) {
+      if (e.response?.statusCode.tokenExpired ?? false) {
+        AuthManager.notifyTokenExpired();
+      }
+      rethrow;
     }
   }
 
