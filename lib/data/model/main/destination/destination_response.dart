@@ -15,8 +15,4 @@ abstract class DestinationResponse with _$DestinationResponse {
 
   factory DestinationResponse.fromJson(Map<String, dynamic> json) =>
       _$DestinationResponseFromJson(json);
-
-  LocationData? locationData() {
-    return LocationData.fromMap({'longitude': longitude, 'latitude': latitude});
-  }
 }

@@ -149,7 +149,10 @@ class _MainScreenState extends State<MainScreen> {
       trip: trip,
       onArrived: (value) async {
         final currentLocation = await getCurrentLocation();
-        final stopPointLocation = value.destination?.locationData();
+        final stopPointLocation = LocationData.fromMap({
+          'longitude': value.destination?.longitude,
+          'latitude': value.destination?.latitude,
+        });
         if (currentLocation != null && stopPointLocation != null) {
           cubit.checkDistance(
             currentLocation,
