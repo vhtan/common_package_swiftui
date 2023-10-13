@@ -24,6 +24,10 @@ class ApiConfig {
     return 'routing/routing-detail/$id/arrived';
   }
 
+  // paths of sos
+  static const String getSOSReasons = '/sos/reason/list';
+  static const String submitSOS = '/sos/submit';
+
   static Map<String, String?> header = {
     'Content-Type': 'application/json',
     'X-CLIENT-ID': 'vndeli_app',
