@@ -32,11 +32,8 @@ class _MainScreenState extends State<MainScreen> {
 
   bool _serviceEnabled = false;
   PermissionStatus? _permissionGranted;
-  LocationData? _locationData;
-  int _expandIndex = 0;
+  // LocationData? _locationData;
   final cubit = MainCubit(repository: di());
-  var _isPanel1Expanded = false;
-  var _isPanel2Expanded = false;
 
   @override
   void initState() {
@@ -51,10 +48,11 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-  void getCurrentLocation() async {
+  Future<LocationData?> getCurrentLocation() async {
     if (_serviceEnabled && _permissionGranted == PermissionStatus.granted) {
-      _locationData = await location.getLocation();
+      return await location.getLocation();
     }
+    return null;
   }
 
   void checkLocationPermission() async {
@@ -149,11 +147,21 @@ class _MainScreenState extends State<MainScreen> {
   Widget currentTrip(TripResponse trip) {
     return TripContainer(
       trip: trip,
-      onArrived: () => showDialog(
-        context: context,
-        builder: (context) => const CheckPointScreen(),
-        barrierDismissible: false,
-      ),
+      onArrived: (value) async {
+        final currentLocation = await getCurrentLocation();
+        final stopPointLocation = value.destination?.locationData();
+        if (currentLocation != null && stopPointLocation != null) {
+          cubit.checkDistance(
+            currentLocation,
+            stopPointLocation,
+          );
+        }
+      },
+      // onArrived: () => showDialog(
+      //   context: context,
+      //   builder: (context) => const CheckPointScreen(),
+      //   barrierDismissible: false,
+      // ),
       onFinihed: () {},
     );
   }

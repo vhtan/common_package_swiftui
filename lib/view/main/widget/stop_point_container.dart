@@ -14,7 +14,7 @@ class StopPointContainer extends StatelessWidget {
   }) : super(key: key);
 
   final StopPointResponse stopPoint;
-  final VoidCallback onArrived;
+  final ValueChanged<StopPointResponse> onArrived;
   final VoidCallback onFinished;
 
   @override
@@ -61,9 +61,7 @@ class StopPointContainer extends StatelessWidget {
               child: PrimaryButton(
                 title: 'Đến nơi',
                 buttonHeight: 50,
-                onPressed: () {
-                  logger.d('Đến nơi ${stopPoint.id}');
-                },
+                onPressed: () => onArrived(stopPoint),
               ),
             ),
             const SizedBox(width: 20),
@@ -71,9 +69,7 @@ class StopPointContainer extends StatelessWidget {
               child: PrimaryButton(
                 title: 'Hoàn thành',
                 buttonHeight: 50,
-                onPressed: () {
-                  logger.d('Hoàn thành ${stopPoint.id}');
-                },
+                onPressed: onFinished,
               ),
             ),
             const SizedBox(width: 20),

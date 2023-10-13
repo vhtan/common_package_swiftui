@@ -14,7 +14,7 @@ class TripContainer extends StatefulWidget {
   });
 
   final TripResponse trip;
-  final VoidCallback onArrived;
+  final ValueChanged<StopPointResponse> onArrived;
   final VoidCallback onFinihed;
 
   @override
@@ -23,7 +23,7 @@ class TripContainer extends StatefulWidget {
 
 class _TripContainer extends State<TripContainer> {
   TripResponse? _trip;
-  VoidCallback _onArrived = () {};
+  late ValueChanged<StopPointResponse> _onArrived;
   VoidCallback _onFinished = () {};
 
   @override
@@ -57,26 +57,6 @@ class _TripContainer extends State<TripContainer> {
             );
           },
         ).toList(),
-        // GestureDetector(
-        //   onTap: () {
-        //     // Button action
-        //     print('Button 1 tapped');
-        //   },
-        //   child: Container(
-        //     padding: EdgeInsets.all(16),
-        //     child: Text('Button 1'),
-        //   ),
-        // ),
-        // StopPointContainer(
-        //   stopPoint: stopPoints.first,
-        //   onArrived: _onArrived,
-        //   onFinished: _onFinished,
-        // ),
-        // StopPointContainer(
-        //   stopPoint: stopPoints.last,
-        //   onArrived: _onArrived,
-        //   onFinished: _onFinished,
-        // ),
       ],
     );
   }

@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:location/location.dart';
 
 part 'destination_response.g.dart';
 part 'destination_response.freezed.dart';
@@ -14,4 +15,8 @@ abstract class DestinationResponse with _$DestinationResponse {
 
   factory DestinationResponse.fromJson(Map<String, dynamic> json) =>
       _$DestinationResponseFromJson(json);
+
+  LocationData? locationData() {
+    return LocationData.fromMap({'longitude': longitude, 'latitude': latitude});
+  }
 }

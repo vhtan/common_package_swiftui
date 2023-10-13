@@ -1,6 +1,6 @@
-import 'dart:math';
-
 import 'package:dio/dio.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:location/location.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
@@ -91,5 +91,19 @@ class MainCubit extends GenericCubit<MainState> {
     emit(
       GenericCubitState.success(state.data),
     );
+  }
+
+  void checkDistance(LocationData start, LocationData end) {
+    logger.d('distance ${calculateDistance(start, end)}');
+  }
+
+  double calculateDistance(LocationData start, LocationData end) {
+    double distance = Geolocator.distanceBetween(
+      start.latitude ?? 0,
+      start.longitude ?? 0,
+      end.latitude ?? 0,
+      end.longitude ?? 0,
+    );
+    return distance;
   }
 }
