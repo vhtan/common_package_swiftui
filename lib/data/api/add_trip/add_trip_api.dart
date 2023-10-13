@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:http/http.dart';
-import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/network/api_helper.dart';
 import 'package:mvvm_cubit/common/network/dio_client.dart';
 import 'package:mvvm_cubit/core/api_config.dart';
@@ -32,17 +31,16 @@ class AddTripApi with ApiHelper<AddTripResponse> {
     final apiResponse = await makeGetRequest(
       client.dio.get(ApiConfig.taskPurposeList),
     );
-    final purposes = parsePurposeResponseList(apiResponse.detail);
-    return purposes;
+
+    return parsePurposeResponseList(apiResponse.detail);
   }
 
   Future<List<VehicleResponse>> vehicleList() async {
     final apiResponse = await makeGetRequest(
       client.dio.get(ApiConfig.vehicleList),
     );
-    final list = parseVehicleResponseList(apiResponse.detail);
-    logger.d('vehicleList $list');
-    return list;
+
+    return parseVehicleResponseList(apiResponse.detail);
   }
 
   Future<List<UserRoleResponse>> userSearchList(List<RoleType> roles) async {
@@ -55,8 +53,8 @@ class AddTripApi with ApiHelper<AddTripResponse> {
         queryParameters: queryParameters,
       ),
     );
-    final userRoles = userRoleResponseList(apiResponse.detail);
-    return userRoles;
+
+    return userRoleResponseList(apiResponse.detail);
   }
 
   Future<List<String>> getCurrencyList() async {
@@ -67,8 +65,7 @@ class AddTripApi with ApiHelper<AddTripResponse> {
     );
 
     final data = apiResponse.detail['listCurrency'];
-    List<String> listCurrency = List<String>.from(data);
-    return listCurrency;
+    return List<String>.from(data);
   }
 
   Future<MapLocationResponse> getMapLocation(String refId) async {

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
-import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/data/model/main/stop_point/stop_point_response.dart';
 import 'package:mvvm_cubit/data/model/main/trip/trip_response.dart';
 import 'package:mvvm_cubit/view/main/widget/stop_point_container.dart';
@@ -10,11 +9,13 @@ class TripContainer extends StatefulWidget {
   const TripContainer({
     super.key,
     required this.trip,
-    required this.onPressed,
+    required this.onArrived,
+    required this.onFinihed,
   });
 
   final TripResponse trip;
-  final VoidCallback onPressed;
+  final VoidCallback onArrived;
+  final VoidCallback onFinihed;
 
   @override
   State<TripContainer> createState() => _TripContainer();
@@ -22,49 +23,61 @@ class TripContainer extends StatefulWidget {
 
 class _TripContainer extends State<TripContainer> {
   TripResponse? _trip;
-  VoidCallback _onPressed = () {};
+  VoidCallback _onArrived = () {};
+  VoidCallback _onFinished = () {};
 
   @override
   void initState() {
     super.initState();
     _trip = widget.trip;
-    _onPressed = widget.onPressed;
+    _onArrived = widget.onArrived;
+    _onFinished = widget.onFinihed;
   }
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Column(children: [
+        child: buildStopPointList(_trip?.routingDetails ?? []));
+  }
+
+  Column buildStopPointList(List<StopPointResponse> stopPoints) {
+    return Column(
+      children: [
         TripInfo(
           tripCode: (_trip?.routeId)!,
           createBy: (_trip?.createBy)!,
           startDate: (_trip?.startTime?.date)!,
         ),
-        _buildPanel(),
-      ]),
-    );
-  }
-
-  Widget _buildPanel() {
-    return ExpansionPanelList.radio(
-      initialOpenPanelValue: 0,
-      children: (_trip?.routingDetails)!.map<ExpansionPanelRadio>(
-        (StopPointResponse item) {
-          return ExpansionPanelRadio(
-            value: item.id,
-            headerBuilder: (context, isExpanded) => ListTile(
-              title: Text(
-                item.stopPointType ?? '',
-                style: headLine2,
-              ),
-            ),
-            body: StopPointContainer(
-              stopPoint: item,
-              onPressed: _onPressed,
-            ),
-          );
-        },
-      ).toList(),
+        ...stopPoints.map(
+          (stopPoint) {
+            return StopPointContainer(
+              stopPoint: stopPoint,
+              onArrived: _onArrived,
+              onFinished: _onFinished,
+            );
+          },
+        ).toList(),
+        // GestureDetector(
+        //   onTap: () {
+        //     // Button action
+        //     print('Button 1 tapped');
+        //   },
+        //   child: Container(
+        //     padding: EdgeInsets.all(16),
+        //     child: Text('Button 1'),
+        //   ),
+        // ),
+        // StopPointContainer(
+        //   stopPoint: stopPoints.first,
+        //   onArrived: _onArrived,
+        //   onFinished: _onFinished,
+        // ),
+        // StopPointContainer(
+        //   stopPoint: stopPoints.last,
+        //   onArrived: _onArrived,
+        //   onFinished: _onFinished,
+        // ),
+      ],
     );
   }
 }

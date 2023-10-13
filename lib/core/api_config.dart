@@ -3,11 +3,12 @@ import 'dart:io';
 class ApiConfig {
   ApiConfig._();
 
-  // static const String baseUrl = "http://45.119.213.78:32181/app/api/v1";
-  static const String baseUrl = "http://localhost:8081/app/api/v1";
+  static const String baseUrl = "http://45.119.213.78:32181/app/api/v1";
+  // static const String baseUrl = "http://localhost:8081/app/api/v1";
   static const Duration receiveTimeout = Duration(milliseconds: 15000);
   static const Duration connectionTimeout = Duration(milliseconds: 15000);
   static const String getTrip = '/routing/detail';
+  static const String warningList = '/warning/list';
   static const String createTrip = '/routing/job';
   static const String tempFormDetails = '/routing/job/detail';
   static const String login = '/user/login';

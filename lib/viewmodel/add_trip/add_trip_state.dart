@@ -1,5 +1,4 @@
 import 'package:mvvm_cubit/common/logger/logger.dart';
-import 'package:mvvm_cubit/data/model/main/trip.dart';
 import 'package:mvvm_cubit/data/model/map_location/map_location_response.dart';
 import 'package:mvvm_cubit/data/model/purpose/purpose_response.dart';
 import 'package:mvvm_cubit/data/model/user_role/user_role_response.dart';

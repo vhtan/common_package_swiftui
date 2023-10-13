@@ -6,9 +6,20 @@ part 'warning_response.freezed.dart';
 abstract class WarningResponse with _$WarningResponse {
   const factory WarningResponse({
     String? id,
-    String? plateNumber,
-    String? description,
+    String? type,
+    String? startAddress,
+    String? endAddress,
+    int? duration,
+    double? distance,
+    int? level,
+    String? warningMessage,
   }) = _WarningResponse;
   factory WarningResponse.fromJson(Map<String, dynamic> json) =>
       _$WarningResponseFromJson(json);
+}
+
+List<WarningResponse> parseWarningResponseList(List<dynamic> parsedList) {
+  return parsedList
+      .map((json) => WarningResponse.fromJson(json as Map<String, dynamic>))
+      .toList();
 }

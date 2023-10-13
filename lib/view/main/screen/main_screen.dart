@@ -9,7 +9,7 @@ import 'package:mvvm_cubit/common/widget/spinkit_indicator.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_string.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
-import 'package:mvvm_cubit/data/model/main/trip.dart';
+import 'package:mvvm_cubit/data/model/main/stop_point/stop_point_response.dart';
 import 'package:mvvm_cubit/data/model/main/trip/trip_response.dart';
 import 'package:mvvm_cubit/di.dart';
 import 'package:mvvm_cubit/view/add_trip/add_trip_screen.dart';
@@ -33,7 +33,10 @@ class _MainScreenState extends State<MainScreen> {
   bool _serviceEnabled = false;
   PermissionStatus? _permissionGranted;
   LocationData? _locationData;
+  int _expandIndex = 0;
   final cubit = MainCubit(repository: di());
+  var _isPanel1Expanded = false;
+  var _isPanel2Expanded = false;
 
   @override
   void initState() {
@@ -107,16 +110,23 @@ class _MainScreenState extends State<MainScreen> {
                   case Status.loading:
                     return const SpinKitIndicator(type: SpinKitType.circle);
                   case Status.success:
-                    var trip = state.data?.trip;
-                    var tempForm = state.data?.tempForm;
+                    final trip = state.data?.trip;
+                    final tempForm = state.data?.tempForm;
+                    final warningList = state.data?.warningList;
                     if (trip != null) {
-                      return currentTrip(trip);
+                      return Column(
+                        children: [
+                          warningNoTrip(),
+                          Expanded(
+                            child: currentTrip(trip),
+                          ),
+                        ],
+                      );
                     } else if (tempForm != null) {
                       return pendingTrip();
                     } else {
                       return noTrip();
                     }
-                  // return noTrip();
                 }
               },
             );
@@ -133,6 +143,18 @@ class _MainScreenState extends State<MainScreen> {
       MaterialPageRoute(
         builder: (context) => screen,
       ),
+    );
+  }
+
+  Widget currentTrip(TripResponse trip) {
+    return TripContainer(
+      trip: trip,
+      onArrived: () => showDialog(
+        context: context,
+        builder: (context) => const CheckPointScreen(),
+        barrierDismissible: false,
+      ),
+      onFinihed: () {},
     );
   }
 }
@@ -156,7 +178,7 @@ extension _MainScreenDeliveryList on _MainScreenState {
           PrimaryButton(
             title: 'Thêm phiếu yêu cầu',
             buttonHeight: 50,
-            onPressed: () => showDialog<Trip>(
+            onPressed: () => showDialog<String>(
               context: context,
               builder: (context) => AddTripScreen(
                 didAddTrip: () => cubit.getTempFormDetails(),
@@ -182,17 +204,6 @@ extension _MainScreenDeliveryList on _MainScreenState {
           ),
           const SizedBox(height: 20),
         ],
-      ),
-    );
-  }
-
-  Widget currentTrip(TripResponse trip) {
-    return TripContainer(
-      trip: trip,
-      onPressed: () => showDialog(
-        context: context,
-        builder: (context) => const CheckPointScreen(),
-        barrierDismissible: false,
       ),
     );
   }
@@ -280,4 +291,11 @@ extension _MainScreenDeliveryList on _MainScreenState {
       ),
     );
   }
+}
+
+class StopPointItem {
+  final StopPointResponse stopPoint;
+  bool isExpanded;
+
+  StopPointItem(this.stopPoint, {this.isExpanded = false});
 }

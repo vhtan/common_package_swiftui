@@ -6,6 +6,7 @@ class TripInfo extends StatelessWidget {
   final int tripCode;
   final DateTime startDate;
   final String createBy;
+
   const TripInfo({
     Key? key,
     required this.tripCode,

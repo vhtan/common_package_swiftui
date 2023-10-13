@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
+import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/data/model/main/stop_point/stop_point_response.dart';
 
@@ -7,37 +9,41 @@ class StopPointContainer extends StatelessWidget {
   const StopPointContainer({
     Key? key,
     required this.stopPoint,
-    required this.onPressed,
+    required this.onArrived,
+    required this.onFinished,
   }) : super(key: key);
 
   final StopPointResponse stopPoint;
-  final VoidCallback onPressed;
+  final VoidCallback onArrived;
+  final VoidCallback onFinished;
 
   @override
   Widget build(BuildContext context) {
-    // if (duty is PickUpDuty) {
-    //   PickUpDuty pickUp = duty as PickUpDuty;
-    //   return renderPickUpDuty(pickUp);
-    // } else if (duty is DeliveryDuty) {
-    //   DeliveryDuty request = duty as DeliveryDuty;
-    //   return renderDeliveryDuty(request);
-    // } else {
-    //   return const EmptyWidget(message: 'message');
-    // }
-
     return renderStopPoint(stopPoint);
   }
 
   Widget renderStopPoint(StopPointResponse stopPoint) {
     return Column(
       children: [
+        const Divider(height: 1, color: AppColors.border, thickness: 1),
+        const SizedBox(height: 20),
+        Row(
+          children: [
+            const SizedBox(width: 20),
+            Text(
+              stopPoint.stopPointType ?? '',
+              style: headLine2,
+            ),
+            const Spacer(),
+          ],
+        ),
         Padding(
           padding: const EdgeInsets.only(left: 20, right: 20),
           child: Row(
             children: [
               const Icon(Icons.map),
               const SizedBox(width: 10),
-              Expanded(
+              Flexible(
                 child: Text(
                   stopPoint.destination?.address ?? '',
                   style: textDefault,
@@ -48,27 +54,30 @@ class StopPointContainer extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 10),
-        Padding(
-          padding: const EdgeInsets.only(left: 20, right: 20),
-          child: Row(
-            children: [
-              const Icon(Icons.phone),
-              const SizedBox(width: 10),
-              Text(
-                stopPoint.stopPointAction ?? '',
-                style: textDefault,
+        Row(
+          children: [
+            const SizedBox(width: 20),
+            Flexible(
+              child: PrimaryButton(
+                title: 'Đến nơi',
+                buttonHeight: 50,
+                onPressed: () {
+                  logger.d('Đến nơi ${stopPoint.id}');
+                },
               ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 10),
-        Padding(
-          padding: const EdgeInsets.only(left: 20, right: 20),
-          child: PrimaryButton(
-            title: 'Đến nói',
-            buttonHeight: 50,
-            onPressed: onPressed,
-          ),
+            ),
+            const SizedBox(width: 20),
+            Flexible(
+              child: PrimaryButton(
+                title: 'Hoàn thành',
+                buttonHeight: 50,
+                onPressed: () {
+                  logger.d('Hoàn thành ${stopPoint.id}');
+                },
+              ),
+            ),
+            const SizedBox(width: 20),
+          ],
         ),
         const SizedBox(height: 20),
       ],
