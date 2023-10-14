@@ -22,6 +22,13 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
   final cubit = ReportSOSCubit(repository: di());
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    cubit.getReasons();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => cubit,
