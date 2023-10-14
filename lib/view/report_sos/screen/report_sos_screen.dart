@@ -60,105 +60,111 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
         builder: (context, state) {
           return BlocBuilder<ReportSOSCubit, GenericCubitState<ReportSOSData>>(
             builder: (context, state) {
-              return Material(
-                color: Colors.transparent,
-                child: Container(
-                  padding: const EdgeInsets.all(20),
-                  alignment: Alignment.center,
-                  child: IntrinsicHeight(
+              return Scaffold(
+                backgroundColor: Colors.transparent,
+                resizeToAvoidBottomInset: true,
+                body: Center(
+                  child: SingleChildScrollView(
                     child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        color: Colors.white,
-                      ),
-                      padding: const EdgeInsets.only(
-                          left: 20, right: 20, bottom: 20, top: 10),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Stack(
-                            alignment: AlignmentDirectional.center,
+                      padding: const EdgeInsets.all(20),
+                      alignment: Alignment.center,
+                      child: IntrinsicHeight(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: Colors.white,
+                          ),
+                          padding: const EdgeInsets.only(
+                              left: 20, right: 20, bottom: 20, top: 10),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              const Align(
-                                alignment: Alignment.center,
-                                child: Text(
-                                  'Báo cáo sự cố',
-                                  style: headLine1,
-                                ),
+                              Stack(
+                                alignment: AlignmentDirectional.center,
+                                children: [
+                                  const Align(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      'Báo cáo sự cố',
+                                      style: headLine1,
+                                    ),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.topRight,
+                                    child: IconButton(
+                                      color: Colors.black,
+                                      icon: const Icon(Icons.close),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                    ),
+                                  ),
+                                ],
                               ),
-                              Align(
-                                alignment: Alignment.topRight,
-                                child: IconButton(
-                                  color: Colors.black,
-                                  icon: const Icon(Icons.close),
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                ),
+                              const SizedBox(height: 20),
+                              (reasons.isNotEmpty)
+                                  ? DropDown<ChildSOSResponse>(
+                                      items: reasons,
+                                      displayTextBuilder: (value) =>
+                                          value.name ?? '',
+                                      onChanged: (value) {
+                                        setState(() {
+                                          selectedReason = value;
+                                        });
+                                      },
+                                    )
+                                  : const SizedBox(),
+                              const SizedBox(height: 20),
+                              ImageCapture(
+                                title: 'Chụp ảnh sự cố',
+                                imageFile: localFile,
+                                captureCallback: () => openCamera(context),
+                                deleteCallback: () => {
+                                  setState(() {
+                                    localFile = null;
+                                    uploadedUrl = null;
+                                  })
+                                },
                               ),
+                              const SizedBox(height: 20),
+                              TextInput(
+                                hint: 'Nhập mô tả sự cố',
+                                labelText: 'Mô tả sự cố',
+                                maxLines: 6, // and this
+                                keyboardType: TextInputType.multiline,
+                                onChanged: (value) => {
+                                  setState(
+                                    () {
+                                      describeReason = value;
+                                    },
+                                  )
+                                },
+                              ),
+                              const SizedBox(height: 20),
+                              PrimaryButton(
+                                title: 'Gửi',
+                                buttonHeight: 50,
+                                onPressed: (validSubmitSOS()) == true
+                                    ? () {
+                                        cubit.submitSOS(
+                                          SOSSubmitRequest(
+                                            reasonId: selectedReason?.id,
+                                            imgUrl: uploadedUrl,
+                                            sosMessage: describeReason,
+                                            requestId:
+                                                selectedReason?.requestId,
+                                            requestTime:
+                                                selectedReason?.requestTime,
+                                          ),
+                                        );
+                                        Navigator.pop(context);
+                                      }
+                                    : null,
+                              )
                             ],
                           ),
-                          const SizedBox(height: 20),
-                          (reasons.isNotEmpty)
-                              ? DropDown<ChildSOSResponse>(
-                                  items: reasons,
-                                  displayTextBuilder: (value) =>
-                                      value.name ?? '',
-                                  onChanged: (value) {
-                                    setState(() {
-                                      selectedReason = value;
-                                    });
-                                  },
-                                )
-                              : const SizedBox(),
-                          const SizedBox(height: 20),
-                          ImageCapture(
-                            title: 'Chụp ảnh sự cố',
-                            imageFile: localFile,
-                            captureCallback: () => openCamera(context),
-                            deleteCallback: () => {
-                              setState((){
-                                localFile = null;
-                                uploadedUrl = null;
-                              })
-                            },
-                          ),
-                          const SizedBox(height: 20),
-                          TextInput(
-                            hint: 'Nhập mô tả sự cố',
-                            labelText: 'Mô tả sự cố',
-                            maxLines: 6, // and this
-                            keyboardType: TextInputType.multiline,
-                            onChanged: (value) => {
-                              setState(
-                                () {
-                                  describeReason = value;
-                                },
-                              )
-                            },
-                          ),
-                          const SizedBox(height: 20),
-                          PrimaryButton(
-                            title: 'Gửi',
-                            buttonHeight: 50,
-                            onPressed: (validSubmitSOS()) == true
-                                ? () {
-                                    cubit.submitSOS(
-                                      SOSSubmitRequest(
-                                        reasonId: selectedReason?.id,
-                                        imgUrl: uploadedUrl,
-                                        sosMessage: describeReason,
-                                        requestId: selectedReason?.requestId,
-                                        requestTime:
-                                            selectedReason?.requestTime,
-                                      ),
-                                    );
-                                    Navigator.pop(context);
-                                  }
-                                : null,
-                          )
-                        ],
+                        ),
                       ),
                     ),
                   ),
