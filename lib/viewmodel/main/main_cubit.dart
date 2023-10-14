@@ -4,6 +4,7 @@ import 'package:location/location.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
+import 'package:mvvm_cubit/data/request/check_in/check_in_request.dart';
 import 'package:mvvm_cubit/repository/main/main_repository.dart';
 import 'package:mvvm_cubit/viewmodel/main/main_state.dart';
 
@@ -18,9 +19,24 @@ class MainCubit extends GenericCubit<MainState> {
         GenericCubitState.loading(),
       );
       final trip = await repository.getTrip();
-      emit(
-        GenericCubitState.success(MainState(trip: trip)),
-      );
+      if (state.data == null) {
+        emit(
+          GenericCubitState.success(
+            MainState(
+              id: '',
+              trip: trip,
+            ),
+          ),
+        );
+      } else {
+        emit(
+          GenericCubitState.success(
+            state.data?.copyWith(
+              trip: trip,
+            ),
+          ),
+        );
+      }
     } on DioException catch (e) {
       emit(
         GenericCubitState.failure(e.message ?? 'Error'),
@@ -34,11 +50,24 @@ class MainCubit extends GenericCubit<MainState> {
         GenericCubitState.loading(),
       );
       final tempForm = await repository.getTempFormDetails();
-      emit(
-        GenericCubitState.success(
-          MainState(tempForm: tempForm),
-        ),
-      );
+      if (state.data == null) {
+        emit(
+          GenericCubitState.success(
+            MainState(
+              id: '',
+              tempForm: tempForm,
+            ),
+          ),
+        );
+      } else {
+        emit(
+          GenericCubitState.success(
+            state.data?.copyWith(
+              tempForm: tempForm,
+            ),
+          ),
+        );
+      }
     } on DioException catch (e) {
       emit(
         GenericCubitState.failure(e.message ?? 'Error'),
@@ -51,12 +80,25 @@ class MainCubit extends GenericCubit<MainState> {
       emit(
         GenericCubitState.loading(),
       );
-      final list = await repository.getWarningList();
-      emit(
-        GenericCubitState.success(
-          MainState(warningList: list),
-        ),
-      );
+      final warningList = await repository.getWarningList();
+      if (state.data == null) {
+        emit(
+          GenericCubitState.success(
+            MainState(
+              id: '',
+              warningList: warningList,
+            ),
+          ),
+        );
+      } else {
+        emit(
+          GenericCubitState.success(
+            state.data?.copyWith(
+              warningList: warningList,
+            ),
+          ),
+        );
+      }
     } on DioException catch (e) {
       emit(
         GenericCubitState.failure(e.message ?? 'Error'),
@@ -68,6 +110,7 @@ class MainCubit extends GenericCubit<MainState> {
     emit(
       GenericCubitState.success(
         MainState(
+          id: '',
           tempForm: null,
           trip: null,
         ),
@@ -75,10 +118,11 @@ class MainCubit extends GenericCubit<MainState> {
     );
   }
 
-  void editNewTrip() {
+  void editNewTrip(String id) {
     emit(
       GenericCubitState.success(
         MainState(
+          id: id,
           tempForm: null,
           trip: null,
         ),
@@ -93,8 +137,29 @@ class MainCubit extends GenericCubit<MainState> {
     );
   }
 
-  void checkDistance(LocationData start, LocationData end) {
-    logger.d('distance ${calculateDistance(start, end)}');
+  void startCheckIn(String id, LocationData current, LocationData destination) {
+    logger.d('distance ${calculateDistance(current, destination)}');
+    if (calculateDistance(current, destination) > 20) {
+      emit(
+        GenericCubitState.success(
+          state.data?.copyWith(
+            id: id,
+            canCheckIn: true,
+            locationData: current,
+          ),
+        ),
+      );
+    } else {
+      emit(
+        GenericCubitState.success(
+          state.data?.copyWith(
+            id: id,
+            canCheckIn: false,
+            locationData: current,
+          ),
+        ),
+      );
+    }
   }
 
   double calculateDistance(LocationData start, LocationData end) {
@@ -105,5 +170,29 @@ class MainCubit extends GenericCubit<MainState> {
       end.longitude ?? 0,
     );
     return distance;
+  }
+
+  Future<void> didCaptureAndUploadImage(String path) async {
+    try {
+      final data = state.data;
+      logger.d('didCaptureAndUploadImage $data');
+      if (data != null) {
+        logger.d('didCaptureAndUploadImage data != null');
+        final response = await repository.submitArrived(
+          CheckInRequest(
+            id: data.id!,
+            imagePath: path,
+            latitude: data.locationData!.latitude!,
+            longitude: data.locationData!.longitude!,
+          ),
+        );
+        getTrip();
+      }
+    } on DioException catch (e) {
+      logger.e(e.message);
+      emit(
+        GenericCubitState.failure(e.message ?? 'Error'),
+      );
+    }
   }
 }

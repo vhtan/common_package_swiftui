@@ -23,15 +23,11 @@ class TripContainer extends StatefulWidget {
 
 class _TripContainer extends State<TripContainer> {
   TripResponse? _trip;
-  late ValueChanged<StopPointResponse> _onArrived;
-  VoidCallback _onFinished = () {};
 
   @override
   void initState() {
     super.initState();
     _trip = widget.trip;
-    _onArrived = widget.onArrived;
-    _onFinished = widget.onFinihed;
   }
 
   @override
@@ -52,8 +48,8 @@ class _TripContainer extends State<TripContainer> {
           (stopPoint) {
             return StopPointContainer(
               stopPoint: stopPoint,
-              onArrived: _onArrived,
-              onFinished: _onFinished,
+              onArrived: widget.onArrived,
+              onFinished: widget.onFinihed,
             );
           },
         ).toList(),

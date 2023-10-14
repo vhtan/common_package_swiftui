@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
@@ -61,7 +63,11 @@ class StopPointContainer extends StatelessWidget {
               child: PrimaryButton(
                 title: 'Đến nơi',
                 buttonHeight: 50,
-                onPressed: () => onArrived(stopPoint),
+                onPressed: (stopPoint.imagePath != null)
+                    ? null
+                    : () {
+                        onArrived(stopPoint);
+                      },
               ),
             ),
             const SizedBox(width: 20),
@@ -69,7 +75,11 @@ class StopPointContainer extends StatelessWidget {
               child: PrimaryButton(
                 title: 'Hoàn thành',
                 buttonHeight: 50,
-                onPressed: onFinished,
+                onPressed: (stopPoint.imagePath != null)
+                    ? () {
+                        onFinished();
+                      }
+                    : null,
               ),
             ),
             const SizedBox(width: 20),
@@ -79,62 +89,4 @@ class StopPointContainer extends StatelessWidget {
       ],
     );
   }
-
-  // Widget renderDeliveryDuty(DeliveryDuty duty) {
-  //   return Column(
-  //     children: [
-  //       Padding(
-  //         padding: const EdgeInsets.only(left: 20, right: 20),
-  //         child: Row(
-  //           children: [
-  //             const Icon(Icons.api_sharp),
-  //             const SizedBox(width: 10),
-  //             Text(
-  //               duty.requestFormId,
-  //               style: textDefault,
-  //             ),
-  //           ],
-  //         ),
-  //       ),
-  //       const SizedBox(height: 10),
-  //       Padding(
-  //         padding: const EdgeInsets.only(left: 20, right: 20),
-  //         child: Row(
-  //           children: [
-  //             const Icon(Icons.money_rounded),
-  //             const SizedBox(width: 10),
-  //             Text(
-  //               duty.totalAmount,
-  //               style: textDefault,
-  //             ),
-  //           ],
-  //         ),
-  //       ),
-  //       const SizedBox(height: 10),
-  //       Padding(
-  //         padding: const EdgeInsets.only(left: 20, right: 20),
-  //         child: Row(
-  //           children: [
-  //             const Icon(Icons.account_balance),
-  //             const SizedBox(width: 10),
-  //             Text(
-  //               duty.type,
-  //               style: textDefault,
-  //             ),
-  //           ],
-  //         ),
-  //       ),
-  //       const SizedBox(height: 10),
-  //       Padding(
-  //         padding: const EdgeInsets.only(left: 20, right: 20),
-  //         child: PrimaryButton(
-  //           title: duty.buttonTitle,
-  //           buttonHeight: 50,
-  //           onPressed: onPressed,
-  //         ),
-  //       ),
-  //       const SizedBox(height: 20),
-  //     ],
-  //   );
-  // }
 }

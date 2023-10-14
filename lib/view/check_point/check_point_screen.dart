@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_text_fields/utils/extensions.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
+import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/widget/image_capture.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
@@ -10,7 +11,12 @@ import 'package:mvvm_cubit/di.dart';
 import 'package:mvvm_cubit/viewmodel/check_point/check_point_cubit.dart';
 
 class CheckPointScreen extends StatefulWidget {
-  const CheckPointScreen({Key? key}) : super(key: key);
+  final ValueChanged<String> didCapture;
+
+  const CheckPointScreen({
+    Key? key,
+    required this.didCapture,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _CheckPointScreen();
@@ -29,11 +35,8 @@ class _CheckPointScreen extends State<CheckPointScreen> {
               CameraCamera(
                 onFile: (file) {
                   if (file.path.isNotNullOrEmpty()) {
-                    // upload photo here
                     cubit.didCapturePhoto(file);
-                  } else {
-                    // display error
-                  }
+                  } else {}
                   Navigator.pop(context);
                 },
               ),
@@ -59,7 +62,7 @@ class _CheckPointScreen extends State<CheckPointScreen> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => cubit,
-      child: BlocConsumer<CheckPointCubit, GenericCubitState>(
+      child: BlocConsumer<CheckPointCubit, GenericCubitState<CheckPointData>>(
         listener: (context, state) {},
         builder: (context, state) {
           return BlocBuilder<CheckPointCubit,
@@ -77,7 +80,11 @@ class _CheckPointScreen extends State<CheckPointScreen> {
                         color: Colors.white,
                       ),
                       padding: const EdgeInsets.only(
-                          left: 20, right: 20, bottom: 20, top: 10),
+                        left: 20,
+                        right: 20,
+                        bottom: 20,
+                        top: 10,
+                      ),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -115,9 +122,17 @@ class _CheckPointScreen extends State<CheckPointScreen> {
                           PrimaryButton(
                             title: 'Gửi',
                             buttonHeight: 50,
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
+                            onPressed: (state.data?.imagePath != null)
+                                ? () {
+                                    if (state.data?.imagePath != null) {
+                                      logger.i(
+                                          'did capture image ${state.data?.imagePath}');
+                                      widget.didCapture(
+                                          state.data?.imagePath ?? '');
+                                    }
+                                    Navigator.pop(context);
+                                  }
+                                : null,
                           )
                         ],
                       ),

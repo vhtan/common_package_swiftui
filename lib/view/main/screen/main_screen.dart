@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:location/location.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
+import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/snack_bar/error_snack_bar.dart';
 import 'package:mvvm_cubit/common/widget/empty_widget.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
@@ -17,6 +18,7 @@ import 'package:mvvm_cubit/view/check_point/check_point_screen.dart';
 import 'package:mvvm_cubit/view/main/widget/trip_container.dart';
 import 'package:mvvm_cubit/view/pending_trip/screen/pending_trip_screen.dart';
 import 'package:mvvm_cubit/view/warnings_handler/screen/warnings_handler_screen.dart';
+import 'package:mvvm_cubit/view/webview/webview_screen.dart';
 import 'package:mvvm_cubit/viewmodel/main/main_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/main/main_state.dart';
 
@@ -77,7 +79,7 @@ class _MainScreenState extends State<MainScreen> {
     return BlocProvider(
       create: (_) => cubit,
       child: Scaffold(
-        body: BlocConsumer<MainCubit, GenericCubitState>(
+        body: BlocConsumer<MainCubit, GenericCubitState<MainState>>(
           listener: (context, state) {
             switch (state.status) {
               case Status.failure:
@@ -87,9 +89,16 @@ class _MainScreenState extends State<MainScreen> {
                 );
                 break;
               case Status.success:
-                // clear cached login
-                // navigateTo(const LoginScreen());
-                break;
+                if (state.data?.canCheckIn == true) {
+                  showDialog(
+                    context: context,
+                    builder: (context) => CheckPointScreen(
+                      didCapture: (value) =>
+                          cubit.didCaptureAndUploadImage(value),
+                    ),
+                    barrierDismissible: false,
+                  );
+                }
               default:
                 break;
             }
@@ -146,27 +155,30 @@ class _MainScreenState extends State<MainScreen> {
 
   Widget currentTrip(TripResponse trip) {
     return TripContainer(
-      trip: trip,
-      onArrived: (value) async {
-        final currentLocation = await getCurrentLocation();
-        final stopPointLocation = LocationData.fromMap({
-          'longitude': value.destination?.longitude,
-          'latitude': value.destination?.latitude,
-        });
-        if (currentLocation != null && stopPointLocation != null) {
-          cubit.checkDistance(
-            currentLocation,
-            stopPointLocation,
+        trip: trip,
+        onArrived: (value) async {
+          final currentLocation = await getCurrentLocation();
+          final stopPointLocation = LocationData.fromMap({
+            'longitude': value.destination?.longitude,
+            'latitude': value.destination?.latitude,
+          });
+          if (currentLocation != null) {
+            cubit.startCheckIn(
+              value.id,
+              currentLocation,
+              stopPointLocation,
+            );
+          }
+        },
+        onFinihed: () {
+          logger.d('onFinihed');
+          navigateTo(
+            const WebViewCustom(
+              title: 'Trip vacom',
+              url: 'https://google.com.vn',
+            ),
           );
-        }
-      },
-      // onArrived: () => showDialog(
-      //   context: context,
-      //   builder: (context) => const CheckPointScreen(),
-      //   barrierDismissible: false,
-      // ),
-      onFinihed: () {},
-    );
+        });
   }
 }
 
@@ -211,7 +223,7 @@ extension _MainScreenDeliveryList on _MainScreenState {
         children: [
           PendingTripScreen(
             onDelete: () => cubit.deleteNewTrip(),
-            onEdit: () => cubit.editNewTrip(),
+            onEdit: () => cubit.editNewTrip(''),
           ),
           const SizedBox(height: 20),
         ],

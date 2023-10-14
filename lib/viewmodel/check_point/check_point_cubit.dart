@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
+import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/repository/check_point/check_point_repository.dart';
 
 class CheckPointCubit extends Cubit<GenericCubitState<CheckPointData>> {
@@ -13,16 +14,31 @@ class CheckPointCubit extends Cubit<GenericCubitState<CheckPointData>> {
   void didCapturePhoto(File? file) async {
     if (file == null) {
       emit(
-        GenericCubitState.success(const CheckPointData(file: null)),
+        GenericCubitState.success(
+          const CheckPointData(
+            file: null,
+            imagePath: null,
+          ),
+        ),
       );
       return;
     }
-    final response = await repository.uploadImage(file.path);
+
     try {
-      emit(
-        GenericCubitState.success(CheckPointData(file: file)),
-      );
+      final imagePath = await repository.uploadImage(file.path);
+      logger.i('imagePath $imagePath');
+      if (imagePath != null) {
+        emit(
+          GenericCubitState.success(
+            CheckPointData(
+              file: file,
+              imagePath: imagePath,
+            ),
+          ),
+        );
+      }
     } catch (ex) {
+      logger.i(ex);
       emit(
         GenericCubitState.failure(ex.toString()),
       );
@@ -32,5 +48,9 @@ class CheckPointCubit extends Cubit<GenericCubitState<CheckPointData>> {
 
 class CheckPointData {
   final File? file;
-  const CheckPointData({required this.file});
+  final String? imagePath;
+  const CheckPointData({
+    required this.file,
+    required this.imagePath,
+  });
 }

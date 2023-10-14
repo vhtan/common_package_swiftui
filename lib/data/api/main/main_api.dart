@@ -4,6 +4,7 @@ import 'package:mvvm_cubit/core/api_config.dart';
 import 'package:mvvm_cubit/data/model/main/trip/trip_response.dart';
 import 'package:mvvm_cubit/data/model/temp_form/temp_form_response.dart';
 import 'package:mvvm_cubit/data/model/warning/warning_response.dart';
+import 'package:mvvm_cubit/data/request/check_in/check_in_request.dart';
 
 class MainApi with ApiHelper<dynamic> {
   final DioClient client;
@@ -35,5 +36,15 @@ class MainApi with ApiHelper<dynamic> {
       ),
     );
     return parseWarningResponseList(apiResponse.detail);
+  }
+
+  Future<dynamic> submitArrived(CheckInRequest request) async {
+    final apiResponse = await makePostRequest(
+      client.dio.post(
+        ApiConfig.arrivedStopPoint(request.id),
+        data: request,
+      ),
+    );
+    return TripResponse.fromJson(apiResponse.detail);
   }
 }

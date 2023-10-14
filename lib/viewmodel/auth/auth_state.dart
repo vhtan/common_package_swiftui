@@ -10,7 +10,7 @@ class AuthState {
     if (username == null) {
       return null;
     }
-    if (username.isValidEmail() == false) {
+    if (username?.isEmpty == true) {
       return 'Vui lòng nhập tên đăng nhập';
     } else {
       return null;
@@ -25,7 +25,7 @@ class AuthState {
       isValidPassword = true;
     }
 
-    if ((username ?? '').isValidEmail() == true) {
+    if ((username ?? '').isNotEmpty) {
       isValidUsername = true;
     }
     return isValidPassword && isValidUsername;

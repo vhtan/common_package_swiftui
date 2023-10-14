@@ -21,7 +21,7 @@ class ApiConfig {
   static const String userSearchList = '/user/search';
 
   static String arrivedStopPoint(String id) {
-    return 'routing/routing-detail/$id/arrived';
+    return '/routing/routing-detail/$id/arrived';
   }
 
   static Map<String, String?> header = {

@@ -13,6 +13,7 @@ abstract class StopPointResponse with _$StopPointResponse {
     String? stopPointType,
     String? stopPointAction,
     String? status,
+    String? imagePath,
     DestinationResponse? destination,
   }) = _StopPointResponse;
 

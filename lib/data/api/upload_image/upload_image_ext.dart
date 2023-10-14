@@ -8,7 +8,7 @@ mixin UploadImageExt {
   Future<String?> uploadImage(
       DioClient client, String path, ApiHelper<dynamic> apiHelper) async {
     try {
-      logger.e('uploadImage path= $path');
+      logger.i('uploadImage path= $path');
       var formData = FormData.fromMap({
         'image': await MultipartFile.fromFile(path, filename: 'image'),
       });

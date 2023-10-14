@@ -27,10 +27,6 @@ class _LoginScreenState extends State<LoginScreen> {
   PreferredSizeWidget get _appBar {
     return AppBar(
       automaticallyImplyLeading: false,
-      // leading: IconButton(
-      //   onPressed: () => Navigator.pop(context),
-      //   icon: const Icon(Icons.arrow_back),
-      // ),
       title: const Text("Đăng nhập"),
     );
   }

@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:ffi';
 
+import 'package:flutter/foundation.dart';
+import 'package:location/location.dart';
 import 'package:mvvm_cubit/core/app_asset.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
