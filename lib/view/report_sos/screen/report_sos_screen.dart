@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:camera_camera/camera_camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,8 +10,11 @@ import 'package:mvvm_cubit/common/widget/image_capture.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/common/widget/text_input.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
+import 'package:mvvm_cubit/data/api/sos/sos_submit_request.dart';
+import 'package:mvvm_cubit/data/model/sos/child_sos_response.dart';
 import 'package:mvvm_cubit/di.dart';
 import 'package:mvvm_cubit/viewmodel/report_sos/report_sos_cubit.dart';
+import 'package:mvvm_cubit/viewmodel/report_sos/report_state.dart';
 
 class ReportSOSScreen extends StatefulWidget {
   const ReportSOSScreen({Key? key}) : super(key: key);
@@ -20,6 +25,11 @@ class ReportSOSScreen extends StatefulWidget {
 
 class _ReportSOSScreen extends State<ReportSOSScreen> {
   final cubit = ReportSOSCubit(repository: di());
+  List<ChildSOSResponse> reasons = [];
+  ChildSOSResponse? selectedReason;
+  String? uploadedUrl;
+  String? describeReason;
+  File? localFile;
 
   @override
   void initState() {
@@ -33,7 +43,20 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
     return BlocProvider(
       create: (context) => cubit,
       child: BlocConsumer<ReportSOSCubit, GenericCubitState>(
-        listener: (context, state) {},
+        listener: (context, state) {
+          if (state is UploadImageSuccess) {
+            setState(() {
+              uploadedUrl = state.uploadUrl;
+              localFile = state.file;
+            });
+          } else if (state is GetReasonsSuccess) {
+            setState(() {
+              reasons.clear();
+              reasons.addAll(state.reasons);
+              selectedReason = reasons.first;
+            });
+          }
+        },
         builder: (context, state) {
           return BlocBuilder<ReportSOSCubit, GenericCubitState<ReportSOSData>>(
             builder: (context, state) {
@@ -77,54 +100,63 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
                             ],
                           ),
                           const SizedBox(height: 20),
-                          DropDown<String>(
-                            items: const [
-                              'Xe hư',
-                              'Hết xăng',
-                              'Thủng lốp',
-                              'Sự cố khác'
-                            ],
-                            displayTextBuilder: (value) => value,
-                            onChanged: (value) {},
-                          ),
+                          (reasons.isNotEmpty)
+                              ? DropDown<ChildSOSResponse>(
+                                  items: reasons,
+                                  displayTextBuilder: (value) =>
+                                      value.name ?? '',
+                                  onChanged: (value) {
+                                    setState(() {
+                                      selectedReason = value;
+                                    });
+                                  },
+                                )
+                              : const SizedBox(),
                           const SizedBox(height: 20),
-                          // if (state.file != null)
-                          //   AspectRatio(
-                          //     aspectRatio: 16 / 9,
-                          //     child: Container(
-                          //       clipBehavior: Clip.antiAlias,
-                          //       decoration: const BoxDecoration(
-                          //         borderRadius:
-                          //             BorderRadius.all(Radius.circular(8)),
-                          //       ),
-                          //       child: Image.file(
-                          //         state.file!,
-                          //         fit: BoxFit.fitWidth,
-                          //       ),
-                          //     ),
-                          //   ),
-                          // if (state.file != null) const SizedBox(height: 20),
                           ImageCapture(
                             title: 'Chụp ảnh sự cố',
-                            imageFile: state.data?.file,
+                            imageFile: localFile,
                             captureCallback: () => openCamera(context),
-                            deleteCallback: () =>
-                                cubit.didCapturePhoto(null, ''),
+                            deleteCallback: () => {
+                              setState((){
+                                localFile = null;
+                                uploadedUrl = null;
+                              })
+                            },
                           ),
                           const SizedBox(height: 20),
-                          const TextInput(
+                          TextInput(
                             hint: 'Nhập mô tả sự cố',
                             labelText: 'Mô tả sự cố',
                             maxLines: 6, // and this
                             keyboardType: TextInputType.multiline,
+                            onChanged: (value) => {
+                              setState(
+                                () {
+                                  describeReason = value;
+                                },
+                              )
+                            },
                           ),
                           const SizedBox(height: 20),
                           PrimaryButton(
                             title: 'Gửi',
                             buttonHeight: 50,
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
+                            onPressed: (validSubmitSOS()) == true
+                                ? () {
+                                    cubit.submitSOS(
+                                      SOSSubmitRequest(
+                                        reasonId: selectedReason?.id,
+                                        imgUrl: uploadedUrl,
+                                        sosMessage: describeReason,
+                                        requestId: selectedReason?.requestId,
+                                        requestTime:
+                                            selectedReason?.requestTime,
+                                      ),
+                                    );
+                                    Navigator.pop(context);
+                                  }
+                                : null,
                           )
                         ],
                       ),
@@ -139,6 +171,15 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
     );
   }
 
+  bool validSubmitSOS() {
+    if (selectedReason != null &&
+        uploadedUrl.isNotNullOrEmpty() &&
+        describeReason.isNotNullOrEmpty()) {
+      return true;
+    }
+    return false;
+  }
+
   void openCamera(BuildContext context) async {
     Navigator.push(
       context,
@@ -150,7 +191,7 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
                 onFile: (file) {
                   if (file.path.isNotNullOrEmpty()) {
                     // upload photo here
-                    cubit.didCapturePhoto(file, '');
+                    cubit.didCapturePhoto(file);
                   } else {
                     // display error
                   }

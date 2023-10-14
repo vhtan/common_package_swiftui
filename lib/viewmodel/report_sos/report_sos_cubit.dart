@@ -1,9 +1,15 @@
+// ignore_for_file: unnecessary_brace_in_string_interps
+
 import 'dart:io';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
+import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/data/api/sos/sos_submit_request.dart';
+import 'package:mvvm_cubit/data/model/sos/child_sos_response.dart';
+import 'package:mvvm_cubit/data/model/sos/sos_response.dart';
 import 'package:mvvm_cubit/repository/sos/sos_repository.dart';
+import 'package:mvvm_cubit/viewmodel/report_sos/report_state.dart';
 
 class ReportSOSCubit extends Cubit<GenericCubitState<ReportSOSData>> {
   final SosRepository repository;
@@ -11,17 +17,17 @@ class ReportSOSCubit extends Cubit<GenericCubitState<ReportSOSData>> {
   ReportSOSCubit({required this.repository})
       : super(GenericCubitState.loading());
 
-  void didCapturePhoto(File? file, String reason) async {
+  void didCapturePhoto(File? file) async {
     if (file == null) {
       emit(
-        GenericCubitState.success(ReportSOSData(file: null, reason: reason)),
+        GenericCubitState.success(ReportSOSData()),
       );
       return;
     }
     final response = await repository.uploadImage(file.path);
     try {
       emit(
-        GenericCubitState.success(ReportSOSData(file: file, reason: reason)),
+        UploadImageSuccess(status: Status.success, uploadUrl: response, file: file),
       );
     } catch (ex) {
       emit(
@@ -32,10 +38,10 @@ class ReportSOSCubit extends Cubit<GenericCubitState<ReportSOSData>> {
 
   void getReasons() async {
     final response = await repository.getReasons();
+    final reasons = SOSResponse.fromJson({'detail': response.detail}).detail;
     try {
       emit(
-        GenericCubitState.success(
-            const ReportSOSData(file: null, reason: null)),
+        GetReasonsSuccess(status: Status.success, reasons: reasons??[]),
       );
     } catch (ex) {
       emit(
@@ -45,11 +51,10 @@ class ReportSOSCubit extends Cubit<GenericCubitState<ReportSOSData>> {
   }
 
   void submitSOS(SOSSubmitRequest request) async {
-    final response = await repository.submitSOS(request);
+    await repository.submitSOS(request);
     try {
       emit(
-        GenericCubitState.success(
-            const ReportSOSData(file: null, reason: null)),
+        GenericCubitState.success(ReportSOSData()),
       );
     } catch (ex) {
       emit(
@@ -60,7 +65,5 @@ class ReportSOSCubit extends Cubit<GenericCubitState<ReportSOSData>> {
 }
 
 class ReportSOSData {
-  final File? file;
-  final String? reason;
-  const ReportSOSData({required this.file, required this.reason});
+  String? reason;
 }

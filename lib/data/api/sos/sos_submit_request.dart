@@ -1,11 +1,11 @@
-import 'dart:ffi';
 
 class SOSSubmitRequest {
-  late final String reasonId;
-  late final String imgUrl;
-  late final String sosMessage;
-  late final String requestId;
-  late final Long requestTime;
+  late final String? reasonId;
+  late final String? imgUrl;
+  late final String? sosMessage;
+  late final String? requestId;
+  late final int? requestTime;
+  SOSSubmitRequest({this.reasonId, this.imgUrl, this.sosMessage, this.requestId, this.requestTime });
   Map<String, dynamic> toParams() {
     return {
       "reasonId": reasonId,
