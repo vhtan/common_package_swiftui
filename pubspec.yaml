@@ -57,7 +57,9 @@ dependencies:
   currency_text_input_formatter: ^2.1.10
   geolocator: ^10.0.1
   webview_flutter: ^4.4.1
+  cached_network_image: ^3.3.0
   
+
   
 dev_dependencies:
   flutter_test:

@@ -13,7 +13,10 @@ Future<dynamic> showAcceptWarningDialog(
     builder: (_) {
       return AlertDialog(
         shape: const RoundedRectangleBorder(
-          side: BorderSide(color: Colors.redAccent, width: 2.0),
+          side: BorderSide(
+            color: Colors.redAccent,
+            width: 2.0,
+          ),
           borderRadius: BorderRadius.all(
             Radius.circular(15.0),
           ),
@@ -21,15 +24,23 @@ Future<dynamic> showAcceptWarningDialog(
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.warning_rounded, color: AppColors.error, size: 40),
+            const Icon(
+              Icons.warning_rounded,
+              color: AppColors.error,
+              size: 40,
+            ),
             const SizedBox(width: 10),
-            Text(title, textAlign: TextAlign.center),
+            Flexible(
+              child: Text(title, textAlign: TextAlign.left),
+            ),
           ],
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(description),
+            Flexible(
+              child: Text(description),
+            ),
             const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -39,7 +50,7 @@ Future<dynamic> showAcceptWarningDialog(
                     Navigator.pop(context, false);
                   },
                   child: const Text(
-                    'Không chấp nhận',
+                    'Không',
                     style: textDefault,
                   ),
                 ),
@@ -52,7 +63,12 @@ Future<dynamic> showAcceptWarningDialog(
                   },
                   child: const Text(
                     'Chấp nhận',
-                    style: textDefault,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.white,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                 )
               ],

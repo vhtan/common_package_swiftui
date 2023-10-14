@@ -20,3 +20,10 @@ abstract class StopPointResponse with _$StopPointResponse {
   factory StopPointResponse.fromJson(Map<String, dynamic> json) =>
       _$StopPointResponseFromJson(json);
 }
+
+extension StopPointStatus on String {
+  static const act = 'ACT';
+  static const pro = 'PRO';
+  static const ina = 'INA';
+  static const cls = 'CLS';
+}

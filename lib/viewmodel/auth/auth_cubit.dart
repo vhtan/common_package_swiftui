@@ -21,12 +21,23 @@ class AuthCubit extends Cubit<GenericCubitState<AuthState>> {
       );
       ApiConfig.header.remove('Authorization');
       final loginResponse = await repository.api.login(request);
+      final token = loginResponse.session ?? '';
+      final roleCode = loginResponse.role?.code ?? '';
+
       if (loginResponse.session != null) {
-        _saveLoginToken(loginResponse.session!);
+        _saveLoginData(token, roleCode);
         ApiConfig.header['Authorization'] = loginResponse.session;
-        emit(
-          GenericCubitState.success(null),
-        );
+        if (loginResponse.role?.code == 'ATAI') {
+          emit(
+            GenericCubitState.success(null),
+          );
+        } else {
+          emit(
+            GenericCubitState.success(
+              AuthState(isManager: true),
+            ),
+          );
+        }
       } else {
         emit(
           GenericCubitState.failure("Error"),
@@ -39,10 +50,14 @@ class AuthCubit extends Cubit<GenericCubitState<AuthState>> {
     }
   }
 
-  Future<void> _saveLoginToken(String token) async {
+  Future<void> _saveLoginData(String token, String roleCode) async {
     await di<FlutterSecureStorage>().write(
       key: StoreKey.loginToken,
       value: token,
+    );
+    await di<FlutterSecureStorage>().write(
+      key: StoreKey.roleCode,
+      value: roleCode,
     );
   }
 
@@ -74,6 +89,9 @@ class AuthCubit extends Cubit<GenericCubitState<AuthState>> {
   Future<void> _clearLoginToken() async {
     await di<FlutterSecureStorage>().delete(
       key: StoreKey.loginToken,
+    );
+    await di<FlutterSecureStorage>().delete(
+      key: StoreKey.roleCode,
     );
   }
 

@@ -12,12 +12,12 @@ import 'package:mvvm_cubit/core/app_string.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/data/model/main/stop_point/stop_point_response.dart';
 import 'package:mvvm_cubit/data/model/main/trip/trip_response.dart';
+import 'package:mvvm_cubit/data/model/warning/warning_response.dart';
 import 'package:mvvm_cubit/di.dart';
 import 'package:mvvm_cubit/view/add_trip/add_trip_screen.dart';
 import 'package:mvvm_cubit/view/check_point/check_point_screen.dart';
 import 'package:mvvm_cubit/view/main/widget/trip_container.dart';
 import 'package:mvvm_cubit/view/pending_trip/screen/pending_trip_screen.dart';
-import 'package:mvvm_cubit/view/warnings_handler/screen/warnings_handler_screen.dart';
 import 'package:mvvm_cubit/view/webview/webview_screen.dart';
 import 'package:mvvm_cubit/viewmodel/main/main_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/main/main_state.dart';
@@ -43,6 +43,7 @@ class _MainScreenState extends State<MainScreen> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       cubit.getTrip();
+      cubit.getWarningList();
       checkLocationPermission();
       Future.delayed(const Duration(milliseconds: 5000), () {
         getCurrentLocation();
@@ -119,20 +120,34 @@ class _MainScreenState extends State<MainScreen> {
                   case Status.success:
                     final trip = state.data?.trip;
                     final tempForm = state.data?.tempForm;
-                    final warningList = state.data?.warningList;
+                    final warningList = state.data?.warningList ?? [];
                     if (trip != null) {
                       return Column(
                         children: [
-                          warningNoTrip(),
+                          warningWidgetList(warningList),
                           Expanded(
                             child: currentTrip(trip),
                           ),
                         ],
                       );
                     } else if (tempForm != null) {
-                      return pendingTrip();
+                      return Column(
+                        children: [
+                          warningWidgetList(warningList),
+                          Expanded(
+                            child: pendingTrip(),
+                          ),
+                        ],
+                      );
                     } else {
-                      return noTrip();
+                      return Column(
+                        children: [
+                          warningWidgetList(warningList),
+                          Expanded(
+                            child: noTrip(),
+                          ),
+                        ],
+                      );
                     }
                 }
               },
@@ -231,12 +246,18 @@ extension _MainScreenDeliveryList on _MainScreenState {
     );
   }
 
-  Widget warningNoTrip() {
+  Widget warningWidgetList(List<WarningResponse> list) {
+    final ll = list.map<Widget>((e) => widgetWithWarning(e)).toList();
+    return Column(
+      children: ll,
+    );
+  }
+
+  Widget widgetWithWarning(WarningResponse warning) {
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: const BoxDecoration(
         color: AppColors.warning,
-        // borderRadius: BorderRadius.all(Radius.circular(8)),
       ),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
@@ -248,64 +269,19 @@ extension _MainScreenDeliveryList on _MainScreenState {
               color: AppColors.red,
               size: 24.0,
             ),
-            const SizedBox(width: 8.0), // Add spacing between elements
-            const Expanded(
+            const SizedBox(width: 8.0),
+            Expanded(
               child: Text(
-                'Di chuyển không có phiếu yêu cầu',
+                warning.warningMessage ?? '',
                 style: textDefault,
                 maxLines: 2,
-                overflow: TextOverflow.ellipsis, // Specify an overflow property
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             ElevatedButton(
               onPressed: () {},
               child: const Text(
                 "Thêm PYC",
-                style: textDefault,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget warningStopTooLong() {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: const BoxDecoration(
-        color: AppColors.warningHigh,
-        // borderRadius: BorderRadius.all(Radius.circular(8)),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: () {},
-        child: Row(
-          children: [
-            const Icon(
-              Icons.warning,
-              color: AppColors.red,
-              size: 24.0,
-            ),
-            const SizedBox(width: 8.0), // Add spacing between elements
-            const Expanded(
-              child: Text(
-                'Cánh báo: Dừng quá lâu',
-                style: textDefault,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis, // Specify an overflow property
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => const WarningsHandlerScreen(),
-                  barrierDismissible: false,
-                );
-              },
-              child: const Text(
-                "Xử lý",
                 style: textDefault,
               ),
             ),

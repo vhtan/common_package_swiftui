@@ -11,6 +11,7 @@ import 'package:mvvm_cubit/view/auth/login_screen.dart';
 import 'package:mvvm_cubit/view/container/screen/container_screen.dart';
 import 'package:mvvm_cubit/core/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:mvvm_cubit/view/manager_role/warning_list/screen/manager_role_warning_list_screen.dart';
 
 import 'di.dart';
 
@@ -20,31 +21,30 @@ void main() async {
   await Firebase.initializeApp();
   FlutterSecureStorage secureStorage = const FlutterSecureStorage();
   String? loginToken = await secureStorage.read(key: StoreKey.loginToken);
+  String? roleCode = await secureStorage.read(key: StoreKey.roleCode);
   ApiConfig.header['Authorization'] = loginToken;
   final osVersion = await _getOSVersion();
   ApiConfig.header['os-version'] = osVersion;
 
   AuthManager.setTokenExpiredCallback(() {
     runApp(
-      const MyApp(
-        token: null,
-      ),
+      const MyApp(),
     );
   });
 
   runApp(
-    MyApp(
-      token: loginToken,
-    ),
+    MyApp(token: loginToken, roleCode: roleCode),
   );
 }
 
 class MyApp extends StatelessWidget {
   final String? token;
+  final String? roleCode;
 
   const MyApp({
     Key? key,
-    required this.token,
+    this.token,
+    this.roleCode,
   }) : super(key: key);
 
   @override
@@ -52,7 +52,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightAppTheme,
-      home: (token == null) ? const LoginScreen() : const ContainerScreen(),
+      home: (token == null)
+          ? const LoginScreen()
+          : (roleCode == 'ATAI'
+              ? const ContainerScreen()
+              : const ManagerRoleWrningListScreen()),
     );
   }
 }

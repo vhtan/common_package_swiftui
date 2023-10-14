@@ -9,6 +9,7 @@ import 'package:mvvm_cubit/core/app_string.dart';
 import 'package:mvvm_cubit/data/request/auth/login_request.dart';
 import 'package:mvvm_cubit/di.dart';
 import 'package:mvvm_cubit/view/container/screen/container_screen.dart';
+import 'package:mvvm_cubit/view/manager_role/warning_list/screen/manager_role_warning_list_screen.dart';
 import 'package:mvvm_cubit/viewmodel/auth/auth_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/auth/auth_state.dart';
 
@@ -37,7 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
       create: (context) => authCubit,
       child: Scaffold(
         appBar: _appBar,
-        body: BlocConsumer<AuthCubit, GenericCubitState>(
+        body: BlocConsumer<AuthCubit, GenericCubitState<AuthState>>(
           listener: (context, state) {
             switch (state.status) {
               case Status.failure:
@@ -46,12 +47,21 @@ class _LoginScreenState extends State<LoginScreen> {
                   state.error ?? AppString.sendTimeOut,
                 );
               case Status.success:
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const ContainerScreen(),
-                  ),
-                );
+                if (state.data?.isManager == true) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ManagerRoleWrningListScreen(),
+                    ),
+                  );
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ContainerScreen(),
+                    ),
+                  );
+                }
               default:
                 break;
             }

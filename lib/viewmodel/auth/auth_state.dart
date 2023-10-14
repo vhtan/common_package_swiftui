@@ -3,8 +3,13 @@ import 'package:material_text_fields/utils/extensions.dart';
 class AuthState {
   final String? username;
   final String? password;
+  final bool? isManager;
 
-  AuthState({this.username, this.password});
+  AuthState({
+    this.username,
+    this.password,
+    this.isManager,
+  });
 
   String? errorText() {
     if (username == null) {

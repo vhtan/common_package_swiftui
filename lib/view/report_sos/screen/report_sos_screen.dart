@@ -33,7 +33,6 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     cubit.getReasons();
   }
@@ -58,7 +57,7 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
           }
         },
         builder: (context, state) {
-          return BlocBuilder<ReportSOSCubit, GenericCubitState<ReportSOSData>>(
+          return BlocBuilder<ReportSOSCubit, GenericCubitState>(
             builder: (context, state) {
               return Scaffold(
                 backgroundColor: Colors.transparent,

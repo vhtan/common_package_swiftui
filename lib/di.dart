@@ -18,6 +18,7 @@ import 'package:mvvm_cubit/viewmodel/main/main_cubit.dart';
 import 'package:mvvm_cubit/common/network/dio_client.dart';
 import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
+import 'package:mvvm_cubit/viewmodel/manager_role/warning_list/manager_role_warning_list_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/report_sos/report_sos_cubit.dart';
 
 final di = GetIt.instance;
@@ -69,6 +70,9 @@ Future<void> init() async {
   );
   di.registerFactory(
     () => AddTripCubit(repository: di()),
+  );
+  di.registerFactory(
+    () => ManagerRoleWarningListCubit(repository: di()),
   );
 
 // Register Add trip Components

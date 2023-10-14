@@ -7,4 +7,5 @@ class AppAsset {
   static const emptyState = "asset/images/empty_state.png";
   static const appLogo = "asset/images/acb_logo.png";
   static const imTextTruct = "asset/images/im_test_truct.png";
+  static const placeHolder = "asset/images/place_holder.png";
 }
