@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:location/location.dart';
@@ -36,6 +38,8 @@ class _MainScreenState extends State<MainScreen> {
   PermissionStatus? _permissionGranted;
   // LocationData? _locationData;
   final cubit = MainCubit(repository: di());
+  Timer? fetchTrip;
+  Timer? fetchWarning;
 
   @override
   void initState() {
@@ -45,10 +49,42 @@ class _MainScreenState extends State<MainScreen> {
       cubit.getTrip();
       cubit.getWarningList();
       checkLocationPermission();
-      Future.delayed(const Duration(milliseconds: 5000), () {
+      Future.delayed(const Duration(seconds: 5), () {
         getCurrentLocation();
       });
     });
+  }
+
+  void startFetchingTrip() {
+    cancelFetchingTrip();
+    fetchTrip = Timer.periodic(const Duration(seconds: 10), (timer) {
+      cubit.getTrip();
+    });
+  }
+
+  void cancelFetchingTrip() {
+    fetchTrip?.cancel();
+    fetchTrip = null;
+  }
+
+  void startFetchingWarning() {
+    cancelFetchingWarning();
+    fetchWarning = Timer.periodic(const Duration(seconds: 10), (timer) {
+      cubit.getWarningList();
+    });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    cancelFetchingTrip();
+    cancelFetchingWarning();
+    super.dispose();
+  }
+
+  void cancelFetchingWarning() {
+    fetchWarning?.cancel();
+    fetchWarning = null;
   }
 
   Future<LocationData?> getCurrentLocation() async {
@@ -120,6 +156,8 @@ class _MainScreenState extends State<MainScreen> {
                     final trip = state.data?.trip;
                     final tempForm = state.data?.tempForm;
                     final warningList = state.data?.warningList ?? [];
+                    startFetchingTrip();
+                    startFetchingWarning();
                     if (trip != null) {
                       return Column(
                         children: [
@@ -209,7 +247,7 @@ extension _MainScreenDeliveryList on _MainScreenState {
           PrimaryButton(
             title: 'Kiểm tra lộ trình',
             buttonHeight: 50,
-            onPressed: () => cubit.getTrip(),
+            onPressed: () => startFetchingTrip(),
           ),
           const SizedBox(height: 20),
           PrimaryButton(
