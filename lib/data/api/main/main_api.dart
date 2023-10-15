@@ -7,6 +7,7 @@ import 'package:mvvm_cubit/data/model/warning/warning_response.dart';
 import 'package:mvvm_cubit/data/model/warning_details/warning_details_response.dart';
 import 'package:mvvm_cubit/data/request/check_in/check_in_request.dart';
 import 'package:mvvm_cubit/data/request/push_token/push_token_request.dart';
+import 'package:mvvm_cubit/data/request/warning_process/warning_process_request.dart';
 
 class MainApi with ApiHelper<dynamic> {
   final DioClient client;
@@ -66,5 +67,14 @@ class MainApi with ApiHelper<dynamic> {
       ),
     );
     return WarningDetailsResponse.fromJson(apiResponse.detail);
+  }
+
+  Future<dynamic> warningProcess(WarningProcessRequest request) async {
+    return await makePostRequest(
+      client.dio.post(
+        ApiConfig.warningProcess,
+        data: request,
+      ),
+    );
   }
 }

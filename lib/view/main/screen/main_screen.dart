@@ -21,6 +21,7 @@ import 'package:mvvm_cubit/view/add_trip/add_trip_screen.dart';
 import 'package:mvvm_cubit/view/check_point/check_point_screen.dart';
 import 'package:mvvm_cubit/view/main/widget/trip_container.dart';
 import 'package:mvvm_cubit/view/pending_trip/screen/pending_trip_screen.dart';
+import 'package:mvvm_cubit/view/warnings_handler/screen/warnings_handler_screen.dart';
 import 'package:mvvm_cubit/view/webview/webview_screen.dart';
 import 'package:mvvm_cubit/viewmodel/main/main_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/main/main_state.dart';
@@ -161,8 +162,8 @@ class MainScreenState extends State<MainScreen> {
                     final trip = state.data?.trip;
                     final tempForm = state.data?.tempForm;
                     final warningList = state.data?.warningList ?? [];
-                    startFetchingTrip();
-                    startFetchingWarning();
+                    // startFetchingTrip();
+                    // startFetchingWarning();
                     if (trip != null) {
                       return Column(
                         children: [
@@ -329,9 +330,14 @@ extension _MainScreenDeliveryList on MainScreenState {
               ),
             ),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () => showDialog(
+                context: context,
+                builder: (context) => WarningsHandlerScreen(
+                  id: warning.id ?? '',
+                ),
+              ),
               child: const Text(
-                "Thêm PYC",
+                "Xử lý",
                 style: textDefault,
               ),
             ),

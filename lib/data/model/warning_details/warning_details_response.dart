@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:mvvm_cubit/data/model/auth/login_response.dart';
 part 'warning_details_response.g.dart';
 part 'warning_details_response.freezed.dart';
 
@@ -13,6 +14,7 @@ abstract class WarningDetailsResponse with _$WarningDetailsResponse {
     PicUserResponse? acceptedUser,
     PicUserResponse? pic,
     PicUserResponse? warnedUser,
+    int? dateCreated,
   }) = _WarningDetailsResponse;
   factory WarningDetailsResponse.fromJson(Map<String, dynamic> json) =>
       _$WarningDetailsResponseFromJson(json);
@@ -26,6 +28,8 @@ abstract class PicUserResponse with _$PicUserResponse {
     String? username,
     String? name,
     String? email,
+    int? dateCreated,
+    RoleResponse? role,
   }) = _PicUserResponse;
   factory PicUserResponse.fromJson(Map<String, dynamic> json) =>
       _$PicUserResponseFromJson(json);
