@@ -16,6 +16,7 @@ import 'package:mvvm_cubit/data/model/main/stop_point/stop_point_response.dart';
 import 'package:mvvm_cubit/data/model/main/trip/trip_response.dart';
 import 'package:mvvm_cubit/data/model/warning/warning_response.dart';
 import 'package:mvvm_cubit/di.dart';
+import 'package:mvvm_cubit/main.dart';
 import 'package:mvvm_cubit/view/add_trip/add_trip_screen.dart';
 import 'package:mvvm_cubit/view/check_point/check_point_screen.dart';
 import 'package:mvvm_cubit/view/main/widget/trip_container.dart';
@@ -52,6 +53,10 @@ class _MainScreenState extends State<MainScreen> {
       Future.delayed(const Duration(seconds: 5), () {
         getCurrentLocation();
       });
+    });
+    AuthManager.setTokenExpiredCallback(() {
+      cancelFetchingTrip();
+      cancelFetchingWarning();
     });
   }
 
