@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
+import 'package:mvvm_cubit/data/model/warning/warning_response.dart';
 
 class ManagerRoleWarningItem extends StatelessWidget {
+  final WarningResponse warning;
   final bool isProcessed;
   final VoidCallback onTap;
 
   const ManagerRoleWarningItem({
     Key? key,
+    required this.warning,
     required this.isProcessed,
     required this.onTap,
   }) : super(key: key);
@@ -19,10 +22,9 @@ class ManagerRoleWarningItem extends StatelessWidget {
 
   Widget warningItem() {
     return Container(
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 20),
       decoration: const BoxDecoration(
         color: AppColors.white,
-        // borderRadius: BorderRadius.all(Radius.circular(8)),
       ),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
@@ -35,11 +37,11 @@ class ManagerRoleWarningItem extends StatelessWidget {
               size: 24.0,
             ),
             const SizedBox(width: 8.0), // Add spacing between elements
-            const Expanded(
+            Expanded(
               child: Text(
-                'Cánh báo: Dừng quá lâu',
+                warning.warningMessage ?? '',
                 style: textDefault,
-                maxLines: 2,
+                maxLines: 3,
                 overflow: TextOverflow.ellipsis, // Specify an overflow property
               ),
             ),

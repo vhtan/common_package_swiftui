@@ -88,7 +88,6 @@ class _MainScreenState extends State<MainScreen> {
                   context,
                   state.error ?? AppString.sendTimeOut,
                 );
-                break;
               case Status.success:
                 if (state.data?.canCheckIn == true) {
                   showDialog(
@@ -254,10 +253,18 @@ extension _MainScreenDeliveryList on _MainScreenState {
   }
 
   Widget widgetWithWarning(WarningResponse warning) {
+    final level = warning.level ?? 1;
+    // final level = 3;
+    var color = AppColors.warning;
+    if (level == 2) {
+      color = AppColors.warningHigh;
+    } else if (level == 3) {
+      color = AppColors.warningRisk;
+    }
     return Container(
       padding: const EdgeInsets.all(10),
-      decoration: const BoxDecoration(
-        color: AppColors.warning,
+      decoration: BoxDecoration(
+        color: color,
       ),
       clipBehavior: Clip.antiAlias,
       child: InkWell(

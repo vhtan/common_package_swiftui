@@ -19,9 +19,14 @@ class ApiConfig {
   static const String taskPurposeList = '/task-purpose/list';
   static const String vehicleList = '/vehicle/list';
   static const String userSearchList = '/user/search';
+  static const String updatePushToken = '/push-token';
 
   static String arrivedStopPoint(String id) {
     return '/routing/routing-detail/$id/arrived';
+  }
+
+  static String warningDetails(String id) {
+    return '/warning/$id';
   }
 
   // paths of sos

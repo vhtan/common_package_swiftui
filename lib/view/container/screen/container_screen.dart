@@ -53,14 +53,17 @@ class _ContainerScreenState extends State<ContainerScreen> {
 
   @override
   void initState() {
-    _initializePushNotifications();
     super.initState();
+    _initializePushNotifications();
   }
 
   Future<void> _initializePushNotifications() async {
     await _pushNotificationService.initialize();
     final token = await _pushNotificationService.getFCMToken();
-    logger.d(token);
+    logger.d('Firebase push token $token');
+    if (token != null) {
+      containerCubit.updatePushToken(token);
+    }
   }
 
   @override

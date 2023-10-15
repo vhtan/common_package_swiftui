@@ -78,9 +78,10 @@ extension AppColors on Color {
   static const Color primary = Color(0xFF0041A8);
   static const Color white = Color(0xFFFFFFFF);
   static const Color error = Color(0xFFFF5252);
-  static const Color red = Color(0xFFFF0000);
   static const Color warning = Color(0xFFF5D04D);
   static const Color warningHigh = Color(0xFFED8422);
+  static const Color warningRisk = Color(0xFFED5C22);
+  static const Color red = Color(0xFFFF0000);
   static const Color border = Color(0x88000000);
   static const Color textDefaultLight = Color(0x86757373);
   static const Color textDefault = Color(0xFF000000);

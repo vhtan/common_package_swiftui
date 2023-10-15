@@ -44,16 +44,20 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
       child: BlocConsumer<ReportSOSCubit, GenericCubitState>(
         listener: (context, state) {
           if (state is UploadImageSuccess) {
-            setState(() {
-              uploadedUrl = state.uploadUrl;
-              localFile = state.file;
-            });
+            setState(
+              () {
+                uploadedUrl = state.uploadUrl;
+                localFile = state.file;
+              },
+            );
           } else if (state is GetReasonsSuccess) {
-            setState(() {
-              reasons.clear();
-              reasons.addAll(state.reasons);
-              selectedReason = reasons.first;
-            });
+            setState(
+              () {
+                reasons.clear();
+                reasons.addAll(state.reasons);
+                selectedReason = reasons.first;
+              },
+            );
           }
         },
         builder: (context, state) {
