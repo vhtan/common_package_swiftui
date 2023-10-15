@@ -88,9 +88,6 @@ class _ContainerScreenState extends State<ContainerScreen> {
                   child: MenuScreen(
                     valueChanged: (value) {
                       containerCubit.menuAction(value);
-                      if (value == MenuType.logOut) {
-                        authCubit.logout();
-                      }
                     },
                   ),
                 ),
@@ -156,10 +153,17 @@ class _ContainerScreenState extends State<ContainerScreen> {
         title = 'Thông báo';
       case MenuType.logOut:
         title = '';
-        navigateTo(const LoginScreen());
+        forceLogout();
       default:
         break;
     }
+  }
+
+  void forceLogout() {
+    authCubit.logout();
+    MainScreenState.cancelFetchingTrip();
+    MainScreenState.cancelFetchingWarning();
+    navigateTo(const LoginScreen());
   }
 
   Widget contentWidget(MenuType? menuType) {

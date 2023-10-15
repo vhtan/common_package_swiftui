@@ -29,18 +29,18 @@ class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _MainScreenState();
+  State<StatefulWidget> createState() => MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class MainScreenState extends State<MainScreen> {
   Location location = Location();
 
   bool _serviceEnabled = false;
   PermissionStatus? _permissionGranted;
   // LocationData? _locationData;
   final cubit = MainCubit(repository: di());
-  Timer? fetchTrip;
-  Timer? fetchWarning;
+  static Timer? fetchTrip;
+  static Timer? fetchWarning;
 
   @override
   void initState() {
@@ -67,7 +67,7 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-  void cancelFetchingTrip() {
+  static void cancelFetchingTrip() {
     fetchTrip?.cancel();
     fetchTrip = null;
   }
@@ -87,7 +87,7 @@ class _MainScreenState extends State<MainScreen> {
     super.dispose();
   }
 
-  void cancelFetchingWarning() {
+  static void cancelFetchingWarning() {
     fetchWarning?.cancel();
     fetchWarning = null;
   }
@@ -239,7 +239,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 }
 
-extension _MainScreenDeliveryList on _MainScreenState {
+extension _MainScreenDeliveryList on MainScreenState {
   Widget noTrip() {
     return Padding(
       padding: const EdgeInsets.only(left: 30, right: 30),
