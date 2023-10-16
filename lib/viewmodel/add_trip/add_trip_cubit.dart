@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
-import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/data/model/purpose/purpose_response.dart';
 import 'package:mvvm_cubit/data/model/user_role/user_role_response.dart';
 import 'package:mvvm_cubit/data/model/vehicle/vehicle_response.dart';
@@ -138,7 +137,6 @@ class AddTripCubit extends GenericCubit<AddTripState> {
   }
 
   void amountChanged(int value) {
-    logger.d('amountChanged $value');
     emit(
       GenericCubitState.success(
         state.data?.copyWith(amount: value),

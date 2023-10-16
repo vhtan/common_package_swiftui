@@ -37,6 +37,10 @@ class ApiConfig {
   // paths of sos
   static const String getSOSReasons = '/sos/reason/list';
   static const String submitSOS = '/sos/submit';
+  static const String notificationList = '/notification/list';
+  static String readNotification(String id) {
+    return '/notification/$id/read';
+  }
 
   static Map<String, String?> header = {
     'Content-Type': 'application/json',

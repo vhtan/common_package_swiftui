@@ -2,6 +2,7 @@ import 'package:mvvm_cubit/common/network/api_helper.dart';
 import 'package:mvvm_cubit/common/network/dio_client.dart';
 import 'package:mvvm_cubit/core/api_config.dart';
 import 'package:mvvm_cubit/data/model/main/trip/trip_response.dart';
+import 'package:mvvm_cubit/data/model/notification/notification_response.dart';
 import 'package:mvvm_cubit/data/model/temp_form/temp_form_response.dart';
 import 'package:mvvm_cubit/data/model/warning/warning_response.dart';
 import 'package:mvvm_cubit/data/model/warning_details/warning_details_response.dart';
@@ -84,5 +85,14 @@ class MainApi with ApiHelper<dynamic> {
         ApiConfig.cancelTempForm,
       ),
     );
+  }
+
+  Future<List<NotificationResponse>> getNotificationList() async {
+    final apiResponse = await makeGetRequest(
+      client.dio.get(
+        ApiConfig.notificationList,
+      ),
+    );
+    return parseNotificationResponseList(apiResponse.detail);
   }
 }
