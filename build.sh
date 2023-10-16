@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define the environments (debug, staging, release)
-environments=("debug" "release")
+environments=("release")
 
 # Function to build for Android
 build_android() {

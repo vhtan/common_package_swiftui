@@ -40,4 +40,8 @@ class MainRepository with RepositoryHelper<dynamic> {
   Future<dynamic> warningProcess(WarningProcessRequest request) async {
     return _api.warningProcess(request);
   }
+
+  Future<dynamic> cancelTempForm() async {
+    return _api.cancelTempForm();
+  }
 }

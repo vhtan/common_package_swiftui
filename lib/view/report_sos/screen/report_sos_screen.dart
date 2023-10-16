@@ -134,7 +134,7 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
                               TextInput(
                                 hint: 'Nhập mô tả sự cố',
                                 labelText: 'Mô tả sự cố',
-                                maxLines: 6, // and this
+                                maxLines: 4, // and this
                                 keyboardType: TextInputType.multiline,
                                 onChanged: (value) => {
                                   setState(

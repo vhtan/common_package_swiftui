@@ -38,9 +38,31 @@ class MainCubit extends GenericCubit<MainState> {
         );
       }
     } on DioException catch (e) {
-      emit(
-        GenericCubitState.failure(e.message ?? 'Error'),
-      );
+      final statusCode = e.response?.statusCode;
+      if (statusCode == 404) {
+        if (state.data == null) {
+          emit(
+            GenericCubitState.success(
+              MainState(
+                id: '',
+                trip: null,
+              ),
+            ),
+          );
+        } else {
+          emit(
+            GenericCubitState.success(
+              state.data?.copyWith(
+                trip: null,
+              ),
+            ),
+          );
+        }
+      } else {
+        emit(
+          GenericCubitState.failure(e.message ?? 'Error'),
+        );
+      }
     }
   }
 
@@ -106,16 +128,24 @@ class MainCubit extends GenericCubit<MainState> {
     }
   }
 
-  void deleteNewTrip() {
+  Future<void> deleteNewTrip() async {
     emit(
-      GenericCubitState.success(
-        MainState(
-          id: '',
-          tempForm: null,
-          trip: null,
-        ),
-      ),
+      GenericCubitState.loading(),
     );
+    try {
+      await repository.cancelTempForm();
+      emit(
+        GenericCubitState.success(
+          state.data?.copyWith(
+            tempForm: null,
+          ),
+        ),
+      );
+    } on DioException catch (e) {
+      emit(
+        GenericCubitState.failure(e.message ?? 'Error'),
+      );
+    }
   }
 
   void editNewTrip(String id) {

@@ -77,4 +77,12 @@ class MainApi with ApiHelper<dynamic> {
       ),
     );
   }
+
+  Future<dynamic> cancelTempForm() async {
+    return await makeGetRequest(
+      client.dio.get(
+        ApiConfig.cancelTempForm,
+      ),
+    );
+  }
 }

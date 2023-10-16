@@ -4,7 +4,6 @@ import 'dart:io';
 
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/data/model/sos/child_sos_response.dart';
-import 'package:mvvm_cubit/viewmodel/report_sos/report_sos_cubit.dart';
 
 class ReportState extends GenericCubitState<dynamic> {
   const ReportState({required super.status});

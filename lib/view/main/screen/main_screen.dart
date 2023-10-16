@@ -9,6 +9,7 @@ import 'package:mvvm_cubit/common/snack_bar/error_snack_bar.dart';
 import 'package:mvvm_cubit/common/widget/empty_widget.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/common/widget/spinkit_indicator.dart';
+import 'package:mvvm_cubit/core/api_config.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_string.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
@@ -82,7 +83,6 @@ class MainScreenState extends State<MainScreen> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     cancelFetchingTrip();
     cancelFetchingWarning();
     super.dispose();
@@ -213,30 +213,31 @@ class MainScreenState extends State<MainScreen> {
 
   Widget currentTrip(TripResponse trip) {
     return TripContainer(
-        trip: trip,
-        onArrived: (value) async {
-          final currentLocation = await getCurrentLocation();
-          final stopPointLocation = LocationData.fromMap({
-            'longitude': value.destination?.longitude,
-            'latitude': value.destination?.latitude,
-          });
-          if (currentLocation != null) {
-            cubit.startCheckIn(
-              value.id,
-              currentLocation,
-              stopPointLocation,
-            );
-          }
-        },
-        onFinihed: () {
-          logger.d('onFinihed');
-          navigateTo(
-            const WebViewCustom(
-              title: 'Trip vacom',
-              url: 'https://google.com.vn',
-            ),
-          );
+      trip: trip,
+      onArrived: (value) async {
+        final currentLocation = await getCurrentLocation();
+        final stopPointLocation = LocationData.fromMap({
+          'longitude': value.destination?.longitude,
+          'latitude': value.destination?.latitude,
         });
+        if (currentLocation != null) {
+          cubit.startCheckIn(
+            value.id,
+            currentLocation,
+            stopPointLocation,
+          );
+        }
+      },
+      onFinihed: () {
+        logger.d('onFinihed');
+        navigateTo(
+          const WebViewCustom(
+            title: 'Trip vacom',
+            url: ApiConfig.finishedStopPointLink,
+          ),
+        );
+      },
+    );
   }
 }
 
@@ -253,7 +254,7 @@ extension _MainScreenDeliveryList on MainScreenState {
           PrimaryButton(
             title: 'Kiểm tra lộ trình',
             buttonHeight: 50,
-            onPressed: () => startFetchingTrip(),
+            onPressed: () => cubit.getTrip(),
           ),
           const SizedBox(height: 20),
           PrimaryButton(

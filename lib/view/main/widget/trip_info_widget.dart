@@ -24,7 +24,7 @@ class TripInfo extends StatelessWidget {
             children: [
               const Text(
                 'Mã lộ trình:',
-                style: textDefault,
+                style: textDefaultLight,
               ),
               const SizedBox(width: 10),
               Text(
@@ -38,7 +38,7 @@ class TripInfo extends StatelessWidget {
             children: [
               const Text(
                 'Thời gian bắt đầu:',
-                style: textDefault,
+                style: textDefaultLight,
               ),
               const SizedBox(width: 10),
               Text(
@@ -52,7 +52,7 @@ class TripInfo extends StatelessWidget {
             children: [
               const Text(
                 'Tạo bởi:',
-                style: textDefault,
+                style: textDefaultLight,
               ),
               const SizedBox(width: 10),
               Text(
@@ -66,7 +66,7 @@ class TripInfo extends StatelessWidget {
             children: [
               Text(
                 'Chi tiết lộ trình',
-                style: textDefault,
+                style: textDefaultLight,
               ),
             ],
           ),

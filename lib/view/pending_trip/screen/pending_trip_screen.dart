@@ -19,16 +19,6 @@ class PendingTripScreen extends StatefulWidget {
 }
 
 class _PendingTripScreen extends State<PendingTripScreen> {
-  late VoidCallback _onDelete;
-  late VoidCallback _onEdit;
-
-  @override
-  void initState() {
-    _onDelete = widget.onDelete;
-    _onEdit = widget.onEdit;
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -125,7 +115,7 @@ class _PendingTripScreen extends State<PendingTripScreen> {
                 //   builder: (context) => const AddTripScreen(),
                 //   barrierDismissible: false,
                 // ),
-                onPressed: _onEdit,
+                onPressed: widget.onEdit,
               ),
             ),
             const SizedBox(width: 20),
@@ -140,7 +130,7 @@ class _PendingTripScreen extends State<PendingTripScreen> {
                     context,
                   );
                   if (delete) {
-                    _onDelete();
+                    widget.onDelete();
                   }
                 },
               ),

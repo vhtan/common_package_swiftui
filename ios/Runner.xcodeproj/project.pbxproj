@@ -366,7 +366,7 @@
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 44G4R58CHN;
 				ENABLE_BITCODE = NO;
@@ -507,7 +507,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development: Truong Mai (9ABXR77867)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Development: Truong Mai (9ABXR77867)";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 44G4R58CHN;
 				ENABLE_BITCODE = NO;
@@ -542,7 +542,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Distribution: Viet  Map Application Co., Ltd. (44G4R58CHN)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Viet  Map Application Co., Ltd. (44G4R58CHN)";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 44G4R58CHN;
 				ENABLE_BITCODE = NO;
