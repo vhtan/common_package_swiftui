@@ -5,7 +5,7 @@ import 'package:mvvm_cubit/config/config_stag.dart';
 class AppConfig {
   static const environment = String.fromEnvironment(
     'FLAVOR',
-    defaultValue: 'stag',
+    defaultValue: 'dev',
   );
 
   static String get apiBaseUrl {

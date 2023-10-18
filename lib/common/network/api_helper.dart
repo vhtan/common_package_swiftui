@@ -1,5 +1,5 @@
 import 'package:mvvm_cubit/common/network/api_error.dart';
-import 'package:mvvm_cubit/common/network/api_response.dart';
+import 'package:mvvm_cubit/common/network/api_response/api_response.dart';
 import 'package:mvvm_cubit/common/network/dio_exception.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:dio/dio.dart';

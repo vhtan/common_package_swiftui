@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart' show DioException;
-import 'package:mvvm_cubit/common/network/api_result.dart';
+import 'package:mvvm_cubit/common/network/api_result/api_result.dart';
 import 'package:mvvm_cubit/common/network/dio_exception.dart';
 
 mixin RepositoryHelper<T> {

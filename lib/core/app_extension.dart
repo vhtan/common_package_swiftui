@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'dart:ffi';
 
-import 'package:flutter/foundation.dart';
-import 'package:location/location.dart';
 import 'package:mvvm_cubit/core/app_asset.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -115,54 +113,3 @@ extension ObjectToJsonExtension on Object? {
 extension IntToDateTime on int {
   DateTime get date => DateTime.fromMillisecondsSinceEpoch(this);
 }
-
-// import 'package:flutter/material.dart';
-//
-// import 'app_asset.dart';
-//
-// extension StringExtension on String {
-//   String get getGenderWidget {
-//     if (this == "male") return AppAsset.male;
-//     return AppAsset.female;
-//   }
-//
-//   String get toCapital {
-//     return "${this[0].toUpperCase()}${substring(1).toLowerCase()}";
-//   }
-// }
-//
-// extension GeneralExtension<T> on T {
-//   bool get isEnum {
-//     final split = toString().split('.');
-//     return split.length > 1 && split[0] == runtimeType.toString();
-//   }
-//
-//   String get getEnumString {
-//     return toString().split('.').last.toCapital;
-//   }
-// }
-//
-// extension IterableExtension<T> on Iterable<T> {
-//   Iterable<E> mapWithIndex<E>(E Function(int index, T value) f) {
-//     return Iterable.generate(length).map((i) => f(i, elementAt(i)));
-//   }
-// }
-//
-// extension MapExtension on Map {
-//   String get format {
-//     if (isEmpty) {
-//       return "";
-//     } else {
-//       var firstKey = entries.first.key;
-//       var mapValues = entries.first.value;
-//       return "?$firstKey=$mapValues";
-//     }
-//   }
-// }
-//
-// //Helper functions
-// void pop(BuildContext context, int returnedLevel) {
-//   for (var i = 0; i < returnedLevel; ++i) {
-//     Navigator.pop(context, true);
-//   }
-// }

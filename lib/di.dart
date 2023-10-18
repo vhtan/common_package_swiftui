@@ -4,7 +4,6 @@ import 'package:mvvm_cubit/data/api/auth/auth_api.dart';
 import 'package:mvvm_cubit/data/api/check_point/check_point_api.dart';
 import 'package:mvvm_cubit/data/api/main/main_api.dart';
 import 'package:mvvm_cubit/data/api/sos/sos_api.dart';
-import 'package:mvvm_cubit/data/api/upload_image/upload_image_ext.dart';
 import 'package:mvvm_cubit/repository/add_trip/add_trip_repository.dart';
 import 'package:mvvm_cubit/repository/auth/auth_repository.dart';
 import 'package:mvvm_cubit/repository/check_point/check_point_repository.dart';
