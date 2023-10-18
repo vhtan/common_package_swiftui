@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
+import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/core/api_config.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/data/request/auth/login_request.dart';
@@ -33,8 +34,11 @@ class AuthCubit extends Cubit<GenericCubitState<AuthState>> {
           );
         } else {
           emit(
+            GenericCubitState.success(LoginStateSuccess()),
+          );
+          emit(
             GenericCubitState.success(
-              AuthState(isManager: true),
+              LoginStateSuccess(true),
             ),
           );
         }
@@ -69,7 +73,7 @@ class AuthCubit extends Cubit<GenericCubitState<AuthState>> {
       final response = await repository.logout();
       if (response != null) {
         emit(
-          GenericCubitState.success(null),
+          GenericCubitState.success(LogoutStateSuccess()),
         );
       } else {
         emit(
@@ -96,17 +100,24 @@ class AuthCubit extends Cubit<GenericCubitState<AuthState>> {
   }
 
   void usernameChanged(String value) {
-    final password = state.data?.password ?? '';
-    emit(GenericCubitState(
-        data: AuthState(username: value, password: password),
-        error: null,
-        status: Status.empty));
+    final dataInput = state.data as LoginStateInput?;
+    final password = dataInput?.password ?? '';
+
+    emit(
+      GenericCubitState.success(
+        LoginStateInput(
+          username: value,
+          password: password,
+        ),
+      ),
+    );
   }
 
   void passwordChanged(String value) {
-    final username = state.data?.username ?? '';
+    final dataInput = state.data as LoginStateInput;
+    final username = dataInput.username ?? '';
     emit(GenericCubitState(
-        data: AuthState(username: username, password: value),
+        data: LoginStateInput(username: username, password: value),
         error: null,
         status: Status.empty));
   }

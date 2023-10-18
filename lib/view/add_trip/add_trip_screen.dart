@@ -10,9 +10,11 @@ import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/common/widget/text_input.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
+import 'package:mvvm_cubit/data/model/map_location/map_location_response.dart';
 import 'package:mvvm_cubit/data/model/purpose/purpose_response.dart';
 import 'package:mvvm_cubit/data/model/user_role/user_role_response.dart';
 import 'package:mvvm_cubit/data/model/vehicle/vehicle_response.dart';
+import 'package:mvvm_cubit/data/request/add_trip/add_trip_request.dart';
 import 'package:mvvm_cubit/di.dart';
 import 'package:mvvm_cubit/viewmodel/add_trip/add_trip_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/add_trip/add_trip_state.dart';
@@ -35,6 +37,22 @@ class _AddTripScreen extends State<AddTripScreen> {
   final addTripCubit = AddTripCubit(repository: di());
   final mainCubit = MainCubit(repository: di());
   dynamic selectedValueSingleDialogFuture;
+
+  List<PurposeResponse> _purposes = [];
+  List<UserRoleResponse> _drivers = [];
+  List<UserRoleResponse> _guards = [];
+  List<VehicleResponse> _vehicles = [];
+  List<String> _currencies = [];
+  String? _form;
+
+  PurposeResponse? _purpose;
+  int? _amount;
+  UserRoleResponse? _driver;
+  VehicleResponse? _vehicle;
+  UserRoleResponse? _guard;
+  MapLocationResponse? _location;
+  String? _currency;
+
   @override
   void initState() {
     super.initState();
@@ -54,10 +72,36 @@ class _AddTripScreen extends State<AddTripScreen> {
       ],
       child: BlocConsumer<AddTripCubit, GenericCubitState<AddTripState>>(
         listener: (context, state) {
-          if (state.data?.tempForm != null) {
-            widget.didAddTrip();
-            Navigator.pop(context);
+          final data = state.data;
+          if (data is GetPurposesState) {
+            setState(() {
+              _purposes = data.purposes;
+            });
+          } else if (data is GetDriversState) {
+            setState(() {
+              _drivers = data.drivers;
+            });
+          } else if (data is GetGuardsState) {
+            setState(() {
+              _guards = data.guards;
+            });
+          } else if (data is GetVehiclesState) {
+            setState(() {
+              _vehicles = data.vehicles;
+            });
+          } else if (data is GetCurrenciesState) {
+            setState(() {
+              _currencies = data.currencies;
+            });
+          } else if (data is GetTempFormState) {
+            setState(() {
+              _form = data.form;
+            });
           }
+          // if (state.data?.tempForm != null) {
+          //   widget.didAddTrip();
+          //   Navigator.pop(context);
+          // }
         },
         builder: (context, state) {
           return BlocBuilder<AddTripCubit, GenericCubitState<AddTripState>>(
@@ -111,12 +155,15 @@ class _AddTripScreen extends State<AddTripScreen> {
                             ),
                           ),
                           const SizedBox(height: 10),
-                          if (state.data?.purposes != null)
+                          if (_purposes.isNotEmpty)
                             DropDown<PurposeResponse>(
-                              items: state.data?.purposes ?? [],
+                              items: _purposes,
                               displayTextBuilder: (value) => value.name ?? '',
-                              onChanged: (value) =>
-                                  addTripCubit.reasonChanged(value),
+                              onChanged: (value) {
+                                setState(() {
+                                  _purpose = value;
+                                });
+                              },
                             ),
                           const SizedBox(height: 20),
                           // TextInput(
@@ -148,9 +195,12 @@ class _AddTripScreen extends State<AddTripScreen> {
                                   hint: 'Nhập số tiền',
                                   labelText: 'Số tiền',
                                   keyboardType: TextInputType.number,
-                                  onChanged: (value) =>
-                                      addTripCubit.amountChanged(
-                                          int.parse(value.replaceAll('.', ''))),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _amount =
+                                          int.parse(value.replaceAll('.', ''));
+                                    });
+                                  },
                                   inputFormatters: [
                                     CurrencyTextInputFormatter(
                                       locale: 'vi',
@@ -161,14 +211,17 @@ class _AddTripScreen extends State<AddTripScreen> {
                                 ),
                               ),
                               const SizedBox(width: 16.0),
-                              if (state.data?.currencies != null)
+                              if (_currencies.isNotEmpty)
                                 Flexible(
                                   flex: 1,
                                   child: DropDown<String>(
-                                    items: state.data?.currencies ?? [],
+                                    items: _currencies,
                                     displayTextBuilder: (value) => value,
-                                    onChanged: (value) =>
-                                        addTripCubit.currencyChanged(value),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _currency = value;
+                                      });
+                                    },
                                   ),
                                 )
                             ],
@@ -182,12 +235,15 @@ class _AddTripScreen extends State<AddTripScreen> {
                             ),
                           ),
                           const SizedBox(height: 10),
-                          if (state.data?.guards != null)
+                          if (_guards.isNotEmpty)
                             DropDown<UserRoleResponse>(
-                              items: state.data?.guards ?? [],
+                              items: _guards,
                               displayTextBuilder: (value) => value.name ?? '',
-                              onChanged: (value) =>
-                                  addTripCubit.guardChanged(value),
+                              onChanged: (value) {
+                                setState(() {
+                                  _guard = value;
+                                });
+                              },
                             ),
                           const SizedBox(height: 20),
                           const Align(
@@ -198,12 +254,15 @@ class _AddTripScreen extends State<AddTripScreen> {
                             ),
                           ),
                           const SizedBox(height: 10),
-                          if (state.data?.drivers != null)
+                          if (_drivers.isNotEmpty)
                             DropDown<UserRoleResponse>(
-                              items: state.data?.drivers ?? [],
+                              items: _drivers,
                               displayTextBuilder: (value) => value.name ?? '',
-                              onChanged: (value) =>
-                                  addTripCubit.driverChanged(value),
+                              onChanged: (value) {
+                                setState(() {
+                                  _driver = value;
+                                });
+                              },
                             ),
                           const SizedBox(height: 20),
                           const Align(
@@ -214,21 +273,24 @@ class _AddTripScreen extends State<AddTripScreen> {
                             ),
                           ),
                           const SizedBox(height: 10),
-                          if (state.data?.vehicles?.isNotEmpty == true)
+                          if (_vehicles.isNotEmpty)
                             DropDown<VehicleResponse>(
-                              items: state.data?.vehicles ?? [],
+                              items: _vehicles,
                               displayTextBuilder: (value) =>
                                   value.plateNumber ?? '',
-                              onChanged: (value) =>
-                                  addTripCubit.vehicleChanged(value),
+                              onChanged: (value) {
+                                setState(() {
+                                  _vehicle = value;
+                                });
+                              },
                             ),
                           const SizedBox(height: 20),
                           PrimaryButton(
                             title: 'Gửi',
                             buttonHeight: 50,
-                            onPressed: state.data?.isValid() == true
+                            onPressed: validSubmit()
                                 ? () {
-                                    addTripCubit.createTrip();
+                                    addTripCubit.createTrip(toRequest());
                                   }
                                 : null,
                           )
@@ -318,6 +380,34 @@ class _AddTripScreen extends State<AddTripScreen> {
           color: Colors.grey,
         ),
       ),
+    );
+  }
+
+  bool validSubmit() {
+    if (_purpose != null &&
+        _amount != null &&
+        _driver != null &&
+        _vehicle != null &&
+        _guard != null &&
+        _location != null &&
+        _currency != null) {
+      return true;
+    }
+    return false;
+  }
+
+  AddTripRequest toRequest() {
+    return AddTripRequest(
+      purposeId: _purpose?.id ?? '',
+      stopPointAddress: _location?.address ?? '',
+      latitude: _location?.lat ?? 0,
+      longitude: _location?.lng ?? 0,
+      quantity: double.parse(_amount?.toString() ?? '0'),
+      currency: _currency ?? '',
+      driverId: _driver?.id ?? '',
+      bodyguardId: _guard?.id ?? '',
+      vehicleId: _vehicle?.id ?? '',
+      note: 'note',
     );
   }
 }

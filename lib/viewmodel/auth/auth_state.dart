@@ -1,14 +1,12 @@
-import 'package:material_text_fields/utils/extensions.dart';
+class AuthState {}
 
-class AuthState {
+class LoginStateInput extends AuthState {
   final String? username;
   final String? password;
-  final bool? isManager;
 
-  AuthState({
+  LoginStateInput({
     this.username,
     this.password,
-    this.isManager,
   });
 
   String? errorText() {
@@ -36,3 +34,12 @@ class AuthState {
     return isValidPassword && isValidUsername;
   }
 }
+
+class LoginStateSuccess extends AuthState {
+  bool isManager;
+  LoginStateSuccess([
+    isManager,
+  ]) : isManager = false;
+}
+
+class LogoutStateSuccess extends AuthState {}

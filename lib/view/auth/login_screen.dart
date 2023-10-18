@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
+import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/snack_bar/error_snack_bar.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/common/widget/text_input.dart';
@@ -47,29 +48,35 @@ class _LoginScreenState extends State<LoginScreen> {
                   state.error ?? AppString.sendTimeOut,
                 );
               case Status.success:
-                if (state.data?.isManager == true) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const ManagerRoleWrningListScreen(),
-                    ),
-                  );
-                } else {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const ContainerScreen(),
-                    ),
-                  );
+                final loginSuccess = state.data;
+                if (loginSuccess is LoginStateSuccess) {
+                  if (loginSuccess.isManager == true) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            const ManagerRoleWrningListScreen(),
+                      ),
+                    );
+                  } else {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ContainerScreen(),
+                      ),
+                    );
+                  }
                 }
               default:
                 break;
             }
           },
           builder: (context, state) {
-            return BlocBuilder<AuthCubit, GenericCubitState<AuthState>>(
-              builder:
-                  (BuildContext context, GenericCubitState<AuthState> state) {
+            return BlocBuilder<AuthCubit, GenericCubitState>(
+              builder: (context, state) {
+                logger.d('inputData ===> ${state.data}');
+                final inputData = state.data as LoginStateInput?;
+                logger.d('inputData ===> $inputData');
                 return SingleChildScrollView(
                   child: Padding(
                     padding: const EdgeInsets.all(20),
@@ -89,7 +96,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           icon: const Icon(Icons.person),
                           controller: _usernameTextController,
                           obscureText: false,
-                          validator: (value) => state.data?.errorText(),
+                          validator: (value) => inputData?.errorText(),
                           onChanged: (value) =>
                               authCubit.usernameChanged(value),
                         ),
@@ -110,7 +117,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         PrimaryButton(
                           title: 'Đăng nhập',
                           buttonHeight: 50,
-                          // onPressed: (state.data?.isValid()) == true
+                          // onPressed: (inputData?.isValid()) == true
                           //     ? () {
                           //         authCubit.login(LoginRequest(
                           //           username: _usernameTextController.text,
@@ -119,10 +126,12 @@ class _LoginScreenState extends State<LoginScreen> {
                           //       }
                           //     : null,
                           onPressed: () {
-                            authCubit.login(LoginRequest(
-                              username: 'loantd',
-                              password: 'as',
-                            ));
+                            authCubit.login(
+                              LoginRequest(
+                                username: 'loantd',
+                                password: 'as',
+                              ),
+                            );
                           },
                         ),
                       ],
