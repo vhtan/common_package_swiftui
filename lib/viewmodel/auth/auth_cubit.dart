@@ -24,24 +24,14 @@ class AuthCubit extends Cubit<GenericCubitState<AuthState>> {
       final loginResponse = await repository.login(request);
       final token = loginResponse.session ?? '';
       final roleCode = loginResponse.role?.code ?? '';
-
+      logger.d('loginResponse ==>> $loginResponse');
       if (loginResponse.session != null) {
         _saveLoginData(token, roleCode);
         ApiConfig.header['Authorization'] = loginResponse.session;
-        if (loginResponse.role?.code == 'ATAI') {
-          emit(
-            GenericCubitState.success(null),
-          );
-        } else {
-          emit(
-            GenericCubitState.success(LoginStateSuccess()),
-          );
-          emit(
-            GenericCubitState.success(
-              LoginStateSuccess(true),
-            ),
-          );
-        }
+        emit(
+          GenericCubitState.success(
+              LoginStateSuccess((loginResponse.role?.code == 'ATAI') == false)),
+        );
       } else {
         emit(
           GenericCubitState.failure("Error"),

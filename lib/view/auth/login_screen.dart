@@ -49,8 +49,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 );
               case Status.success:
                 final loginSuccess = state.data;
+                logger.d('loginSuccess => $loginSuccess');
                 if (loginSuccess is LoginStateSuccess) {
-                  if (loginSuccess.isManager == true) {
+                  if (loginSuccess.isManager) {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -74,9 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
           builder: (context, state) {
             return BlocBuilder<AuthCubit, GenericCubitState>(
               builder: (context, state) {
-                logger.d('inputData ===> ${state.data}');
                 final inputData = state.data as LoginStateInput?;
-                logger.d('inputData ===> $inputData');
                 return SingleChildScrollView(
                   child: Padding(
                     padding: const EdgeInsets.all(20),
