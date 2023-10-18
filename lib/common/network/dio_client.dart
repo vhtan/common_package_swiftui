@@ -12,7 +12,7 @@ class DioClient {
 
   void updateHeaders() {
     dio
-      ..options.baseUrl = AppConfig.apiBaseUrl
+      ..options.baseUrl = environment.fullUrl()
       ..options.headers = ApiConfig.header
       ..options.connectTimeout = ApiConfig.connectionTimeout
       ..options.receiveTimeout = ApiConfig.receiveTimeout

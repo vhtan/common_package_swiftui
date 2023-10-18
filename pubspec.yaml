@@ -19,18 +19,6 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # of the product and file versions while build-number is used as the build suffix.
 version: 1.0.0+3
 
-flavorDimensions: "environment"
-environments:
-  dev:
-    location: lib/config/config_dev.dart
-    
-  stag:
-    location: lib/config/config_stag.dart
-    
-  prod:
-    location: lib/config/config_prod.dart
-    
-
 environment:
   sdk: '>=3.0.0 <4.0.0'
 
@@ -70,8 +58,6 @@ dependencies:
   geolocator: ^10.0.1
   webview_flutter: ^4.4.1
   cached_network_image: ^3.3.0
-  
-
   
 dev_dependencies:
   flutter_test:
