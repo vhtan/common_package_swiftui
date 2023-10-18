@@ -17,7 +17,19 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+2
+version: 1.0.0+3
+
+flavorDimensions: "environment"
+environments:
+  dev:
+    location: lib/config/config_dev.dart
+    
+  stag:
+    location: lib/config/config_stag.dart
+    
+  prod:
+    location: lib/config/config_prod.dart
+    
 
 environment:
   sdk: '>=3.0.0 <4.0.0'

@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
+import 'package:mvvm_cubit/config/app_config.dart';
 import 'package:mvvm_cubit/core/api_config.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/view/auth/login_screen.dart';
@@ -19,6 +20,7 @@ void main() async {
   await init();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+
   FlutterSecureStorage secureStorage = const FlutterSecureStorage();
   String? loginToken = await secureStorage.read(key: StoreKey.loginToken);
   String? roleCode = await secureStorage.read(key: StoreKey.roleCode);
