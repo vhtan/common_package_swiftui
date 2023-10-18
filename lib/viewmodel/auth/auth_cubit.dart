@@ -20,7 +20,7 @@ class AuthCubit extends Cubit<GenericCubitState<AuthState>> {
         GenericCubitState.loading(),
       );
       ApiConfig.header.remove('Authorization');
-      final loginResponse = await repository.api.login(request);
+      final loginResponse = await repository.login(request);
       final token = loginResponse.session ?? '';
       final roleCode = loginResponse.role?.code ?? '';
 

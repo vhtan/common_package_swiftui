@@ -13,6 +13,10 @@ abstract class LoginResponse with _$LoginResponse {
 
   factory LoginResponse.fromJson(Map<String, dynamic> json) =>
       _$LoginResponseFromJson(json);
+
+  factory LoginResponse.fromJson1(Map<String, dynamic> json) {
+    throw UnimplementedError();
+  }
 }
 
 @freezed

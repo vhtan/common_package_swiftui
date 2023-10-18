@@ -4,15 +4,15 @@ import 'package:mvvm_cubit/data/model/auth/login_response.dart';
 import 'package:mvvm_cubit/data/request/auth/login_request.dart';
 
 class AuthRepository with RepositoryHelper<LoginResponse> {
-  final AuthApi api;
+  final AuthApi _api;
 
-  const AuthRepository({required this.api});
+  const AuthRepository({required AuthApi api}) : _api = api;
 
   Future<dynamic> login(LoginRequest request) async {
-    return api.login(request);
+    return _api.login(request);
   }
 
   Future<dynamic> logout() async {
-    return api.logout();
+    return _api.logout();
   }
 }

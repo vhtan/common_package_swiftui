@@ -4,8 +4,9 @@ import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/data/model/notification/notification_response.dart';
 
 class NotificationItem extends StatelessWidget {
-  NotificationResponse notification;
-  NotificationItem({
+  final NotificationResponse notification;
+
+  const NotificationItem({
     Key? key,
     required this.notification,
   }) : super(key: key);
