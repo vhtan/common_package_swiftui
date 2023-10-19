@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:location/location.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
@@ -39,10 +40,11 @@ class MainScreenState extends State<MainScreen> {
 
   bool _serviceEnabled = false;
   PermissionStatus? _permissionGranted;
-  // LocationData? _locationData;
+  LocationData? _locationData;
   final cubit = MainCubit(repository: di());
   static Timer? fetchTrip;
   static Timer? fetchWarning;
+  String? _imagePath;
 
   @override
   void initState() {
@@ -51,6 +53,7 @@ class MainScreenState extends State<MainScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       cubit.getTrip();
       cubit.getWarningList();
+      cubit.getTempFormDetails();
       checkLocationPermission();
       Future.delayed(const Duration(seconds: 5), () {
         getCurrentLocation();
@@ -131,16 +134,7 @@ class MainScreenState extends State<MainScreen> {
                   state.error ?? AppString.sendTimeOut,
                 );
               case Status.success:
-                if (state.data?.canCheckIn == true) {
-                  showDialog(
-                    context: context,
-                    builder: (context) => CheckPointScreen(
-                      didCapture: (value) =>
-                          cubit.didCaptureAndUploadImage(value),
-                    ),
-                    barrierDismissible: false,
-                  );
-                }
+                break;
               default:
                 break;
             }
@@ -148,32 +142,29 @@ class MainScreenState extends State<MainScreen> {
           builder: (context, state) {
             return BlocBuilder<MainCubit, GenericCubitState<MainState>>(
               builder: (context, state) {
+                final data = state.data;
+                final warningList =
+                    (data as GetWarningListMainState?)?.warningList ?? [];
                 switch (state.status) {
                   case Status.failure:
-                    // return const SizedBox();
-                    // return tripList();
-                    // return pendingTrip();
                     return noTrip();
                   case Status.empty:
                     return const EmptyWidget(message: "No delivery!");
                   case Status.loading:
                     return const SpinKitIndicator(type: SpinKitType.circle);
                   case Status.success:
-                    final trip = state.data?.trip;
-                    final tempForm = state.data?.tempForm;
-                    final warningList = state.data?.warningList ?? [];
                     // startFetchingTrip();
                     // startFetchingWarning();
-                    if (trip != null) {
+                    if (data is GetTripMainState) {
                       return Column(
                         children: [
                           warningWidgetList(warningList),
                           Expanded(
-                            child: currentTrip(trip),
+                            child: currentTrip((data as GetTripMainState).trip),
                           ),
                         ],
                       );
-                    } else if (tempForm != null) {
+                    } else if (data is GetTempFormDetailsMainState) {
                       return Column(
                         children: [
                           warningWidgetList(warningList),
@@ -215,21 +206,25 @@ class MainScreenState extends State<MainScreen> {
     return TripContainer(
       trip: trip,
       onArrived: (value) async {
-        final currentLocation = await getCurrentLocation();
+        _locationData = await getCurrentLocation();
         final stopPointLocation = LocationData.fromMap({
           'longitude': value.destination?.longitude,
           'latitude': value.destination?.latitude,
         });
-        if (currentLocation != null) {
-          cubit.startCheckIn(
-            value.id,
-            currentLocation,
-            stopPointLocation,
-          );
+        if (_locationData != null) {
+          if (calculateDistance(_locationData!, stopPointLocation) > 20) {
+            // ignore: use_build_context_synchronously
+            await showDialog(
+              context: context,
+              builder: (context) => CheckPointScreen(
+                didCapture: (value) => _imagePath = value,
+              ),
+              barrierDismissible: false,
+            );
+          }
         }
       },
       onFinihed: () {
-        logger.d('onFinihed');
         navigateTo(
           const WebViewCustom(
             title: 'Trip vacom',
@@ -346,6 +341,16 @@ extension _MainScreenDeliveryList on MainScreenState {
         ),
       ),
     );
+  }
+
+  double calculateDistance(LocationData start, LocationData end) {
+    double distance = Geolocator.distanceBetween(
+      start.latitude ?? 0,
+      start.longitude ?? 0,
+      end.latitude ?? 0,
+      end.longitude ?? 0,
+    );
+    return distance;
   }
 }
 
