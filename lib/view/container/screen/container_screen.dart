@@ -27,7 +27,11 @@ class _ContainerScreenState extends State<ContainerScreen> {
   bool isOpened = false;
   String title = 'Lộ trình';
   ContainerCubit containerCubit = ContainerCubit(repository: di());
-  AuthCubit authCubit = AuthCubit(repository: di());
+  AuthCubit authCubit = AuthCubit(
+    repository: di(),
+    secureStorageManager: di(),
+    hiveStorageManager: di(),
+  );
 
   final GlobalKey<SideMenuState> _sideMenuKey = GlobalKey<SideMenuState>();
 

@@ -1,13 +1,12 @@
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
-import 'package:dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/config/app_config.dart';
 import 'package:mvvm_cubit/core/api_config.dart';
-import 'package:mvvm_cubit/core/app_extension.dart';
+import 'package:mvvm_cubit/manager/hive_storage_manager.dart';
+import 'package:mvvm_cubit/manager/secure_storage_manager.dart';
 import 'package:mvvm_cubit/view/auth/login_screen.dart';
 import 'package:mvvm_cubit/view/container/screen/container_screen.dart';
 import 'package:mvvm_cubit/core/app_theme.dart';
@@ -22,12 +21,14 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  FlutterSecureStorage secureStorage = const FlutterSecureStorage();
-  String? loginToken = await secureStorage.read(key: StoreKey.loginToken);
-  String? roleCode = await secureStorage.read(key: StoreKey.roleCode);
+  String? loginToken = await di<SecureStorageManager>().getToken();
+  String? roleCode = await di<SecureStorageManager>().getRole();
+
   ApiConfig.header['Authorization'] = loginToken;
   final osVersion = await _getOSVersion();
   ApiConfig.header['os-version'] = osVersion;
+
+  di<HiveStorageManager>().initHive();
 
   AuthManager.setTokenExpiredCallback(() {
     runApp(
@@ -72,19 +73,9 @@ class AuthManager {
   }
 
   static void notifyTokenExpired() {
-    _clearLoginToken();
+    di<SecureStorageManager>().deleteAll();
     if (onTokenExpired != null) {
       onTokenExpired!();
-    }
-  }
-
-  static void _clearLoginToken() {
-    try {
-      di<FlutterSecureStorage>().delete(
-        key: StoreKey.loginToken,
-      );
-    } on DioException catch (e) {
-      logger.e(e.message);
     }
   }
 }

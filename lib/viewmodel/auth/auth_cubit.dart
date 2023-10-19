@@ -1,19 +1,23 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
-import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/core/api_config.dart';
-import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/data/request/auth/login_request.dart';
-import 'package:mvvm_cubit/di.dart';
+import 'package:mvvm_cubit/manager/hive_storage_manager.dart';
+import 'package:mvvm_cubit/manager/secure_storage_manager.dart';
 import 'package:mvvm_cubit/repository/auth/auth_repository.dart';
 import 'package:mvvm_cubit/viewmodel/auth/auth_state.dart';
 
 class AuthCubit extends Cubit<GenericCubitState<AuthState>> {
   final AuthRepository repository;
+  final SecureStorageManager secureStorageManager;
+  final HiveStorageManager hiveStorageManager;
 
-  AuthCubit({required this.repository}) : super(GenericCubitState.loading());
+  AuthCubit({
+    required this.repository,
+    required this.secureStorageManager,
+    required this.hiveStorageManager,
+  }) : super(GenericCubitState.loading());
 
   Future<void> login(LoginRequest request) async {
     try {
@@ -24,9 +28,11 @@ class AuthCubit extends Cubit<GenericCubitState<AuthState>> {
       final loginResponse = await repository.login(request);
       final token = loginResponse.session ?? '';
       final roleCode = loginResponse.role?.code ?? '';
-      logger.d('loginResponse ==>> $loginResponse');
+
+      hiveStorageManager.saveLoginData(loginResponse);
+
       if (loginResponse.session != null) {
-        _saveLoginData(token, roleCode);
+        secureStorageManager.saveToken(token, roleCode);
         ApiConfig.header['Authorization'] = loginResponse.session;
         emit(
           GenericCubitState.success(
@@ -42,17 +48,6 @@ class AuthCubit extends Cubit<GenericCubitState<AuthState>> {
         GenericCubitState.failure(e.message ?? 'Error'),
       );
     }
-  }
-
-  Future<void> _saveLoginData(String token, String roleCode) async {
-    await di<FlutterSecureStorage>().write(
-      key: StoreKey.loginToken,
-      value: token,
-    );
-    await di<FlutterSecureStorage>().write(
-      key: StoreKey.roleCode,
-      value: roleCode,
-    );
   }
 
   Future<void> logout() async {
@@ -77,16 +72,7 @@ class AuthCubit extends Cubit<GenericCubitState<AuthState>> {
         ),
       );
     }
-    _clearLoginToken();
-  }
-
-  Future<void> _clearLoginToken() async {
-    await di<FlutterSecureStorage>().delete(
-      key: StoreKey.loginToken,
-    );
-    await di<FlutterSecureStorage>().delete(
-      key: StoreKey.roleCode,
-    );
+    secureStorageManager.deleteAll();
   }
 
   void usernameChanged(String value) {

@@ -19,7 +19,11 @@ class ManagerRoleWrningListScreen extends StatefulWidget {
 
 class _ManagerRoleWrningListScreen extends State<ManagerRoleWrningListScreen> {
   final warningCubit = ManagerRoleWarningListCubit(repository: di());
-  final authCubit = AuthCubit(repository: di());
+  final authCubit = AuthCubit(
+    repository: di(),
+    secureStorageManager: di(),
+    hiveStorageManager: di(),
+  );
 
   @override
   void initState() {

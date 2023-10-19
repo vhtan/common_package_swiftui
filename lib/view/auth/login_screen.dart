@@ -24,7 +24,11 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _usernameTextController = TextEditingController();
   final TextEditingController _passwordTextController = TextEditingController();
-  AuthCubit authCubit = AuthCubit(repository: di());
+  AuthCubit authCubit = AuthCubit(
+    repository: di(),
+    secureStorageManager: di(),
+    hiveStorageManager: di(),
+  );
 
   PreferredSizeWidget get _appBar {
     return AppBar(

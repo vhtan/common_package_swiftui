@@ -1,6 +1,12 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/core/app_asset.dart';
+import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
+import 'package:mvvm_cubit/data/model/auth/login_response.dart';
+import 'package:mvvm_cubit/di.dart';
+import 'package:mvvm_cubit/manager/hive_storage_manager.dart';
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({Key? key}) : super(key: key);
@@ -10,6 +16,19 @@ class AccountScreen extends StatefulWidget {
 }
 
 class _AccountScreenState extends State<AccountScreen> {
+  LoginResponse? _loginResponse;
+  final _hiveStorageManager = di<HiveStorageManager>();
+
+  @override
+  void initState() {
+    super.initState();
+    _hiveStorageManager.getLoginData().then((value) => {
+          setState(() {
+            _loginResponse = value;
+          })
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -27,22 +46,22 @@ class _AccountScreenState extends State<AccountScreen> {
           const SizedBox(
             height: 20,
           ),
-          const Text(
-            'Nguyễn An',
+          Text(
+            _loginResponse?.name ?? '',
             style: headLine1,
           ),
           const SizedBox(
             height: 8,
           ),
-          const Text(
-            "annguyen@gmail.com",
+          Text(
+            _loginResponse?.email ?? '',
             style: textDefault,
           ),
           const SizedBox(
             height: 20,
           ),
-          const Text(
-            "Nhân viên giám sát",
+          Text(
+            _loginResponse?.role?.name ?? '',
             style: textDefault,
           )
         ],
