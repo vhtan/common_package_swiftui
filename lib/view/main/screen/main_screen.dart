@@ -16,6 +16,7 @@ import 'package:mvvm_cubit/core/app_string.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/data/model/main/stop_point/stop_point_response.dart';
 import 'package:mvvm_cubit/data/model/main/trip/trip_response.dart';
+import 'package:mvvm_cubit/data/model/temp_form/temp_form_response.dart';
 import 'package:mvvm_cubit/data/model/warning/warning_response.dart';
 import 'package:mvvm_cubit/di.dart';
 import 'package:mvvm_cubit/main.dart';
@@ -38,6 +39,9 @@ class MainScreen extends StatefulWidget {
 class MainScreenState extends State<MainScreen> {
   Location location = Location();
 
+  TripResponse? trip;
+  TempFormResponse? tempForm;
+  List<WarningResponse>? warningList;
   bool _serviceEnabled = false;
   PermissionStatus? _permissionGranted;
   LocationData? _locationData;
@@ -134,7 +138,20 @@ class MainScreenState extends State<MainScreen> {
                   state.error ?? AppString.sendTimeOut,
                 );
               case Status.success:
-                break;
+                final data = state.data;
+                if (data is GetWarningListMainState) {
+                  setState(() {
+                    warningList = data.warningList;
+                  });
+                } else if (data is GetTripMainState) {
+                  setState(() {
+                    trip = data.trip;
+                  });
+                } else if (data is GetTempFormDetailsMainState) {
+                  setState(() {
+                    tempForm = data.tempForm;
+                  });
+                }
               default:
                 break;
             }
@@ -142,9 +159,6 @@ class MainScreenState extends State<MainScreen> {
           builder: (context, state) {
             return BlocBuilder<MainCubit, GenericCubitState<MainState>>(
               builder: (context, state) {
-                final data = state.data;
-                final warningList =
-                    (data as GetWarningListMainState?)?.warningList ?? [];
                 switch (state.status) {
                   case Status.failure:
                     return noTrip();
@@ -155,34 +169,43 @@ class MainScreenState extends State<MainScreen> {
                   case Status.success:
                     // startFetchingTrip();
                     // startFetchingWarning();
-                    if (data is GetTripMainState) {
-                      return Column(
-                        children: [
-                          warningWidgetList(warningList),
+                    return Column(
+                      children: [
+                        warningWidgetList(),
+                        if (trip != null)
                           Expanded(
-                            child: currentTrip((data as GetTripMainState).trip),
+                            child: currentTrip(trip!),
                           ),
-                        ],
-                      );
-                    } else if (data is GetTempFormDetailsMainState) {
-                      return Column(
-                        children: [
-                          warningWidgetList(warningList),
+                        if (tempForm != null)
                           Expanded(
                             child: pendingTrip(),
                           ),
-                        ],
-                      );
-                    } else {
-                      return Column(
-                        children: [
-                          warningWidgetList(warningList),
+                        if (trip == null && tempForm == null)
                           Expanded(
                             child: noTrip(),
                           ),
-                        ],
-                      );
-                    }
+                      ],
+                    );
+                  // if (data is GetTripMainState) {
+                  // } else if (data is GetTempFormDetailsMainState) {
+                  //   return Column(
+                  //     children: [
+                  //       warningWidgetList(warningList),
+                  //       Expanded(
+                  //         child: pendingTrip(),
+                  //       ),
+                  //     ],
+                  //   );
+                  // } else {
+                  //   return Column(
+                  //     children: [
+                  //       warningWidgetList(warningList),
+                  //       Expanded(
+                  //         child: noTrip(),
+                  //       ),
+                  //     ],
+                  //   );
+                  // }
                 }
               },
             );
@@ -285,8 +308,9 @@ extension _MainScreenDeliveryList on MainScreenState {
     );
   }
 
-  Widget warningWidgetList(List<WarningResponse> list) {
-    final ll = list.map<Widget>((e) => widgetWithWarning(e)).toList();
+  Widget warningWidgetList() {
+    final ll =
+        (warningList ?? []).map<Widget>((e) => widgetWithWarning(e)).toList();
     return Column(
       children: ll,
     );

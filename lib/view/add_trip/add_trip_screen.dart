@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
+import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/widget/drop_down.dart';
+import 'package:mvvm_cubit/common/widget/empty_widget.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/common/widget/text_input.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
@@ -76,26 +78,35 @@ class _AddTripScreen extends State<AddTripScreen> {
           if (data is GetPurposesState) {
             setState(() {
               _purposes = data.purposes;
+              _purpose = _purposes.first;
             });
           } else if (data is GetDriversState) {
             setState(() {
               _drivers = data.drivers;
+              _driver = _drivers.first;
             });
           } else if (data is GetGuardsState) {
             setState(() {
               _guards = data.guards;
+              _guard = _guards.first;
             });
           } else if (data is GetVehiclesState) {
             setState(() {
               _vehicles = data.vehicles;
+              _vehicle = _vehicles.first;
             });
           } else if (data is GetCurrenciesState) {
             setState(() {
               _currencies = data.currencies;
+              _currency = _currencies.first;
             });
           } else if (data is GetTempFormState) {
             setState(() {
               _form = data.form;
+            });
+          } else if (data is GetMapLocationSate) {
+            setState(() {
+              _location = data.location;
             });
           }
           // if (state.data?.tempForm != null) {
@@ -107,194 +118,200 @@ class _AddTripScreen extends State<AddTripScreen> {
           return BlocBuilder<AddTripCubit, GenericCubitState<AddTripState>>(
             builder:
                 (BuildContext context, GenericCubitState<AddTripState> state) {
-              return Material(
-                color: Colors.transparent,
-                child: Container(
-                  padding: const EdgeInsets.all(20),
-                  alignment: Alignment.center,
-                  child: IntrinsicHeight(
+              return Scaffold(
+                backgroundColor: Colors.transparent,
+                resizeToAvoidBottomInset: true,
+                body: Center(
+                  child: SingleChildScrollView(
                     child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        color: Colors.white,
-                      ),
-                      padding: const EdgeInsets.only(
-                          left: 20, right: 20, bottom: 20, top: 10),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Stack(
-                            alignment: AlignmentDirectional.center,
+                      padding: const EdgeInsets.all(20),
+                      alignment: Alignment.center,
+                      child: IntrinsicHeight(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: Colors.white,
+                          ),
+                          padding: const EdgeInsets.only(bottom: 20, top: 0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              const Align(
-                                alignment: Alignment.center,
-                                child: Text(
-                                  'Thêm phiếu yêu cầu',
-                                  style: headLine1,
-                                ),
+                              Stack(
+                                alignment: AlignmentDirectional.center,
+                                children: [
+                                  const Align(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      'Thêm phiếu yêu cầu',
+                                      style: headLine1,
+                                    ),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.topRight,
+                                    child: IconButton(
+                                      color: Colors.black,
+                                      icon: const Icon(Icons.close),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                    ),
+                                  ),
+                                ],
                               ),
-                              Align(
-                                alignment: Alignment.topRight,
-                                child: IconButton(
-                                  color: Colors.black,
-                                  icon: const Icon(Icons.close),
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 20),
-                          const Align(
-                            alignment: Alignment.topLeft,
-                            child: Text(
-                              'Mục đích di chuyển',
-                              style: textDefault,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          if (_purposes.isNotEmpty)
-                            DropDown<PurposeResponse>(
-                              items: _purposes,
-                              displayTextBuilder: (value) => value.name ?? '',
-                              onChanged: (value) {
-                                setState(() {
-                                  _purpose = value;
-                                });
-                              },
-                            ),
-                          const SizedBox(height: 20),
-                          // TextInput(
-                          //   hint: 'Nhập điểm dừng',
-                          //   labelText: 'Điểm dừng',
-                          //   keyboardType: TextInputType.number,
-                          //   onChanged: (value) =>
-                          //       addTripCubit.stopPlaceChanged(value),
-                          // ),
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(
-                                Dimension.radiusDefault,
-                              ),
-                              color: Colors.white,
-                              border: Border.all(
-                                color: AppColors.border,
-                                width: 1.0,
-                              ),
-                            ),
-                            child: search(),
-                          ),
-                          const SizedBox(height: 20),
-                          Row(
-                            children: [
-                              Flexible(
-                                flex: 2,
-                                child: TextInput(
-                                  hint: 'Nhập số tiền',
-                                  labelText: 'Số tiền',
-                                  keyboardType: TextInputType.number,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _amount =
-                                          int.parse(value.replaceAll('.', ''));
-                                    });
-                                  },
-                                  inputFormatters: [
-                                    CurrencyTextInputFormatter(
-                                      locale: 'vi',
-                                      decimalDigits: 0,
-                                      symbol: '',
+                              Padding(
+                                padding:
+                                    const EdgeInsets.only(left: 20, right: 20),
+                                child: Column(
+                                  children: [
+                                    const Align(
+                                      alignment: Alignment.topLeft,
+                                      child: Text(
+                                        'Mục đích di chuyển',
+                                        style: textDefault,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    if (_purposes.isNotEmpty)
+                                      DropDown<PurposeResponse>(
+                                        items: _purposes,
+                                        displayTextBuilder: (value) =>
+                                            value.name ?? '',
+                                        onChanged: (value) {
+                                          setState(() {
+                                            _purpose = value;
+                                          });
+                                        },
+                                      ),
+                                    const SizedBox(height: 15),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(
+                                          Dimension.radiusDefault,
+                                        ),
+                                        color: Colors.white,
+                                        border: Border.all(
+                                          color: AppColors.border,
+                                          width: 1.0,
+                                        ),
+                                      ),
+                                      child: search(),
+                                    ),
+                                    const SizedBox(height: 15),
+                                    Row(
+                                      children: [
+                                        Flexible(
+                                          flex: 2,
+                                          child: TextInput(
+                                            hint: 'Nhập số tiền',
+                                            labelText: 'Số tiền',
+                                            keyboardType: TextInputType.number,
+                                            onChanged: (value) {
+                                              setState(() {
+                                                _amount = int.parse(
+                                                    value.replaceAll('.', ''));
+                                              });
+                                            },
+                                            inputFormatters: [
+                                              CurrencyTextInputFormatter(
+                                                locale: 'vi',
+                                                decimalDigits: 0,
+                                                symbol: '',
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                        const SizedBox(width: 16.0),
+                                        if (_currencies.isNotEmpty)
+                                          Flexible(
+                                            flex: 1,
+                                            child: DropDown<String>(
+                                              items: _currencies,
+                                              displayTextBuilder: (value) =>
+                                                  value,
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  _currency = value;
+                                                });
+                                              },
+                                            ),
+                                          )
+                                      ],
+                                    ),
+                                    const SizedBox(height: 15),
+                                    const Align(
+                                      alignment: Alignment.topLeft,
+                                      child: Text(
+                                        'Chọn bảo vệ',
+                                        style: textDefault,
+                                      ),
+                                    ),
+                                    if (_guards.isNotEmpty)
+                                      DropDown<UserRoleResponse>(
+                                        items: _guards,
+                                        displayTextBuilder: (value) =>
+                                            value.name ?? '',
+                                        onChanged: (value) {
+                                          setState(() {
+                                            _guard = value;
+                                          });
+                                        },
+                                      ),
+                                    const SizedBox(height: 15),
+                                    const Align(
+                                      alignment: Alignment.topLeft,
+                                      child: Text(
+                                        'Chọn lái xe',
+                                        style: textDefault,
+                                      ),
+                                    ),
+                                    if (_drivers.isNotEmpty)
+                                      DropDown<UserRoleResponse>(
+                                        items: _drivers,
+                                        displayTextBuilder: (value) =>
+                                            value.name ?? '',
+                                        onChanged: (value) {
+                                          setState(() {
+                                            _driver = value;
+                                          });
+                                        },
+                                      ),
+                                    const SizedBox(height: 15),
+                                    const Align(
+                                      alignment: Alignment.topLeft,
+                                      child: Text(
+                                        'Chọn xe',
+                                        style: textDefault,
+                                      ),
+                                    ),
+                                    if (_vehicles.isNotEmpty)
+                                      DropDown<VehicleResponse>(
+                                        items: _vehicles,
+                                        displayTextBuilder: (value) =>
+                                            value.plateNumber ?? '',
+                                        onChanged: (value) {
+                                          setState(() {
+                                            _vehicle = value;
+                                          });
+                                        },
+                                      ),
+                                    const SizedBox(height: 15),
+                                    PrimaryButton(
+                                      title: 'Gửi',
+                                      buttonHeight: 50,
+                                      onPressed: validSubmit()
+                                          ? () {
+                                              addTripCubit
+                                                  .createTrip(toRequest());
+                                            }
+                                          : null,
                                     )
                                   ],
                                 ),
                               ),
-                              const SizedBox(width: 16.0),
-                              if (_currencies.isNotEmpty)
-                                Flexible(
-                                  flex: 1,
-                                  child: DropDown<String>(
-                                    items: _currencies,
-                                    displayTextBuilder: (value) => value,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _currency = value;
-                                      });
-                                    },
-                                  ),
-                                )
                             ],
                           ),
-                          const SizedBox(height: 20),
-                          const Align(
-                            alignment: Alignment.topLeft,
-                            child: Text(
-                              'Chọn bảo vệ',
-                              style: textDefault,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          if (_guards.isNotEmpty)
-                            DropDown<UserRoleResponse>(
-                              items: _guards,
-                              displayTextBuilder: (value) => value.name ?? '',
-                              onChanged: (value) {
-                                setState(() {
-                                  _guard = value;
-                                });
-                              },
-                            ),
-                          const SizedBox(height: 20),
-                          const Align(
-                            alignment: Alignment.topLeft,
-                            child: Text(
-                              'Chọn lái xe',
-                              style: textDefault,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          if (_drivers.isNotEmpty)
-                            DropDown<UserRoleResponse>(
-                              items: _drivers,
-                              displayTextBuilder: (value) => value.name ?? '',
-                              onChanged: (value) {
-                                setState(() {
-                                  _driver = value;
-                                });
-                              },
-                            ),
-                          const SizedBox(height: 20),
-                          const Align(
-                            alignment: Alignment.topLeft,
-                            child: Text(
-                              'Chọn xe',
-                              style: textDefault,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          if (_vehicles.isNotEmpty)
-                            DropDown<VehicleResponse>(
-                              items: _vehicles,
-                              displayTextBuilder: (value) =>
-                                  value.plateNumber ?? '',
-                              onChanged: (value) {
-                                setState(() {
-                                  _vehicle = value;
-                                });
-                              },
-                            ),
-                          const SizedBox(height: 20),
-                          PrimaryButton(
-                            title: 'Gửi',
-                            buttonHeight: 50,
-                            onPressed: validSubmit()
-                                ? () {
-                                    addTripCubit.createTrip(toRequest());
-                                  }
-                                : null,
-                          )
-                        ],
+                        ),
                       ),
                     ),
                   ),
@@ -384,6 +401,7 @@ class _AddTripScreen extends State<AddTripScreen> {
   }
 
   bool validSubmit() {
+    logger.d('validSubmit $_location');
     if (_purpose != null &&
         _amount != null &&
         _driver != null &&
