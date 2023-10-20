@@ -9,11 +9,11 @@ class ManagerRoleWarningItem extends StatelessWidget {
   final VoidCallback onTap;
 
   const ManagerRoleWarningItem({
-    Key? key,
+    super.key,
     required this.warning,
     required this.isProcessed,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

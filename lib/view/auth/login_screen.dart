@@ -15,7 +15,7 @@ import 'package:mvvm_cubit/viewmodel/auth/auth_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/auth/auth_state.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({super.key});
 
   @override
   State<StatefulWidget> createState() => _LoginScreenState();
@@ -43,7 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
       create: (context) => authCubit,
       child: Scaffold(
         appBar: _appBar,
-        body: BlocConsumer<AuthCubit, GenericCubitState<AuthState>>(
+        body: BlocConsumer<AuthCubit, GenericCubitState>(
           listener: (context, state) {
             switch (state.status) {
               case Status.failure:
@@ -79,7 +79,10 @@ class _LoginScreenState extends State<LoginScreen> {
           builder: (context, state) {
             return BlocBuilder<AuthCubit, GenericCubitState>(
               builder: (context, state) {
-                final inputData = state.data as LoginStateInput?;
+                LoginStateInput? inputData;
+                if (state.data is LoginStateInput) {
+                  inputData = state.data;
+                }
                 return SingleChildScrollView(
                   child: Padding(
                     padding: const EdgeInsets.all(20),

@@ -2,91 +2,104 @@ import 'package:flutter/material.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
+import 'package:mvvm_cubit/data/model/temp_form/temp_form_response.dart';
 import 'package:mvvm_cubit/view/pending_trip/widget/delete_request_form.dart';
+import 'package:mvvm_cubit/view/pending_trip/widget/pending_trip_item_row_widget.dart';
 
 class PendingTripScreen extends StatefulWidget {
+  final TempFormResponse tempForm;
   final VoidCallback onDelete;
-  final VoidCallback onEdit;
+  final ValueChanged<String> onEdit;
 
   const PendingTripScreen({
-    Key? key,
+    super.key,
+    required this.tempForm,
     required this.onDelete,
     required this.onEdit,
-  }) : super(key: key);
+  });
 
   @override
   State<StatefulWidget> createState() => _PendingTripScreen();
 }
 
 class _PendingTripScreen extends State<PendingTripScreen> {
+  late TempFormResponse _tempForm;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _tempForm = widget.tempForm;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const Row(
+        Row(
           children: [
-            Text(
+            const Text(
               'Phiếu yêu cầu tạm:',
               style: textDefault,
             ),
-            SizedBox(width: 10),
+            const SizedBox(width: 10),
             Text(
-              '000012',
+              _tempForm.routeId ?? '',
               style: textDefault,
             ),
           ],
         ),
         const SizedBox(height: 10),
-        const ItemRowWidget(
-          icon: Icon(Icons.map),
+        PendingTripItemRowWidget(
+          icon: const Icon(Icons.map),
           title: 'Điểm đến:',
-          description:
-              'Chi nhánh Nam Sai Gòn, 123 Nguyễn Văn Linh, Tân Thuận Tây, Quận 7, Thành phố Hồ Chí Minh',
+          description: _tempForm.address?.address ?? '',
         ),
         const SizedBox(height: 10),
-        const ItemRowWidget(
-          icon: Icon(Icons.tag),
+        PendingTripItemRowWidget(
+          icon: const Icon(Icons.tag),
           title: 'Mục đích:',
-          description: 'Gặp khách hàng',
+          description: _tempForm.purpose?.name ?? '',
         ),
         const SizedBox(height: 10),
-        const ItemRowWidget(
-          icon: Icon(Icons.drive_eta),
-          title: 'Lái xe:',
-          description: 'Nguyễn Văn A',
+        PendingTripItemRowWidget(
+          icon: const Icon(Icons.drive_eta),
+          title: _tempForm.driver?.role?.name ?? '',
+          description: _tempForm.driver?.name ?? '',
         ),
         const SizedBox(height: 10),
-        const ItemRowWidget(
-          icon: Icon(Icons.security),
-          title: 'Bảo vệ:',
-          description: 'Nguyễn Văn B',
+        PendingTripItemRowWidget(
+          icon: const Icon(Icons.security),
+          title: _tempForm.bodyguard?.role?.name ?? '',
+          description: _tempForm.bodyguard?.name ?? '',
         ),
         const SizedBox(height: 10),
-        const Row(
+        Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(Icons.security),
-            SizedBox(width: 10),
+            const Icon(Icons.security),
+            const SizedBox(width: 10),
             Flexible(
-                child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Trạng thái:',
-                  style: textDefaultLight,
-                ),
-                Text(
-                  'Chờ duyệt',
-                  maxLines: 3,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.primary,
-                    overflow: TextOverflow.ellipsis,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Trạng thái:',
+                    style: textDefaultLight,
                   ),
-                ),
-              ],
-            ))
+                  Text(
+                    _tempForm.status?.displayName ?? '',
+                    maxLines: 3,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: _tempForm.status?.displayColor,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            )
           ],
         ),
         // const SizedBox(height: 10),
@@ -110,12 +123,7 @@ class _PendingTripScreen extends State<PendingTripScreen> {
               child: PrimaryButton(
                 title: 'Sửa PYC',
                 buttonHeight: 50,
-                // onPressed: () => showDialog(
-                //   context: context,
-                //   builder: (context) => const AddTripScreen(),
-                //   barrierDismissible: false,
-                // ),
-                onPressed: widget.onEdit,
+                onPressed: () => widget.onEdit(_tempForm.routeId ?? ''),
               ),
             ),
             const SizedBox(width: 20),
@@ -142,41 +150,30 @@ class _PendingTripScreen extends State<PendingTripScreen> {
   }
 }
 
-class ItemRowWidget extends StatelessWidget {
-  const ItemRowWidget({
-    Key? key,
-    required this.icon,
-    required this.title,
-    required this.description,
-  }) : super(key: key);
+extension _TempFormStatusDisplay on TempFormStatus {
+  String get displayName {
+    switch (this) {
+      case TempFormStatus.NEW:
+        return 'Mới tạo';
+      case TempFormStatus.APPROVED:
+        return 'Đã duyệt';
+      case TempFormStatus.CLOSED:
+        return 'Đã đóng';
+      case TempFormStatus.CANCELED:
+        return 'Đã huỷ';
+    }
+  }
 
-  final Icon icon;
-  final String title;
-  final String description;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        icon,
-        const SizedBox(width: 10),
-        Flexible(
-            child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: textDefaultLight,
-            ),
-            Text(
-              description,
-              maxLines: 3,
-              style: textDefault,
-            ),
-          ],
-        ))
-      ],
-    );
+  Color get displayColor {
+    switch (this) {
+      case TempFormStatus.NEW:
+        return AppColors.primary;
+      case TempFormStatus.APPROVED:
+        return AppColors.warning;
+      case TempFormStatus.CLOSED:
+        return AppColors.warningHigh;
+      case TempFormStatus.CANCELED:
+        return AppColors.red;
+    }
   }
 }

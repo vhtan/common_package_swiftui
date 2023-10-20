@@ -8,11 +8,11 @@ import 'package:mvvm_cubit/data/model/main/stop_point/stop_point_response.dart';
 
 class StopPointContainer extends StatelessWidget {
   const StopPointContainer({
-    Key? key,
+    super.key,
     required this.stopPoint,
     required this.onArrived,
     required this.onFinished,
-  }) : super(key: key);
+  });
 
   final StopPointResponse stopPoint;
   final ValueChanged<StopPointResponse> onArrived;

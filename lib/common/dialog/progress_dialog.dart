@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 
 class ProgressDialog extends StatelessWidget {
   const ProgressDialog({
-    Key? key,
+    super.key,
     required this.title,
     required this.isProgressed,
     this.onPressed,
-  }) : super(key: key);
+  });
 
   final String title;
   final bool isProgressed;

@@ -24,13 +24,11 @@ class MainCubit extends GenericCubit<MainState> {
     } on DioException catch (e) {
       final statusCode = e.response?.statusCode;
       if (statusCode == 404) {
-        if (state.data == null) {
-          emit(
-            GenericCubitState.success(
-              EmptyTripMainState(),
-            ),
-          );
-        }
+        emit(
+          GenericCubitState.success(
+            EmptyTripMainState(),
+          ),
+        );
       } else {
         emit(
           GenericCubitState.failure(e.message ?? 'Error'),

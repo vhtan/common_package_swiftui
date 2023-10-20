@@ -24,12 +24,14 @@ import 'package:mvvm_cubit/viewmodel/main/main_cubit.dart';
 import 'package:search_choices/search_choices.dart';
 
 class AddTripScreen extends StatefulWidget {
+  final String? tempFormId;
   final VoidCallback didAddTrip;
 
   const AddTripScreen({
-    Key? key,
+    super.key,
+    this.tempFormId,
     required this.didAddTrip,
-  }) : super(key: key);
+  });
 
   @override
   State<StatefulWidget> createState() => _AddTripScreen();

@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:mvvm_cubit/data/model/auth/login_response.dart';
 part 'user_role_response.g.dart';
 part 'user_role_response.freezed.dart';
 
@@ -9,6 +10,7 @@ abstract class UserRoleResponse with _$UserRoleResponse {
     String? name,
     String? phone,
     String? email,
+    RoleResponse? role,
   }) = _UserRoleResponse;
 
   factory UserRoleResponse.fromJson(Map<String, dynamic> json) =>

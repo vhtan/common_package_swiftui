@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names
+
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:mvvm_cubit/data/model/purpose/purpose_response.dart';
 import 'package:mvvm_cubit/data/model/user_role/user_role_response.dart';
@@ -8,12 +10,13 @@ part 'temp_form_response.freezed.dart';
 @freezed
 abstract class TempFormResponse with _$TempFormResponse {
   const factory TempFormResponse({
+    String? routeId,
     PurposeResponse? purpose,
     UserRoleResponse? driver,
     UserRoleResponse? bodyguard,
     VehicleResponse? vehicle,
     AddressResponse? address,
-    String? status,
+    TempFormStatus? status,
     String? note,
   }) = _TempFormResponse;
 
@@ -30,4 +33,11 @@ abstract class AddressResponse with _$AddressResponse {
   }) = _AddressResponse;
   factory AddressResponse.fromJson(Map<String, dynamic> json) =>
       _$AddressResponseFromJson(json);
+}
+
+enum TempFormStatus {
+  NEW,
+  APPROVED,
+  CLOSED,
+  CANCELED,
 }

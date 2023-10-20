@@ -13,10 +13,8 @@ import 'package:mvvm_cubit/viewmodel/manager_role/manager_warnings_handler/manag
 
 class ManagerWarningsHandlerScreen extends StatefulWidget {
   final String id;
-  const ManagerWarningsHandlerScreen({
-    Key? key,
-    required this.id,
-  }) : super(key: key);
+
+  const ManagerWarningsHandlerScreen({super.key, required this.id});
 
   @override
   State<StatefulWidget> createState() => _ManagerWarningsHandlerScreen();

@@ -6,12 +6,13 @@ import 'package:mvvm_cubit/core/app_style.dart';
 
 class ImageCapture extends StatelessWidget {
   const ImageCapture({
-    Key? key,
+    super.key,
     required this.title,
     required this.imageFile,
     required this.captureCallback,
     required this.deleteCallback,
-  }) : super(key: key);
+  });
+
   final String title;
   final File? imageFile;
   final VoidCallback captureCallback;

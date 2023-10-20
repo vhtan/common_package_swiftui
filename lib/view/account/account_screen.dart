@@ -9,7 +9,7 @@ import 'package:mvvm_cubit/di.dart';
 import 'package:mvvm_cubit/manager/hive_storage_manager.dart';
 
 class AccountScreen extends StatefulWidget {
-  const AccountScreen({Key? key}) : super(key: key);
+  const AccountScreen({super.key});
 
   @override
   State<StatefulWidget> createState() => _AccountScreenState();

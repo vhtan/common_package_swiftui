@@ -30,7 +30,7 @@ import 'package:mvvm_cubit/viewmodel/main/main_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/main/main_state.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({Key? key}) : super(key: key);
+  const MainScreen({super.key});
 
   @override
   State<StatefulWidget> createState() => MainScreenState();
@@ -140,16 +140,24 @@ class MainScreenState extends State<MainScreen> {
               case Status.success:
                 final data = state.data;
                 if (data is GetWarningListMainState) {
+                  logger.d('listener GetWarningListMainState $data');
                   setState(() {
                     warningList = data.warningList;
                   });
                 } else if (data is GetTripMainState) {
+                  logger.d('listener GetTripMainState $data');
                   setState(() {
                     trip = data.trip;
                   });
                 } else if (data is GetTempFormDetailsMainState) {
+                  logger.d('listener GetTempFormDetailsMainState $data');
                   setState(() {
                     tempForm = data.tempForm;
+                  });
+                } else if (data is EmptyTripMainState) {
+                  logger.d('listener EmptyTripMainState $data');
+                  setState(() {
+                    trip = null;
                   });
                 }
               default:
@@ -159,54 +167,54 @@ class MainScreenState extends State<MainScreen> {
           builder: (context, state) {
             return BlocBuilder<MainCubit, GenericCubitState<MainState>>(
               builder: (context, state) {
-                switch (state.status) {
-                  case Status.failure:
-                    return noTrip();
-                  case Status.empty:
-                    return const EmptyWidget(message: "No delivery!");
-                  case Status.loading:
-                    return const SpinKitIndicator(type: SpinKitType.circle);
-                  case Status.success:
-                    // startFetchingTrip();
-                    // startFetchingWarning();
-                    return Column(
-                      children: [
-                        warningWidgetList(),
-                        if (trip != null)
-                          Expanded(
-                            child: currentTrip(trip!),
-                          ),
-                        if (tempForm != null)
-                          Expanded(
-                            child: pendingTrip(),
-                          ),
-                        if (trip == null && tempForm == null)
-                          Expanded(
-                            child: noTrip(),
-                          ),
-                      ],
-                    );
-                  // if (data is GetTripMainState) {
-                  // } else if (data is GetTempFormDetailsMainState) {
-                  //   return Column(
-                  //     children: [
-                  //       warningWidgetList(warningList),
-                  //       Expanded(
-                  //         child: pendingTrip(),
-                  //       ),
-                  //     ],
-                  //   );
-                  // } else {
-                  //   return Column(
-                  //     children: [
-                  //       warningWidgetList(warningList),
-                  //       Expanded(
-                  //         child: noTrip(),
-                  //       ),
-                  //     ],
-                  //   );
-                  // }
-                }
+                return Column(
+                  children: [
+                    warningWidgetList(),
+                    if (trip != null && tempForm == null)
+                      Expanded(
+                        child: currentTrip(trip!),
+                      ),
+                    if (tempForm != null && trip == null)
+                      Expanded(
+                        child: pendingTrip(tempForm!),
+                      ),
+                    if (trip == null && tempForm == null)
+                      Expanded(
+                        child: noTrip(),
+                      ),
+                  ],
+                );
+
+                // logger.d('builder main ${state.status}');
+                // switch (state.status) {
+                //   case Status.failure:
+                //     return const EmptyWidget(message: "No delivery!");
+                //   case Status.empty:
+                //     return const EmptyWidget(message: "No delivery!");
+                //   case Status.loading:
+                //     // return const SpinKitIndicator(type: SpinKitType.circle);
+                //     return const EmptyWidget(message: "No delivery!");
+                //   case Status.success:
+                //     // startFetchingTrip();
+                //     // startFetchingWarning();
+                //     return Column(
+                //       children: [
+                //         warningWidgetList(),
+                //         if (trip != null)
+                //           Expanded(
+                //             child: currentTrip(trip!),
+                //           ),
+                //         if (tempForm != null)
+                //           Expanded(
+                //             child: pendingTrip(tempForm!),
+                //           ),
+                //         if (trip == null && tempForm == null)
+                //           Expanded(
+                //             child: noTrip(),
+                //           ),
+                //       ],
+                //     );
+                // }
               },
             );
           },
@@ -292,15 +300,22 @@ extension _MainScreenDeliveryList on MainScreenState {
     );
   }
 
-  Widget pendingTrip() {
+  Widget pendingTrip(TempFormResponse tempForm) {
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           PendingTripScreen(
+            tempForm: tempForm,
             onDelete: () => cubit.deleteNewTrip(),
-            onEdit: () => cubit.editNewTrip(''),
+            onEdit: (value) => showDialog<String>(
+              context: context,
+              builder: (context) => AddTripScreen(
+                didAddTrip: () => cubit.getTempFormDetails(),
+              ),
+              barrierDismissible: false,
+            ),
           ),
           const SizedBox(height: 20),
         ],

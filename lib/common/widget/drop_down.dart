@@ -4,12 +4,12 @@ import 'package:mvvm_cubit/core/app_style.dart';
 
 class DropDown<T> extends StatefulWidget {
   const DropDown({
-    Key? key,
+    super.key,
     required this.onChanged,
     required this.items,
     required this.displayTextBuilder,
     this.initialItem,
-  }) : super(key: key);
+  });
 
   final ValueChanged<T> onChanged;
   final List<T> items;

@@ -4,8 +4,7 @@ import 'package:flutter/material.dart';
 enum SpinKitType { wave, circle }
 
 class SpinKitIndicator extends StatelessWidget {
-  const SpinKitIndicator({Key? key, this.type = SpinKitType.wave})
-      : super(key: key);
+  const SpinKitIndicator({super.key, this.type = SpinKitType.wave});
 
   final SpinKitType type;
 

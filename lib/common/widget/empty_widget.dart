@@ -3,7 +3,7 @@ import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:flutter/material.dart';
 
 class EmptyWidget extends StatelessWidget {
-  const EmptyWidget({Key? key, required this.message}) : super(key: key);
+  const EmptyWidget({super.key, required this.message});
 
   final String message;
 

@@ -8,11 +8,11 @@ class TripInfo extends StatelessWidget {
   final String createBy;
 
   const TripInfo({
-    Key? key,
+    super.key,
     required this.tripCode,
     required this.startDate,
     required this.createBy,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

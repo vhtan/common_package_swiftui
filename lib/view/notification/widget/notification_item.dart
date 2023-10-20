@@ -7,9 +7,9 @@ class NotificationItem extends StatelessWidget {
   final NotificationResponse notification;
 
   const NotificationItem({
-    Key? key,
+    super.key,
     required this.notification,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

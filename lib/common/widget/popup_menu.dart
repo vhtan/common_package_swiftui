@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 
 class PopupMenu<T> extends StatelessWidget {
   const PopupMenu(
-      {Key? key,
+      {super.key,
       required this.items,
       required this.onChanged,
-      this.icon = Icons.more_vert})
-      : super(key: key);
+      this.icon = Icons.more_vert});
 
   final List<T> items;
   final ValueChanged<T> onChanged;

@@ -46,21 +46,23 @@ class MyApp extends StatelessWidget {
   final String? roleCode;
 
   const MyApp({
-    Key? key,
+    super.key,
     this.token,
     this.roleCode,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightAppTheme,
-      home: (token == null)
-          ? const LoginScreen()
-          : (roleCode == 'ATAI'
-              ? const ContainerScreen()
-              : const ManagerRoleWrningListScreen()),
+      home: PopScope(
+        child: (token == null)
+            ? const LoginScreen()
+            : (roleCode == 'ATAI'
+                ? const ContainerScreen()
+                : const ManagerRoleWrningListScreen()),
+      ),
     );
   }
 }

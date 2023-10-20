@@ -4,7 +4,7 @@ import 'package:mvvm_cubit/core/app_style.dart';
 
 class TextInput extends StatelessWidget {
   const TextInput({
-    Key? key,
+    super.key,
     this.initialValue,
     this.onChanged,
     this.validator,
@@ -18,7 +18,7 @@ class TextInput extends StatelessWidget {
     required this.hint,
     required this.labelText,
     this.inputFormatters,
-  }) : super(key: key);
+  });
 
   final String? initialValue;
   final String hint;

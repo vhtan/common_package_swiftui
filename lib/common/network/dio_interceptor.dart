@@ -27,8 +27,8 @@ class DioInterceptor extends Interceptor {
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
     final options = err.requestOptions;
-    _logger.e(options.method); // Debug log
-    _logger.e('Error: ${err.error}, Message: ${err.message}'); // Error log
+    _logger.e(
+        'Error: ${err.error}. ${err.requestOptions.uri}. ${options.method}. Code: ${err.message}'); // Error log
     return super.onError(err, handler);
   }
 

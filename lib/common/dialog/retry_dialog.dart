@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 
 class RetryDialog extends StatelessWidget {
   const RetryDialog(
-      {Key? key, required this.title, required this.onRetryPressed})
-      : super(key: key);
+      {super.key, required this.title, required this.onRetryPressed});
 
   final String title;
   final VoidCallback onRetryPressed;

@@ -2,12 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:mvvm_cubit/core/app_asset.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
+import 'package:mvvm_cubit/data/model/auth/login_response.dart';
 import 'package:mvvm_cubit/data/model/container/menu_type.dart';
 
 class MenuScreen extends StatelessWidget {
+  final LoginResponse? loginResponse;
   final ValueChanged<MenuType> valueChanged;
 
-  const MenuScreen({Key? key, required this.valueChanged}) : super(key: key);
+  const MenuScreen({
+    super.key,
+    required this.loginResponse,
+    required this.valueChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -29,9 +35,9 @@ class MenuScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16.0),
-                const Text(
-                  'Nguyễn An',
-                  style: TextStyle(color: Colors.white),
+                Text(
+                  loginResponse?.name ?? '',
+                  style: const TextStyle(color: Colors.white),
                 ),
                 const SizedBox(height: 20.0),
               ],

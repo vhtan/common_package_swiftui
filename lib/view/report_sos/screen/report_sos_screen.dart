@@ -17,7 +17,7 @@ import 'package:mvvm_cubit/viewmodel/report_sos/report_sos_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/report_sos/report_state.dart';
 
 class ReportSOSScreen extends StatefulWidget {
-  const ReportSOSScreen({Key? key}) : super(key: key);
+  const ReportSOSScreen({super.key});
 
   @override
   State<StatefulWidget> createState() => _ReportSOSScreen();

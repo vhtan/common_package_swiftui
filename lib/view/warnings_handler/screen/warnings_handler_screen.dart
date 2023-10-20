@@ -13,10 +13,11 @@ import 'package:mvvm_cubit/viewmodel/warnings_handler/warnings_handler_cubit.dar
 
 class WarningsHandlerScreen extends StatefulWidget {
   final String id;
+
   const WarningsHandlerScreen({
-    Key? key,
+    super.key,
     required this.id,
-  }) : super(key: key);
+  });
 
   @override
   State<StatefulWidget> createState() => _WarningsHandlerScreen();

@@ -10,7 +10,7 @@ import 'package:mvvm_cubit/viewmodel/notification/notification_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/notification/notification_state.dart';
 
 class NotificationScreen extends StatefulWidget {
-  const NotificationScreen({Key? key}) : super(key: key);
+  const NotificationScreen({super.key});
 
   @override
   State<StatefulWidget> createState() => _NotificationScreen();

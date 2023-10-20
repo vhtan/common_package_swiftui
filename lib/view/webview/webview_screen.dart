@@ -7,10 +7,10 @@ class WebViewCustom extends StatefulWidget {
   final String url;
 
   const WebViewCustom({
-    Key? key,
+    super.key,
     required this.title,
     required this.url,
-  }) : super(key: key);
+  });
 
   @override
   State<StatefulWidget> createState() => _WebViewCustomState();

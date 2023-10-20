@@ -11,7 +11,7 @@ import 'package:mvvm_cubit/viewmodel/manager_role/warning_list/manager_role_warn
 import 'package:mvvm_cubit/viewmodel/manager_role/warning_list/manager_role_warning_list_state.dart';
 
 class ManagerRoleWrningListScreen extends StatefulWidget {
-  const ManagerRoleWrningListScreen({Key? key}) : super(key: key);
+  const ManagerRoleWrningListScreen({super.key});
 
   @override
   State<StatefulWidget> createState() => _ManagerRoleWrningListScreen();

@@ -14,9 +14,9 @@ class CheckPointScreen extends StatefulWidget {
   final ValueChanged<String> didCapture;
 
   const CheckPointScreen({
-    Key? key,
+    super.key,
     required this.didCapture,
-  }) : super(key: key);
+  });
 
   @override
   State<StatefulWidget> createState() => _CheckPointScreen();

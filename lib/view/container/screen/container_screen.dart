@@ -3,9 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
+import 'package:mvvm_cubit/data/model/auth/login_response.dart';
 import 'package:mvvm_cubit/data/model/container/menu_type.dart';
 import 'package:mvvm_cubit/data/notification_service/notification_service.dart';
 import 'package:mvvm_cubit/di.dart';
+import 'package:mvvm_cubit/manager/hive_storage_manager.dart';
 import 'package:mvvm_cubit/view/account/account_screen.dart';
 import 'package:mvvm_cubit/view/auth/login_screen.dart';
 import 'package:mvvm_cubit/view/container/widget/menu_widget.dart';
@@ -17,7 +19,7 @@ import 'package:mvvm_cubit/viewmodel/container/container_cubit.dart';
 import 'package:shrink_sidemenu/shrink_sidemenu.dart';
 
 class ContainerScreen extends StatefulWidget {
-  const ContainerScreen({Key? key}) : super(key: key);
+  const ContainerScreen({super.key});
 
   @override
   State<StatefulWidget> createState() => _ContainerScreenState();
@@ -27,11 +29,13 @@ class _ContainerScreenState extends State<ContainerScreen> {
   bool isOpened = false;
   String title = 'Lộ trình';
   ContainerCubit containerCubit = ContainerCubit(repository: di());
+  final HiveStorageManager _hiveStorageManager = di();
   AuthCubit authCubit = AuthCubit(
     repository: di(),
     secureStorageManager: di(),
     hiveStorageManager: di(),
   );
+  LoginResponse? _loginData;
 
   final GlobalKey<SideMenuState> _sideMenuKey = GlobalKey<SideMenuState>();
 
@@ -59,6 +63,11 @@ class _ContainerScreenState extends State<ContainerScreen> {
   void initState() {
     super.initState();
     _initializePushNotifications();
+    _hiveStorageManager.getLoginData().then((value) {
+      setState(() {
+        _loginData = value;
+      });
+    });
   }
 
   Future<void> _initializePushNotifications() async {
@@ -90,6 +99,7 @@ class _ContainerScreenState extends State<ContainerScreen> {
                 menu: Padding(
                   padding: const EdgeInsets.only(left: 10.0),
                   child: MenuScreen(
+                    loginResponse: _loginData,
                     valueChanged: (value) {
                       containerCubit.menuAction(value);
                     },
