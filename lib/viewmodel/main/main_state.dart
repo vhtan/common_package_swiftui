@@ -32,6 +32,10 @@ class EmptyTripMainState extends MainState {
   EmptyTripMainState();
 }
 
+class EmptyTempFormMainState extends MainState {
+  EmptyTempFormMainState();
+}
+
 
 // class MainState {
 //   final String? id;

@@ -43,13 +43,12 @@ class MainApi with ApiHelper<dynamic> {
   }
 
   Future<dynamic> submitArrived(CheckInRequest request) async {
-    final apiResponse = await makePostRequest(
+    return await makePostRequest(
       client.dio.post(
         ApiConfig.arrivedStopPoint(request.id),
         data: request,
       ),
     );
-    return TripResponse.fromJson(apiResponse.detail);
   }
 
   Future<dynamic> updatePushToken(PushTokenRequest request) async {

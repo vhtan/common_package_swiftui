@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -22,6 +23,7 @@ class _WebViewCustomState extends State<WebViewCustom> {
   @override
   void initState() {
     super.initState();
+    logger.i('WebView link ${widget.url}');
     controller.loadRequest(
       Uri.parse(widget.url),
     );

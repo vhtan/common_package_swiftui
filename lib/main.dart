@@ -17,6 +17,7 @@ import 'di.dart';
 
 void main() async {
   await init();
+
   await environment.initConfig();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -29,12 +30,6 @@ void main() async {
   ApiConfig.header['os-version'] = osVersion;
 
   di<HiveStorageManager>().initHive();
-
-  AuthManager.setTokenExpiredCallback(() {
-    runApp(
-      const MyApp(),
-    );
-  });
 
   runApp(
     MyApp(token: loginToken, roleCode: roleCode),
@@ -71,14 +66,17 @@ class AuthManager {
   static late Function? onTokenExpired;
 
   static void setTokenExpiredCallback(Function callback) {
+    logger.d('==setTokenExpiredCallback $callback');
     onTokenExpired = callback;
   }
 
   static void notifyTokenExpired() {
-    di<SecureStorageManager>().deleteAll();
+    logger.d('==notifyTokenExpired');
     if (onTokenExpired != null) {
       onTokenExpired!();
     }
+    di<SecureStorageManager>().deleteAll();
+    ApiConfig.header['Authorization'] = null;
   }
 }
 

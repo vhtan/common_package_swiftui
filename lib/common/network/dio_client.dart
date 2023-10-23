@@ -1,3 +1,4 @@
+import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/network/dio_interceptor.dart';
 import 'package:mvvm_cubit/config/app_config.dart';
 import 'package:mvvm_cubit/core/api_config.dart';
@@ -11,6 +12,7 @@ class DioClient {
   }
 
   void updateHeaders() {
+    logger.d('==updateHeaders');
     dio
       ..options.baseUrl = environment.fullUrl()
       ..options.headers = ApiConfig.header

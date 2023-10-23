@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
+import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/core/api_config.dart';
 import 'package:mvvm_cubit/data/request/auth/login_request.dart';
 import 'package:mvvm_cubit/manager/hive_storage_manager.dart';
@@ -24,7 +25,8 @@ class AuthCubit extends Cubit<GenericCubitState<AuthState>> {
       emit(
         GenericCubitState.loading(),
       );
-      ApiConfig.header.remove('Authorization');
+      logger.d('==didremove auth login');
+      ApiConfig.header['Authorization'] = null;
       final loginResponse = await repository.login(request);
       final token = loginResponse.session ?? '';
       final roleCode = loginResponse.role?.code ?? '';

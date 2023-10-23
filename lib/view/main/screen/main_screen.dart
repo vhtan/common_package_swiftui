@@ -9,7 +9,7 @@ import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/snack_bar/error_snack_bar.dart';
 import 'package:mvvm_cubit/common/widget/empty_widget.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
-import 'package:mvvm_cubit/common/widget/spinkit_indicator.dart';
+import 'package:mvvm_cubit/config/app_config.dart';
 import 'package:mvvm_cubit/core/api_config.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_string.dart';
@@ -18,9 +18,11 @@ import 'package:mvvm_cubit/data/model/main/stop_point/stop_point_response.dart';
 import 'package:mvvm_cubit/data/model/main/trip/trip_response.dart';
 import 'package:mvvm_cubit/data/model/temp_form/temp_form_response.dart';
 import 'package:mvvm_cubit/data/model/warning/warning_response.dart';
+import 'package:mvvm_cubit/data/request/check_in/check_in_request.dart';
 import 'package:mvvm_cubit/di.dart';
 import 'package:mvvm_cubit/main.dart';
 import 'package:mvvm_cubit/view/add_trip/add_trip_screen.dart';
+import 'package:mvvm_cubit/view/auth/login_screen.dart';
 import 'package:mvvm_cubit/view/check_point/check_point_screen.dart';
 import 'package:mvvm_cubit/view/main/widget/trip_container.dart';
 import 'package:mvvm_cubit/view/pending_trip/screen/pending_trip_screen.dart';
@@ -67,6 +69,15 @@ class MainScreenState extends State<MainScreen> {
       cancelFetchingTrip();
       cancelFetchingWarning();
     });
+
+    AuthManager.setTokenExpiredCallback(
+      () {
+        logger.d('==TokenExpired');
+        navigateTo(
+          const LoginScreen(),
+        );
+      },
+    );
   }
 
   void startFetchingTrip() {
@@ -140,24 +151,28 @@ class MainScreenState extends State<MainScreen> {
               case Status.success:
                 final data = state.data;
                 if (data is GetWarningListMainState) {
-                  logger.d('listener GetWarningListMainState $data');
                   setState(() {
                     warningList = data.warningList;
                   });
                 } else if (data is GetTripMainState) {
-                  logger.d('listener GetTripMainState $data');
                   setState(() {
                     trip = data.trip;
                   });
                 } else if (data is GetTempFormDetailsMainState) {
-                  logger.d('listener GetTempFormDetailsMainState $data');
                   setState(() {
                     tempForm = data.tempForm;
                   });
                 } else if (data is EmptyTripMainState) {
-                  logger.d('listener EmptyTripMainState $data');
                   setState(() {
                     trip = null;
+                  });
+                } else if (data is EmptyTempFormMainState) {
+                  setState(() {
+                    tempForm = null;
+                  });
+                } else if (data is DidDeleteTripMainState) {
+                  setState(() {
+                    tempForm = null;
                   });
                 }
               default:
@@ -184,37 +199,6 @@ class MainScreenState extends State<MainScreen> {
                       ),
                   ],
                 );
-
-                // logger.d('builder main ${state.status}');
-                // switch (state.status) {
-                //   case Status.failure:
-                //     return const EmptyWidget(message: "No delivery!");
-                //   case Status.empty:
-                //     return const EmptyWidget(message: "No delivery!");
-                //   case Status.loading:
-                //     // return const SpinKitIndicator(type: SpinKitType.circle);
-                //     return const EmptyWidget(message: "No delivery!");
-                //   case Status.success:
-                //     // startFetchingTrip();
-                //     // startFetchingWarning();
-                //     return Column(
-                //       children: [
-                //         warningWidgetList(),
-                //         if (trip != null)
-                //           Expanded(
-                //             child: currentTrip(trip!),
-                //           ),
-                //         if (tempForm != null)
-                //           Expanded(
-                //             child: pendingTrip(tempForm!),
-                //           ),
-                //         if (trip == null && tempForm == null)
-                //           Expanded(
-                //             child: noTrip(),
-                //           ),
-                //       ],
-                //     );
-                // }
               },
             );
           },
@@ -236,11 +220,11 @@ class MainScreenState extends State<MainScreen> {
   Widget currentTrip(TripResponse trip) {
     return TripContainer(
       trip: trip,
-      onArrived: (value) async {
+      onArrived: (stopPoint) async {
         _locationData = await getCurrentLocation();
         final stopPointLocation = LocationData.fromMap({
-          'longitude': value.destination?.longitude,
-          'latitude': value.destination?.latitude,
+          'longitude': stopPoint.destination?.longitude,
+          'latitude': stopPoint.destination?.latitude,
         });
         if (_locationData != null) {
           if (calculateDistance(_locationData!, stopPointLocation) > 20) {
@@ -248,18 +232,24 @@ class MainScreenState extends State<MainScreen> {
             await showDialog(
               context: context,
               builder: (context) => CheckPointScreen(
-                didCapture: (value) => _imagePath = value,
+                didCapture: (imagePath) => cubit.submitArrived(
+                  CheckInRequest(
+                      id: stopPoint.id,
+                      imagePath: imagePath,
+                      latitude: _locationData?.latitude ?? 0,
+                      longitude: _locationData?.longitude ?? 0),
+                ),
               ),
               barrierDismissible: false,
             );
           }
         }
       },
-      onFinihed: () {
+      onFinihed: (value) {
         navigateTo(
-          const WebViewCustom(
-            title: 'Trip vacom',
-            url: ApiConfig.finishedStopPointLink,
+          WebViewCustom(
+            title: 'Hoàn thành',
+            url: '${environment.vacomUrl()}$value',
           ),
         );
       },

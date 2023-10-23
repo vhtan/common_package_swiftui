@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
+import 'package:mvvm_cubit/data/model/temp_form/temp_form_response.dart';
+import 'package:mvvm_cubit/data/request/check_in/check_in_request.dart';
 import 'package:mvvm_cubit/repository/main/main_repository.dart';
 import 'package:mvvm_cubit/viewmodel/main/main_state.dart';
 
@@ -30,6 +32,7 @@ class MainCubit extends GenericCubit<MainState> {
           ),
         );
       } else {
+        logger.d('statusCode else main = $statusCode');
         emit(
           GenericCubitState.failure(e.message ?? 'Error'),
         );
@@ -43,15 +46,33 @@ class MainCubit extends GenericCubit<MainState> {
     );
     try {
       final tempForm = await repository.getTempFormDetails();
-      emit(
-        GenericCubitState.success(
-          GetTempFormDetailsMainState(tempForm: tempForm),
-        ),
-      );
+      if (tempForm.status == TempFormStatus.NEW ||
+          tempForm.status == TempFormStatus.APPROVED) {
+        emit(
+          GenericCubitState.success(
+            GetTempFormDetailsMainState(tempForm: tempForm),
+          ),
+        );
+      } else {
+        emit(
+          GenericCubitState.success(
+            EmptyTempFormMainState(),
+          ),
+        );
+      }
     } on DioException catch (e) {
-      emit(
-        GenericCubitState.failure(e.message ?? 'Error'),
-      );
+      final statusCode = e.response?.statusCode;
+      if (statusCode == 404) {
+        emit(
+          GenericCubitState.success(
+            EmptyTempFormMainState(),
+          ),
+        );
+      } else {
+        emit(
+          GenericCubitState.failure(e.message ?? 'Error'),
+        );
+      }
     }
   }
 
@@ -102,27 +123,21 @@ class MainCubit extends GenericCubit<MainState> {
     );
   }
 
-  // Future<void> didCaptureAndUploadImage(String path) async {
-  //   try {
-  //     final data = state.data;
-  //     logger.d('didCaptureAndUploadImage $data');
-  //     if (data != null) {
-  //       logger.d('didCaptureAndUploadImage data != null');
-  //       final response = await repository.submitArrived(
-  //         CheckInRequest(
-  //           id: data.id!,
-  //           imagePath: path,
-  //           latitude: data.locationData!.latitude!,
-  //           longitude: data.locationData!.longitude!,
-  //         ),
-  //       );
-  //       getTrip();
-  //     }
-  //   } on DioException catch (e) {
-  //     logger.e(e.message);
-  //     emit(
-  //       GenericCubitState.failure(e.message ?? 'Error'),
-  //     );
-  //   }
-  // }
+  Future<void> submitArrived(CheckInRequest request) async {
+    try {
+      logger.d('didCaptureAndUploadImage $request');
+      await repository.submitArrived(request);
+      emit(
+        GenericCubitState.success(
+          EmptyTripMainState(),
+        ),
+      );
+      getTrip();
+    } on DioException catch (e) {
+      logger.e(e.message);
+      emit(
+        GenericCubitState.failure(e.message ?? 'Error'),
+      );
+    }
+  }
 }

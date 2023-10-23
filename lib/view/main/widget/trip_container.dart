@@ -15,7 +15,7 @@ class TripContainer extends StatefulWidget {
 
   final TripResponse trip;
   final ValueChanged<StopPointResponse> onArrived;
-  final VoidCallback onFinihed;
+  final ValueChanged<int> onFinihed;
 
   @override
   State<TripContainer> createState() => _TripContainer();
@@ -52,7 +52,8 @@ class _TripContainer extends State<TripContainer> {
               onFinished: widget.onFinihed,
             );
           },
-        ).toList(),
+        ),
+        const SizedBox(height: 20)
       ],
     );
   }

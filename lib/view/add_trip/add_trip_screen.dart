@@ -110,11 +110,10 @@ class _AddTripScreen extends State<AddTripScreen> {
             setState(() {
               _location = data.location;
             });
+          } else if (data is DidAddTripState) {
+            widget.didAddTrip();
+            Navigator.pop(context);
           }
-          // if (state.data?.tempForm != null) {
-          //   widget.didAddTrip();
-          //   Navigator.pop(context);
-          // }
         },
         builder: (context, state) {
           return BlocBuilder<AddTripCubit, GenericCubitState<AddTripState>>(

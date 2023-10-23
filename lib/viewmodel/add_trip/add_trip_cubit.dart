@@ -72,7 +72,7 @@ class AddTripCubit extends GenericCubit<AddTripState> {
 
   Future<void> createTrip(AddTripRequest request) async {
     try {
-      final id = await repository.createTrip(request);
+      await repository.createTrip(request);
       emit(
         GenericCubitState.success(DidAddTripState()),
       );

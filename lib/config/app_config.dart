@@ -46,4 +46,6 @@ class Environment {
         return ConfigDev();
     }
   }
+
+  String vacomUrl() => config.vacomUrl;
 }

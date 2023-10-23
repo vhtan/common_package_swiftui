@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names
+
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:mvvm_cubit/data/model/main/destination/destination_response.dart';
 
@@ -12,8 +14,9 @@ abstract class StopPointResponse with _$StopPointResponse {
     String? createBy,
     String? stopPointType,
     String? stopPointAction,
-    String? status,
+    StopPointStatus? status,
     String? imagePath,
+    int? jobRequestId,
     DestinationResponse? destination,
   }) = _StopPointResponse;
 
@@ -21,9 +24,15 @@ abstract class StopPointResponse with _$StopPointResponse {
       _$StopPointResponseFromJson(json);
 }
 
-extension StopPointStatus on String {
-  static const act = 'ACT';
-  static const pro = 'PRO';
-  static const ina = 'INA';
-  static const cls = 'CLS';
+enum StopPointStatus {
+  ACT,
+  PRO,
+  INA,
+  CLS,
+}
+
+extension StopPointStatusCheckIn on StopPointStatus {
+  bool canCheckIn() {
+    return this == StopPointStatus.ACT || this == StopPointStatus.PRO;
+  }
 }

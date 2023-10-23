@@ -16,7 +16,7 @@ class StopPointContainer extends StatelessWidget {
 
   final StopPointResponse stopPoint;
   final ValueChanged<StopPointResponse> onArrived;
-  final VoidCallback onFinished;
+  final ValueChanged<int> onFinished;
 
   @override
   Widget build(BuildContext context) {
@@ -79,13 +79,13 @@ class StopPointContainer extends StatelessWidget {
                 )),
           ),
         const SizedBox(height: 20),
-        if (stopPoint.status == StopPointStatus.act)
+        if (stopPoint.status?.canCheckIn() == true)
           Row(
             children: [
               const SizedBox(width: 20),
               Flexible(
                 child: PrimaryButton(
-                  title: 'Đến nơi',
+                  title: stopPoint.imagePath != null ? 'Đã đến nơi' : 'Đến nơi',
                   buttonHeight: 50,
                   onPressed: (stopPoint.imagePath != null)
                       ? null
@@ -94,18 +94,19 @@ class StopPointContainer extends StatelessWidget {
                         },
                 ),
               ),
-              const SizedBox(width: 20),
-              Flexible(
-                child: PrimaryButton(
-                  title: 'Hoàn thành',
-                  buttonHeight: 50,
-                  onPressed: (stopPoint.imagePath != null)
-                      ? () {
-                          onFinished();
-                        }
-                      : null,
+              if (stopPoint.jobRequestId != null) const SizedBox(width: 20),
+              if (stopPoint.jobRequestId != null)
+                Flexible(
+                  child: PrimaryButton(
+                    title: 'Hoàn thành',
+                    buttonHeight: 50,
+                    onPressed: (stopPoint.imagePath != null)
+                        ? () {
+                            onFinished(stopPoint.jobRequestId!);
+                          }
+                        : null,
+                  ),
                 ),
-              ),
               const SizedBox(width: 20),
             ],
           ),

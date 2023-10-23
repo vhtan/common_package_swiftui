@@ -21,14 +21,12 @@ class ApiConfig {
   static const String userSearchList = '/user/search';
   static const String updatePushToken = '/push-token';
   static const String warningProcess = '/warning/process';
-  static const String finishedStopPointLink =
-      'https://quanlydieuquy.acb.com.vn/login';
 
   static String arrivedStopPoint(String id) {
     return '/routing/routing-detail/$id/arrived';
   }
 
-  static const String cancelTempForm = 'routing/job/cancel';
+  static const String cancelTempForm = '/routing/job/cancel';
 
   static String warningDetails(String id) {
     return '/warning/$id';
