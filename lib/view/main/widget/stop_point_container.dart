@@ -87,6 +87,9 @@ class StopPointContainer extends StatelessWidget {
                 child: PrimaryButton(
                   title: stopPoint.imagePath != null ? 'Đã đến nơi' : 'Đến nơi',
                   buttonHeight: 50,
+                  backgroundColor: stopPoint.imagePath != null
+                      ? AppColors.white
+                      : AppColors.primary,
                   onPressed: (stopPoint.imagePath != null)
                       ? null
                       : () {

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:camera_camera/camera_camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:material_text_fields/utils/extensions.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/common/widget/drop_down.dart';
@@ -37,6 +38,20 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
     cubit.getReasons();
   }
 
+  final FocusNode _nodeTextInput = FocusNode();
+  KeyboardActionsConfig _keyboardActionsConfig(BuildContext context) {
+    return KeyboardActionsConfig(
+      keyboardActionsPlatform: KeyboardActionsPlatform.IOS,
+      keyboardBarColor: Colors.grey[200],
+      nextFocus: false,
+      actions: [
+        KeyboardActionsItem(
+          focusNode: _nodeTextInput,
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -66,106 +81,111 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
               return Scaffold(
                 backgroundColor: Colors.transparent,
                 resizeToAvoidBottomInset: true,
-                body: Center(
-                  child: SingleChildScrollView(
-                    child: Container(
-                      padding: const EdgeInsets.all(20),
-                      alignment: Alignment.center,
-                      child: IntrinsicHeight(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: Colors.white,
-                          ),
-                          padding: const EdgeInsets.only(
-                              left: 20, right: 20, bottom: 20, top: 10),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Stack(
-                                alignment: AlignmentDirectional.center,
-                                children: [
-                                  const Align(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      'Báo cáo sự cố',
-                                      style: headLine1,
+                body: KeyboardActions(
+                  isDialog: true,
+                  config: _keyboardActionsConfig(context),
+                  child: Center(
+                    child: SingleChildScrollView(
+                      child: Container(
+                        padding: const EdgeInsets.all(20),
+                        alignment: Alignment.center,
+                        child: IntrinsicHeight(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              color: Colors.white,
+                            ),
+                            padding: const EdgeInsets.only(
+                                left: 20, right: 20, bottom: 20, top: 10),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Stack(
+                                  alignment: AlignmentDirectional.center,
+                                  children: [
+                                    const Align(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        'Báo cáo sự cố',
+                                        style: headLine1,
+                                      ),
                                     ),
-                                  ),
-                                  Align(
-                                    alignment: Alignment.topRight,
-                                    child: IconButton(
-                                      color: Colors.black,
-                                      icon: const Icon(Icons.close),
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
+                                    Align(
+                                      alignment: Alignment.topRight,
+                                      child: IconButton(
+                                        color: Colors.black,
+                                        icon: const Icon(Icons.close),
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 20),
-                              (reasons.isNotEmpty)
-                                  ? DropDown<ChildSOSResponse>(
-                                      items: reasons,
-                                      displayTextBuilder: (value) =>
-                                          value.name ?? '',
-                                      onChanged: (value) {
-                                        setState(() {
-                                          selectedReason = value;
-                                        });
+                                  ],
+                                ),
+                                const SizedBox(height: 20),
+                                (reasons.isNotEmpty)
+                                    ? DropDown<ChildSOSResponse>(
+                                        items: reasons,
+                                        displayTextBuilder: (value) =>
+                                            value.name ?? '',
+                                        onChanged: (value) {
+                                          setState(() {
+                                            selectedReason = value;
+                                          });
+                                        },
+                                      )
+                                    : const SizedBox(),
+                                const SizedBox(height: 20),
+                                ImageCapture(
+                                  title: 'Chụp ảnh sự cố',
+                                  imageFile: localFile,
+                                  captureCallback: () => openCamera(context),
+                                  deleteCallback: () => {
+                                    setState(() {
+                                      localFile = null;
+                                      uploadedUrl = null;
+                                    })
+                                  },
+                                ),
+                                const SizedBox(height: 20),
+                                TextInput(
+                                  focusNode: _nodeTextInput,
+                                  hint: 'Nhập mô tả sự cố',
+                                  labelText: 'Mô tả sự cố',
+                                  maxLines: 4, // and this
+                                  keyboardType: TextInputType.multiline,
+                                  onChanged: (value) => {
+                                    setState(
+                                      () {
+                                        describeReason = value;
                                       },
                                     )
-                                  : const SizedBox(),
-                              const SizedBox(height: 20),
-                              ImageCapture(
-                                title: 'Chụp ảnh sự cố',
-                                imageFile: localFile,
-                                captureCallback: () => openCamera(context),
-                                deleteCallback: () => {
-                                  setState(() {
-                                    localFile = null;
-                                    uploadedUrl = null;
-                                  })
-                                },
-                              ),
-                              const SizedBox(height: 20),
-                              TextInput(
-                                hint: 'Nhập mô tả sự cố',
-                                labelText: 'Mô tả sự cố',
-                                maxLines: 4, // and this
-                                keyboardType: TextInputType.multiline,
-                                onChanged: (value) => {
-                                  setState(
-                                    () {
-                                      describeReason = value;
-                                    },
-                                  )
-                                },
-                              ),
-                              const SizedBox(height: 20),
-                              PrimaryButton(
-                                title: 'Gửi',
-                                buttonHeight: 50,
-                                onPressed: (validSubmitSOS()) == true
-                                    ? () {
-                                        cubit.submitSOS(
-                                          SOSSubmitRequest(
-                                            reasonId: selectedReason?.id,
-                                            imgUrl: uploadedUrl,
-                                            sosMessage: describeReason,
-                                            requestId:
-                                                selectedReason?.requestId,
-                                            requestTime:
-                                                selectedReason?.requestTime,
-                                          ),
-                                        );
-                                        Navigator.pop(context);
-                                      }
-                                    : null,
-                              )
-                            ],
+                                  },
+                                ),
+                                const SizedBox(height: 20),
+                                PrimaryButton(
+                                  title: 'Gửi',
+                                  buttonHeight: 50,
+                                  onPressed: (validSubmitSOS()) == true
+                                      ? () {
+                                          cubit.submitSOS(
+                                            SOSSubmitRequest(
+                                              reasonId: selectedReason?.id,
+                                              imgUrl: uploadedUrl,
+                                              sosMessage: describeReason,
+                                              requestId:
+                                                  selectedReason?.requestId,
+                                              requestTime:
+                                                  selectedReason?.requestTime,
+                                            ),
+                                          );
+                                          Navigator.pop(context);
+                                        }
+                                      : null,
+                                )
+                              ],
+                            ),
                           ),
                         ),
                       ),

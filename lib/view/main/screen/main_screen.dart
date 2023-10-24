@@ -10,7 +10,6 @@ import 'package:mvvm_cubit/common/snack_bar/error_snack_bar.dart';
 import 'package:mvvm_cubit/common/widget/empty_widget.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/config/app_config.dart';
-import 'package:mvvm_cubit/core/api_config.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_string.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
@@ -50,7 +49,6 @@ class MainScreenState extends State<MainScreen> {
   final cubit = MainCubit(repository: di());
   static Timer? fetchTrip;
   static Timer? fetchWarning;
-  String? _imagePath;
 
   @override
   void initState() {

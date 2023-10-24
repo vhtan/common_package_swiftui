@@ -4,6 +4,7 @@ import 'package:mvvm_cubit/config/config_dev.dart';
 import 'package:mvvm_cubit/config/config_prod.dart';
 import 'package:mvvm_cubit/config/config_stag.dart';
 
+// ignore: constant_identifier_names
 enum Env { DEV, PROD, STAG }
 
 final Environment environment = Environment.instance;
