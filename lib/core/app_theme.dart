@@ -10,7 +10,10 @@ class AppTheme {
   static ThemeData lightAppTheme = ThemeData(
     appBarTheme: const AppBarTheme(
       titleTextStyle: TextStyle(
-          fontSize: 20, fontWeight: FontWeight.w700, color: AppColors.white),
+        fontSize: 20,
+        fontWeight: FontWeight.w700,
+        color: AppColors.white,
+      ),
       color: AppColors.primary,
       centerTitle: true,
     ),
