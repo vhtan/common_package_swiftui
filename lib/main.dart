@@ -63,17 +63,16 @@ class MyApp extends StatelessWidget {
 }
 
 class AuthManager {
-  static late Function? onTokenExpired;
+  static List<Function> onTokenExpireds = [];
 
   static void setTokenExpiredCallback(Function callback) {
-    logger.d('==setTokenExpiredCallback $callback');
-    onTokenExpired = callback;
+    onTokenExpireds.add(callback);
   }
 
   static void notifyTokenExpired() {
     logger.d('==notifyTokenExpired');
-    if (onTokenExpired != null) {
-      onTokenExpired!();
+    for (final onTokenExpired in onTokenExpireds) {
+      onTokenExpired();
     }
     di<SecureStorageManager>().deleteAll();
     ApiConfig.header['Authorization'] = null;

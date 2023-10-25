@@ -1,24 +1,37 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
+import 'package:mvvm_cubit/core/app_extension.dart';
 
 class PushNotificationService {
   final FirebaseMessaging _fcm = FirebaseMessaging.instance;
+  late ValueChanged<String>? onHandleMessage;
 
-  Future<void> initialize() async {
-    await _fcm.requestPermission(sound: true, badge: true, alert: true);
+  PushNotificationService._privateConstructor();
+  static final PushNotificationService _instance =
+      PushNotificationService._privateConstructor();
 
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      _handleMessage(message);
-    });
-
-    RemoteMessage? initialMessage =
-        await FirebaseMessaging.instance.getInitialMessage();
-    if (initialMessage != null) {
-      _handleMessage(initialMessage);
-    }
+  factory PushNotificationService() {
+    return _instance;
   }
 
-  Future<String?> getFCMToken() async {
+  Future<void> initialize(Function(String) onTokenRefresh) async {
+    await _fcm.requestPermission(sound: true, badge: true, alert: true);
+    final token = await _getFCMToken();
+    if (token != null) {
+      onTokenRefresh(token);
+    }
+    FirebaseMessaging.onMessage.listen(
+      (RemoteMessage message) {
+        _handleMessage(message);
+      },
+    );
+
+    FirebaseMessaging.instance.onTokenRefresh
+        .listen((token) => onTokenRefresh(token));
+  }
+
+  Future<String?> _getFCMToken() async {
     try {
       final token = await _fcm.getToken();
       return token;
@@ -28,6 +41,11 @@ class PushNotificationService {
   }
 
   void _handleMessage(RemoteMessage message) {
-    logger.d('Received message: ${message.notification?.title}');
+    logger.d('Received message: ${message.data.toJsonString()}');
+    if (onHandleMessage != null) {
+      onHandleMessage!(
+        message.data.toJsonString(),
+      );
+    }
   }
 }

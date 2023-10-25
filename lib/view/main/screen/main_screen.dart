@@ -66,16 +66,10 @@ class MainScreenState extends State<MainScreen> {
     AuthManager.setTokenExpiredCallback(() {
       cancelFetchingTrip();
       cancelFetchingWarning();
+      navigateTo(
+        const LoginScreen(),
+      );
     });
-
-    AuthManager.setTokenExpiredCallback(
-      () {
-        logger.d('==TokenExpired');
-        navigateTo(
-          const LoginScreen(),
-        );
-      },
-    );
   }
 
   void startFetchingTrip() {
@@ -207,10 +201,15 @@ class MainScreenState extends State<MainScreen> {
 
   void navigateTo(Widget screen) {
     if (!mounted) return;
+    final name = screen.runtimeType.toString();
+    logger.d('navigateTo $name');
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => screen,
+        settings: RouteSettings(
+          name: name,
+        ),
       ),
     );
   }
@@ -247,7 +246,7 @@ class MainScreenState extends State<MainScreen> {
         navigateTo(
           WebViewCustom(
             title: 'Hoàn thành',
-            url: '${environment.vacomUrl()}$value',
+            jobRequestId: value,
           ),
         );
       },

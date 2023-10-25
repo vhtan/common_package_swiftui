@@ -3,8 +3,6 @@ import 'dart:io';
 class ApiConfig {
   ApiConfig._();
 
-  // static const String baseUrl = "http://45.119.213.78:32181/app/api/v1";
-  // static const String baseUrl = "http://localhost:8081/app/api/v1";
   static const Duration receiveTimeout = Duration(milliseconds: 15000);
   static const Duration connectionTimeout = Duration(milliseconds: 15000);
   static const String getTrip = '/routing/detail';
@@ -21,6 +19,10 @@ class ApiConfig {
   static const String userSearchList = '/user/search';
   static const String updatePushToken = '/push-token';
   static const String warningProcess = '/warning/process';
+  static const vietMapGetLocation =
+      'https://maps.vietmap.vn/api/place/v3?apikey=12963eff8f160538ffd99bf225440c49a0907f7b7eddda45&refid=';
+  static const vietMapSearch =
+      'https://maps.vietmap.vn/api/autocomplete/v3?apikey=12963eff8f160538ffd99bf225440c49a0907f7b7eddda45&text=';
 
   static String arrivedStopPoint(String id) {
     return '/routing/routing-detail/$id/arrived';

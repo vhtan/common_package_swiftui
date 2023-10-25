@@ -70,8 +70,7 @@ class AddTripApi with ApiHelper<AddTripResponse> {
 
   Future<MapLocationResponse> getMapLocation(String refId) async {
     Response response = await get(
-      Uri.parse(
-          'https://maps.vietmap.vn/api/place/v3?apikey=12963eff8f160538ffd99bf225440c49a0907f7b7eddda45&refid=$refId'),
+      Uri.parse('${ApiConfig.vietMapGetLocation}$refId'),
     ).timeout(
       const Duration(seconds: 10),
     );

@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
+import 'package:mvvm_cubit/config/app_config.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
+import 'package:mvvm_cubit/data/notification_service/notification_service.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class WebViewCustom extends StatefulWidget {
   final String title;
-  final String url;
+  final int jobRequestId;
 
   const WebViewCustom({
     super.key,
     required this.title,
-    required this.url,
+    required this.jobRequestId,
   });
 
   @override
@@ -23,14 +25,24 @@ class _WebViewCustomState extends State<WebViewCustom> {
   @override
   void initState() {
     super.initState();
-    logger.i('WebView link ${widget.url}');
     controller.loadRequest(
-      Uri.parse(widget.url),
+      Uri.parse('${environment.vacomUrl()}${widget.jobRequestId}'),
     );
+
+    PushNotificationService().onHandleMessage = (value) {
+      if (value == '${widget.jobRequestId}') {
+        Navigator.pop(context);
+      }
+    };
   }
 
   @override
   Widget build(BuildContext context) {
+    Route<dynamic>? currentRoute = ModalRoute.of(context);
+    logger.d('name == $currentRoute');
+    if (currentRoute is MaterialPageRoute) {
+      logger.d('name == ${currentRoute.settings.name}');
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),

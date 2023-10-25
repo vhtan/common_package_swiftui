@@ -37,9 +37,9 @@ class LoginStateInput extends AuthState {
 
 class LoginStateSuccess extends AuthState {
   bool isManager;
-  LoginStateSuccess([
-    isManager,
-  ]) : isManager = false;
+  LoginStateSuccess(
+    this.isManager,
+  );
 }
 
 class LogoutStateSuccess extends AuthState {}

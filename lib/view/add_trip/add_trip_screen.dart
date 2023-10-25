@@ -10,6 +10,7 @@ import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/widget/drop_down.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/common/widget/text_input.dart';
+import 'package:mvvm_cubit/core/api_config.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/data/model/map_location/map_location_response.dart';
@@ -377,8 +378,7 @@ class _AddTripScreen extends State<AddTripScreen> {
           return (Tuple2<List<DropdownMenuItem>, int>([], 0));
         }
         Response response = await get(
-          Uri.parse(
-              'https://maps.vietmap.vn/api/autocomplete/v3?apikey=12963eff8f160538ffd99bf225440c49a0907f7b7eddda45&text=$keyword'),
+          Uri.parse('${ApiConfig.vietMapSearch}$keyword'),
         ).timeout(
           const Duration(seconds: 10),
         );

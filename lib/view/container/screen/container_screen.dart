@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
@@ -14,9 +17,12 @@ import 'package:mvvm_cubit/view/container/widget/menu_widget.dart';
 import 'package:mvvm_cubit/view/main/screen/main_screen.dart';
 import 'package:mvvm_cubit/view/notification/screen/notification_screen.dart';
 import 'package:mvvm_cubit/view/report_sos/screen/report_sos_screen.dart';
+import 'package:mvvm_cubit/view/webview/webview_screen.dart';
 import 'package:mvvm_cubit/viewmodel/auth/auth_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/container/container_cubit.dart';
 import 'package:shrink_sidemenu/shrink_sidemenu.dart';
+
+final streamController = StreamController<int>();
 
 class ContainerScreen extends StatefulWidget {
   const ContainerScreen({super.key});
@@ -57,26 +63,40 @@ class _ContainerScreenState extends State<ContainerScreen> {
     }
   }
 
-  final _pushNotificationService = PushNotificationService();
+  late PushNotificationService _pushNotificationService;
+
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+  static Timer? fetchTrip;
 
   @override
   void initState() {
     super.initState();
     _initializePushNotifications();
-    _hiveStorageManager.getLoginData().then((value) {
-      setState(() {
-        _loginData = value;
-      });
-    });
+    _hiveStorageManager.getLoginData().then(
+      (value) {
+        setState(() {
+          _loginData = value;
+        });
+      },
+    );
   }
 
   Future<void> _initializePushNotifications() async {
-    await _pushNotificationService.initialize();
-    final token = await _pushNotificationService.getFCMToken();
-    logger.d('Firebase push token $token');
-    if (token != null) {
-      containerCubit.updatePushToken(token);
-    }
+    _pushNotificationService = PushNotificationService(
+        // onTokenRefresh: (token) => containerCubit.updatePushToken(token),
+        // onHandleMessage: (value) {
+        //   logger.d('onHandleMessage');
+        //   final isTopOfNavigationStack =
+        //       ModalRoute.of(context)?.isCurrent ?? false;
+        // },
+        );
+    fetchTrip = Timer.periodic(const Duration(seconds: 10), (timer) {
+      streamController.sink.add(timer.tick);
+    });
+    await _pushNotificationService.initialize(
+      (token) => containerCubit.updatePushToken(token),
+    );
   }
 
   @override
@@ -144,8 +164,13 @@ class _ContainerScreenState extends State<ContainerScreen> {
                       title: Text(title),
                     ),
                     body: BlocBuilder<ContainerCubit,
-                            GenericCubitState<MenuType>>(
-                        builder: (context, state) => contentWidget(state.data)),
+                        GenericCubitState<MenuType>>(
+                      builder: (context, state) => Container(
+                        padding: const EdgeInsets.all(0),
+                        // key: _widgetKey,
+                        child: contentWidget(state.data),
+                      ),
+                    ),
                   ),
                 ),
               );
