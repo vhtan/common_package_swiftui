@@ -20,7 +20,7 @@ class DioInterceptor extends Interceptor {
         'Request => ${options.baseUrl}${options.path}${options.queryParameters.format}');
     _logger.i('Header  => ${options.headers}');
     final curlCommand = _generateCurlCommand(options);
-    debugPrint('cURL Request: $curlCommand');
+    _logger.i('cURL Request: $curlCommand');
     options.headers.addAll(ApiConfig.header);
 
     return super.onRequest(options, handler);

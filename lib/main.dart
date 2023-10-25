@@ -49,16 +49,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightAppTheme,
-      home: PopScope(
-        child: (token == null)
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.lightAppTheme,
+        home: (token == null)
             ? const LoginScreen()
             : (roleCode == 'ATAI'
                 ? const ContainerScreen()
-                : const ManagerRoleWrningListScreen()),
-      ),
-    );
+                : const ManagerRoleWrningListScreen()));
   }
 }
 
