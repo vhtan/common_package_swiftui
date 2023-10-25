@@ -123,22 +123,22 @@ class _LoginScreenState extends State<LoginScreen> {
                         PrimaryButton(
                           title: 'Đăng nhập',
                           buttonHeight: 50,
-                          // onPressed: (inputData?.isValid()) == true
-                          //     ? () {
-                          //         authCubit.login(LoginRequest(
-                          //           username: _usernameTextController.text,
-                          //           password: _passwordTextController.text,
-                          //         ));
-                          //       }
-                          //     : null,
-                          onPressed: () {
-                            authCubit.login(
-                              LoginRequest(
-                                username: 'email10005',
-                                password: 'as',
-                              ),
-                            );
-                          },
+                          onPressed: (inputData?.isValid()) == true
+                              ? () {
+                                  authCubit.login(LoginRequest(
+                                    username: _usernameTextController.text,
+                                    password: _passwordTextController.text,
+                                  ));
+                                }
+                              : null,
+                          // onPressed: () {
+                          //   authCubit.login(
+                          //     LoginRequest(
+                          //       username: 'email10005',
+                          //       password: 'as',
+                          //     ),
+                          //   );
+                          // },
                         ),
                       ],
                     ),

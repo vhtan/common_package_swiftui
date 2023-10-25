@@ -70,7 +70,6 @@ class AuthManager {
   }
 
   static void notifyTokenExpired() {
-    logger.d('==notifyTokenExpired');
     for (final onTokenExpired in onTokenExpireds) {
       onTokenExpired();
     }
