@@ -30,7 +30,7 @@ class _WebViewCustomState extends State<WebViewCustom> {
     );
 
     PushNotificationService().onHandleMessage = (value) {
-      if (value == '${widget.jobRequestId}') {
+      if (value.id == '${widget.jobRequestId}') {
         Navigator.pop(context);
       }
     };

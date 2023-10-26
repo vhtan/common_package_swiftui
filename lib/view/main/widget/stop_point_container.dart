@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/core/app_asset.dart';
@@ -20,10 +21,10 @@ class StopPointContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return renderStopPoint(stopPoint);
+    return renderStopPoint(stopPoint, context);
   }
 
-  Widget renderStopPoint(StopPointResponse stopPoint) {
+  Widget renderStopPoint(StopPointResponse stopPoint, BuildContext context) {
     return Column(
       children: [
         const Divider(height: 1, color: AppColors.border, thickness: 1),
@@ -54,6 +55,60 @@ class StopPointContainer extends StatelessWidget {
             ],
           ),
         ),
+        if (stopPoint.routingJob != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    const SizedBox(width: 20),
+                    Text(
+                      stopPoint.routingJob?.placeReceive ?? '',
+                      style: headLine2,
+                    ),
+                    const Spacer(),
+                  ],
+                ),
+                Row(
+                  children: [
+                    const SizedBox(width: 20),
+                    Text(
+                      'Mã PYC: ${stopPoint.routingJob?.jobRequestId ?? 0}',
+                      style: headLine3,
+                    ),
+                    const SizedBox(width: 10),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.textDefaultLight,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                      ),
+                      onPressed: () => _copyToClipboard(context),
+                      child: const Icon(
+                        Icons.copy,
+                        color: AppColors.textDefault,
+                        size: 20,
+                      ),
+                    ),
+                    const Spacer(),
+                  ],
+                ),
+                Row(
+                  children: [
+                    const SizedBox(width: 20),
+                    Text(
+                      'Loại PYC: ${stopPoint.routingJob?.priorityLevel ?? ''}',
+                      style: headLine3,
+                    ),
+                    const Spacer(),
+                  ],
+                ),
+              ],
+            ),
+          ),
         const SizedBox(height: 10),
         if (stopPoint.imagePath != null)
           Padding(
@@ -115,6 +170,15 @@ class StopPointContainer extends StatelessWidget {
           ),
         const SizedBox(height: 20),
       ],
+    );
+  }
+
+  void _copyToClipboard(BuildContext context) {
+    FlutterClipboard.copy("${stopPoint.jobRequestId ?? 0}");
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Đã sao chép Mã PYC'),
+      ),
     );
   }
 }

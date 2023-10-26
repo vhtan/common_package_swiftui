@@ -2,10 +2,11 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
+import 'package:mvvm_cubit/data/model/push_notification/push_notification.dart';
 
 class PushNotificationService {
   final FirebaseMessaging _fcm = FirebaseMessaging.instance;
-  late ValueChanged<String>? onHandleMessage;
+  late ValueChanged<PushNotification>? onHandleMessage;
 
   PushNotificationService._privateConstructor();
   static final PushNotificationService _instance =
@@ -42,10 +43,9 @@ class PushNotificationService {
 
   void _handleMessage(RemoteMessage message) {
     logger.d('Received message: ${message.data.toJsonString()}');
+    final pushNotification = PushNotification.fromJson(message.data);
     if (onHandleMessage != null) {
-      onHandleMessage!(
-        message.data.toJsonString(),
-      );
+      onHandleMessage!(pushNotification);
     }
   }
 }

@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
-import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/core/api_config.dart';
 import 'package:mvvm_cubit/data/request/auth/login_request.dart';
 import 'package:mvvm_cubit/manager/hive_storage_manager.dart';
@@ -25,7 +24,6 @@ class AuthCubit extends Cubit<GenericCubitState<AuthState>> {
       emit(
         GenericCubitState.loading(),
       );
-      logger.d('==didremove auth login');
       ApiConfig.header['Authorization'] = null;
       final loginResponse = await repository.login(request);
       final token = loginResponse.session ?? '';
@@ -75,28 +73,5 @@ class AuthCubit extends Cubit<GenericCubitState<AuthState>> {
       );
     }
     secureStorageManager.deleteAll();
-  }
-
-  void usernameChanged(String value) {
-    final dataInput = state.data as LoginStateInput?;
-    final password = dataInput?.password ?? '';
-
-    emit(
-      GenericCubitState.success(
-        LoginStateInput(
-          username: value,
-          password: password,
-        ),
-      ),
-    );
-  }
-
-  void passwordChanged(String value) {
-    final dataInput = state.data as LoginStateInput;
-    final username = dataInput.username ?? '';
-    emit(GenericCubitState(
-        data: LoginStateInput(username: username, password: value),
-        error: null,
-        status: Status.empty));
   }
 }

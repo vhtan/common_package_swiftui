@@ -2,6 +2,7 @@
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:mvvm_cubit/data/model/main/destination/destination_response.dart';
+import 'package:mvvm_cubit/data/model/main/routing_job/routing_job_response.dart';
 
 part 'stop_point_response.g.dart';
 part 'stop_point_response.freezed.dart';
@@ -18,6 +19,7 @@ abstract class StopPointResponse with _$StopPointResponse {
     String? imagePath,
     int? jobRequestId,
     DestinationResponse? destination,
+    RoutingJobResponse? routingJob,
   }) = _StopPointResponse;
 
   factory StopPointResponse.fromJson(Map<String, dynamic> json) =>
