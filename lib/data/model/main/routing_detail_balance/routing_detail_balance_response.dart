@@ -8,9 +8,9 @@ abstract class RoutingDetailBalanceResponse
     with _$RoutingDetailBalanceResponse {
   const factory RoutingDetailBalanceResponse({
     String? id,
-    String? address,
-    double? latitude,
-    double? longitude,
+    String? currency,
+    double? quantity,
+    String? attribute,
   }) = _RoutingDetailBalanceResponse;
 
   factory RoutingDetailBalanceResponse.fromJson(Map<String, dynamic> json) =>
