@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
+import 'package:mvvm_cubit/common/dialog/progress_dialog.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/widget/drop_down.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
@@ -92,6 +93,9 @@ class _AddTripScreen extends State<AddTripScreen> {
       child: BlocConsumer<AddTripCubit, GenericCubitState<AddTripState>>(
         listener: (context, state) {
           final data = state.data;
+          if (state.status == Status.loading) {
+            showProgressDialog(context);
+          }
           if (data is GetPurposesState) {
             setState(() {
               _purposes = data.purposes;

@@ -2,21 +2,23 @@
 
 import 'dart:io';
 
-import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/data/model/sos/child_sos_response.dart';
 
-class ReportState extends GenericCubitState<dynamic> {
-  const ReportState({required super.status});
+class ReportState {
+  const ReportState();
 }
 
 class UploadImageSuccess extends ReportState {
   String uploadUrl;
   File? file;
-  UploadImageSuccess(
-      {required this.uploadUrl, required super.status, required this.file});
+  UploadImageSuccess({required this.uploadUrl, required this.file});
 }
 
 class GetReasonsSuccess extends ReportState {
   List<ChildSOSResponse> reasons;
-  GetReasonsSuccess({required this.reasons, required super.status});
+  GetReasonsSuccess({required this.reasons});
+}
+
+class DidSubmitReasonSuccess extends ReportState {
+  const DidSubmitReasonSuccess();
 }

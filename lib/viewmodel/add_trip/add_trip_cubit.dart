@@ -12,6 +12,9 @@ class AddTripCubit extends GenericCubit<AddTripState> {
 
   Future<void> taskPurposeList() async {
     try {
+      emit(
+        GenericCubitState.loading(),
+      );
       final list = await repository.taskPurposeList();
       emit(
         GenericCubitState.success(
@@ -27,6 +30,9 @@ class AddTripCubit extends GenericCubit<AddTripState> {
 
   Future<void> vehicleList() async {
     try {
+      emit(
+        GenericCubitState.loading(),
+      );
       final list = await repository.vehicleList();
       emit(
         GenericCubitState.success(
@@ -42,6 +48,9 @@ class AddTripCubit extends GenericCubit<AddTripState> {
 
   Future<void> getDriverList() async {
     try {
+      emit(
+        GenericCubitState.loading(),
+      );
       final list = await repository.driverList();
       emit(
         GenericCubitState.success(
@@ -57,6 +66,9 @@ class AddTripCubit extends GenericCubit<AddTripState> {
 
   Future<void> getGuardGuyList() async {
     try {
+      emit(
+        GenericCubitState.loading(),
+      );
       final list = await repository.guardList();
       emit(
         GenericCubitState.success(
@@ -72,6 +84,9 @@ class AddTripCubit extends GenericCubit<AddTripState> {
 
   Future<void> createTrip(AddTripRequest request) async {
     try {
+      emit(
+        GenericCubitState.loading(),
+      );
       await repository.createTrip(request);
       emit(
         GenericCubitState.success(DidAddTripState()),
@@ -85,6 +100,9 @@ class AddTripCubit extends GenericCubit<AddTripState> {
 
   Future<void> getMapLocation(String refId) async {
     try {
+      emit(
+        GenericCubitState.loading(),
+      );
       final mapLocation = await repository.getMapLocation(refId);
       emit(
         GenericCubitState.success(GetMapLocationSate(location: mapLocation)),

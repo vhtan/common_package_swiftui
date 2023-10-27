@@ -1,8 +1,5 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/core/app_asset.dart';
-import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/data/model/auth/login_response.dart';
 import 'package:mvvm_cubit/di.dart';

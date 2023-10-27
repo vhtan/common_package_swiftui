@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:material_text_fields/utils/extensions.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
+import 'package:mvvm_cubit/common/dialog/progress_dialog.dart';
 import 'package:mvvm_cubit/common/widget/drop_down.dart';
 import 'package:mvvm_cubit/common/widget/image_capture.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
@@ -58,18 +59,25 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
       create: (context) => cubit,
       child: BlocConsumer<ReportSOSCubit, GenericCubitState>(
         listener: (context, state) {
-          if (state is UploadImageSuccess) {
+          final data = state.data;
+          if (state.status == Status.loading) {
+            showProgressDialog(context);
+          }
+          if (data is DidSubmitReasonSuccess) {
+            Navigator.popUntil(context, (route) => route.isFirst);
+          }
+          if (data is UploadImageSuccess) {
             setState(
               () {
-                uploadedUrl = state.uploadUrl;
-                localFile = state.file;
+                uploadedUrl = data.uploadUrl;
+                localFile = data.file;
               },
             );
-          } else if (state is GetReasonsSuccess) {
+          } else if (data is GetReasonsSuccess) {
             setState(
               () {
                 reasons.clear();
-                reasons.addAll(state.reasons);
+                reasons.addAll(data.reasons);
                 selectedReason = reasons.first;
               },
             );
@@ -180,7 +188,6 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
                                                   selectedReason?.requestTime,
                                             ),
                                           );
-                                          Navigator.pop(context);
                                         }
                                       : null,
                                 )

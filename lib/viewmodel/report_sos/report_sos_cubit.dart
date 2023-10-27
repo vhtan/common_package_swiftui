@@ -25,8 +25,9 @@ class ReportSOSCubit extends Cubit<GenericCubitState<dynamic>> {
     final response = await repository.uploadImage(file.path);
     try {
       emit(
-        UploadImageSuccess(
-            status: Status.success, uploadUrl: response, file: file),
+        GenericCubitState.success(
+          UploadImageSuccess(uploadUrl: response, file: file),
+        ),
       );
     } catch (ex) {
       emit(
@@ -36,11 +37,16 @@ class ReportSOSCubit extends Cubit<GenericCubitState<dynamic>> {
   }
 
   void getReasons() async {
+    emit(
+      GenericCubitState.loading(),
+    );
     final response = await repository.getReasons();
     final reasons = SOSResponse.fromJson({'detail': response.detail}).detail;
     try {
       emit(
-        GetReasonsSuccess(status: Status.success, reasons: reasons ?? []),
+        GenericCubitState.success(
+          GetReasonsSuccess(reasons: reasons ?? []),
+        ),
       );
     } catch (ex) {
       emit(
@@ -50,10 +56,15 @@ class ReportSOSCubit extends Cubit<GenericCubitState<dynamic>> {
   }
 
   void submitSOS(SOSSubmitRequest request) async {
-    await repository.submitSOS(request);
+    emit(
+      GenericCubitState.loading(),
+    );
     try {
+      await repository.submitSOS(request);
       emit(
-        GenericCubitState.success(null),
+        GenericCubitState.success(
+          const DidSubmitReasonSuccess(),
+        ),
       );
     } catch (ex) {
       emit(

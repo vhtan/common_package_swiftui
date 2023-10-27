@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
+import 'package:mvvm_cubit/common/dialog/progress_dialog.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/snack_bar/error_snack_bar.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
@@ -47,6 +48,8 @@ class _LoginScreenState extends State<LoginScreen> {
         body: BlocConsumer<AuthCubit, GenericCubitState>(
           listener: (context, state) {
             switch (state.status) {
+              case Status.loading:
+                showProgressDialog(context);
               case Status.failure:
                 showErrorSnackBar(
                   context,
@@ -124,24 +127,24 @@ class _LoginScreenState extends State<LoginScreen> {
                         PrimaryButton(
                           title: 'Đăng nhập',
                           buttonHeight: 50,
-                          onPressed: _isValidLogin()
-                              ? () {
-                                  authCubit.login(
-                                    LoginRequest(
-                                      username: _username,
-                                      password: _password,
-                                    ),
-                                  );
-                                }
-                              : null,
-                          // onPressed: () {
-                          //   authCubit.login(
-                          //     LoginRequest(
-                          //       username: 'email10005',
-                          //       password: 'as',
-                          //     ),
-                          //   );
-                          // },
+                          // onPressed: _isValidLogin()
+                          //     ? () {
+                          //         authCubit.login(
+                          //           LoginRequest(
+                          //             username: _username,
+                          //             password: _password,
+                          //           ),
+                          //         );
+                          //       }
+                          //     : null,
+                          onPressed: () {
+                            authCubit.login(
+                              LoginRequest(
+                                username: 'email10005',
+                                password: 'as',
+                              ),
+                            );
+                          },
                         ),
                       ],
                     ),
