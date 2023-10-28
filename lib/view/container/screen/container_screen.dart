@@ -92,61 +92,65 @@ class _ContainerScreenState extends State<ContainerScreen> {
         builder: (context, state) {
           return BlocBuilder<ContainerCubit, GenericCubitState<MenuType>>(
             builder: (context, state) {
-              return SideMenu(
-                key: _sideMenuKey,
-                background: AppColors.primary,
-                type: SideMenuType.slide,
-                maxMenuWidth: 230,
-                menu: Padding(
-                  padding: const EdgeInsets.only(left: 10.0),
-                  child: MenuScreen(
-                    loginResponse: _loginData,
-                    valueChanged: (value) {
-                      containerCubit.menuAction(value);
-                    },
+              return PopScope(
+                canPop: false,
+                child: SideMenu(
+                  key: _sideMenuKey,
+                  background: AppColors.primary,
+                  type: SideMenuType.slide,
+                  maxMenuWidth: 230,
+                  menu: Padding(
+                    padding: const EdgeInsets.only(left: 10.0),
+                    child: MenuScreen(
+                      loginResponse: _loginData,
+                      valueChanged: (value) {
+                        containerCubit.menuAction(value);
+                      },
+                    ),
                   ),
-                ),
-                onChange: (isOpened) {
-                  setState(() => this.isOpened = isOpened);
-                },
-                child: IgnorePointer(
-                  ignoring: isOpened,
-                  child: Scaffold(
-                    appBar: AppBar(
-                      centerTitle: true,
-                      leading: IconButton(
-                        icon: const Icon(Icons.menu,
-                            size: Dimension.menuIconSize, color: Colors.white),
-                        onPressed: () => toggleMenu(true),
-                      ),
-                      actions: [
-                        Padding(
-                          padding: const EdgeInsets.only(right: 10),
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: 5),
-                                backgroundColor: AppColors.error),
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) => const ReportSOSScreen(),
-                                barrierDismissible: false,
-                              );
-                            },
-                            child: const Icon(
-                              Icons.sos,
-                              color: AppColors.white,
+                  onChange: (isOpened) {
+                    setState(() => this.isOpened = isOpened);
+                  },
+                  child: IgnorePointer(
+                    ignoring: isOpened,
+                    child: Scaffold(
+                      appBar: AppBar(
+                        centerTitle: true,
+                        leading: IconButton(
+                          icon: const Icon(Icons.menu,
                               size: Dimension.menuIconSize,
+                              color: Colors.white),
+                          onPressed: () => toggleMenu(true),
+                        ),
+                        actions: [
+                          Padding(
+                            padding: const EdgeInsets.only(right: 10),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 5),
+                                  backgroundColor: AppColors.error),
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => const ReportSOSScreen(),
+                                  barrierDismissible: false,
+                                );
+                              },
+                              child: const Icon(
+                                Icons.sos,
+                                color: AppColors.white,
+                                size: Dimension.menuIconSize,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                      title: Text(title),
-                    ),
-                    body: BlocBuilder<ContainerCubit,
-                        GenericCubitState<MenuType>>(
-                      builder: (context, state) => contentWidget(state.data),
+                        ],
+                        title: Text(title),
+                      ),
+                      body: BlocBuilder<ContainerCubit,
+                          GenericCubitState<MenuType>>(
+                        builder: (context, state) => contentWidget(state.data),
+                      ),
                     ),
                   ),
                 ),
