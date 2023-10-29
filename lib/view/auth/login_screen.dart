@@ -26,6 +26,8 @@ class _LoginScreenState extends State<LoginScreen> {
   String _username = '';
   String _password = '';
 
+  final GlobalKey<State> progressKey = GlobalKey<State>();
+
   AuthCubit authCubit = AuthCubit(
     repository: di(),
     secureStorageManager: di(),
@@ -49,8 +51,15 @@ class _LoginScreenState extends State<LoginScreen> {
           listener: (context, state) {
             switch (state.status) {
               case Status.loading:
-                showProgressDialog(context);
+                showProgressDialog(
+                  context,
+                  progressKey,
+                );
               case Status.failure:
+                if (progressKey.currentContext != null) {
+                  logger.d('message $progressKey');
+                  Navigator.pop(context);
+                }
                 showErrorSnackBar(
                   context,
                   state.error ?? AppString.sendTimeOut,

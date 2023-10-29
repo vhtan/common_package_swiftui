@@ -33,6 +33,8 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
   String? describeReason;
   File? localFile;
 
+  final GlobalKey<State> progressKey = GlobalKey<State>();
+
   @override
   void initState() {
     super.initState();
@@ -61,7 +63,10 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
         listener: (context, state) {
           final data = state.data;
           if (state.status == Status.loading) {
-            showProgressDialog(context);
+            showProgressDialog(
+              context,
+              progressKey,
+            );
           }
           if (data is DidSubmitReasonSuccess) {
             Navigator.popUntil(context, (route) => route.isFirst);

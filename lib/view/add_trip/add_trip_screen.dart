@@ -44,6 +44,8 @@ class _AddTripScreen extends State<AddTripScreen> {
   final mainCubit = MainCubit(repository: di());
   dynamic selectedValueSingleDialogFuture;
 
+  final GlobalKey<State> _progressKey = GlobalKey<State>();
+
   List<PurposeResponse> _purposes = [];
   List<UserRoleResponse> _drivers = [];
   List<UserRoleResponse> _guards = [];
@@ -94,7 +96,7 @@ class _AddTripScreen extends State<AddTripScreen> {
         listener: (context, state) {
           final data = state.data;
           if (state.status == Status.loading) {
-            showProgressDialog(context);
+            showProgressDialog(context, _progressKey);
           }
           if (data is GetPurposesState) {
             setState(() {

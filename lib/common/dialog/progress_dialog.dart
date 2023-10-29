@@ -38,11 +38,13 @@ class ProgressDialog extends StatelessWidget {
   }
 }
 
-Future<dynamic> showProgressDialog(BuildContext context) {
+Future<dynamic> showProgressDialog(BuildContext context, GlobalKey key) {
   return showDialog(
+    barrierDismissible: false,
     context: context,
     builder: (context) {
       return ProgressDialog(
+        key: key,
         isProgressed: false,
         onPressed: () {
           Navigator.of(context).pop();
