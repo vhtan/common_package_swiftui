@@ -54,8 +54,8 @@ class MainScreenState extends State<MainScreen> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      cubit.getTrip();
-      cubit.getWarningList();
+      // cubit.getTrip();
+      // cubit.getWarningList();
       cubit.getTempFormDetails();
       checkLocationPermission();
       Future.delayed(const Duration(seconds: 5), () {

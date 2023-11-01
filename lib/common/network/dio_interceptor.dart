@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:mvvm_cubit/core/api_config.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
@@ -14,6 +13,8 @@ class DioInterceptor extends Interceptor {
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+    options.headers.addAll(ApiConfig.header);
+    options.headers.removeWhere((key, value) => value == null);
     _logger.i('====================START====================');
     _logger.i('HTTP method => ${options.method} ');
     _logger.i(
@@ -21,7 +22,6 @@ class DioInterceptor extends Interceptor {
     _logger.i('Header  => ${options.headers}');
     final curlCommand = _generateCurlCommand(options);
     _logger.i('cURL Request: $curlCommand');
-    options.headers.addAll(ApiConfig.header);
 
     return super.onRequest(options, handler);
   }

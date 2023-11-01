@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:mvvm_cubit/common/widget/empty_widget.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/core/app_asset.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
@@ -63,9 +62,9 @@ class StopPointContainer extends StatelessWidget {
           _routingJob(stopPoint.routingJob!, context),
         if (stopPoint.routingDetailBalances?.isNotEmpty ?? false)
           _routingDetailBalances(stopPoint.routingDetailBalances ?? []),
-        const SizedBox(height: 10),
+        if (stopPoint.imagePath != null) const SizedBox(height: 10),
         if (stopPoint.imagePath != null) _imageWidget(stopPoint.imagePath!),
-        const SizedBox(height: 20),
+        if (stopPoint.status?.canCheckIn() == true) const SizedBox(height: 20),
         if (stopPoint.status?.canCheckIn() == true) _canCheckInButton(),
         const SizedBox(height: 20),
       ],

@@ -6,6 +6,8 @@ import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/snack_bar/error_snack_bar.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/common/widget/text_input.dart';
+import 'package:mvvm_cubit/config/app_config.dart';
+import 'package:mvvm_cubit/core/api_config.dart';
 import 'package:mvvm_cubit/core/app_asset.dart';
 import 'package:mvvm_cubit/core/app_string.dart';
 import 'package:mvvm_cubit/data/request/auth/login_request.dart';
@@ -99,6 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         const SizedBox(height: 20),
+                        Text(environment.fullUrl()),
                         Image.asset(
                           AppAsset.appLogo,
                           height: 50,
@@ -149,8 +152,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           onPressed: () {
                             authCubit.login(
                               LoginRequest(
-                                username: 'email10005',
-                                password: 'as',
+                                username: 'email10001',
+                                password: 'Abc@123456',
                               ),
                             );
                           },

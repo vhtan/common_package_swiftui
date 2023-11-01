@@ -196,7 +196,6 @@ class _AddTripScreen extends State<AddTripScreen> {
                                           style: textDefault,
                                         ),
                                       ),
-                                      const SizedBox(height: 10),
                                       if (_purposes.isNotEmpty)
                                         DropDown<PurposeResponse>(
                                           items: _purposes,
@@ -209,21 +208,35 @@ class _AddTripScreen extends State<AddTripScreen> {
                                           },
                                         ),
                                       const SizedBox(height: 15),
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(
-                                            Dimension.radiusDefault,
+                                      Column(
+                                        children: [
+                                          const Align(
+                                            alignment: Alignment.topLeft,
+                                            child: Text(
+                                              'Điểm dừng',
+                                              style: textDefault,
+                                            ),
                                           ),
-                                          color: Colors.white,
-                                          border: Border.all(
-                                            color: AppColors.border,
-                                            width: 1.0,
-                                          ),
-                                        ),
-                                        child: search(),
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                Dimension.radiusDefault,
+                                              ),
+                                              color: Colors.white,
+                                              border: Border.all(
+                                                color: AppColors.border,
+                                                width: 1.0,
+                                              ),
+                                            ),
+                                            child: search(),
+                                          )
+                                        ],
                                       ),
                                       const SizedBox(height: 15),
                                       Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
                                         children: [
                                           Flexible(
                                             flex: 2,
@@ -252,17 +265,29 @@ class _AddTripScreen extends State<AddTripScreen> {
                                           if (_currencies.isNotEmpty)
                                             Flexible(
                                               flex: 1,
-                                              child: DropDown<String>(
-                                                items: _currencies,
-                                                displayTextBuilder: (value) =>
-                                                    value,
-                                                onChanged: (value) {
-                                                  setState(() {
-                                                    _currency = value;
-                                                  });
-                                                },
+                                              child: Column(
+                                                children: [
+                                                  const Align(
+                                                    alignment:
+                                                        Alignment.topLeft,
+                                                    child: Text(
+                                                      'Loại tiền',
+                                                      style: textDefault,
+                                                    ),
+                                                  ),
+                                                  DropDown<String>(
+                                                    items: _currencies,
+                                                    displayTextBuilder:
+                                                        (value) => value,
+                                                    onChanged: (value) {
+                                                      setState(() {
+                                                        _currency = value;
+                                                      });
+                                                    },
+                                                  ),
+                                                ],
                                               ),
-                                            )
+                                            ),
                                         ],
                                       ),
                                       const SizedBox(height: 15),
