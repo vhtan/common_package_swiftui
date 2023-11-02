@@ -8,66 +8,79 @@ import 'package:mvvm_cubit/data/model/container/menu_type.dart';
 class MenuScreen extends StatelessWidget {
   final LoginResponse? loginResponse;
   final ValueChanged<MenuType> valueChanged;
+  final String version;
 
   const MenuScreen({
     super.key,
     required this.loginResponse,
     required this.valueChanged,
+    required this.version,
   });
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CircleAvatar(
-                  backgroundColor: Colors.white,
-                  radius: 50.0,
-                  child: Image.asset(
-                    AppAsset.user,
-                  ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CircleAvatar(
+                backgroundColor: Colors.white,
+                radius: 50.0,
+                child: Image.asset(
+                  AppAsset.user,
                 ),
-                const SizedBox(height: 16.0),
-                Text(
-                  loginResponse?.name ?? '',
-                  style: const TextStyle(color: Colors.white),
-                ),
-                const SizedBox(height: 20.0),
-              ],
+              ),
+              const SizedBox(height: 16.0),
+              Text(
+                loginResponse?.name ?? '',
+                style: const TextStyle(color: Colors.white),
+              ),
+              const SizedBox(height: 20.0),
+            ],
+          ),
+        ),
+        const Divider(
+          thickness: 0.5,
+        ),
+        _MenuListTile(
+          title: 'Lộ trình',
+          icon: Icons.home,
+          onTap: () => valueChanged(MenuType.trip),
+        ),
+        _MenuListTile(
+          title: 'Tài khoản',
+          icon: Icons.person,
+          onTap: () => valueChanged(MenuType.account),
+        ),
+        _MenuListTile(
+          title: 'Thông báo',
+          icon: Icons.notifications_active,
+          onTap: () => valueChanged(MenuType.notification),
+        ),
+        _MenuListTile(
+          title: 'Đăng xuất',
+          icon: Icons.logout,
+          onTap: () => valueChanged(MenuType.logOut),
+        ),
+        const SizedBox(height: 30),
+        Padding(
+          padding: const EdgeInsets.only(left: 20),
+          child: Text(
+            'v.$version',
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: AppColors.white,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
-          const Divider(
-            thickness: 0.5,
-          ),
-          _MenuListTile(
-            title: 'Lộ trình',
-            icon: Icons.home,
-            onTap: () => valueChanged(MenuType.trip),
-          ),
-          _MenuListTile(
-            title: 'Tài khoản',
-            icon: Icons.person,
-            onTap: () => valueChanged(MenuType.account),
-          ),
-          _MenuListTile(
-            title: 'Thông báo',
-            icon: Icons.notifications_active,
-            onTap: () => valueChanged(MenuType.notification),
-          ),
-          _MenuListTile(
-            title: 'Đăng xuất',
-            icon: Icons.logout,
-            onTap: () => valueChanged(MenuType.logOut),
-          ),
-        ],
-      ),
+        )
+      ],
     );
   }
 }

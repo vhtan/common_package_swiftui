@@ -17,6 +17,7 @@ import 'package:mvvm_cubit/view/notification/screen/notification_screen.dart';
 import 'package:mvvm_cubit/view/report_sos/screen/report_sos_screen.dart';
 import 'package:mvvm_cubit/viewmodel/auth/auth_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/container/container_cubit.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shrink_sidemenu/shrink_sidemenu.dart';
 
 class ContainerScreen extends StatefulWidget {
@@ -39,6 +40,15 @@ class _ContainerScreenState extends State<ContainerScreen> {
   LoginResponse? _loginData;
 
   final GlobalKey<SideMenuState> _sideMenuKey = GlobalKey<SideMenuState>();
+
+  PackageInfo _packageInfo = PackageInfo(
+    appName: 'Unknown',
+    packageName: 'Unknown',
+    version: 'Unknown',
+    buildNumber: 'Unknown',
+    buildSignature: 'Unknown',
+    installerStore: 'Unknown',
+  );
 
   toggleMenu([bool end = false]) {
     if (end) {
@@ -71,6 +81,15 @@ class _ContainerScreenState extends State<ContainerScreen> {
         });
       },
     );
+
+    _initPackageInfo();
+  }
+
+  Future<void> _initPackageInfo() async {
+    final info = await PackageInfo.fromPlatform();
+    setState(() {
+      _packageInfo = info;
+    });
   }
 
   Future<void> _initializePushNotifications() async {
@@ -102,6 +121,7 @@ class _ContainerScreenState extends State<ContainerScreen> {
                   menu: Padding(
                     padding: const EdgeInsets.only(left: 10.0),
                     child: MenuScreen(
+                      version: _packageInfo.version,
                       loginResponse: _loginData,
                       valueChanged: (value) {
                         containerCubit.menuAction(value);
