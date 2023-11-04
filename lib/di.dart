@@ -30,7 +30,10 @@ Future<void> init() async {
     () => Dio(),
   );
   di.registerFactory<FlutterSecureStorage>(
-    () => const FlutterSecureStorage(),
+    () => const FlutterSecureStorage(
+        aOptions: AndroidOptions(
+            keyCipherAlgorithm:
+                KeyCipherAlgorithm.RSA_ECB_OAEPwithSHA_256andMGF1Padding)),
   );
   di.registerFactory<DioClient>(
     () => DioClient(
