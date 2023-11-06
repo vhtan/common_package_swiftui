@@ -11,6 +11,7 @@ import 'package:mvvm_cubit/common/widget/drop_down.dart';
 import 'package:mvvm_cubit/common/widget/image_capture.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/common/widget/text_input.dart';
+import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/data/api/sos/sos_submit_request.dart';
 import 'package:mvvm_cubit/data/model/sos/child_sos_response.dart';
@@ -180,7 +181,10 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
                                 PrimaryButton(
                                   title: 'Gửi',
                                   buttonHeight: 50,
-                                  onPressed: (validSubmitSOS()) == true
+                                  backgroundColor: validSubmitSOS() == true
+                                      ? AppColors.primary
+                                      : AppColors.textDefaultLight,
+                                  onPressed: validSubmitSOS() == true
                                       ? () {
                                           cubit.submitSOS(
                                             SOSSubmitRequest(

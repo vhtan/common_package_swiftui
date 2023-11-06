@@ -6,6 +6,7 @@ import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/widget/image_capture.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
+import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/di.dart';
 import 'package:mvvm_cubit/viewmodel/check_point/check_point_cubit.dart';
@@ -122,6 +123,9 @@ class _CheckPointScreen extends State<CheckPointScreen> {
                           PrimaryButton(
                             title: 'Gửi',
                             buttonHeight: 50,
+                            backgroundColor: (state.data?.imagePath != null)
+                                ? AppColors.primary
+                                : AppColors.textDefaultLight,
                             onPressed: (state.data?.imagePath != null)
                                 ? () {
                                     if (state.data?.imagePath != null) {

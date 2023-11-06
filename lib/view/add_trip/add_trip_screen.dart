@@ -207,6 +207,9 @@ class _AddTripScreen extends State<AddTripScreen> {
                                             });
                                           },
                                         ),
+                                      if (_purposes.isEmpty)
+                                        const Text(
+                                            'Yêu cầu phải chọn Mục đích di chuyển'),
                                       const SizedBox(height: 15),
                                       Column(
                                         children: [
@@ -432,21 +435,19 @@ class _AddTripScreen extends State<AddTripScreen> {
             .map<DropdownMenuItem>(
               (item) => DropdownMenuItem(
                 value: item,
-                child: Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 20),
-                      Text(
-                        item['name'],
-                        style: textDefault,
-                      ),
-                      Text(
-                        item['display'],
-                        maxLines: 2,
-                      ),
-                    ],
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 20),
+                    Text(
+                      item['name'],
+                      style: textDefault,
+                    ),
+                    Text(
+                      item['display'],
+                      maxLines: 2,
+                    ),
+                  ],
                 ),
               ),
             )
