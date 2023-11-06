@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart';
+import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/network/api_helper.dart';
 import 'package:mvvm_cubit/common/network/dio_client.dart';
 import 'package:mvvm_cubit/core/api_config.dart';
@@ -17,7 +18,7 @@ class AddTripApi with ApiHelper<AddTripResponse> {
 
   AddTripApi({required this.client});
 
-  Future<String> createTrip(AddTripRequest request) async {
+  Future<dynamic> createTrip(AddTripRequest request) async {
     final apiResponse = await makePostRequest(
       client.dio.post(
         ApiConfig.createTrip,
@@ -69,6 +70,7 @@ class AddTripApi with ApiHelper<AddTripResponse> {
   }
 
   Future<MapLocationResponse> getMapLocation(String refId) async {
+    logger.d(refId);
     Response response = await get(
       Uri.parse('${ApiConfig.vietMapGetLocation}$refId'),
     ).timeout(
@@ -78,6 +80,7 @@ class AddTripApi with ApiHelper<AddTripResponse> {
       throw Exception("failed to get data from internet");
     }
     dynamic data = jsonDecode(response.body);
+    logger.d(data);
     return MapLocationResponse.fromJson(data);
   }
 }

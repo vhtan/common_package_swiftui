@@ -5,7 +5,7 @@ part 'map_location_response.freezed.dart';
 @freezed
 abstract class MapLocationResponse with _$MapLocationResponse {
   const factory MapLocationResponse({
-    String? address,
+    String? display,
     double? lat,
     double? lng,
   }) = _MapLocationResponse;

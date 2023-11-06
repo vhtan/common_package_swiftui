@@ -8,6 +8,7 @@ import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/common/widget/text_input.dart';
 import 'package:mvvm_cubit/config/app_config.dart';
 import 'package:mvvm_cubit/core/app_asset.dart';
+import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_string.dart';
 import 'package:mvvm_cubit/data/request/auth/login_request.dart';
 import 'package:mvvm_cubit/di.dart';
@@ -63,7 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 }
                 showErrorSnackBar(
                   context,
-                  state.error ?? AppString.sendTimeOut,
+                  'Tài khoản hoặc mật khẩu không đúng',
                 );
               case Status.success:
                 final loginSuccess = state.data;
@@ -100,7 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         const SizedBox(height: 20),
-                        Text(environment.fullUrl()),
+                        // Text(environment.fullUrl()),
                         Image.asset(
                           AppAsset.appLogo,
                           height: 50,
@@ -138,24 +139,27 @@ class _LoginScreenState extends State<LoginScreen> {
                         PrimaryButton(
                           title: 'Đăng nhập',
                           buttonHeight: 50,
-                          // onPressed: _isValidLogin()
-                          //     ? () {
-                          //         authCubit.login(
-                          //           LoginRequest(
-                          //             username: _username,
-                          //             password: _password,
-                          //           ),
-                          //         );
-                          //       }
-                          //     : null,
-                          onPressed: () {
-                            authCubit.login(
-                              LoginRequest(
-                                username: 'user02',
-                                password: 'Abc@123456',
-                              ),
-                            );
-                          },
+                          backgroundColor: _isValidLogin()
+                              ? AppColors.primary
+                              : AppColors.textDefaultLight,
+                          onPressed: _isValidLogin()
+                              ? () {
+                                  authCubit.login(
+                                    LoginRequest(
+                                      username: _username,
+                                      password: _password,
+                                    ),
+                                  );
+                                }
+                              : null,
+                          // onPressed: () {
+                          //   authCubit.login(
+                          //     LoginRequest(
+                          //       username: 'email10001',
+                          //       password: 'Abc@123456',
+                          //     ),
+                          //   );
+                          // },
                         ),
                       ],
                     ),

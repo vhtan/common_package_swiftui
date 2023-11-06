@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:location/location.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
+import 'package:mvvm_cubit/common/dialog/notification_popup_dialog.dart';
+import 'package:mvvm_cubit/common/dialog/retry_dialog.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/snack_bar/error_snack_bar.dart';
 import 'package:mvvm_cubit/common/widget/empty_widget.dart';
@@ -272,6 +274,14 @@ extension _MainScreenDeliveryList on MainScreenState {
           PrimaryButton(
             title: 'Thêm phiếu yêu cầu',
             buttonHeight: 50,
+            // onPressed: () => showDialog(
+            //   context: context,
+            //   barrierDismissible: false,
+            //   builder: (context) => const NotificationPopupDialog(
+            //     title: 'Thông báo khẩn',
+            //     description: 'Tất cá áp tải tập trung về hội sở',
+            //   ),
+            // ),
             onPressed: () => showDialog<String>(
               context: context,
               builder: (context) => AddTripScreen(

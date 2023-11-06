@@ -12,7 +12,7 @@ class AddTripRepository with RepositoryHelper<dynamic> {
 
   const AddTripRepository({required AddTripApi api}) : _api = api;
 
-  Future<String> createTrip(AddTripRequest request) async {
+  Future<dynamic> createTrip(AddTripRequest request) async {
     return _api.createTrip(request);
   }
 

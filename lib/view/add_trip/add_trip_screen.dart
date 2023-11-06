@@ -309,6 +309,8 @@ class _AddTripScreen extends State<AddTripScreen> {
                                             });
                                           },
                                         ),
+                                      if (_guards.isEmpty)
+                                        const Text('Yêu cầu phải chọn bảo vệ'),
                                       const SizedBox(height: 15),
                                       const Align(
                                         alignment: Alignment.topLeft,
@@ -328,6 +330,8 @@ class _AddTripScreen extends State<AddTripScreen> {
                                             });
                                           },
                                         ),
+                                      if (_drivers.isEmpty)
+                                        const Text('Yêu cầu phải chọn lái xe'),
                                       const SizedBox(height: 15),
                                       const Align(
                                         alignment: Alignment.topLeft,
@@ -347,14 +351,19 @@ class _AddTripScreen extends State<AddTripScreen> {
                                             });
                                           },
                                         ),
+                                      if (_vehicles.isEmpty)
+                                        const Text('Yêu cầu phải chọn xe'),
                                       const SizedBox(height: 15),
                                       PrimaryButton(
                                         title: 'Gửi',
                                         buttonHeight: 50,
+                                        backgroundColor: validSubmit()
+                                            ? AppColors.primary
+                                            : AppColors.textDefaultLight,
                                         onPressed: validSubmit()
                                             ? () {
                                                 addTripCubit
-                                                    .createTrip(toRequest());
+                                                    .createTrip(_toRequest);
                                               }
                                             : null,
                                       )
@@ -470,10 +479,10 @@ class _AddTripScreen extends State<AddTripScreen> {
     return false;
   }
 
-  AddTripRequest toRequest() {
+  AddTripRequest get _toRequest {
     return AddTripRequest(
       purposeId: _purpose?.id ?? '',
-      stopPointAddress: _location?.address ?? '',
+      stopPointAddress: _location?.display ?? '',
       latitude: _location?.lat ?? 0,
       longitude: _location?.lng ?? 0,
       quantity: double.parse(_amount?.toString() ?? '0'),
