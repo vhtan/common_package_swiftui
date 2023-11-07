@@ -16,6 +16,10 @@ class AddTripRepository with RepositoryHelper<dynamic> {
     return _api.createTrip(request);
   }
 
+  Future<dynamic> updateTrip(AddTripRequest request) async {
+    return _api.udpateTrip(request);
+  }
+
   Future<List<PurposeResponse>> taskPurposeList() async {
     return _api.taskPurposeList();
   }

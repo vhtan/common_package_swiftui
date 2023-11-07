@@ -90,7 +90,11 @@ Future<void> init() async {
     () => AddTripCubit(repository: di()),
   );
   di.registerFactory(
-    () => ManagerRoleWarningListCubit(repository: di()),
+    () => ManagerRoleWarningListCubit(
+      repository: di(),
+      authRepository: di(),
+      secureStorageManager: di(),
+    ),
   );
 
 // Register Add trip Components

@@ -4,9 +4,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_text_fields/utils/extensions.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
+import 'package:mvvm_cubit/common/snack_bar/error_snack_bar.dart';
 import 'package:mvvm_cubit/common/widget/image_capture.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
+import 'package:mvvm_cubit/core/app_string.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/di.dart';
 import 'package:mvvm_cubit/viewmodel/check_point/check_point_cubit.dart';
@@ -64,7 +66,14 @@ class _CheckPointScreen extends State<CheckPointScreen> {
     return BlocProvider(
       create: (context) => cubit,
       child: BlocConsumer<CheckPointCubit, GenericCubitState<CheckPointData>>(
-        listener: (context, state) {},
+        listener: (context, state) {
+          if (state.status == Status.failure) {
+            showErrorSnackBar(
+              context,
+              state.error ?? AppString.sendTimeOut,
+            );
+          }
+        },
         builder: (context, state) {
           return BlocBuilder<CheckPointCubit,
               GenericCubitState<CheckPointData>>(

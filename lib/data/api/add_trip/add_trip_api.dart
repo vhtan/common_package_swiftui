@@ -18,6 +18,16 @@ class AddTripApi with ApiHelper<AddTripResponse> {
 
   AddTripApi({required this.client});
 
+  Future<dynamic> udpateTrip(AddTripRequest request) async {
+    final apiResponse = await makePostRequest(
+      client.dio.put(
+        ApiConfig.createTrip,
+        data: request,
+      ),
+    );
+    return apiResponse.detail;
+  }
+
   Future<dynamic> createTrip(AddTripRequest request) async {
     final apiResponse = await makePostRequest(
       client.dio.post(

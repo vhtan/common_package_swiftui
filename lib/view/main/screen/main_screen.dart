@@ -41,24 +41,24 @@ class MainScreen extends StatefulWidget {
 class MainScreenState extends State<MainScreen> {
   Location location = Location();
 
-  TripResponse? trip;
-  TempFormResponse? tempForm;
-  List<WarningResponse>? warningList;
+  TripResponse? _trip;
+  TempFormResponse? _tempForm;
+  List<WarningResponse>? _warningList;
   bool _serviceEnabled = false;
   PermissionStatus? _permissionGranted;
   LocationData? _locationData;
-  final cubit = MainCubit(repository: di());
-  static Timer? fetchTrip;
-  static Timer? fetchWarning;
+  final _cubit = MainCubit(repository: di());
+  static Timer? _fetchTrip;
+  static Timer? _fetchWarning;
 
   @override
   void initState() {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // cubit.getTrip();
-      // cubit.getWarningList();
-      cubit.getTempFormDetails();
+      _cubit.getTrip();
+      _cubit.getWarningList();
+      _cubit.getTempFormDetails();
       checkLocationPermission();
       Future.delayed(const Duration(seconds: 5), () {
         getCurrentLocation();
@@ -75,20 +75,20 @@ class MainScreenState extends State<MainScreen> {
 
   void startFetchingTrip() {
     cancelFetchingTrip();
-    fetchTrip = Timer.periodic(const Duration(seconds: 10), (timer) {
-      cubit.getTrip();
+    _fetchTrip = Timer.periodic(const Duration(seconds: 10), (timer) {
+      _cubit.getTrip();
     });
   }
 
   static void cancelFetchingTrip() {
-    fetchTrip?.cancel();
-    fetchTrip = null;
+    _fetchTrip?.cancel();
+    _fetchTrip = null;
   }
 
   void startFetchingWarning() {
     cancelFetchingWarning();
-    fetchWarning = Timer.periodic(const Duration(seconds: 10), (timer) {
-      cubit.getWarningList();
+    _fetchWarning = Timer.periodic(const Duration(seconds: 10), (timer) {
+      _cubit.getWarningList();
     });
   }
 
@@ -100,8 +100,8 @@ class MainScreenState extends State<MainScreen> {
   }
 
   static void cancelFetchingWarning() {
-    fetchWarning?.cancel();
-    fetchWarning = null;
+    _fetchWarning?.cancel();
+    _fetchWarning = null;
   }
 
   Future<LocationData?> getCurrentLocation() async {
@@ -131,7 +131,7 @@ class MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => cubit,
+      create: (_) => _cubit,
       child: Scaffold(
         body: BlocConsumer<MainCubit, GenericCubitState<MainState>>(
           listener: (context, state) {
@@ -145,27 +145,27 @@ class MainScreenState extends State<MainScreen> {
                 final data = state.data;
                 if (data is GetWarningListMainState) {
                   setState(() {
-                    warningList = data.warningList;
+                    _warningList = data.warningList;
                   });
                 } else if (data is GetTripMainState) {
                   setState(() {
-                    trip = data.trip;
+                    _trip = data.trip;
                   });
                 } else if (data is GetTempFormDetailsMainState) {
                   setState(() {
-                    tempForm = data.tempForm;
+                    _tempForm = data.tempForm;
                   });
                 } else if (data is EmptyTripMainState) {
                   setState(() {
-                    trip = null;
+                    _trip = null;
                   });
                 } else if (data is EmptyTempFormMainState) {
                   setState(() {
-                    tempForm = null;
+                    _tempForm = null;
                   });
                 } else if (data is DidDeleteTripMainState) {
                   setState(() {
-                    tempForm = null;
+                    _tempForm = null;
                   });
                 }
               default:
@@ -178,15 +178,15 @@ class MainScreenState extends State<MainScreen> {
                 return Column(
                   children: [
                     warningWidgetList(),
-                    if (trip != null && tempForm == null)
+                    if (_trip != null && _tempForm == null)
                       Expanded(
-                        child: currentTrip(trip!),
+                        child: currentTrip(_trip!),
                       ),
-                    if (tempForm != null && trip == null)
+                    if (_tempForm != null && _trip == null)
                       Expanded(
-                        child: pendingTrip(tempForm!),
+                        child: pendingTrip(),
                       ),
-                    if (trip == null && tempForm == null)
+                    if (_trip == null && _tempForm == null)
                       Expanded(
                         child: noTrip(),
                       ),
@@ -230,7 +230,7 @@ class MainScreenState extends State<MainScreen> {
             await showDialog(
               context: context,
               builder: (context) => CheckPointScreen(
-                didCapture: (imagePath) => cubit.submitArrived(
+                didCapture: (imagePath) => _cubit.submitArrived(
                   CheckInRequest(
                       id: stopPoint.id,
                       imagePath: imagePath,
@@ -268,7 +268,7 @@ extension _MainScreenDeliveryList on MainScreenState {
           PrimaryButton(
             title: 'Kiểm tra lộ trình',
             buttonHeight: 50,
-            onPressed: () => cubit.getTrip(),
+            onPressed: () => _cubit.getTrip(),
           ),
           const SizedBox(height: 20),
           PrimaryButton(
@@ -285,7 +285,7 @@ extension _MainScreenDeliveryList on MainScreenState {
             onPressed: () => showDialog<String>(
               context: context,
               builder: (context) => AddTripScreen(
-                didAddTrip: () => cubit.getTempFormDetails(),
+                didAddTrip: () => _cubit.getTempFormDetails(),
               ),
               barrierDismissible: false,
             ),
@@ -296,19 +296,21 @@ extension _MainScreenDeliveryList on MainScreenState {
     );
   }
 
-  Widget pendingTrip(TempFormResponse tempForm) {
+  Widget pendingTrip() {
+    logger.d('===tempForm $_tempForm');
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           PendingTripScreen(
-            tempForm: tempForm,
-            onDelete: () => cubit.deleteNewTrip(),
-            onEdit: (value) => showDialog<String>(
+            tempForm: _tempForm!,
+            onDelete: () => _cubit.deleteNewTrip(),
+            onEdit: () => showDialog<String>(
               context: context,
               builder: (context) => AddTripScreen(
-                didAddTrip: () => cubit.getTempFormDetails(),
+                tempForm: _tempForm,
+                didAddTrip: () => _cubit.getTempFormDetails(),
               ),
               barrierDismissible: false,
             ),
@@ -321,7 +323,7 @@ extension _MainScreenDeliveryList on MainScreenState {
 
   Widget warningWidgetList() {
     final ll =
-        (warningList ?? []).map<Widget>((e) => widgetWithWarning(e)).toList();
+        (_warningList ?? []).map<Widget>((e) => widgetWithWarning(e)).toList();
     return Column(
       children: ll,
     );

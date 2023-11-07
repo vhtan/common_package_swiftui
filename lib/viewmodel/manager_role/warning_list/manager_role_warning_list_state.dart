@@ -11,3 +11,7 @@ class GetWarningListSuccess extends WarningListState {
   List<WarningResponse> warnings;
   GetWarningListSuccess({required this.warnings, required super.status});
 }
+
+class DidLogoutWarningListSuccess extends WarningListState {
+  const DidLogoutWarningListSuccess({required super.status});
+}

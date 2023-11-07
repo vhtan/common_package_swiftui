@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
+import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/data/model/warning/warning_response.dart';
 import 'package:mvvm_cubit/di.dart';
@@ -20,26 +21,25 @@ class ManagerRoleWrningListScreen extends StatefulWidget {
 }
 
 class _ManagerRoleWrningListScreen extends State<ManagerRoleWrningListScreen> {
-  final warningCubit = ManagerRoleWarningListCubit(repository: di());
-  final authCubit = AuthCubit(
+  final cubit = ManagerRoleWarningListCubit(
     repository: di(),
+    authRepository: di(),
     secureStorageManager: di(),
-    hiveStorageManager: di(),
   );
 
   @override
   void initState() {
     super.initState();
-    warningCubit.getWarningList();
+    cubit.getWarningList();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => warningCubit,
+      create: (context) => cubit,
       child: BlocConsumer<ManagerRoleWarningListCubit, GenericCubitState>(
         listener: (context, state) {
-          if (state.data is LogoutStateSuccess) {
+          if (state is DidLogoutWarningListSuccess) {
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -67,7 +67,7 @@ class _ManagerRoleWrningListScreen extends State<ManagerRoleWrningListScreen> {
                         size: Dimension.menuIconSize,
                         color: Colors.white,
                       ),
-                      onPressed: () => authCubit.logout(),
+                      onPressed: () => cubit.logout(),
                     ),
                   ],
                 ),

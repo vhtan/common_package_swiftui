@@ -64,13 +64,13 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
         listener: (context, state) {
           final data = state.data;
           if (state.status == Status.loading) {
-            showProgressDialog(
-              context,
-              progressKey,
-            );
+            // showProgressDialog(
+            //   context,
+            //   progressKey,
+            // );
           }
           if (data is DidSubmitReasonSuccess) {
-            Navigator.popUntil(context, (route) => route.isFirst);
+            Navigator.of(context).pop();
           }
           if (data is UploadImageSuccess) {
             setState(

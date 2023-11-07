@@ -122,4 +122,17 @@ class AddTripCubit extends GenericCubit<AddTripState> {
       );
     }
   }
+
+  Future<void> updateTrip(AddTripRequest request) async {
+    try {
+      await repository.updateTrip(request);
+      emit(
+        GenericCubitState.success(DidAddTripState()),
+      );
+    } on DioException catch (e) {
+      emit(
+        GenericCubitState.failure(e.message ?? 'Error'),
+      );
+    }
+  }
 }

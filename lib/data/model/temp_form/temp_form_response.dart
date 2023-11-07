@@ -17,6 +17,8 @@ abstract class TempFormResponse with _$TempFormResponse {
     VehicleResponse? vehicle,
     AddressResponse? address,
     TempFormStatus? status,
+    double? quantity,
+    String? currency,
     String? note,
   }) = _TempFormResponse;
 

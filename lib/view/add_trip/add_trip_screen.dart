@@ -8,14 +8,17 @@ import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/common/dialog/progress_dialog.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
+import 'package:mvvm_cubit/common/snack_bar/error_snack_bar.dart';
 import 'package:mvvm_cubit/common/widget/drop_down.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/common/widget/text_input.dart';
 import 'package:mvvm_cubit/core/api_config.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
+import 'package:mvvm_cubit/core/app_string.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/data/model/map_location/map_location_response.dart';
 import 'package:mvvm_cubit/data/model/purpose/purpose_response.dart';
+import 'package:mvvm_cubit/data/model/temp_form/temp_form_response.dart';
 import 'package:mvvm_cubit/data/model/user_role/user_role_response.dart';
 import 'package:mvvm_cubit/data/model/vehicle/vehicle_response.dart';
 import 'package:mvvm_cubit/data/request/add_trip/add_trip_request.dart';
@@ -26,12 +29,12 @@ import 'package:mvvm_cubit/viewmodel/main/main_cubit.dart';
 import 'package:search_choices/search_choices.dart';
 
 class AddTripScreen extends StatefulWidget {
-  final String? tempFormId;
+  final TempFormResponse? tempForm;
   final VoidCallback didAddTrip;
 
   const AddTripScreen({
     super.key,
-    this.tempFormId,
+    this.tempForm,
     required this.didAddTrip,
   });
 
@@ -51,7 +54,6 @@ class _AddTripScreen extends State<AddTripScreen> {
   List<UserRoleResponse> _guards = [];
   List<VehicleResponse> _vehicles = [];
   List<String> _currencies = [];
-  String? _form;
 
   PurposeResponse? _purpose;
   int? _amount;
@@ -60,6 +62,9 @@ class _AddTripScreen extends State<AddTripScreen> {
   UserRoleResponse? _guard;
   MapLocationResponse? _location;
   String? _currency;
+  TempFormResponse? _tempForm;
+
+  final _amountController = TextEditingController();
 
   final FocusNode _nodeTextInput = FocusNode();
   KeyboardActionsConfig _keyboardActionsConfig(BuildContext context) {
@@ -83,6 +88,30 @@ class _AddTripScreen extends State<AddTripScreen> {
     addTripCubit.vehicleList();
     addTripCubit.getGuardGuyList();
     addTripCubit.getCurrencyList();
+    _tempForm = widget.tempForm;
+
+    logger.d('===_tempForm $_tempForm');
+    if (_tempForm != null) {
+      setState(() {
+        _loadEditTempForm(_tempForm!);
+      });
+    }
+  }
+
+  void _loadEditTempForm(TempFormResponse tempForm) {
+    _purpose = tempForm.purpose;
+    _driver = tempForm.driver;
+    _vehicle = tempForm.vehicle;
+    _guard = tempForm.bodyguard;
+    _location = MapLocationResponse(
+      display: tempForm.address?.address,
+      lat: tempForm.address?.lat,
+      lng: tempForm.address?.lng,
+    );
+    _currency = tempForm.currency;
+    _amount = tempForm.quantity?.toInt();
+    _amountController.text = _amount.toString();
+    selectedValueSingleDialogFuture = tempForm.address?.toJson();
   }
 
   @override
@@ -94,6 +123,12 @@ class _AddTripScreen extends State<AddTripScreen> {
       ],
       child: BlocConsumer<AddTripCubit, GenericCubitState<AddTripState>>(
         listener: (context, state) {
+          if (state.status == Status.failure) {
+            showErrorSnackBar(
+              context,
+              state.error ?? AppString.sendTimeOut,
+            );
+          }
           final data = state.data;
           if (state.status == Status.loading) {
             showProgressDialog(context, _progressKey);
@@ -101,31 +136,27 @@ class _AddTripScreen extends State<AddTripScreen> {
           if (data is GetPurposesState) {
             setState(() {
               _purposes = data.purposes;
-              _purpose = _purposes.first;
+              if (_tempForm == null) _purpose = _purposes.first;
             });
           } else if (data is GetDriversState) {
             setState(() {
               _drivers = data.drivers;
-              _driver = _drivers.first;
+              if (_tempForm == null) _driver = _drivers.first;
             });
           } else if (data is GetGuardsState) {
             setState(() {
               _guards = data.guards;
-              _guard = _guards.first;
+              if (_tempForm == null) _guard = _guards.first;
             });
           } else if (data is GetVehiclesState) {
             setState(() {
               _vehicles = data.vehicles;
-              _vehicle = _vehicles.first;
+              if (_tempForm == null) _vehicle = _vehicles.first;
             });
           } else if (data is GetCurrenciesState) {
             setState(() {
               _currencies = data.currencies;
-              _currency = _currencies.first;
-            });
-          } else if (data is GetTempFormState) {
-            setState(() {
-              _form = data.form;
+              if (_tempForm == null) _currency = _currencies.first;
             });
           } else if (data is GetMapLocationSate) {
             setState(() {
@@ -165,10 +196,12 @@ class _AddTripScreen extends State<AddTripScreen> {
                                 Stack(
                                   alignment: AlignmentDirectional.center,
                                   children: [
-                                    const Align(
+                                    Align(
                                       alignment: Alignment.center,
                                       child: Text(
-                                        'Thêm phiếu yêu cầu',
+                                        (_tempForm == null)
+                                            ? 'Thêm phiếu yêu cầu'
+                                            : 'Sửa phiếu yêu cầu',
                                         style: headLine1,
                                       ),
                                     ),
@@ -198,6 +231,7 @@ class _AddTripScreen extends State<AddTripScreen> {
                                       ),
                                       if (_purposes.isNotEmpty)
                                         DropDown<PurposeResponse>(
+                                          initialItem: _purpose,
                                           items: _purposes,
                                           displayTextBuilder: (value) =>
                                               value.name ?? '',
@@ -244,6 +278,7 @@ class _AddTripScreen extends State<AddTripScreen> {
                                           Flexible(
                                             flex: 2,
                                             child: TextInput(
+                                              controller: _amountController,
                                               focusNode: _nodeTextInput,
                                               hint: 'Nhập số tiền',
                                               labelText: 'Số tiền',
@@ -279,6 +314,7 @@ class _AddTripScreen extends State<AddTripScreen> {
                                                     ),
                                                   ),
                                                   DropDown<String>(
+                                                    initialItem: _currency,
                                                     items: _currencies,
                                                     displayTextBuilder:
                                                         (value) => value,
@@ -303,6 +339,7 @@ class _AddTripScreen extends State<AddTripScreen> {
                                       ),
                                       if (_guards.isNotEmpty)
                                         DropDown<UserRoleResponse>(
+                                          initialItem: _guard,
                                           items: _guards,
                                           displayTextBuilder: (value) =>
                                               value.name ?? '',
@@ -324,6 +361,7 @@ class _AddTripScreen extends State<AddTripScreen> {
                                       ),
                                       if (_drivers.isNotEmpty)
                                         DropDown<UserRoleResponse>(
+                                          initialItem: _driver,
                                           items: _drivers,
                                           displayTextBuilder: (value) =>
                                               value.name ?? '',
@@ -345,6 +383,7 @@ class _AddTripScreen extends State<AddTripScreen> {
                                       ),
                                       if (_vehicles.isNotEmpty)
                                         DropDown<VehicleResponse>(
+                                          initialItem: _vehicle,
                                           items: _vehicles,
                                           displayTextBuilder: (value) =>
                                               value.plateNumber ?? '',
@@ -365,8 +404,13 @@ class _AddTripScreen extends State<AddTripScreen> {
                                             : AppColors.textDefaultLight,
                                         onPressed: validSubmit()
                                             ? () {
-                                                addTripCubit
-                                                    .createTrip(_toRequest);
+                                                if (_tempForm == null) {
+                                                  addTripCubit
+                                                      .createTrip(_toRequest);
+                                                } else {
+                                                  addTripCubit
+                                                      .updateTrip(_toRequest);
+                                                }
                                               }
                                             : null,
                                       )
@@ -402,6 +446,7 @@ class _AddTripScreen extends State<AddTripScreen> {
       onChanged: (value) {
         setState(
           () {
+            logger.d('===selectedValueSingleDialogFuture $value');
             selectedValueSingleDialogFuture = value;
             addTripCubit.getMapLocation(value['ref_id']);
           },
@@ -469,7 +514,6 @@ class _AddTripScreen extends State<AddTripScreen> {
   bool validSubmit() {
     logger.d('validSubmit $_location');
     if (_purpose != null &&
-        _amount != null &&
         _driver != null &&
         _vehicle != null &&
         _guard != null &&

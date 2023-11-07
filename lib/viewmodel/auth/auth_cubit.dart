@@ -56,16 +56,10 @@ class AuthCubit extends Cubit<GenericCubitState<AuthState>> {
       emit(
         GenericCubitState.loading(),
       );
-      final response = await repository.logout();
-      if (response != null) {
-        emit(
-          GenericCubitState.success(LogoutStateSuccess()),
-        );
-      } else {
-        emit(
-          GenericCubitState.failure('Error'),
-        );
-      }
+      await repository.logout();
+      emit(
+        GenericCubitState.success(LogoutStateSuccess()),
+      );
     } on DioException catch (e) {
       emit(
         GenericCubitState.failure(

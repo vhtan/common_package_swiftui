@@ -111,7 +111,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           labelText: 'Tên đăng nhập',
                           icon: const Icon(Icons.person),
                           obscureText: false,
-                          // validator: (value) => inputData?.errorText(),
                           onChanged: (value) {
                             setState(() {
                               _username = value;
@@ -140,24 +139,24 @@ class _LoginScreenState extends State<LoginScreen> {
                           backgroundColor: _isValidLogin()
                               ? AppColors.primary
                               : AppColors.textDefaultLight,
-                          onPressed: _isValidLogin()
-                              ? () {
-                                  authCubit.login(
-                                    LoginRequest(
-                                      username: _username,
-                                      password: _password,
-                                    ),
-                                  );
-                                }
-                              : null,
-                          // onPressed: () {
-                          //   authCubit.login(
-                          //     LoginRequest(
-                          //       username: 'user01',
-                          //       password: 'Abc@123456',
-                          //     ),
-                          //   );
-                          // },
+                          // onPressed: _isValidLogin()
+                          //     ? () {
+                          //         authCubit.login(
+                          //           LoginRequest(
+                          //             username: _username,
+                          //             password: _password,
+                          //           ),
+                          //         );
+                          //       }
+                          //     : null,
+                          onPressed: () {
+                            authCubit.login(
+                              LoginRequest(
+                                username: 'minhpd',
+                                password: 'Abc@123456',
+                              ),
+                            );
+                          },
                         ),
                       ],
                     ),
