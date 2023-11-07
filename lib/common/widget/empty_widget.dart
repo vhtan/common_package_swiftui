@@ -13,7 +13,11 @@ class EmptyWidget extends StatelessWidget {
       child: Column(
         children: [
           Image.asset(AppAsset.emptyState),
-          Text(message, style: headLine1),
+          Text(
+            message,
+            style: headLine2,
+            textAlign: TextAlign.center,
+          ),
         ],
       ),
     );

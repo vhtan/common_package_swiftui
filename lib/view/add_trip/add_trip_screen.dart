@@ -110,6 +110,7 @@ class _AddTripScreen extends State<AddTripScreen> {
     );
     _currency = tempForm.currency;
     _amount = tempForm.quantity?.toInt();
+    logger.d('====message $_amount');
     _amountController.text = _amount.toString();
     selectedValueSingleDialogFuture = tempForm.address?.toJson();
   }
@@ -525,12 +526,17 @@ class _AddTripScreen extends State<AddTripScreen> {
   }
 
   AddTripRequest get _toRequest {
+    double amount = 0;
+    final text = _amountController.text.replaceAll('.', '');
+    if (text.isNotEmpty) {
+      amount = double.parse(text);
+    }
     return AddTripRequest(
       purposeId: _purpose?.id ?? '',
       stopPointAddress: _location?.display ?? '',
       latitude: _location?.lat ?? 0,
       longitude: _location?.lng ?? 0,
-      quantity: double.parse(_amount?.toString() ?? '0'),
+      quantity: amount,
       currency: _currency ?? '',
       driverId: _driver?.id ?? '',
       bodyguardId: _guard?.id ?? '',
