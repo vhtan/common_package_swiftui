@@ -30,6 +30,10 @@ class ApiConfig {
 
   static const String cancelTempForm = '/routing/job/cancel';
 
+  static String chattingList(String id) {
+    return '/warning/list/chatting?warningId=$id';
+  }
+
   static String warningDetails(String id) {
     return '/warning/$id';
   }

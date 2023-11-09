@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/common/widget/empty_widget.dart';
+import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/data/model/warning/warning_response.dart';
 import 'package:mvvm_cubit/di.dart';
@@ -70,10 +71,20 @@ class _ManagerRoleWrningListScreen extends State<ManagerRoleWrningListScreen> {
                   ],
                 ),
                 body: list.isEmpty
-                    ? const Padding(
-                        padding: EdgeInsets.all(20),
-                        child: EmptyWidget(
-                            message: 'Hiện không có cảnh báo cần xử lý'),
+                    ? Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          children: [
+                            const EmptyWidget(
+                                message: 'Hiện không có cảnh báo cần xử lý'),
+                            const SizedBox(height: 20),
+                            PrimaryButton(
+                              title: 'Kiểm tra danh sách cảnh báo',
+                              buttonHeight: 50,
+                              onPressed: () => cubit.getWarningList(),
+                            )
+                          ],
+                        ),
                       )
                     : waitingProcessListView(list),
               );

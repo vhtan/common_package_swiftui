@@ -23,18 +23,20 @@ class NotificationItem extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
+          const Icon(
             Icons.warning,
             color: AppColors.error,
             size: 40,
           ),
-          SizedBox(width: 20),
+          const SizedBox(width: 20),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  (notification.dateCreated ?? 0).date.toStringFormat(),
+                  (notification.dateCreated ?? 0)
+                      .dateFromMillisecond
+                      .toStringFormat(),
                   style: headLine6,
                   maxLines: 1,
                   overflow: TextOverflow.clip,

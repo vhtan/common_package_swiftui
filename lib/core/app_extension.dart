@@ -112,5 +112,8 @@ extension ObjectToJsonExtension on Object? {
 }
 
 extension IntToDateTime on int {
-  DateTime get date => DateTime.fromMillisecondsSinceEpoch(this);
+  DateTime get dateFromSecond =>
+      DateTime.fromMillisecondsSinceEpoch(this * 1000);
+
+  DateTime get dateFromMillisecond => DateTime.fromMillisecondsSinceEpoch(this);
 }

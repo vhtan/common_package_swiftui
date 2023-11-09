@@ -1,6 +1,7 @@
 import 'package:mvvm_cubit/common/network/api_helper.dart';
 import 'package:mvvm_cubit/common/network/dio_client.dart';
 import 'package:mvvm_cubit/core/api_config.dart';
+import 'package:mvvm_cubit/data/model/chatting/chat_message_response.dart';
 import 'package:mvvm_cubit/data/model/main/trip/trip_response.dart';
 import 'package:mvvm_cubit/data/model/notification/notification_response.dart';
 import 'package:mvvm_cubit/data/model/temp_form/temp_form_response.dart';
@@ -93,5 +94,14 @@ class MainApi with ApiHelper<dynamic> {
       ),
     );
     return parseNotificationResponseList(apiResponse.detail);
+  }
+
+  Future<List<ChatMessageResponse>> getChattingList(String id) async {
+    final apiResponse = await makeGetRequest(
+      client.dio.get(
+        ApiConfig.chattingList(id),
+      ),
+    );
+    return parseChatMessageResponseList(apiResponse.detail);
   }
 }
