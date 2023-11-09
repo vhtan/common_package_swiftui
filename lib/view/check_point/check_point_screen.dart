@@ -36,6 +36,7 @@ class _CheckPointScreen extends State<CheckPointScreen> {
           body: Stack(
             children: [
               CameraCamera(
+                resolutionPreset: ResolutionPreset.medium,
                 onFile: (file) {
                   if (file.path.isNotNullOrEmpty()) {
                     cubit.didCapturePhoto(file);

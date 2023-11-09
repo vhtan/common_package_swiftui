@@ -10,7 +10,7 @@ class AppString {
   static const unexpectedError = "Unexpected error occurred";
   static const unknownError = "Something went wrong";
   static const duplicateEmail = "Email has already been taken";
-
+  static const farFromCheckIn = "Không thể xác nhận đến nơi vì còn xa điểm đến";
   //status code
   static const badRequest = "Bad request";
   static const unauthorized = "Unauthorized";

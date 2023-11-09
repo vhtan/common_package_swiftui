@@ -6,7 +6,9 @@ part 'notification_response.freezed.dart';
 abstract class NotificationResponse with _$NotificationResponse {
   const factory NotificationResponse({
     String? id,
-    String? name,
+    String? title,
+    String? message,
+    int? dateCreated,
   }) = _NotificationResponse;
 
   factory NotificationResponse.fromJson(Map<String, dynamic> json) =>

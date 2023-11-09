@@ -40,9 +40,9 @@ class _NotificationScreen extends State<NotificationScreen> {
               }
               if (list.isNotEmpty) {
                 return Padding(
-                  padding: const EdgeInsets.only(top: 20, bottom: 20),
+                  padding: const EdgeInsets.only(top: 0, bottom: 20),
                   child: Container(
-                    alignment: Alignment.center,
+                    alignment: Alignment.topCenter,
                     child: ListView.separated(
                       separatorBuilder: (context, index) => const Divider(
                         height: 1,

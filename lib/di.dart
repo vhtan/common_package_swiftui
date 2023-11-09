@@ -31,9 +31,11 @@ Future<void> init() async {
   );
   di.registerFactory<FlutterSecureStorage>(
     () => const FlutterSecureStorage(
-        aOptions: AndroidOptions(
-            keyCipherAlgorithm:
-                KeyCipherAlgorithm.RSA_ECB_OAEPwithSHA_256andMGF1Padding)),
+      aOptions: AndroidOptions(encryptedSharedPreferences: true
+          // keyCipherAlgorithm:
+          //     KeyCipherAlgorithm.RSA_ECB_OAEPwithSHA_256andMGF1Padding,
+          ),
+    ),
   );
   di.registerFactory<DioClient>(
     () => DioClient(

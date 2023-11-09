@@ -25,8 +25,10 @@ class _WebViewCustomState extends State<WebViewCustom> {
   @override
   void initState() {
     super.initState();
+    final url = '${environment.vacomUrl()}${widget.jobRequestId}';
+    logger.i('url $url');
     controller.loadRequest(
-      Uri.parse('${environment.vacomUrl()}${widget.jobRequestId}'),
+      Uri.parse(url),
     );
 
     PushNotificationService().onHandleMessage = (value) {
@@ -38,11 +40,6 @@ class _WebViewCustomState extends State<WebViewCustom> {
 
   @override
   Widget build(BuildContext context) {
-    Route<dynamic>? currentRoute = ModalRoute.of(context);
-    logger.d('name == $currentRoute');
-    if (currentRoute is MaterialPageRoute) {
-      logger.d('name == ${currentRoute.settings.name}');
-    }
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),

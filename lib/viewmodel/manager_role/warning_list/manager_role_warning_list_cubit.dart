@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
+import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/manager/secure_storage_manager.dart';
 import 'package:mvvm_cubit/repository/auth/auth_repository.dart';
 import 'package:mvvm_cubit/repository/main/main_repository.dart';
@@ -42,11 +43,12 @@ class ManagerRoleWarningListCubit extends Cubit<GenericCubitState<dynamic>> {
       emit(
         const DidLogoutWarningListSuccess(status: Status.success),
       );
+      secureStorageManager.deleteAll();
     } on DioException catch (e) {
+      logger.e(e.message);
+      secureStorageManager.deleteAll();
       emit(
-        GenericCubitState.failure(
-          e.message ?? 'Error',
-        ),
+        const DidLogoutWarningListSuccess(status: Status.success),
       );
     }
     secureStorageManager.deleteAll();

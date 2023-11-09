@@ -233,6 +233,7 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
           body: Stack(
             children: [
               CameraCamera(
+                resolutionPreset: ResolutionPreset.medium,
                 onFile: (file) {
                   if (file.path.isNotNullOrEmpty()) {
                     // upload photo here

@@ -20,7 +20,7 @@ class NotificationItem extends StatelessWidget {
         borderRadius: BorderRadius.all(Radius.circular(8)),
       ),
       clipBehavior: Clip.antiAlias,
-      child: const Row(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(
@@ -34,19 +34,19 @@ class NotificationItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Hôm nay, 10:20',
+                  (notification.dateCreated ?? 0).date.toStringFormat(),
                   style: headLine6,
                   maxLines: 1,
                   overflow: TextOverflow.clip,
                 ),
                 Text(
-                  'Thông báo từ công ty',
+                  notification.title ?? '',
                   style: headLine4,
                   maxLines: 1,
                   overflow: TextOverflow.clip,
                 ),
                 Text(
-                  'Cảnh báo sai lộ trình, đề nghị khắc phục',
+                  notification.message ?? '',
                   style: textDefault,
                   maxLines: 2,
                   overflow: TextOverflow.clip,

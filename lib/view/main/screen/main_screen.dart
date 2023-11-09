@@ -180,7 +180,7 @@ class MainScreenState extends State<MainScreen> {
                     warningWidgetList(),
                     if (_trip != null && _tempForm == null)
                       Expanded(
-                        child: currentTrip(_trip!),
+                        child: currentTrip(context, _trip!),
                       ),
                     if (_tempForm != null && _trip == null)
                       Expanded(
@@ -215,7 +215,7 @@ class MainScreenState extends State<MainScreen> {
     );
   }
 
-  Widget currentTrip(TripResponse trip) {
+  Widget currentTrip(BuildContext context, TripResponse trip) {
     return TripContainer(
       trip: trip,
       onArrived: (stopPoint) async {
@@ -225,6 +225,7 @@ class MainScreenState extends State<MainScreen> {
           'latitude': stopPoint.destination?.latitude,
         });
         if (_locationData != null) {
+          // TODO: check distance
           if (calculateDistance(_locationData!, stopPointLocation) > 20) {
             // ignore: use_build_context_synchronously
             await showDialog(
@@ -239,6 +240,12 @@ class MainScreenState extends State<MainScreen> {
                 ),
               ),
               barrierDismissible: false,
+            );
+          } else {
+            // ignore: use_build_context_synchronously
+            showErrorSnackBar(
+              context,
+              AppString.farFromCheckIn,
             );
           }
         }
