@@ -29,7 +29,7 @@ class _ManagerWarningsHandlerScreen
   WarningDetailsResponse? _details;
   List<ChatMessageResponse> _messageList = [];
 
-  String? comment;
+  final _commentController = TextEditingController();
 
   final FocusNode _nodeTextInput = FocusNode();
   KeyboardActionsConfig _keyboardActionsConfig(BuildContext context) {
@@ -59,6 +59,7 @@ class _ManagerWarningsHandlerScreen
       child: BlocConsumer<ManagerWarningsHandlerCubit, GenericCubitState>(
         listener: (context, state) {
           if (state is ProcessWarningSuccess) {
+            _commentController.text = '';
             cubit.getChattingList(widget.id);
           }
           if (state is GetWarningDetailsSuccess) {
@@ -127,13 +128,7 @@ class _ManagerWarningsHandlerScreen
                                       labelText: 'Nhập ý kiến',
                                       maxLines: 3,
                                       keyboardType: TextInputType.multiline,
-                                      onChanged: (value) => {
-                                        setState(
-                                          () {
-                                            comment = value;
-                                          },
-                                        )
-                                      },
+                                      controller: _commentController,
                                     ),
                                   ),
                                 ),
@@ -227,7 +222,7 @@ class _ManagerWarningsHandlerScreen
               WarningProcessRequest(
                   warningId: widget.id,
                   action: 'accept',
-                  message: comment ?? ''),
+                  message: _commentController.text),
             ),
           ),
         ),
@@ -240,7 +235,7 @@ class _ManagerWarningsHandlerScreen
               WarningProcessRequest(
                   warningId: widget.id,
                   action: 'reject',
-                  message: comment ?? ''),
+                  message: _commentController.text),
             ),
           ),
         ),

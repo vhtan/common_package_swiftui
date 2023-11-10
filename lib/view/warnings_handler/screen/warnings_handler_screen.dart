@@ -26,10 +26,10 @@ class WarningsHandlerScreen extends StatefulWidget {
 
 class _WarningsHandlerScreen extends State<WarningsHandlerScreen> {
   final cubit = WarningsHandlerCubit(repository: di());
-  String? comment;
 
   WarningDetailsResponse? _details;
   List<ChatMessageResponse> _messageList = [];
+  final _commentController = TextEditingController();
 
   final FocusNode _nodeTextInput = FocusNode();
   KeyboardActionsConfig _keyboardActionsConfig(BuildContext context) {
@@ -59,6 +59,7 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen> {
       child: BlocConsumer<WarningsHandlerCubit, GenericCubitState>(
         listener: (context, state) {
           if (state is ProcessWarningSuccess) {
+            _commentController.text = '';
             cubit.getChattingList(widget.id);
           }
           if (state is GetWarningDetailsSuccess) {
@@ -204,13 +205,7 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen> {
             focusNode: _nodeTextInput,
             hint: 'Nhập ý kiến',
             labelText: 'Nhập ý kiến',
-            onChanged: (value) => {
-              setState(
-                () {
-                  comment = value;
-                },
-              )
-            },
+            controller: _commentController,
           ),
         ),
         const SizedBox(width: 10),
@@ -222,7 +217,7 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen> {
             WarningProcessRequest(
               warningId: widget.id,
               action: 'explain',
-              message: comment ?? '',
+              message: _commentController.text,
             ),
           ),
           child: const Text(
