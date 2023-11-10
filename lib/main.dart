@@ -2,9 +2,12 @@ import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/config/app_config.dart';
 import 'package:mvvm_cubit/core/api_config.dart';
+import 'package:mvvm_cubit/firebase_options.dart';
 import 'package:mvvm_cubit/manager/hive_storage_manager.dart';
 import 'package:mvvm_cubit/manager/secure_storage_manager.dart';
 import 'package:mvvm_cubit/view/auth/login_screen.dart';
@@ -20,7 +23,17 @@ void main() async {
 
   await environment.initConfig();
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  FlutterError.onError = (errorDetails) {
+    FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+  };
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    return true;
+  };
 
   String? loginToken = await di<SecureStorageManager>().getToken();
   String? roleCode = await di<SecureStorageManager>().getRole();

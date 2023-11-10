@@ -251,7 +251,6 @@ class MainScreenState extends State<MainScreen> {
       onFinihed: (value) {
         navigateTo(
           WebViewCustom(
-            title: 'Hoàn thành',
             jobRequestId: value,
           ),
         );

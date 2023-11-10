@@ -139,24 +139,24 @@ class _LoginScreenState extends State<LoginScreen> {
                           backgroundColor: _isValidLogin()
                               ? AppColors.primary
                               : AppColors.textDefaultLight,
-                          onPressed: _isValidLogin()
-                              ? () {
-                                  authCubit.login(
-                                    LoginRequest(
-                                      username: _username,
-                                      password: _password,
-                                    ),
-                                  );
-                                }
-                              : null,
-                          // onPressed: () {
-                          //   authCubit.login(
-                          //     LoginRequest(
-                          //       username: 'phupd',
-                          //       password: 'Abc@123456',
-                          //     ),
-                          //   );
-                          // },
+                          // onPressed: _isValidLogin()
+                          //     ? () {
+                          //         authCubit.login(
+                          //           LoginRequest(
+                          //             username: _username,
+                          //             password: _password,
+                          //           ),
+                          //         );
+                          //       }
+                          //     : null,
+                          onPressed: () {
+                            authCubit.login(
+                              LoginRequest(
+                                username: 'phudm',
+                                password: 'Abc@123456',
+                              ),
+                            );
+                          },
                         ),
                       ],
                     ),
