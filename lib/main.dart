@@ -20,10 +20,10 @@ import 'package:mvvm_cubit/view/manager_role/warning_list/screen/manager_role_wa
 import 'di.dart';
 
 void main() async {
-  await init();
-
-  await environment.initConfig();
   WidgetsFlutterBinding.ensureInitialized();
+  await init();
+  await di<HiveStorageManager>().initHive();
+  await environment.initConfig();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -51,8 +51,6 @@ void main() async {
   ApiConfig.header['Authorization'] = loginToken;
   final osVersion = await _getOSVersion();
   ApiConfig.header['os-version'] = osVersion;
-
-  di<HiveStorageManager>().initHive();
 
   runApp(
     MyApp(token: loginToken, roleCode: roleCode),

@@ -1,31 +1,29 @@
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 
 class SecureStorageManager {
-  final FlutterSecureStorage _secureStorage;
-
-  SecureStorageManager(this._secureStorage);
-
   Future<String?> getToken() async {
-    return _secureStorage.read(key: StoreKey.loginToken);
+    var box = await Hive.openBox(StoreKey.loginToken);
+    return await box.get(StoreKey.loginToken);
   }
 
   Future<String?> getRole() async {
-    return _secureStorage.read(key: StoreKey.roleCode);
+    var box = await Hive.openBox(StoreKey.roleCode);
+    return await box.get(StoreKey.roleCode);
   }
 
   Future<void> saveToken(String token, String roleCode) async {
-    await _secureStorage.write(
-      key: StoreKey.loginToken,
-      value: token,
-    );
-    await _secureStorage.write(
-      key: StoreKey.roleCode,
-      value: roleCode,
-    );
+    var tokenBox = await Hive.openBox(StoreKey.loginToken);
+    await tokenBox.put(StoreKey.loginToken, token);
+
+    var roleCodeBox = await Hive.openBox(StoreKey.roleCode);
+    await roleCodeBox.put(StoreKey.roleCode, roleCode);
   }
 
   Future<void> deleteAll() async {
-    await _secureStorage.deleteAll();
+    var tokenBox = await Hive.openBox(StoreKey.loginToken);
+    var roleCodeBox = await Hive.openBox(StoreKey.roleCode);
+    await tokenBox.clear();
+    await roleCodeBox.clear();
   }
 }

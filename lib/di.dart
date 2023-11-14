@@ -1,4 +1,3 @@
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mvvm_cubit/data/api/add_trip/add_trip_api.dart';
 import 'package:mvvm_cubit/data/api/auth/auth_api.dart';
 import 'package:mvvm_cubit/data/api/check_point/check_point_api.dart';
@@ -29,14 +28,7 @@ Future<void> init() async {
   di.registerFactory<Dio>(
     () => Dio(),
   );
-  di.registerFactory<FlutterSecureStorage>(
-    () => const FlutterSecureStorage(
-      aOptions: AndroidOptions(encryptedSharedPreferences: true
-          // keyCipherAlgorithm:
-          //     KeyCipherAlgorithm.RSA_ECB_OAEPwithSHA_256andMGF1Padding,
-          ),
-    ),
-  );
+
   di.registerFactory<DioClient>(
     () => DioClient(
       di(),
@@ -44,9 +36,7 @@ Future<void> init() async {
   );
 
   di.registerFactory<SecureStorageManager>(
-    () => SecureStorageManager(
-      di(),
-    ),
+    () => SecureStorageManager(),
   );
 
   di.registerFactory<HiveStorageManager>(
