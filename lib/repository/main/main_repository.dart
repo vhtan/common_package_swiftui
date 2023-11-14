@@ -47,8 +47,17 @@ class MainRepository with RepositoryHelper<dynamic> {
     return _api.cancelTempForm();
   }
 
-  Future<List<NotificationResponse>> getNotificationList() async {
-    return _api.getNotificationList();
+  Future<dynamic> closeTempForm(String note) async {
+    return _api.closeTempForm(note);
+  }
+
+  Future<int> totalUnreadNotification() async {
+    return _api.totalUnreadNotification();
+  }
+
+  Future<List<NotificationResponse>> getNotificationList(
+      bool isEmergency) async {
+    return _api.getNotificationList(isEmergency);
   }
 
   Future<List<ChatMessageResponse>> getChattingList(String id) async {

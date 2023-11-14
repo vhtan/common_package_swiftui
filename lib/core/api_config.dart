@@ -29,6 +29,10 @@ class ApiConfig {
   }
 
   static const String cancelTempForm = '/routing/job/cancel';
+  static const String closeTempForm = '/routing/job/close';
+
+  static const String totalUnreadNotification =
+      '/app/api/v1/notification/count?isRead=false';
 
   static String chattingList(String id) {
     return '/warning/list/chatting?warningId=$id';
@@ -41,7 +45,15 @@ class ApiConfig {
   // paths of sos
   static const String getSOSReasons = '/sos/reason/list';
   static const String submitSOS = '/sos/submit';
-  static const String notificationList = '/notification/list';
+
+  static String notificationList(bool isEmergency) {
+    if (isEmergency) {
+      return '/notification/list?type=EMERGENCY';
+    } else {
+      return '/notification/list';
+    }
+  }
+
   static String readNotification(String id) {
     return '/notification/$id/read';
   }

@@ -1,3 +1,4 @@
+import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/network/api_helper.dart';
 import 'package:mvvm_cubit/common/network/dio_client.dart';
 import 'package:mvvm_cubit/core/api_config.dart';
@@ -87,13 +88,30 @@ class MainApi with ApiHelper<dynamic> {
     );
   }
 
-  Future<List<NotificationResponse>> getNotificationList() async {
+  Future<dynamic> closeTempForm(String note) async {
+    return await makeGetRequest(
+      client.dio.get(ApiConfig.closeTempForm, data: {"note": note}),
+    );
+  }
+
+  Future<List<NotificationResponse>> getNotificationList(
+      bool isEmergency) async {
     final apiResponse = await makeGetRequest(
       client.dio.get(
-        ApiConfig.notificationList,
+        ApiConfig.notificationList(isEmergency),
       ),
     );
     return parseNotificationResponseList(apiResponse.detail);
+  }
+
+  Future<int> totalUnreadNotification() async {
+    final apiResponse = await makeGetRequest(
+      client.dio.get(
+        ApiConfig.totalUnreadNotification,
+      ),
+    );
+    logger.d(apiResponse);
+    return 0;
   }
 
   Future<List<ChatMessageResponse>> getChattingList(String id) async {

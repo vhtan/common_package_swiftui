@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
+import 'package:mvvm_cubit/view/main/widget/finish_temp_form.dart';
 
 Future<dynamic> deleteRequestFormDialog(
   String title,
@@ -64,4 +65,20 @@ Future<dynamic> deleteRequestFormDialog(
   );
 
   return dialog.then((res) => res ?? false);
+}
+
+Future<String?> finishRequestFormDialog(
+  BuildContext context,
+) {
+  Future<dynamic> dialog = showDialog(
+    barrierDismissible: false,
+    context: context,
+    builder: (_) {
+      return FinishTempForm(
+        okAction: (value) {},
+      );
+    },
+  );
+
+  return dialog.then((res) => res);
 }

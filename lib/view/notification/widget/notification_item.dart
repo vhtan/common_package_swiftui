@@ -34,9 +34,7 @@ class NotificationItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  (notification.dateCreated ?? 0)
-                      .dateFromMillisecond
-                      .toStringFormat(),
+                  (notification.dateCreated ?? 0).toDate.toStringFormat(),
                   style: headLine6,
                   maxLines: 1,
                   overflow: TextOverflow.clip,

@@ -110,6 +110,35 @@ class MainCubit extends GenericCubit<MainState> {
     }
   }
 
+  Future<void> closeNewTrip(String note) async {
+    emit(
+      GenericCubitState.loading(),
+    );
+    try {
+      await repository.closeTempForm(note);
+      emit(
+        GenericCubitState.success(DidCloseTripMainState()),
+      );
+    } on DioException catch (e) {
+      emit(
+        GenericCubitState.failure(e.message ?? 'Error'),
+      );
+    }
+  }
+
+  Future<void> totalUnreadNotificationTrip() async {
+    emit(
+      GenericCubitState.loading(),
+    );
+    try {
+      await repository.totalUnreadNotification();
+    } on DioException catch (e) {
+      emit(
+        GenericCubitState.failure(e.message ?? 'Error'),
+      );
+    }
+  }
+
   void editNewTrip(String id) {
     emit(
       GenericCubitState.success(null),

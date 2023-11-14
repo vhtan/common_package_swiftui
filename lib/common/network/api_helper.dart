@@ -13,6 +13,7 @@ abstract mixin class ApiHelper<T> {
       Future<Response<dynamic>> apiCallback) async {
     try {
       final Response response = await apiCallback;
+      logger.d('===response $response');
       final apiResponse = ApiResponse.fromJson(response.data);
 
       if (response.statusCode.success) {

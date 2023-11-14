@@ -25,6 +25,7 @@ class _WebViewCustomState extends State<WebViewCustom> {
     super.initState();
     final url = '${environment.vacomUrl()}${widget.jobRequestId}';
     logger.i('url $url');
+    controller.setJavaScriptMode(JavaScriptMode.unrestricted);
     controller.loadRequest(
       Uri.parse(url),
     );

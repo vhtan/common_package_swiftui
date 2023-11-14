@@ -26,6 +26,10 @@ class DidDeleteTripMainState extends MainState {
   DidDeleteTripMainState();
 }
 
+class DidCloseTripMainState extends MainState {
+  DidCloseTripMainState();
+}
+
 class EmptyTripMainState extends MainState {
   EmptyTripMainState();
 }

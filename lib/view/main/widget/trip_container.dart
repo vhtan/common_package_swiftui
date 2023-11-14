@@ -42,7 +42,7 @@ class _TripContainer extends State<TripContainer> {
         TripInfo(
           tripCode: (_trip?.routeId)!,
           createBy: (_trip?.createBy)!,
-          startDate: (_trip?.startTime?.dateFromSecond)!,
+          startDate: (_trip?.startTime?.toDate)!,
         ),
         ...stopPoints.map(
           (stopPoint) {

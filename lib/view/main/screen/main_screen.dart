@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
@@ -28,6 +29,7 @@ import 'package:mvvm_cubit/view/warnings_handler/screen/warnings_handler_screen.
 import 'package:mvvm_cubit/view/webview/webview_screen.dart';
 import 'package:mvvm_cubit/viewmodel/main/main_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/main/main_state.dart';
+import 'package:mvvm_cubit/viewmodel/notification/notification_cubit.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -46,6 +48,7 @@ class MainScreenState extends State<MainScreen> {
   PermissionStatus? _permissionGranted;
   LocationData? _locationData;
   final _cubit = MainCubit(repository: di());
+  final _notificationCubit = NotificationCubit(repository: di());
   static Timer? _fetchTrip;
   static Timer? _fetchWarning;
 
@@ -57,6 +60,7 @@ class MainScreenState extends State<MainScreen> {
       _cubit.getTrip();
       _cubit.getWarningList();
       _cubit.getTempFormDetails();
+      _notificationCubit.getEmergencyNotificationList();
       checkLocationPermission();
       Future.delayed(const Duration(seconds: 5), () {
         getCurrentLocation();
@@ -69,6 +73,10 @@ class MainScreenState extends State<MainScreen> {
         const LoginScreen(),
       );
     });
+
+    final distance =
+        FirebaseRemoteConfig.instance.getDouble('minimum_finish_distance');
+    logger.d('distance $distance');
   }
 
   void startFetchingTrip() {
@@ -94,6 +102,7 @@ class MainScreenState extends State<MainScreen> {
   void dispose() {
     cancelFetchingTrip();
     cancelFetchingWarning();
+
     super.dispose();
   }
 
@@ -128,8 +137,12 @@ class MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => _cubit,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<MainCubit>(create: (context) => _cubit),
+        BlocProvider<NotificationCubit>(
+            create: (context) => _notificationCubit),
+      ],
       child: Scaffold(
         body: BlocConsumer<MainCubit, GenericCubitState<MainState>>(
           listener: (context, state) {
@@ -162,6 +175,10 @@ class MainScreenState extends State<MainScreen> {
                     _tempForm = null;
                   });
                 } else if (data is DidDeleteTripMainState) {
+                  setState(() {
+                    _tempForm = null;
+                  });
+                } else if (data is DidCloseTripMainState) {
                   setState(() {
                     _tempForm = null;
                   });
@@ -223,8 +240,18 @@ class MainScreenState extends State<MainScreen> {
           'latitude': stopPoint.destination?.latitude,
         });
         if (_locationData != null) {
-          // TODO: check distance
-          if (calculateDistance(_locationData!, stopPointLocation) > 20) {
+          final distance = FirebaseRemoteConfig.instance
+              .getDouble('minimum_finish_distance');
+          logger.d('distance $distance');
+          final isNeedCheckDistance = distance >= 0;
+          if (isNeedCheckDistance &&
+              calculateDistance(_locationData!, stopPointLocation) < distance) {
+            // ignore: use_build_context_synchronously
+            showErrorSnackBar(
+              context,
+              AppString.farFromCheckIn,
+            );
+          } else {
             // ignore: use_build_context_synchronously
             await showDialog(
               context: context,
@@ -239,19 +266,13 @@ class MainScreenState extends State<MainScreen> {
               ),
               barrierDismissible: false,
             );
-          } else {
-            // ignore: use_build_context_synchronously
-            showErrorSnackBar(
-              context,
-              AppString.farFromCheckIn,
-            );
           }
         }
       },
       onFinihed: (value) {
         navigateTo(
           WebViewCustom(
-            jobRequestId: value,
+            jobRequestId: trip.routeId ?? 0,
           ),
         );
       },
@@ -301,7 +322,6 @@ extension _MainScreenDeliveryList on MainScreenState {
   }
 
   Widget pendingTrip() {
-    logger.d('===tempForm $_tempForm');
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -318,6 +338,7 @@ extension _MainScreenDeliveryList on MainScreenState {
               ),
               barrierDismissible: false,
             ),
+            onClose: (value) => _cubit.closeNewTrip(value),
           ),
           const SizedBox(height: 20),
         ],

@@ -11,12 +11,14 @@ class PendingTripScreen extends StatelessWidget {
   final TempFormResponse tempForm;
   final VoidCallback onDelete;
   final VoidCallback onEdit;
+  final ValueChanged<String> onClose;
 
   const PendingTripScreen({
     super.key,
     required this.tempForm,
     required this.onDelete,
     required this.onEdit,
+    required this.onClose,
   });
 
   @override
@@ -135,6 +137,25 @@ class PendingTripScreen extends StatelessWidget {
               ),
             ],
           ),
+        if (tempForm.status != TempFormStatus.NEW)
+          Row(
+            children: [
+              Expanded(
+                child: PrimaryButton(
+                  title: 'Hoàn thành PYC',
+                  buttonHeight: 50,
+                  onPressed: () async {
+                    String? noted = await finishRequestFormDialog(
+                      context,
+                    );
+                    if (noted != null) {
+                      onClose(noted);
+                    }
+                  },
+                ),
+              )
+            ],
+          )
       ],
     );
   }

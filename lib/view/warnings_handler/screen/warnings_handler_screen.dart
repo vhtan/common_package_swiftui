@@ -185,7 +185,7 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen> {
         ),
         const Spacer(),
         Text(
-          (details?.dateCreated ?? 0).dateFromSecond.toStringFormat(),
+          (details?.dateCreated ?? 0).toDate.toStringFormat(),
           style: const TextStyle(
             fontStyle: FontStyle.italic,
             fontSize: 12,
@@ -332,7 +332,7 @@ class _MessageWidget extends StatelessWidget {
               ),
               const Spacer(),
               Text(
-                dateCreated.dateFromMillisecond.toStringFormat(),
+                dateCreated.toDate.toStringFormat(),
                 style: const TextStyle(
                   fontStyle: FontStyle.italic,
                   fontSize: 12,
