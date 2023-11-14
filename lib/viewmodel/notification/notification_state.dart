@@ -15,3 +15,7 @@ class GetNotificationListSuccess extends NotificationState {
 class ReadNotificationSuccess extends NotificationState {
   const ReadNotificationSuccess({required super.status});
 }
+
+class DidReadNotification extends NotificationState {
+  const DidReadNotification({required super.status});
+}

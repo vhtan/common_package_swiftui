@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/data/model/notification/notification_response.dart';
@@ -45,11 +46,8 @@ class NotificationItem extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.clip,
                 ),
-                Text(
-                  notification.message ?? '',
-                  style: textDefault,
-                  maxLines: 2,
-                  overflow: TextOverflow.clip,
+                Html(
+                  data: notification.message,
                 ),
               ],
             ),

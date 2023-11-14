@@ -55,6 +55,10 @@ class MainRepository with RepositoryHelper<dynamic> {
     return _api.totalUnreadNotification();
   }
 
+  Future<dynamic> readNotification(String id) async {
+    return _api.readNotification(id);
+  }
+
   Future<List<NotificationResponse>> getNotificationList(
       bool isEmergency) async {
     return _api.getNotificationList(isEmergency);

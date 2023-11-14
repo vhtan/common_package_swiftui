@@ -114,6 +114,16 @@ class MainApi with ApiHelper<dynamic> {
     return 0;
   }
 
+  Future<dynamic> readNotification(String id) async {
+    final apiResponse = await makeGetRequest(
+      client.dio.get(
+        ApiConfig.readNotification(id),
+      ),
+    );
+    logger.d(apiResponse);
+    return 0;
+  }
+
   Future<List<ChatMessageResponse>> getChattingList(String id) async {
     final apiResponse = await makeGetRequest(
       client.dio.get(

@@ -6,6 +6,7 @@ import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/data/model/notification/notification_response.dart';
 import 'package:mvvm_cubit/di.dart';
 import 'package:mvvm_cubit/view/notification/widget/notification_item.dart';
+import 'package:mvvm_cubit/view/notification_details/notification_details_screen.dart';
 import 'package:mvvm_cubit/viewmodel/notification/notification_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/notification/notification_state.dart';
 
@@ -17,18 +18,18 @@ class NotificationScreen extends StatefulWidget {
 }
 
 class _NotificationScreen extends State<NotificationScreen> {
-  final cubit = NotificationCubit(repository: di());
+  final _cubit = NotificationCubit(repository: di());
 
   @override
   void initState() {
     super.initState();
-    cubit.getNotificationList();
+    _cubit.getNotificationList();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => cubit,
+      create: (context) => _cubit,
       child: BlocConsumer<NotificationCubit, GenericCubitState>(
         listener: (context, state) {},
         builder: (context, state) {
@@ -51,8 +52,21 @@ class _NotificationScreen extends State<NotificationScreen> {
                       shrinkWrap: true,
                       itemCount: list.length,
                       itemBuilder: (_, index) {
-                        return NotificationItem(
-                          notification: list[index],
+                        return InkWell(
+                          onTap: () {
+                            final item = list[index];
+                            _cubit.readNotification(item.id ?? '');
+                            showDialog(
+                              context: context,
+                              builder: (context) => NotificationDetailsScreen(
+                                notification: item,
+                              ),
+                              barrierDismissible: false,
+                            );
+                          },
+                          child: NotificationItem(
+                            notification: list[index],
+                          ),
                         );
                       },
                     ),
