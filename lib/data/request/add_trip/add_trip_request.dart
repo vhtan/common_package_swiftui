@@ -53,3 +53,29 @@ class AddTripRequest {
 
   Map<String, dynamic> toJson() => _$AddTripRequestToJson(this);
 }
+
+@immutable
+@JsonSerializable()
+class HandleTempFormRequest {
+  HandleTempFormRequest({
+    required this.action,
+    this.note,
+    String? requestId,
+    int? requestTime,
+  })  : requestId = const Uuid().v4(),
+        requestTime = DateTime.now().millisecondsSinceEpoch;
+
+  @JsonKey(name: "action")
+  final String action;
+  @JsonKey(name: "note")
+  final String? note;
+  @JsonKey(name: "requestId")
+  final String requestId;
+  @JsonKey(name: "requestTime")
+  final int requestTime;
+
+  factory HandleTempFormRequest.fromJson(Map<String, dynamic> json) =>
+      _$HandleTempFormRequestFromJson(json);
+
+  Map<String, dynamic> toJson() => _$HandleTempFormRequestToJson(this);
+}

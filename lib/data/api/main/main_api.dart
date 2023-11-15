@@ -8,6 +8,7 @@ import 'package:mvvm_cubit/data/model/notification/notification_response.dart';
 import 'package:mvvm_cubit/data/model/temp_form/temp_form_response.dart';
 import 'package:mvvm_cubit/data/model/warning/warning_response.dart';
 import 'package:mvvm_cubit/data/model/warning_details/warning_details_response.dart';
+import 'package:mvvm_cubit/data/request/add_trip/add_trip_request.dart';
 import 'package:mvvm_cubit/data/request/check_in/check_in_request.dart';
 import 'package:mvvm_cubit/data/request/push_token/push_token_request.dart';
 import 'package:mvvm_cubit/data/request/warning_process/warning_process_request.dart';
@@ -82,15 +83,22 @@ class MainApi with ApiHelper<dynamic> {
 
   Future<dynamic> cancelTempForm() async {
     return await makeGetRequest(
-      client.dio.get(
-        ApiConfig.cancelTempForm,
+      client.dio.post(
+        ApiConfig.handleTempForm,
+        data: HandleTempFormRequest(action: 'CANCEL'),
       ),
     );
   }
 
   Future<dynamic> closeTempForm(String note) async {
     return await makeGetRequest(
-      client.dio.get(ApiConfig.closeTempForm, data: {"note": note}),
+      client.dio.post(
+        ApiConfig.handleTempForm,
+        data: HandleTempFormRequest(
+          action: 'CLOSE',
+          note: note,
+        ),
+      ),
     );
   }
 

@@ -28,8 +28,7 @@ class ApiConfig {
     return '/routing/routing-detail/$id/arrived';
   }
 
-  static const String cancelTempForm = '/routing/job/cancel';
-  static const String closeTempForm = '/routing/job/close';
+  static const String handleTempForm = '/routing/job/process';
 
   static const String totalUnreadNotification =
       '/app/api/v1/notification/count?isRead=false';
@@ -55,7 +54,7 @@ class ApiConfig {
   }
 
   static String readNotification(String id) {
-    return '/notification/$id/read';
+    return '/notification/$id';
   }
 
   static Map<String, String?> header = {

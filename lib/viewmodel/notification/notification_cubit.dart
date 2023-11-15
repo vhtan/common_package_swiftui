@@ -41,20 +41,4 @@ class NotificationCubit extends Cubit<GenericCubitState<dynamic>> {
       );
     }
   }
-
-  void getEmergencyNotificationList() async {
-    final response = await repository.getNotificationList(true);
-    try {
-      emit(
-        GetNotificationListSuccess(
-          status: Status.success,
-          list: response,
-        ),
-      );
-    } catch (ex) {
-      emit(
-        GenericCubitState.failure(ex.toString()),
-      );
-    }
-  }
 }

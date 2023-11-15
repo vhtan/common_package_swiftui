@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
@@ -24,12 +25,15 @@ import 'package:mvvm_cubit/view/add_trip/add_trip_screen.dart';
 import 'package:mvvm_cubit/view/auth/login_screen.dart';
 import 'package:mvvm_cubit/view/check_point/check_point_screen.dart';
 import 'package:mvvm_cubit/view/main/widget/trip_container.dart';
+import 'package:mvvm_cubit/view/notification_details/notification_details_emergency_screen.dart';
+import 'package:mvvm_cubit/view/notification_details/notification_details_screen.dart';
 import 'package:mvvm_cubit/view/pending_trip/screen/pending_trip_screen.dart';
 import 'package:mvvm_cubit/view/warnings_handler/screen/warnings_handler_screen.dart';
 import 'package:mvvm_cubit/view/webview/webview_screen.dart';
 import 'package:mvvm_cubit/viewmodel/main/main_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/main/main_state.dart';
 import 'package:mvvm_cubit/viewmodel/notification/notification_cubit.dart';
+import 'package:mvvm_cubit/viewmodel/notification/notification_state.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -60,7 +64,7 @@ class MainScreenState extends State<MainScreen> {
       _cubit.getTrip();
       _cubit.getWarningList();
       _cubit.getTempFormDetails();
-      _notificationCubit.getEmergencyNotificationList();
+      _cubit.getEmergencyNotificationList();
       checkLocationPermission();
       Future.delayed(const Duration(seconds: 5), () {
         getCurrentLocation();
@@ -144,7 +148,7 @@ class MainScreenState extends State<MainScreen> {
             create: (context) => _notificationCubit),
       ],
       child: Scaffold(
-        body: BlocConsumer<MainCubit, GenericCubitState<MainState>>(
+        body: BlocConsumer<MainCubit, GenericCubitState>(
           listener: (context, state) {
             switch (state.status) {
               case Status.failure:
@@ -153,6 +157,7 @@ class MainScreenState extends State<MainScreen> {
                   state.error ?? AppString.sendTimeOut,
                 );
               case Status.success:
+                logger.d('main success $state');
                 final data = state.data;
                 if (data is GetWarningListMainState) {
                   setState(() {
@@ -182,6 +187,17 @@ class MainScreenState extends State<MainScreen> {
                   setState(() {
                     _tempForm = null;
                   });
+                } else if (data is EmergencyNotificationListSuccess) {
+                  final first = data.list.first;
+
+                  _cubit.readNotification(first.id ?? '');
+                  showDialog(
+                    context: context,
+                    builder: (context) => NotificationEmergencyDetailsScreen(
+                      notification: first,
+                    ),
+                    barrierDismissible: false,
+                  );
                 }
               default:
                 break;

@@ -169,4 +169,31 @@ class MainCubit extends GenericCubit<MainState> {
       );
     }
   }
+
+  void getEmergencyNotificationList() async {
+    final response = await repository.getNotificationList(true);
+    logger.d('getEmergencyNotificationList $response');
+    try {
+      emit(
+        GenericCubitState.success(
+          EmergencyNotificationListSuccess(
+            list: response,
+          ),
+        ),
+      );
+    } catch (ex) {
+      emit(
+        GenericCubitState.failure(ex.toString()),
+      );
+    }
+  }
+
+  void readNotification(String id) async {
+    await repository.readNotification(id);
+    try {} catch (ex) {
+      emit(
+        GenericCubitState.failure(ex.toString()),
+      );
+    }
+  }
 }
