@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
@@ -26,14 +25,12 @@ import 'package:mvvm_cubit/view/auth/login_screen.dart';
 import 'package:mvvm_cubit/view/check_point/check_point_screen.dart';
 import 'package:mvvm_cubit/view/main/widget/trip_container.dart';
 import 'package:mvvm_cubit/view/notification_details/notification_details_emergency_screen.dart';
-import 'package:mvvm_cubit/view/notification_details/notification_details_screen.dart';
 import 'package:mvvm_cubit/view/pending_trip/screen/pending_trip_screen.dart';
 import 'package:mvvm_cubit/view/warnings_handler/screen/warnings_handler_screen.dart';
 import 'package:mvvm_cubit/view/webview/webview_screen.dart';
 import 'package:mvvm_cubit/viewmodel/main/main_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/main/main_state.dart';
 import 'package:mvvm_cubit/viewmodel/notification/notification_cubit.dart';
-import 'package:mvvm_cubit/viewmodel/notification/notification_state.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -51,6 +48,7 @@ class MainScreenState extends State<MainScreen> {
   bool _serviceEnabled = false;
   PermissionStatus? _permissionGranted;
   LocationData? _locationData;
+
   final _cubit = MainCubit(repository: di());
   final _notificationCubit = NotificationCubit(repository: di());
   static Timer? _fetchTrip;
@@ -188,16 +186,23 @@ class MainScreenState extends State<MainScreen> {
                     _tempForm = null;
                   });
                 } else if (data is EmergencyNotificationListSuccess) {
-                  final first = data.list.first;
+                  var list = data.list;
+                  final first = list.first;
 
                   _cubit.readNotification(first.id ?? '');
-                  showDialog(
+                  final dialog = showDialog(
                     context: context,
                     builder: (context) => NotificationEmergencyDetailsScreen(
                       notification: first,
                     ),
                     barrierDismissible: false,
                   );
+                  dialog.then((value) {
+                    if (list.isNotEmpty) {
+                      list.removeAt(0);
+                      _cubit.updateEmergencyNotificationList(list);
+                    }
+                  });
                 }
               default:
                 break;

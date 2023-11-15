@@ -15,10 +15,15 @@ class NotificationItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: const BoxDecoration(
-        color: AppColors.notificationRead,
-        borderRadius: BorderRadius.all(Radius.circular(8)),
+      padding: const EdgeInsets.only(
+        top: 10,
+        left: 10,
+        right: 10,
+      ),
+      decoration: BoxDecoration(
+        color: notification.read == true
+            ? AppColors.notificationRead
+            : AppColors.notificationUnread,
       ),
       clipBehavior: Clip.antiAlias,
       child: Row(
@@ -46,9 +51,10 @@ class NotificationItem extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.clip,
                 ),
-                Html(
-                  data: notification.message,
-                ),
+                if (notification.message != null)
+                  Html(
+                    data: notification.message,
+                  ),
               ],
             ),
           )

@@ -38,7 +38,8 @@ class DioInterceptor extends Interceptor {
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
     _logger.d('Response => StatusCode: ${response.statusCode}'); // Debug log
-    _logger.d('Response => Body: ${response.data}'); // Debug log
+    _logger.d(
+        'Response => ${response.requestOptions.uri} Body: ${response.data}'); // Debug log
     return super.onResponse(response, handler);
   }
 

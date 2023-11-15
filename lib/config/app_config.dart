@@ -33,7 +33,6 @@ class Environment {
         break;
     }
     config = _getConfig(environmentConfig);
-    logger.d('Environments: ${config.baseUrl}');
   }
 
   String fullUrl() => config.baseUrl + prefix;

@@ -30,7 +30,6 @@ class NotificationEmergencyDetailsScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
               color: AppColors.white,
             ),
-            padding: const EdgeInsets.all(0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.start,
@@ -38,13 +37,6 @@ class NotificationEmergencyDetailsScreen extends StatelessWidget {
                 Stack(
                   alignment: AlignmentDirectional.center,
                   children: [
-                    const Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                        '',
-                        style: headLine1,
-                      ),
-                    ),
                     Align(
                       alignment: Alignment.topRight,
                       child: IconButton(
@@ -58,12 +50,22 @@ class NotificationEmergencyDetailsScreen extends StatelessWidget {
                   ],
                 ),
                 _title,
-                const SizedBox(height: 20.0),
-                Flexible(
-                  child: Html(
-                    data: notification.message,
-                  ),
-                )
+                if (notification.message != null)
+                  Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Flexible(
+                      child: Html(
+                        data: notification.message,
+                        style: {
+                          'body': Style(
+                            color: AppColors.textDefault,
+                            fontSize:
+                                FontSize(16.0), // Set your custom font size
+                          ),
+                        },
+                      ),
+                    ),
+                  )
               ],
             ),
           ),
@@ -73,8 +75,8 @@ class NotificationEmergencyDetailsScreen extends StatelessWidget {
   }
 
   Widget get _title {
-    return Align(
-      alignment: Alignment.center,
+    return Container(
+      padding: const EdgeInsets.only(left: 20, right: 20),
       child: Text(
         notification.title ?? '',
         style: headLine1,

@@ -9,6 +9,7 @@ abstract class NotificationResponse with _$NotificationResponse {
     String? title,
     String? message,
     int? dateCreated,
+    bool? read,
   }) = _NotificationResponse;
 
   factory NotificationResponse.fromJson(Map<String, dynamic> json) =>

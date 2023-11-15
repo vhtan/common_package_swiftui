@@ -99,22 +99,17 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen> {
                               children: [
                                 _title,
                                 _warningMessage(_details),
-                                const SizedBox(height: 20.0),
+                                const SizedBox(height: 10.0),
                                 _systemMessage(_details),
                                 systemWarning(_details?.level),
                                 const Divider(),
                                 ..._messageList.map(
                                   (item) {
-                                    return Container(
-                                      padding: const EdgeInsets.only(
-                                        top: 10,
-                                      ),
-                                      child: _MessageWidget(
-                                        userName: item.userCreated?.name ?? '',
-                                        message: item.text ?? '',
-                                        dateCreated: item.dateCreated ?? 0,
-                                        roleCode: item.userCreated?.role?.code,
-                                      ),
+                                    return _MessageWidget(
+                                      userName: item.userCreated?.name ?? '',
+                                      message: item.text ?? '',
+                                      dateCreated: item.dateCreated ?? 0,
+                                      roleCode: item.userCreated?.role?.code,
                                     );
                                   },
                                 ),
@@ -165,11 +160,14 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen> {
     return Row(
       children: [
         const SizedBox(width: 20),
-        Text(
-          details?.warningMessage ?? '',
-          style: headLine4,
+        Flexible(
+          child: Text(
+            details?.warningMessage ?? '',
+            style: headLine4,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
-        const Spacer(),
       ],
     );
   }
@@ -252,7 +250,7 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen> {
             const SizedBox(width: 8.0),
             Expanded(
               child: Text(
-                'Hệ thống gửi cảnh báo cấp $level',
+                'Hệ thống gửi cảnh báo cấp ${level ?? 1}',
                 style: textDefault,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -267,10 +265,7 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen> {
   Widget normalWarning() {
     return Container(
       padding: const EdgeInsets.all(10),
-      decoration: const BoxDecoration(
-          // color: AppColors.warningHigh,
-          // borderRadius: BorderRadius.all(Radius.circular(8)),
-          ),
+      decoration: const BoxDecoration(),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () {},
@@ -316,13 +311,13 @@ class _MessageWidget extends StatelessWidget {
       padding: const EdgeInsets.only(
         left: 20,
         right: 20,
+        top: 10,
         bottom: 10,
       ),
       color:
           roleCode == 'ATAI' ? AppColors.white : AppColors.notificationUnread,
       child: Column(
         children: [
-          const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
