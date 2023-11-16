@@ -29,7 +29,7 @@ class AuthCubit extends Cubit<GenericCubitState<AuthState>> {
       final loginResponse = await repository.login(request);
       final token = loginResponse.session ?? '';
       final roleCode = loginResponse.role?.code ?? '';
-
+      logger.d('loginResponse ${loginResponse.arrivalLimitRadius}');
       hiveStorageManager.saveLoginData(loginResponse);
 
       if (loginResponse.session != null) {

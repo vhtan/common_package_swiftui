@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/data/model/auth/login_response.dart';
 // ignore: depend_on_referenced_packages
@@ -25,6 +26,7 @@ class HiveStorageManager {
 
   Future<void> saveLoginData(LoginResponse loginData) async {
     var box = await Hive.openBox(StoreKey.userData);
+    logger.d('===loginData $loginData');
     await box.put(StoreKey.userData, loginData);
   }
 
@@ -32,6 +34,7 @@ class HiveStorageManager {
     var box = await Hive.openBox(StoreKey.userData);
     final data = await box.get(StoreKey.userData);
     final userData = data as LoginResponse?;
+    logger.d('===userData $data');
     return userData;
   }
 }
@@ -48,13 +51,14 @@ class _LoginResponseHiveAdapter extends TypeAdapter<LoginResponse> {
       name: fields[1] as String?,
       email: fields[2] as String?,
       role: fields[3] as RoleResponse?,
+      arrivalLimitRadius: fields[4] as double?,
     );
   }
 
   @override
   void write(BinaryWriter writer, LoginResponse obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.session)
       ..writeByte(1)
@@ -62,7 +66,9 @@ class _LoginResponseHiveAdapter extends TypeAdapter<LoginResponse> {
       ..writeByte(2)
       ..write(obj.email)
       ..writeByte(3)
-      ..write(obj.role);
+      ..write(obj.role)
+      ..writeByte(4)
+      ..write(obj.arrivalLimitRadius);
   }
 
   @override

@@ -9,12 +9,14 @@ class MenuScreen extends StatelessWidget {
   final LoginResponse? loginResponse;
   final ValueChanged<MenuType> valueChanged;
   final String version;
+  final int totalUnreadNoti;
 
   const MenuScreen({
     super.key,
     required this.loginResponse,
     required this.valueChanged,
     required this.version,
+    required this.totalUnreadNoti,
   });
 
   @override
@@ -49,22 +51,44 @@ class MenuScreen extends StatelessWidget {
         ),
         _MenuListTile(
           title: 'Lộ trình',
-          icon: Icons.home,
+          icon: const Icon(
+            Icons.home,
+            size: Dimension.menuIconSize,
+            color: Colors.white,
+          ),
           onTap: () => valueChanged(MenuType.trip),
         ),
         _MenuListTile(
           title: 'Tài khoản',
-          icon: Icons.person,
+          icon: const Icon(
+            Icons.person,
+            size: Dimension.menuIconSize,
+            color: Colors.white,
+          ),
           onTap: () => valueChanged(MenuType.account),
         ),
         _MenuListTile(
           title: 'Thông báo',
-          icon: Icons.notifications_active,
+          icon: totalUnreadNoti > 0
+              ? Image.asset(
+                  AppAsset.icNotificationDot,
+                  width: Dimension.menuIconSize,
+                  height: Dimension.menuIconSize,
+                )
+              : Image.asset(
+                  AppAsset.icNotification,
+                  width: Dimension.menuIconSize,
+                  height: Dimension.menuIconSize,
+                ),
           onTap: () => valueChanged(MenuType.notification),
         ),
         _MenuListTile(
           title: 'Đăng xuất',
-          icon: Icons.logout,
+          icon: const Icon(
+            Icons.logout,
+            size: Dimension.menuIconSize,
+            color: Colors.white,
+          ),
           onTap: () => valueChanged(MenuType.logOut),
         ),
         const SizedBox(height: 30),
@@ -87,7 +111,7 @@ class MenuScreen extends StatelessWidget {
 
 class _MenuListTile extends StatelessWidget {
   final String title;
-  final IconData icon;
+  final Widget icon;
   final VoidCallback onTap;
   const _MenuListTile({
     required this.title,
@@ -99,7 +123,7 @@ class _MenuListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       onTap: onTap,
-      leading: Icon(icon, size: Dimension.menuIconSize, color: Colors.white),
+      leading: icon,
       title: Text(
         title,
         style: menuTextStyle,

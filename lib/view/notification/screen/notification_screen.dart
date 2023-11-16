@@ -58,13 +58,16 @@ class _NotificationScreen extends State<NotificationScreen> {
                           onTap: () {
                             final item = list[index];
                             _cubit.readNotification(item.id ?? '');
-                            showDialog(
+                            final dialog = showDialog(
                               context: context,
                               builder: (context) => NotificationDetailsScreen(
                                 notification: item,
                               ),
                               barrierDismissible: false,
                             );
+                            dialog.then((value) {
+                              _cubit.getNotificationList();
+                            });
                           },
                           child: NotificationItem(
                             notification: list[index],

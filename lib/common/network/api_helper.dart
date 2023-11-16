@@ -14,7 +14,7 @@ abstract mixin class ApiHelper<T> {
     try {
       final Response response = await apiCallback;
       final apiResponse = ApiResponse.fromJson(response.data);
-
+      logger.d('apiResponse $apiResponse');
       if (response.statusCode.success) {
         if (apiResponse.code == ErrorCode.SUCCESS) {
           return apiResponse;

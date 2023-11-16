@@ -11,6 +11,7 @@ abstract class LoginResponse with _$LoginResponse {
     @HiveField(0) String? name,
     @HiveField(1) String? email,
     @HiveField(2) RoleResponse? role,
+    @HiveField(3) double? arrivalLimitRadius,
   }) = _LoginResponse;
 
   factory LoginResponse.fromJson(Map<String, dynamic> json) =>

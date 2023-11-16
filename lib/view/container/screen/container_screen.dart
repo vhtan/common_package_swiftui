@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
+import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/data/model/auth/login_response.dart';
 import 'package:mvvm_cubit/data/model/container/menu_type.dart';
@@ -27,7 +28,8 @@ class ContainerScreen extends StatefulWidget {
   State<StatefulWidget> createState() => _ContainerScreenState();
 }
 
-class _ContainerScreenState extends State<ContainerScreen> {
+class _ContainerScreenState extends State<ContainerScreen>
+    with WidgetsBindingObserver {
   bool isOpened = false;
   String title = 'Lộ trình';
   ContainerCubit containerCubit = ContainerCubit(repository: di());
@@ -39,7 +41,11 @@ class _ContainerScreenState extends State<ContainerScreen> {
   );
   LoginResponse? _loginData;
 
+  MenuType _menuType = MenuType.trip;
+
   final GlobalKey<SideMenuState> _sideMenuKey = GlobalKey<SideMenuState>();
+
+  int _totalUnreadNotification = 0;
 
   PackageInfo _packageInfo = PackageInfo(
     appName: 'Unknown',
@@ -83,6 +89,15 @@ class _ContainerScreenState extends State<ContainerScreen> {
     );
 
     _initPackageInfo();
+
+    containerCubit.totalUnreadNotification();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   Future<void> _initPackageInfo() async {
@@ -100,16 +115,31 @@ class _ContainerScreenState extends State<ContainerScreen> {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      containerCubit.totalUnreadNotification();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider<ContainerCubit>(create: (context) => containerCubit),
         BlocProvider<AuthCubit>(create: (context) => authCubit),
       ],
-      child: BlocConsumer<ContainerCubit, GenericCubitState<MenuType>>(
-        listener: (context, state) => titlePage(state.data),
+      child: BlocConsumer<ContainerCubit, GenericCubitState<dynamic>>(
+        listener: (context, state) {
+          final data = state.data;
+          if (data is MenuType) {
+            titlePage(data);
+          } else if (data is TotalUnreadNotificationMainState) {
+            logger.d('==== data ${data.total}');
+            _totalUnreadNotification = data.total;
+          }
+        },
         builder: (context, state) {
-          return BlocBuilder<ContainerCubit, GenericCubitState<MenuType>>(
+          return BlocBuilder<ContainerCubit, GenericCubitState>(
             builder: (context, state) {
               return PopScope(
                 canPop: false,
@@ -123,8 +153,12 @@ class _ContainerScreenState extends State<ContainerScreen> {
                     child: MenuScreen(
                       version: _packageInfo.version,
                       loginResponse: _loginData,
+                      totalUnreadNoti: _totalUnreadNotification,
                       valueChanged: (value) {
-                        containerCubit.menuAction(value);
+                        setState(() {
+                          _menuType = value;
+                          titlePage(_menuType);
+                        });
                       },
                     ),
                   ),
@@ -167,9 +201,10 @@ class _ContainerScreenState extends State<ContainerScreen> {
                         ],
                         title: Text(title),
                       ),
-                      body: BlocBuilder<ContainerCubit,
-                          GenericCubitState<MenuType>>(
-                        builder: (context, state) => contentWidget(state.data),
+                      body: BlocBuilder<ContainerCubit, GenericCubitState>(
+                        builder: (context, state) {
+                          return contentWidget(_menuType);
+                        },
                       ),
                     ),
                   ),

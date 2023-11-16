@@ -1,3 +1,5 @@
+import 'package:html_unescape/html_unescape.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
@@ -54,17 +56,22 @@ class NotificationDetailsScreen extends StatelessWidget {
                 ),
                 _title,
                 const SizedBox(height: 20.0),
-                Flexible(
-                  child: Html(
-                    data: notification.message,
-                  ),
-                )
+                if (notification.message != null)
+                  Flexible(
+                    child: Html(
+                        data: decodeHtmlEntities(notification.message ?? '')),
+                  )
               ],
             ),
           ),
         ),
       ),
     );
+  }
+
+  String decodeHtmlEntities(String htmlString) {
+    HtmlUnescape htmlUnescape = HtmlUnescape();
+    return htmlUnescape.convert(htmlString);
   }
 
   Widget get _title {

@@ -8,4 +8,6 @@ class AppAsset {
   static const appLogo = "asset/images/acb_logo.png";
   static const imTextTruct = "asset/images/im_test_truct.png";
   static const placeHolder = "asset/images/place_holder.png";
+  static const icNotificationDot = "asset/images/ic_notification_dot.png";
+  static const icNotification = "asset/images/ic_notification.png";
 }

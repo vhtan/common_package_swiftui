@@ -54,39 +54,42 @@ class _ManagerRoleWrningListScreen extends State<ManagerRoleWrningListScreen> {
               if (state is GetWarningListSuccess) {
                 list = state.warnings;
               }
-              return Scaffold(
-                appBar: AppBar(
-                  automaticallyImplyLeading: false,
-                  title: const Text('Danh sách cảnh báo'),
-                  leading: null,
-                  actions: [
-                    IconButton(
-                      icon: const Icon(
-                        Icons.power_settings_new_rounded,
-                        size: Dimension.menuIconSize,
-                        color: Colors.white,
-                      ),
-                      onPressed: () => cubit.logout(),
-                    ),
-                  ],
-                ),
-                body: list.isEmpty
-                    ? Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Column(
-                          children: [
-                            const EmptyWidget(
-                                message: 'Hiện không có cảnh báo cần xử lý'),
-                            const SizedBox(height: 20),
-                            PrimaryButton(
-                              title: 'Kiểm tra danh sách cảnh báo',
-                              buttonHeight: 50,
-                              onPressed: () => cubit.getWarningList(),
-                            )
-                          ],
+              return PopScope(
+                canPop: false,
+                child: Scaffold(
+                  appBar: AppBar(
+                    automaticallyImplyLeading: false,
+                    title: const Text('Danh sách cảnh báo'),
+                    leading: null,
+                    actions: [
+                      IconButton(
+                        icon: const Icon(
+                          Icons.power_settings_new_rounded,
+                          size: Dimension.menuIconSize,
+                          color: Colors.white,
                         ),
-                      )
-                    : waitingProcessListView(list),
+                        onPressed: () => cubit.logout(),
+                      ),
+                    ],
+                  ),
+                  body: list.isEmpty
+                      ? Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Column(
+                            children: [
+                              const EmptyWidget(
+                                  message: 'Hiện không có cảnh báo cần xử lý'),
+                              const SizedBox(height: 20),
+                              PrimaryButton(
+                                title: 'Kiểm tra danh sách cảnh báo',
+                                buttonHeight: 50,
+                                onPressed: () => cubit.getWarningList(),
+                              )
+                            ],
+                          ),
+                        )
+                      : waitingProcessListView(list),
+                ),
               );
             },
           );

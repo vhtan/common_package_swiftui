@@ -20,6 +20,7 @@ abstract class TempFormResponse with _$TempFormResponse {
     double? quantity,
     String? currency,
     String? note,
+    String? code,
   }) = _TempFormResponse;
 
   factory TempFormResponse.fromJson(Map<String, dynamic> json) =>

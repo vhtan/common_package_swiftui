@@ -127,19 +127,6 @@ class MainCubit extends GenericCubit<MainState> {
     }
   }
 
-  Future<void> totalUnreadNotificationTrip() async {
-    emit(
-      GenericCubitState.loading(),
-    );
-    try {
-      await repository.totalUnreadNotification();
-    } on DioException catch (e) {
-      emit(
-        GenericCubitState.failure(e.message ?? 'Error'),
-      );
-    }
-  }
-
   void editNewTrip(String id) {
     emit(
       GenericCubitState.success(null),
@@ -173,12 +160,11 @@ class MainCubit extends GenericCubit<MainState> {
 
   void getEmergencyNotificationList() async {
     final response = await repository.getNotificationList(true);
-    logger.d('getEmergencyNotificationList $response');
     try {
       emit(
         GenericCubitState.success(
           EmergencyNotificationListSuccess(
-            list: response,
+            list: response.where((element) => element.read == false).toList(),
           ),
         ),
       );

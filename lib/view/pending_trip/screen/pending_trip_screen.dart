@@ -33,7 +33,7 @@ class PendingTripScreen extends StatelessWidget {
             ),
             const SizedBox(width: 10),
             Text(
-              tempForm.routeId ?? '',
+              tempForm.code ?? '',
               style: textDefault,
             ),
           ],

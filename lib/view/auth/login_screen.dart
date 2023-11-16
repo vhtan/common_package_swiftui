@@ -6,6 +6,7 @@ import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/snack_bar/error_snack_bar.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/common/widget/text_input.dart';
+import 'package:mvvm_cubit/config/app_config.dart';
 import 'package:mvvm_cubit/core/app_asset.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/data/request/auth/login_request.dart';
@@ -92,73 +93,76 @@ class _LoginScreenState extends State<LoginScreen> {
           builder: (context, state) {
             return BlocBuilder<AuthCubit, GenericCubitState>(
               builder: (context, state) {
-                return SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 20),
-                        // Text(environment.fullUrl()),
-                        Image.asset(
-                          AppAsset.appLogo,
-                          height: 50,
-                        ),
-                        const SizedBox(height: 40),
-                        TextInput(
-                          keyboardType: TextInputType.emailAddress,
-                          hint: 'Nhập tên đăng nhập',
-                          labelText: 'Tên đăng nhập',
-                          icon: const Icon(Icons.person),
-                          obscureText: false,
-                          onChanged: (value) {
-                            setState(() {
-                              _username = value;
-                            });
-                          },
-                        ),
-                        const SizedBox(height: 20),
-                        TextInput(
-                          hint: 'Nhập mật khẩu',
-                          labelText: 'Mật khẩu',
-                          icon: const Icon(Icons.lock),
-                          obscureText: true,
-                          maxLines: 1,
-                          onChanged: (value) {
-                            setState(() {
-                              _password = value;
-                            });
-                          },
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        PrimaryButton(
-                          title: 'Đăng nhập',
-                          buttonHeight: 50,
-                          backgroundColor: _isValidLogin()
-                              ? AppColors.primary
-                              : AppColors.textDefaultLight,
-                          onPressed: _isValidLogin()
-                              ? () {
-                                  authCubit.login(
-                                    LoginRequest(
-                                      username: _username,
-                                      password: _password,
-                                    ),
-                                  );
-                                }
-                              : null,
-                          // onPressed: () {
-                          //   authCubit.login(
-                          //     LoginRequest(
-                          //       username: 'loantd',
-                          //       password: 'Abc@123456',
-                          //     ),
-                          //   );
-                          // },
-                        ),
-                      ],
+                return PopScope(
+                  canPop: false,
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 20),
+                          // Text(environment.fullUrl()),
+                          Image.asset(
+                            AppAsset.appLogo,
+                            height: 50,
+                          ),
+                          const SizedBox(height: 40),
+                          TextInput(
+                            keyboardType: TextInputType.emailAddress,
+                            hint: 'Nhập tên đăng nhập',
+                            labelText: 'Tên đăng nhập',
+                            icon: const Icon(Icons.person),
+                            obscureText: false,
+                            onChanged: (value) {
+                              setState(() {
+                                _username = value;
+                              });
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                          TextInput(
+                            hint: 'Nhập mật khẩu',
+                            labelText: 'Mật khẩu',
+                            icon: const Icon(Icons.lock),
+                            obscureText: true,
+                            maxLines: 1,
+                            onChanged: (value) {
+                              setState(() {
+                                _password = value;
+                              });
+                            },
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          PrimaryButton(
+                            title: 'Đăng nhập',
+                            buttonHeight: 50,
+                            backgroundColor: _isValidLogin()
+                                ? AppColors.primary
+                                : AppColors.textDefaultLight,
+                            // onPressed: _isValidLogin()
+                            //     ? () {
+                            //         authCubit.login(
+                            //           LoginRequest(
+                            //             username: _username,
+                            //             password: _password,
+                            //           ),
+                            //         );
+                            //       }
+                            //     : null,
+                            onPressed: () {
+                              authCubit.login(
+                                LoginRequest(
+                                  username: 'user03',
+                                  password: 'Abc@123456',
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );

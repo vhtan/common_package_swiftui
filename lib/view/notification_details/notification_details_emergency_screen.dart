@@ -53,19 +53,23 @@ class NotificationEmergencyDetailsScreen extends StatelessWidget {
                 if (notification.message != null)
                   Padding(
                     padding: const EdgeInsets.all(10),
-                    child: Flexible(
-                      child: Html(
-                        data: notification.message,
-                        style: {
-                          'body': Style(
-                            color: AppColors.textDefault,
-                            fontSize:
-                                FontSize(16.0), // Set your custom font size
-                          ),
-                        },
-                      ),
+                    child: Html(
+                      data: notification.message,
+                      style: {
+                        'body': Style(
+                          color: AppColors.textDefault,
+                          fontSize: FontSize(16.0), // Set your custom font size
+                        ),
+                      },
                     ),
                   )
+                // if (notification.message != null)
+                //   Padding(
+                //     padding: const EdgeInsets.all(10),
+                //     child: Text(
+                //       notification.message ?? '',
+                //     ),
+                //   )
               ],
             ),
           ),

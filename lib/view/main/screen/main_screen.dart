@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
@@ -20,6 +19,7 @@ import 'package:mvvm_cubit/data/model/warning/warning_response.dart';
 import 'package:mvvm_cubit/data/request/check_in/check_in_request.dart';
 import 'package:mvvm_cubit/di.dart';
 import 'package:mvvm_cubit/main.dart';
+import 'package:mvvm_cubit/manager/hive_storage_manager.dart';
 import 'package:mvvm_cubit/view/add_trip/add_trip_screen.dart';
 import 'package:mvvm_cubit/view/auth/login_screen.dart';
 import 'package:mvvm_cubit/view/check_point/check_point_screen.dart';
@@ -30,7 +30,6 @@ import 'package:mvvm_cubit/view/warnings_handler/screen/warnings_handler_screen.
 import 'package:mvvm_cubit/view/webview/webview_screen.dart';
 import 'package:mvvm_cubit/viewmodel/main/main_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/main/main_state.dart';
-import 'package:mvvm_cubit/viewmodel/notification/notification_cubit.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -39,7 +38,7 @@ class MainScreen extends StatefulWidget {
   State<StatefulWidget> createState() => MainScreenState();
 }
 
-class MainScreenState extends State<MainScreen> {
+class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   Location location = Location();
 
   TripResponse? _trip;
@@ -50,9 +49,11 @@ class MainScreenState extends State<MainScreen> {
   LocationData? _locationData;
 
   final _cubit = MainCubit(repository: di());
-  final _notificationCubit = NotificationCubit(repository: di());
   static Timer? _fetchTrip;
   static Timer? _fetchWarning;
+  final HiveStorageManager _hiveStorageManager = di();
+  double _arrivalLimitRadius = 0;
+  final _timerDuration = const Duration(seconds: 10);
 
   @override
   void initState() {
@@ -60,12 +61,15 @@ class MainScreenState extends State<MainScreen> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _cubit.getTrip();
-      _cubit.getWarningList();
-      _cubit.getTempFormDetails();
+      // _cubit.getWarningList();
+      // _cubit.getTempFormDetails();
+      startFetchingWarning();
       _cubit.getEmergencyNotificationList();
+
       checkLocationPermission();
-      Future.delayed(const Duration(seconds: 5), () {
+      Future.delayed(const Duration(seconds: 2), () {
         getCurrentLocation();
+        _cubit.getEmergencyNotificationList();
       });
     });
     AuthManager.setTokenExpiredCallback(() {
@@ -76,16 +80,25 @@ class MainScreenState extends State<MainScreen> {
       );
     });
 
-    final distance =
-        FirebaseRemoteConfig.instance.getDouble('minimum_finish_distance');
-    logger.d('distance $distance');
+    _hiveStorageManager.getLoginData().then(
+      (value) {
+        setState(() {
+          _arrivalLimitRadius = value?.arrivalLimitRadius ?? 0;
+        });
+      },
+    );
+
+    WidgetsBinding.instance.addObserver(this);
   }
 
   void startFetchingTrip() {
     cancelFetchingTrip();
-    _fetchTrip = Timer.periodic(const Duration(seconds: 10), (timer) {
-      _cubit.getTrip();
-    });
+    _fetchTrip = Timer.periodic(
+      _timerDuration,
+      (timer) {
+        // _cubit.getTrip();
+      },
+    );
   }
 
   static void cancelFetchingTrip() {
@@ -95,22 +108,37 @@ class MainScreenState extends State<MainScreen> {
 
   void startFetchingWarning() {
     cancelFetchingWarning();
-    _fetchWarning = Timer.periodic(const Duration(seconds: 10), (timer) {
-      _cubit.getWarningList();
-    });
+    _fetchWarning = Timer.periodic(
+      _timerDuration,
+      (timer) {
+        _cubit.getWarningList();
+        _cubit.getEmergencyNotificationList();
+      },
+    );
   }
 
   @override
   void dispose() {
     cancelFetchingTrip();
     cancelFetchingWarning();
-
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
   static void cancelFetchingWarning() {
     _fetchWarning?.cancel();
     _fetchWarning = null;
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      logger.d('===AppLifecycleState.resumed');
+      startFetchingWarning();
+    } else if (state == AppLifecycleState.inactive) {
+      logger.d('===AppLifecycleState.inactive');
+      cancelFetchingWarning();
+    }
   }
 
   Future<LocationData?> getCurrentLocation() async {
@@ -142,8 +170,6 @@ class MainScreenState extends State<MainScreen> {
     return MultiBlocProvider(
       providers: [
         BlocProvider<MainCubit>(create: (context) => _cubit),
-        BlocProvider<NotificationCubit>(
-            create: (context) => _notificationCubit),
       ],
       child: Scaffold(
         body: BlocConsumer<MainCubit, GenericCubitState>(
@@ -188,21 +214,23 @@ class MainScreenState extends State<MainScreen> {
                 } else if (data is EmergencyNotificationListSuccess) {
                   var list = data.list;
                   final first = list.first;
-
-                  _cubit.readNotification(first.id ?? '');
-                  final dialog = showDialog(
-                    context: context,
-                    builder: (context) => NotificationEmergencyDetailsScreen(
-                      notification: first,
-                    ),
-                    barrierDismissible: false,
-                  );
-                  dialog.then((value) {
-                    if (list.isNotEmpty) {
-                      list.removeAt(0);
-                      _cubit.updateEmergencyNotificationList(list);
-                    }
-                  });
+                  logger.d('EmergencyNotificationListSuccess $list');
+                  if (mounted) {
+                    final dialog = showDialog(
+                      context: context,
+                      builder: (context) => NotificationEmergencyDetailsScreen(
+                        notification: first,
+                      ),
+                      barrierDismissible: false,
+                    );
+                    dialog.then((value) {
+                      _cubit.readNotification(first.id ?? '');
+                      if (list.isNotEmpty) {
+                        list.removeAt(0);
+                        _cubit.updateEmergencyNotificationList(list);
+                      }
+                    });
+                  }
                 }
               default:
                 break;
@@ -260,13 +288,16 @@ class MainScreenState extends State<MainScreen> {
           'longitude': stopPoint.destination?.longitude,
           'latitude': stopPoint.destination?.latitude,
         });
+        logger.d('===locationData $_locationData');
+
         if (_locationData != null) {
-          final distance = FirebaseRemoteConfig.instance
-              .getDouble('minimum_finish_distance');
-          logger.d('distance $distance');
-          final isNeedCheckDistance = distance >= 0;
-          if (isNeedCheckDistance &&
-              calculateDistance(_locationData!, stopPointLocation) < distance) {
+          final isNeedCheckDistance = _arrivalLimitRadius > 0;
+          final calDistance =
+              calculateDistance(_locationData!, stopPointLocation);
+          logger.d('===isNeedCheckDistance $isNeedCheckDistance');
+          logger.d('===calDistance $calDistance');
+          logger.d('===_arrivalLimitRadius $_arrivalLimitRadius');
+          if (isNeedCheckDistance && calDistance > _arrivalLimitRadius) {
             // ignore: use_build_context_synchronously
             showErrorSnackBar(
               context,
@@ -320,14 +351,6 @@ extension _MainScreenDeliveryList on MainScreenState {
           PrimaryButton(
             title: 'Thêm phiếu yêu cầu',
             buttonHeight: 50,
-            // onPressed: () => showDialog(
-            //   context: context,
-            //   barrierDismissible: false,
-            //   builder: (context) => const NotificationPopupDialog(
-            //     title: 'Thông báo khẩn',
-            //     description: 'Tất cá áp tải tập trung về hội sở',
-            //   ),
-            // ),
             onPressed: () => showDialog<String>(
               context: context,
               builder: (context) => AddTripScreen(

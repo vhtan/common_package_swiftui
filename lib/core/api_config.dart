@@ -31,7 +31,7 @@ class ApiConfig {
   static const String handleTempForm = '/routing/job/process';
 
   static const String totalUnreadNotification =
-      '/app/api/v1/notification/count?isRead=false';
+      '/notification/count?isRead=false';
 
   static String chattingList(String id) {
     return '/warning/list/chatting?warningId=$id';
