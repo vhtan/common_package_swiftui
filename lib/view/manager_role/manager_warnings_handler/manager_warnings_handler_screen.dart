@@ -110,8 +110,10 @@ class _ManagerWarningsHandlerScreen
                                         top: 10,
                                       ),
                                       child: _MessageWidget(
-                                        userName: item.userCreated?.name ?? '',
-                                        message: item.text ?? '',
+                                        userName: item.userCreated?.name
+                                                ?.decodeHtml ??
+                                            '',
+                                        message: item.text?.decodeHtml ?? '',
                                         dateCreated: item.dateCreated ?? 0,
                                         roleCode: item.userCreated?.role?.code,
                                       ),
@@ -180,7 +182,7 @@ class _ManagerWarningsHandlerScreen
       children: [
         const SizedBox(width: 20),
         Text(
-          details?.warningMessage ?? '',
+          details?.warningMessage?.decodeHtml ?? '',
           style: headLine4,
         ),
         const Spacer(),

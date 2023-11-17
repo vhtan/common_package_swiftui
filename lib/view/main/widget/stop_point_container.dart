@@ -36,7 +36,7 @@ class StopPointContainer extends StatelessWidget {
           children: [
             const SizedBox(width: 20),
             Text(
-              stopPoint.stopPointType ?? '',
+              stopPoint.stopPointType?.decodeHtml ?? '',
               style: headLine2,
             ),
             const Spacer(),
@@ -50,7 +50,7 @@ class StopPointContainer extends StatelessWidget {
               const SizedBox(width: 10),
               Flexible(
                 child: Text(
-                  stopPoint.destination?.address ?? '',
+                  stopPoint.destination?.address?.decodeHtml ?? '',
                   style: textDefault,
                   maxLines: 2,
                 ),
@@ -154,7 +154,7 @@ class StopPointContainer extends StatelessWidget {
             children: [
               const SizedBox(width: 20),
               Text(
-                routingJob.placeReceive ?? '',
+                routingJob.placeReceive?.decodeHtml ?? '',
                 style: headLine2,
               ),
               const Spacer(),
@@ -190,7 +190,7 @@ class StopPointContainer extends StatelessWidget {
             children: [
               const SizedBox(width: 20),
               Text(
-                'Loại PYC: ${routingJob.priorityLevel ?? ''}',
+                'Loại PYC: ${routingJob.priorityLevel?.decodeHtml ?? ''}',
                 style: headLine3,
               ),
               const Spacer(),
@@ -208,7 +208,7 @@ class StopPointContainer extends StatelessWidget {
           children: [
             const SizedBox(width: 20),
             Text(
-              item.attribute ?? '',
+              item.attribute?.decodeHtml ?? '',
               style: headLine2,
             ),
             const Spacer(),

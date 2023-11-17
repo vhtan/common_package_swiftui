@@ -235,7 +235,7 @@ class _AddTripScreen extends State<AddTripScreen> {
                                           initialItem: _purpose,
                                           items: _purposes,
                                           displayTextBuilder: (value) =>
-                                              value.name ?? '',
+                                              value.name?.decodeHtml ?? '',
                                           onChanged: (value) {
                                             setState(() {
                                               _purpose = value;
@@ -343,7 +343,7 @@ class _AddTripScreen extends State<AddTripScreen> {
                                           initialItem: _guard,
                                           items: _guards,
                                           displayTextBuilder: (value) =>
-                                              value.name ?? '',
+                                              value.name?.decodeHtml ?? '',
                                           onChanged: (value) {
                                             setState(() {
                                               _guard = value;
@@ -365,7 +365,7 @@ class _AddTripScreen extends State<AddTripScreen> {
                                           initialItem: _driver,
                                           items: _drivers,
                                           displayTextBuilder: (value) =>
-                                              value.name ?? '',
+                                              value.name?.decodeHtml ?? '',
                                           onChanged: (value) {
                                             setState(() {
                                               _driver = value;

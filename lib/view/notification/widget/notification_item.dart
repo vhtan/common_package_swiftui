@@ -46,14 +46,14 @@ class NotificationItem extends StatelessWidget {
                   overflow: TextOverflow.clip,
                 ),
                 Text(
-                  notification.title ?? '',
+                  notification.title!.decodeHtml,
                   style: headLine4,
                   maxLines: 1,
                   overflow: TextOverflow.clip,
                 ),
                 if (notification.message != null)
                   Html(
-                    data: notification.message,
+                    data: notification.message!.decodeHtml,
                   ),
               ],
             ),

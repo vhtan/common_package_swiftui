@@ -6,7 +6,6 @@ import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/snack_bar/error_snack_bar.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/common/widget/text_input.dart';
-import 'package:mvvm_cubit/config/app_config.dart';
 import 'package:mvvm_cubit/core/app_asset.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/data/request/auth/login_request.dart';
@@ -142,24 +141,24 @@ class _LoginScreenState extends State<LoginScreen> {
                             backgroundColor: _isValidLogin()
                                 ? AppColors.primary
                                 : AppColors.textDefaultLight,
-                            // onPressed: _isValidLogin()
-                            //     ? () {
-                            //         authCubit.login(
-                            //           LoginRequest(
-                            //             username: _username,
-                            //             password: _password,
-                            //           ),
-                            //         );
-                            //       }
-                            //     : null,
-                            onPressed: () {
-                              authCubit.login(
-                                LoginRequest(
-                                  username: 'user03',
-                                  password: 'Abc@123456',
-                                ),
-                              );
-                            },
+                            onPressed: _isValidLogin()
+                                ? () {
+                                    authCubit.login(
+                                      LoginRequest(
+                                        username: _username,
+                                        password: _password,
+                                      ),
+                                    );
+                                  }
+                                : null,
+                            // onPressed: () {
+                            //   authCubit.login(
+                            //     LoginRequest(
+                            //       username: 'user03',
+                            //       password: 'Abc@123456',
+                            //     ),
+                            //   );
+                            // },
                           ),
                         ],
                       ),

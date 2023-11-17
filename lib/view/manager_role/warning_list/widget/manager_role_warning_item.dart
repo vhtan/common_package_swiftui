@@ -39,7 +39,7 @@ class ManagerRoleWarningItem extends StatelessWidget {
             const SizedBox(width: 8.0), // Add spacing between elements
             Expanded(
               child: Text(
-                warning.warningMessage ?? '',
+                warning.warningMessage?.decodeHtml ?? '',
                 style: textDefault,
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis, // Specify an overflow property

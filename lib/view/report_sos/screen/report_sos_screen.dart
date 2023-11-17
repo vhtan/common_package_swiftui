@@ -141,7 +141,7 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
                                     ? DropDown<ChildSOSResponse>(
                                         items: reasons,
                                         displayTextBuilder: (value) =>
-                                            value.name ?? '',
+                                            value.name?.decodeHtml ?? '',
                                         onChanged: (value) {
                                           setState(() {
                                             selectedReason = value;

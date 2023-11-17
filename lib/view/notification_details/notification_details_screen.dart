@@ -1,8 +1,7 @@
-import 'package:html_unescape/html_unescape.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
+import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/data/model/notification/notification_response.dart';
 
 class NotificationDetailsScreen extends StatelessWidget {
@@ -58,8 +57,7 @@ class NotificationDetailsScreen extends StatelessWidget {
                 const SizedBox(height: 20.0),
                 if (notification.message != null)
                   Flexible(
-                    child: Html(
-                        data: decodeHtmlEntities(notification.message ?? '')),
+                    child: Html(data: notification.message?.decodeHtml),
                   )
               ],
             ),
@@ -69,16 +67,11 @@ class NotificationDetailsScreen extends StatelessWidget {
     );
   }
 
-  String decodeHtmlEntities(String htmlString) {
-    HtmlUnescape htmlUnescape = HtmlUnescape();
-    return htmlUnescape.convert(htmlString);
-  }
-
   Widget get _title {
     return Align(
       alignment: Alignment.center,
       child: Text(
-        notification.title ?? '',
+        notification.title!.decodeHtml,
         style: headLine1,
       ),
     );

@@ -3,6 +3,7 @@ import 'package:mvvm_cubit/core/app_asset.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/data/model/auth/login_response.dart';
 import 'package:mvvm_cubit/di.dart';
+import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/manager/hive_storage_manager.dart';
 
 class AccountScreen extends StatefulWidget {
@@ -44,21 +45,21 @@ class _AccountScreenState extends State<AccountScreen> {
             height: 20,
           ),
           Text(
-            _loginResponse?.name ?? '',
+            _loginResponse?.name?.decodeHtml ?? '',
             style: headLine1,
           ),
           const SizedBox(
             height: 8,
           ),
           Text(
-            _loginResponse?.email ?? '',
+            _loginResponse?.email?.decodeHtml ?? '',
             style: textDefault,
           ),
           const SizedBox(
             height: 20,
           ),
           Text(
-            _loginResponse?.role?.name ?? '',
+            _loginResponse?.role?.name?.decodeHtml ?? '',
             style: textDefault,
           )
         ],

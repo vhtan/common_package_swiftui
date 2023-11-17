@@ -54,7 +54,7 @@ class NotificationEmergencyDetailsScreen extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.all(10),
                     child: Html(
-                      data: notification.message,
+                      data: notification.message!.decodeHtml,
                       style: {
                         'body': Style(
                           color: AppColors.textDefault,
@@ -82,7 +82,7 @@ class NotificationEmergencyDetailsScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.only(left: 20, right: 20),
       child: Text(
-        notification.title ?? '',
+        notification.title?.decodeHtml ?? '',
         style: headLine1,
       ),
     );

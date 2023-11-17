@@ -106,8 +106,10 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen> {
                                 ..._messageList.map(
                                   (item) {
                                     return _MessageWidget(
-                                      userName: item.userCreated?.name ?? '',
-                                      message: item.text ?? '',
+                                      userName:
+                                          item.userCreated?.name?.decodeHtml ??
+                                              '',
+                                      message: item.text?.decodeHtml ?? '',
                                       dateCreated: item.dateCreated ?? 0,
                                       roleCode: item.userCreated?.role?.code,
                                     );
@@ -162,7 +164,7 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen> {
         const SizedBox(width: 20),
         Flexible(
           child: Text(
-            details?.warningMessage ?? '',
+            details?.warningMessage?.decodeHtml ?? '',
             style: headLine4,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,

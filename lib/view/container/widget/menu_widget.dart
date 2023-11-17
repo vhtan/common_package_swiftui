@@ -39,7 +39,7 @@ class MenuScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16.0),
               Text(
-                loginResponse?.name ?? '',
+                loginResponse?.name?.decodeHtml ?? '',
                 style: const TextStyle(color: Colors.white),
               ),
               const SizedBox(height: 20.0),

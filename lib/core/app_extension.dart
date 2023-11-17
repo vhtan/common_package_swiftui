@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:ffi';
 
+import 'package:html_unescape/html_unescape.dart';
+import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/core/app_asset.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -122,4 +124,12 @@ extension _IntToDateTime on int {
 
   DateTime get _dateFromMillisecond =>
       DateTime.fromMillisecondsSinceEpoch(this);
+}
+
+extension HtmlDecode on String {
+  String get decodeHtml {
+    HtmlUnescape htmlUnescape = HtmlUnescape();
+    logger.d(htmlUnescape.convert(this));
+    return htmlUnescape.convert(this);
+  }
 }

@@ -48,19 +48,19 @@ class PendingTripScreen extends StatelessWidget {
         PendingTripItemRowWidget(
           icon: const Icon(Icons.tag),
           title: 'Mục đích:',
-          description: tempForm.purpose?.name ?? '',
+          description: tempForm.purpose?.name?.decodeHtml ?? '',
         ),
         const SizedBox(height: 10),
         PendingTripItemRowWidget(
           icon: const Icon(Icons.drive_eta),
-          title: tempForm.driver?.role?.name ?? '',
-          description: tempForm.driver?.name ?? '',
+          title: tempForm.driver?.role?.name?.decodeHtml ?? '',
+          description: tempForm.driver?.name?.decodeHtml ?? '',
         ),
         const SizedBox(height: 10),
         PendingTripItemRowWidget(
           icon: const Icon(Icons.security),
-          title: tempForm.bodyguard?.role?.name ?? '',
-          description: tempForm.bodyguard?.name ?? '',
+          title: tempForm.bodyguard?.role?.name?.decodeHtml ?? '',
+          description: tempForm.bodyguard?.name?.decodeHtml ?? '',
         ),
         const SizedBox(height: 10),
         Row(

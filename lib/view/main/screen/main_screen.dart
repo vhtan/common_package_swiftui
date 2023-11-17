@@ -61,10 +61,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _cubit.getTrip();
-      // _cubit.getWarningList();
-      // _cubit.getTempFormDetails();
       startFetchingWarning();
-      _cubit.getEmergencyNotificationList();
 
       checkLocationPermission();
       Future.delayed(const Duration(seconds: 2), () {
@@ -113,6 +110,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
       (timer) {
         _cubit.getWarningList();
         _cubit.getEmergencyNotificationList();
+        _cubit.getTempFormDetails();
       },
     );
   }
@@ -425,7 +423,7 @@ extension _MainScreenDeliveryList on MainScreenState {
             const SizedBox(width: 8.0),
             Expanded(
               child: Text(
-                warning.warningMessage ?? '',
+                warning.warningMessage?.decodeHtml ?? '',
                 style: textDefault,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
