@@ -19,7 +19,26 @@ import 'package:mvvm_cubit/view/manager_role/warning_list/screen/manager_role_wa
 
 import 'di.dart';
 
-void main() async {
+void main() {
+  runApp(const MyApp1());
+}
+
+class MyApp1 extends StatelessWidget {
+  const MyApp1({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.lightAppTheme,
+      home: Center(
+        child: Text(environment.environmentConfig.toString()),
+      ),
+    );
+  }
+}
+
+void main1() async {
   WidgetsFlutterBinding.ensureInitialized();
   await init();
   await di<HiveStorageManager>().initHive();
