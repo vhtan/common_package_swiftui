@@ -88,37 +88,43 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen> {
         builder: (context, state) {
           return BlocBuilder<WarningsHandlerCubit, GenericCubitState>(
             builder: (context, state) {
-              return Scaffold(
-                appBar: _appBar,
-                backgroundColor: AppColors.white,
-                bottomNavigationBar: _sendMessage,
-                body: KeyboardActions(
-                  tapOutsideBehavior: TapOutsideBehavior.opaqueDismiss,
-                  config: _keyboardActionsConfig(context),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 20.0),
-                        _warningMessage(_details),
-                        const SizedBox(height: 10.0),
-                        _systemMessage(_details),
-                        systemWarning(_details?.level),
-                        const Divider(),
-                        ..._messageList.map(
-                          (item) {
-                            return _MessageWidget(
-                              userName:
-                                  item.userCreated?.name?.decodeHtml ?? '',
-                              message: item.text?.decodeHtml ?? '',
-                              dateCreated: item.dateCreated ?? 0,
-                              roleCode: item.userCreated?.role?.code,
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 20.0),
-                      ],
+              return SafeArea(
+                child: Scaffold(
+                  resizeToAvoidBottomInset: true,
+                  appBar: _appBar,
+                  bottomNavigationBar: Padding(
+                    padding: MediaQuery.of(context).viewInsets,
+                    child: _sendMessage,
+                  ),
+                  backgroundColor: AppColors.white,
+                  body: KeyboardActions(
+                    tapOutsideBehavior: TapOutsideBehavior.opaqueDismiss,
+                    config: _keyboardActionsConfig(context),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 20.0),
+                          _warningMessage(_details),
+                          const SizedBox(height: 10.0),
+                          _systemMessage(_details),
+                          systemWarning(_details?.level),
+                          const Divider(),
+                          ..._messageList.map(
+                            (item) {
+                              return _MessageWidget(
+                                userName:
+                                    item.userCreated?.name?.decodeHtml ?? '',
+                                message: item.text?.decodeHtml ?? '',
+                                dateCreated: item.dateCreated ?? 0,
+                                roleCode: item.userCreated?.role?.code,
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 20.0),
+                        ],
+                      ),
                     ),
                   ),
                 ),
