@@ -52,10 +52,12 @@ class _LoginScreenState extends State<LoginScreen> {
             logger.d('===loading = $state');
             switch (state.status) {
               case Status.loading:
-                showProgressDialog(
-                  context,
-                  progressKey,
-                );
+                if (progressKey.currentContext == null) {
+                  showProgressDialog(
+                    context,
+                    progressKey,
+                  );
+                }
               case Status.failure:
                 if (progressKey.currentContext != null) {
                   logger.d('message $progressKey');

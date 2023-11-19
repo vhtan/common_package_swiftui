@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
+import 'package:mvvm_cubit/common/dialog/progress_dialog.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/widget/empty_widget.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
@@ -21,10 +22,15 @@ class NotificationScreen extends StatefulWidget {
 class _NotificationScreen extends State<NotificationScreen> {
   final _cubit = NotificationCubit(repository: di());
 
+  final GlobalKey<State> progressKey = GlobalKey<State>();
+
   @override
   void initState() {
     super.initState();
-    _cubit.getNotificationList();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _cubit.getNotificationList();
+    });
   }
 
   @override
@@ -32,7 +38,22 @@ class _NotificationScreen extends State<NotificationScreen> {
     return BlocProvider(
       create: (context) => _cubit,
       child: BlocConsumer<NotificationCubit, GenericCubitState>(
-        listener: (context, state) {},
+        listener: (context, state) {
+          logger.d('=====Notification $state');
+          switch (state.status) {
+            case Status.loading:
+              if (progressKey.currentContext == null) {
+                showProgressDialog(
+                  context,
+                  progressKey,
+                );
+              }
+            default:
+              if (progressKey.currentContext != null) {
+                Navigator.pop(context);
+              }
+          }
+        },
         builder: (context, state) {
           return BlocBuilder<NotificationCubit, GenericCubitState>(
             builder: (context, state) {
@@ -40,7 +61,7 @@ class _NotificationScreen extends State<NotificationScreen> {
               if (state is GetNotificationListSuccess) {
                 list = state.list;
               }
-              logger.d('=====NotificationScreen $list');
+
               if (list.isNotEmpty) {
                 return Padding(
                   padding: const EdgeInsets.only(top: 0, bottom: 20),

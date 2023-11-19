@@ -11,7 +11,10 @@ class NotificationCubit extends Cubit<GenericCubitState<dynamic>> {
   NotificationCubit({required this.repository})
       : super(GenericCubitState.loading());
 
-  void getNotificationList() async {
+  Future<void> getNotificationList() async {
+    emit(
+      GenericCubitState.loading(),
+    );
     final response = await repository.getNotificationList(false);
     try {
       emit(
