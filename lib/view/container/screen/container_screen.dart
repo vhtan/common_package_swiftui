@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:diffutil_dart/diffutil.dart' as diffutil;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
@@ -7,6 +7,7 @@ import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/data/model/auth/login_response.dart';
 import 'package:mvvm_cubit/data/model/container/menu_type.dart';
+import 'package:mvvm_cubit/data/model/notification/notification_response.dart';
 import 'package:mvvm_cubit/data/notification_service/notification_service.dart';
 import 'package:mvvm_cubit/di.dart';
 import 'package:mvvm_cubit/manager/hive_storage_manager.dart';
@@ -20,6 +21,7 @@ import 'package:mvvm_cubit/viewmodel/auth/auth_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/container/container_cubit.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shrink_sidemenu/shrink_sidemenu.dart';
+import 'package:mvvm_cubit/view/notification_details/notification_details_emergency_screen.dart';
 
 class ContainerScreen extends StatefulWidget {
   const ContainerScreen({super.key});
@@ -32,7 +34,7 @@ class _ContainerScreenState extends State<ContainerScreen>
     with WidgetsBindingObserver {
   bool isOpened = false;
   String title = 'Lộ trình';
-  ContainerCubit containerCubit = ContainerCubit(repository: di());
+  final _containerCubit = ContainerCubit(repository: di());
   final HiveStorageManager _hiveStorageManager = di();
   AuthCubit authCubit = AuthCubit(
     repository: di(),
@@ -43,9 +45,13 @@ class _ContainerScreenState extends State<ContainerScreen>
 
   MenuType _menuType = MenuType.trip;
 
+  List<NotificationResponse> _emergencyList = [];
+  bool _isShowEmergency = false;
   final GlobalKey<SideMenuState> _sideMenuKey = GlobalKey<SideMenuState>();
 
   int _totalUnreadNotification = 0;
+  static Timer? _fetchEmergency;
+  final _timerDuration = const Duration(seconds: 10);
 
   PackageInfo _packageInfo = PackageInfo(
     appName: 'Unknown',
@@ -90,12 +96,35 @@ class _ContainerScreenState extends State<ContainerScreen>
 
     _initPackageInfo();
 
-    containerCubit.totalUnreadNotification();
+    _containerCubit.totalUnreadNotification();
     WidgetsBinding.instance.addObserver(this);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      startFetchingEmergency();
+      Future.delayed(const Duration(seconds: 2), () {
+        _containerCubit.getEmergencyNotificationList();
+      });
+    });
+  }
+
+  void startFetchingEmergency() {
+    cancelFetchingEmergency();
+    _fetchEmergency = Timer.periodic(
+      _timerDuration,
+      (timer) {
+        _containerCubit.getEmergencyNotificationList();
+      },
+    );
+  }
+
+  static void cancelFetchingEmergency() {
+    _fetchEmergency?.cancel();
+    _fetchEmergency = null;
   }
 
   @override
   void dispose() {
+    cancelFetchingEmergency();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -110,14 +139,16 @@ class _ContainerScreenState extends State<ContainerScreen>
   Future<void> _initializePushNotifications() async {
     _pushNotificationService = PushNotificationService();
     await _pushNotificationService.initialize(
-      (token) => containerCubit.updatePushToken(token),
+      (token) => _containerCubit.updatePushToken(token),
     );
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      containerCubit.totalUnreadNotification();
+      startFetchingEmergency();
+    } else if (state == AppLifecycleState.inactive) {
+      cancelFetchingEmergency();
     }
   }
 
@@ -125,10 +156,10 @@ class _ContainerScreenState extends State<ContainerScreen>
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<ContainerCubit>(create: (context) => containerCubit),
+        BlocProvider<ContainerCubit>(create: (context) => _containerCubit),
         BlocProvider<AuthCubit>(create: (context) => authCubit),
       ],
-      child: BlocConsumer<ContainerCubit, GenericCubitState<dynamic>>(
+      child: BlocConsumer<ContainerCubit, GenericCubitState>(
         listener: (context, state) {
           final data = state.data;
           if (data is MenuType) {
@@ -136,6 +167,40 @@ class _ContainerScreenState extends State<ContainerScreen>
           } else if (data is TotalUnreadNotificationMainState) {
             logger.d('==== data ${data.total}');
             _totalUnreadNotification = data.total;
+          } else if (data is EmergencyNotificationListSuccess) {
+            var list = data.list;
+            logger.d('===list $list');
+            logger.d('===elis $_emergencyList');
+            var listDiff = diffutil
+                .calculateListDiff(
+                  _emergencyList,
+                  list,
+                )
+                .getUpdates();
+
+            logger.d('===listDiff ${listDiff.toList()}');
+            if (list.isNotEmpty &&
+                _emergencyList.isNotEmpty &&
+                listDiff.isEmpty) {
+              return;
+            } else {
+              if (_isShowEmergency) {
+                Navigator.pop(context);
+              }
+            }
+            _emergencyList = List.from(list);
+            final first = list.first;
+            _isShowEmergency = true;
+            showEmergencyDialog(first).then(
+              (value) {
+                _containerCubit.readNotification(first.id ?? '');
+                _isShowEmergency = false;
+                if (list.isNotEmpty) {
+                  list.removeAt(0);
+                  _containerCubit.updateEmergencyNotificationList(list);
+                }
+              },
+            );
           }
         },
         builder: (context, state) {
@@ -252,6 +317,16 @@ class _ContainerScreenState extends State<ContainerScreen>
       default:
         return const MainScreen();
     }
+  }
+
+  Future<dynamic> showEmergencyDialog(NotificationResponse item) {
+    return showDialog(
+      context: context,
+      builder: (context) => NotificationEmergencyDetailsScreen(
+        notification: item,
+      ),
+      barrierDismissible: false,
+    );
   }
 
   void navigateTo(Widget screen) {

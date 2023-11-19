@@ -15,12 +15,16 @@ class StopPointContainer extends StatelessWidget {
     super.key,
     required this.stopPoint,
     required this.onArrived,
+    required this.onConfirm,
     required this.onFinished,
   });
 
   final StopPointResponse stopPoint;
   final ValueChanged<StopPointResponse> onArrived;
+  final ValueChanged<int> onConfirm;
   final ValueChanged<int> onFinished;
+
+  final String _confirmText = "Điểm dừng trả quỹ của ĐVTLT";
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +68,9 @@ class StopPointContainer extends StatelessWidget {
           _routingDetailBalances(stopPoint.routingDetailBalances ?? []),
         if (stopPoint.imagePath != null) const SizedBox(height: 10),
         if (stopPoint.imagePath != null) _imageWidget(stopPoint.imagePath!),
-        if (stopPoint.status?.canCheckIn() == true) const SizedBox(height: 20),
+        if (stopPoint.stopPointType == _confirmText &&
+            stopPoint.status == StopPointStatus.PRO)
+          _confirmButtonWithProStatus(),
         if (stopPoint.status?.canCheckIn() == true) _canCheckInButton(),
         const SizedBox(height: 20),
       ],
@@ -106,42 +112,59 @@ class StopPointContainer extends StatelessWidget {
     );
   }
 
-  Widget _canCheckInButton() {
-    return Row(
-      children: [
-        const SizedBox(width: 20),
-        Flexible(
-          child: PrimaryButton(
-            title: stopPoint.imagePath != null ? 'Đã đến nơi' : 'Đến nơi',
-            buttonHeight: 50,
-            backgroundColor: stopPoint.imagePath != null
-                ? AppColors.white
-                : AppColors.primary,
-            onPressed: (stopPoint.imagePath != null)
-                ? null
-                : () {
-                    onArrived(stopPoint);
-                  },
-          ),
+  Widget _confirmButtonWithProStatus() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 20),
+      child: Flexible(
+        child: PrimaryButton(
+          title: 'Xác nhận',
+          buttonHeight: 50,
+          backgroundColor: AppColors.primary,
+          onPressed: () {
+            onConfirm(stopPoint.jobRequestId!);
+          },
         ),
-        if (stopPoint.jobRequestId != null) const SizedBox(width: 20),
-        if (stopPoint.jobRequestId != null)
+      ),
+    );
+  }
+
+  Widget _canCheckInButton() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 20),
+      child: Row(
+        children: [
           Flexible(
             child: PrimaryButton(
-              title: 'Hoàn thành',
+              title: stopPoint.imagePath != null ? 'Đã đến nơi' : 'Đến nơi',
               buttonHeight: 50,
-              backgroundColor: (stopPoint.imagePath != null)
-                  ? AppColors.primary
-                  : AppColors.textDefaultLight,
+              backgroundColor: stopPoint.imagePath != null
+                  ? AppColors.white
+                  : AppColors.primary,
               onPressed: (stopPoint.imagePath != null)
-                  ? () {
-                      onFinished(stopPoint.jobRequestId!);
-                    }
-                  : null,
+                  ? null
+                  : () {
+                      onArrived(stopPoint);
+                    },
             ),
           ),
-        const SizedBox(width: 20),
-      ],
+          if (stopPoint.jobRequestId != null) const SizedBox(width: 20),
+          if (stopPoint.jobRequestId != null)
+            Flexible(
+              child: PrimaryButton(
+                title: 'Hoàn thành',
+                buttonHeight: 50,
+                backgroundColor: (stopPoint.imagePath != null)
+                    ? AppColors.primary
+                    : AppColors.textDefaultLight,
+                onPressed: (stopPoint.imagePath != null)
+                    ? () {
+                        onFinished(stopPoint.jobRequestId!);
+                      }
+                    : null,
+              ),
+            ),
+        ],
+      ),
     );
   }
 

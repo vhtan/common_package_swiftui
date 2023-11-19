@@ -112,12 +112,22 @@ extension _TabBarView on _ManagerRoleWrningListScreen {
         return ManagerRoleWarningItem(
           warning: list[index],
           isProcessed: false,
-          onTap: () => showDialog(
-            context: context,
-            builder: (context) => ManagerWarningsHandlerScreen(
-              id: list[index].id ?? '',
-            ),
-          ),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ManagerWarningsHandlerScreen(
+                  id: list[index].id ?? '',
+                ),
+              ),
+            );
+          },
+          // onTap: () => showDialog(
+          //   context: context,
+          //   builder: (context) => ManagerWarningsHandlerScreen(
+          //     id: list[index].id ?? '',
+          //   ),
+          // ),
         );
       },
     );

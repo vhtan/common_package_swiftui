@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/data/model/container/menu_type.dart';
+import 'package:mvvm_cubit/data/model/notification/notification_response.dart';
 import 'package:mvvm_cubit/data/request/push_token/push_token_request.dart';
 import 'package:mvvm_cubit/repository/main/main_repository.dart';
 
@@ -24,7 +25,7 @@ class ContainerCubit extends GenericCubit<ContainerState> {
       final total = await repository.totalUnreadNotification();
       emit(
         GenericCubitState.success(
-          TotalUnreadNotificationMainState(total: 12),
+          TotalUnreadNotificationMainState(total: total),
         ),
       );
     } on DioException catch (e) {
@@ -32,6 +33,42 @@ class ContainerCubit extends GenericCubit<ContainerState> {
         GenericCubitState.failure(e.message ?? 'Error'),
       );
     }
+  }
+
+  void getEmergencyNotificationList() async {
+    final response = await repository.getNotificationList(true);
+    try {
+      emit(
+        GenericCubitState.success(
+          EmergencyNotificationListSuccess(
+            list: response.where((element) => element.read == false).toList(),
+          ),
+        ),
+      );
+    } catch (ex) {
+      emit(
+        GenericCubitState.failure(ex.toString()),
+      );
+    }
+  }
+
+  void readNotification(String id) async {
+    await repository.readNotification(id);
+    try {} catch (ex) {
+      emit(
+        GenericCubitState.failure(ex.toString()),
+      );
+    }
+  }
+
+  void updateEmergencyNotificationList(List<NotificationResponse> list) {
+    emit(
+      GenericCubitState.success(
+        EmergencyNotificationListSuccess(
+          list: list,
+        ),
+      ),
+    );
   }
 }
 
@@ -47,4 +84,10 @@ class TotalUnreadNotificationMainState extends ContainerState {
   TotalUnreadNotificationMainState({
     required this.total,
   });
+}
+
+class EmergencyNotificationListSuccess extends ContainerState {
+  List<NotificationResponse> list;
+
+  EmergencyNotificationListSuccess({required this.list});
 }

@@ -38,9 +38,3 @@ class EmptyTripMainState extends MainState {
 class EmptyTempFormMainState extends MainState {
   EmptyTempFormMainState();
 }
-
-class EmergencyNotificationListSuccess extends MainState {
-  List<NotificationResponse> list;
-
-  EmergencyNotificationListSuccess({required this.list});
-}

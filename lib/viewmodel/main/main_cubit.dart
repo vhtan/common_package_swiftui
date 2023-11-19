@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
-import 'package:mvvm_cubit/data/model/notification/notification_response.dart';
 import 'package:mvvm_cubit/data/model/temp_form/temp_form_response.dart';
 import 'package:mvvm_cubit/data/request/check_in/check_in_request.dart';
 import 'package:mvvm_cubit/repository/main/main_repository.dart';
@@ -154,42 +153,6 @@ class MainCubit extends GenericCubit<MainState> {
       logger.e(e.message);
       emit(
         GenericCubitState.failure(e.message ?? 'Error'),
-      );
-    }
-  }
-
-  void getEmergencyNotificationList() async {
-    final response = await repository.getNotificationList(true);
-    try {
-      emit(
-        GenericCubitState.success(
-          EmergencyNotificationListSuccess(
-            list: response.where((element) => element.read == false).toList(),
-          ),
-        ),
-      );
-    } catch (ex) {
-      emit(
-        GenericCubitState.failure(ex.toString()),
-      );
-    }
-  }
-
-  void updateEmergencyNotificationList(List<NotificationResponse> list) {
-    emit(
-      GenericCubitState.success(
-        EmergencyNotificationListSuccess(
-          list: list,
-        ),
-      ),
-    );
-  }
-
-  void readNotification(String id) async {
-    await repository.readNotification(id);
-    try {} catch (ex) {
-      emit(
-        GenericCubitState.failure(ex.toString()),
       );
     }
   }

@@ -49,6 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
         appBar: _appBar,
         body: BlocConsumer<AuthCubit, GenericCubitState>(
           listener: (context, state) {
+            logger.d('===loading = $state');
             switch (state.status) {
               case Status.loading:
                 showProgressDialog(
@@ -141,24 +142,24 @@ class _LoginScreenState extends State<LoginScreen> {
                             backgroundColor: _isValidLogin()
                                 ? AppColors.primary
                                 : AppColors.textDefaultLight,
-                            onPressed: _isValidLogin()
-                                ? () {
-                                    authCubit.login(
-                                      LoginRequest(
-                                        username: _username,
-                                        password: _password,
-                                      ),
-                                    );
-                                  }
-                                : null,
-                            // onPressed: () {
-                            //   authCubit.login(
-                            //     LoginRequest(
-                            //       username: 'doanntt.han',
-                            //       password: 'Abc@123456',
-                            //     ),
-                            //   );
-                            // },
+                            // onPressed: _isValidLogin()
+                            //     ? () {
+                            //         authCubit.login(
+                            //           LoginRequest(
+                            //             username: _username,
+                            //             password: _password,
+                            //           ),
+                            //         );
+                            //       }
+                            //     : null,
+                            onPressed: () {
+                              authCubit.login(
+                                LoginRequest(
+                                  username: 'loantd',
+                                  password: 'Abc@123456',
+                                ),
+                              );
+                            },
                           ),
                         ],
                       ),

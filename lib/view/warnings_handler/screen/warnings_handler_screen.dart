@@ -52,6 +52,19 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen> {
     cubit.getChattingList(widget.id);
   }
 
+  PreferredSizeWidget get _appBar {
+    return AppBar(
+      leading: const BackButton(
+        color: AppColors.white,
+      ),
+      automaticallyImplyLeading: true,
+      title: const Text(
+        "Cảnh báo",
+        style: headLine1,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -76,52 +89,36 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen> {
           return BlocBuilder<WarningsHandlerCubit, GenericCubitState>(
             builder: (context, state) {
               return Scaffold(
-                resizeToAvoidBottomInset: true,
-                backgroundColor: Colors.transparent,
+                appBar: _appBar,
+                backgroundColor: AppColors.white,
+                bottomNavigationBar: _sendMessage,
                 body: KeyboardActions(
                   tapOutsideBehavior: TapOutsideBehavior.opaqueDismiss,
                   config: _keyboardActionsConfig(context),
-                  child: Center(
-                    child: SingleChildScrollView(
-                      child: Container(
-                        padding: const EdgeInsets.all(20),
-                        alignment: Alignment.center,
-                        child: IntrinsicHeight(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              color: Colors.white,
-                            ),
-                            padding: const EdgeInsets.only(bottom: 20, top: 10),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                _title,
-                                _warningMessage(_details),
-                                const SizedBox(height: 10.0),
-                                _systemMessage(_details),
-                                systemWarning(_details?.level),
-                                const Divider(),
-                                ..._messageList.map(
-                                  (item) {
-                                    return _MessageWidget(
-                                      userName:
-                                          item.userCreated?.name?.decodeHtml ??
-                                              '',
-                                      message: item.text?.decodeHtml ?? '',
-                                      dateCreated: item.dateCreated ?? 0,
-                                      roleCode: item.userCreated?.role?.code,
-                                    );
-                                  },
-                                ),
-                                const SizedBox(height: 20.0),
-                                _sendMessage
-                              ],
-                            ),
-                          ),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 20.0),
+                        _warningMessage(_details),
+                        const SizedBox(height: 10.0),
+                        _systemMessage(_details),
+                        systemWarning(_details?.level),
+                        const Divider(),
+                        ..._messageList.map(
+                          (item) {
+                            return _MessageWidget(
+                              userName:
+                                  item.userCreated?.name?.decodeHtml ?? '',
+                              message: item.text?.decodeHtml ?? '',
+                              dateCreated: item.dateCreated ?? 0,
+                              roleCode: item.userCreated?.role?.code,
+                            );
+                          },
                         ),
-                      ),
+                        const SizedBox(height: 20.0),
+                      ],
                     ),
                   ),
                 ),
@@ -133,31 +130,6 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen> {
     );
   }
 
-  Widget get _title {
-    return Stack(
-      alignment: AlignmentDirectional.center,
-      children: [
-        const Align(
-          alignment: Alignment.center,
-          child: Text(
-            'Cảnh báo',
-            style: headLine1,
-          ),
-        ),
-        Align(
-          alignment: Alignment.topRight,
-          child: IconButton(
-            color: Colors.black,
-            icon: const Icon(Icons.close),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _warningMessage(WarningDetailsResponse? details) {
     return Row(
       children: [
@@ -166,7 +138,7 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen> {
           child: Text(
             details?.warningMessage?.decodeHtml ?? '',
             style: headLine4,
-            maxLines: 2,
+            maxLines: 3,
             overflow: TextOverflow.ellipsis,
           ),
         ),
@@ -208,25 +180,32 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen> {
             controller: _commentController,
           ),
         ),
-        const SizedBox(width: 10),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-              backgroundColor: AppColors.primary),
-          onPressed: () => cubit.warningProcess(
-            WarningProcessRequest(
-              warningId: widget.id,
-              action: 'explain',
-              message: _commentController.text,
+        const SizedBox(width: 20),
+        SizedBox(
+          height: 50,
+          child: ElevatedButton(
+            style: ButtonStyle(
+              backgroundColor:
+                  MaterialStateProperty.all<Color>(AppColors.primary),
+              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
             ),
-          ),
-          child: const Text(
-            'Gửi',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: AppColors.white,
-              overflow: TextOverflow.ellipsis,
+            onPressed: () => cubit.warningProcess(
+              WarningProcessRequest(
+                warningId: widget.id,
+                action: 'explain',
+                message: _commentController.text,
+              ),
+            ),
+            child: const Text(
+              'Gửi',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: AppColors.white,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
           ),
         ),
@@ -349,7 +328,7 @@ class _MessageWidget extends StatelessWidget {
                 child: Text(
                   message,
                   style: textDefault,
-                  maxLines: 2,
+                  // maxLines: 0,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),

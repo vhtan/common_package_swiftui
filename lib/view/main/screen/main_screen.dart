@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:location/location.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
+import 'package:mvvm_cubit/common/dialog/progress_dialog.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/snack_bar/error_snack_bar.dart';
 import 'package:mvvm_cubit/common/widget/empty_widget.dart';
@@ -24,7 +25,6 @@ import 'package:mvvm_cubit/view/add_trip/add_trip_screen.dart';
 import 'package:mvvm_cubit/view/auth/login_screen.dart';
 import 'package:mvvm_cubit/view/check_point/check_point_screen.dart';
 import 'package:mvvm_cubit/view/main/widget/trip_container.dart';
-import 'package:mvvm_cubit/view/notification_details/notification_details_emergency_screen.dart';
 import 'package:mvvm_cubit/view/pending_trip/screen/pending_trip_screen.dart';
 import 'package:mvvm_cubit/view/warnings_handler/screen/warnings_handler_screen.dart';
 import 'package:mvvm_cubit/view/webview/webview_screen.dart';
@@ -54,6 +54,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   final HiveStorageManager _hiveStorageManager = di();
   double _arrivalLimitRadius = 0;
   final _timerDuration = const Duration(seconds: 10);
+  final GlobalKey<State> progressKey = GlobalKey<State>();
 
   @override
   void initState() {
@@ -65,8 +66,9 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
 
       checkLocationPermission();
       Future.delayed(const Duration(seconds: 2), () {
+        _cubit.getWarningList();
         getCurrentLocation();
-        _cubit.getEmergencyNotificationList();
+        _cubit.getTempFormDetails();
       });
     });
     AuthManager.setTokenExpiredCallback(() {
@@ -109,7 +111,6 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
       _timerDuration,
       (timer) {
         _cubit.getWarningList();
-        _cubit.getEmergencyNotificationList();
         _cubit.getTempFormDetails();
       },
     );
@@ -174,6 +175,9 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
           listener: (context, state) {
             switch (state.status) {
               case Status.failure:
+                if (progressKey.currentContext != null) {
+                  Navigator.pop(context);
+                }
                 showErrorSnackBar(
                   context,
                   state.error ?? AppString.sendTimeOut,
@@ -209,26 +213,6 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                   setState(() {
                     _tempForm = null;
                   });
-                } else if (data is EmergencyNotificationListSuccess) {
-                  var list = data.list;
-                  final first = list.first;
-                  logger.d('EmergencyNotificationListSuccess $list');
-                  if (mounted) {
-                    final dialog = showDialog(
-                      context: context,
-                      builder: (context) => NotificationEmergencyDetailsScreen(
-                        notification: first,
-                      ),
-                      barrierDismissible: false,
-                    );
-                    dialog.then((value) {
-                      _cubit.readNotification(first.id ?? '');
-                      if (list.isNotEmpty) {
-                        list.removeAt(0);
-                        _cubit.updateEmergencyNotificationList(list);
-                      }
-                    });
-                  }
                 }
               default:
                 break;
@@ -286,15 +270,11 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
           'longitude': stopPoint.destination?.longitude,
           'latitude': stopPoint.destination?.latitude,
         });
-        logger.d('===locationData $_locationData');
-
         if (_locationData != null) {
           final isNeedCheckDistance = _arrivalLimitRadius > 0;
           final calDistance =
               calculateDistance(_locationData!, stopPointLocation);
-          logger.d('===isNeedCheckDistance $isNeedCheckDistance');
-          logger.d('===calDistance $calDistance');
-          logger.d('===_arrivalLimitRadius $_arrivalLimitRadius');
+
           if (isNeedCheckDistance && calDistance > _arrivalLimitRadius) {
             // ignore: use_build_context_synchronously
             showErrorSnackBar(
@@ -319,9 +299,18 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
           }
         }
       },
+      onConfirm: (value) {
+        navigateTo(
+          WebViewCustom(
+            title: 'Xác nhận PYC: $value',
+            jobRequestId: trip.routeId ?? 0,
+          ),
+        );
+      },
       onFinihed: (value) {
         navigateTo(
           WebViewCustom(
+            title: 'Hoàn thành PYC: $value',
             jobRequestId: trip.routeId ?? 0,
           ),
         );

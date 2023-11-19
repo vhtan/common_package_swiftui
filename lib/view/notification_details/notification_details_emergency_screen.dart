@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/data/model/notification/notification_response.dart';
 
 class NotificationEmergencyDetailsScreen extends StatelessWidget {
   final NotificationResponse notification;
+
+  final String str =
+      """<blockquote cite="http://www.worldwildlife.org/who/index.html">
+For 60 years, WWF has worked to help people and nature thrive. As the world's leading conservation organization, WWF works in nearly 100 countries. At every level, we collaborate with people around the world to develop and deliver innovative solutions that protect communities, wildlife, and the places in which they live.
+</blockquote>""";
 
   const NotificationEmergencyDetailsScreen({
     super.key,
@@ -34,42 +40,34 @@ class NotificationEmergencyDetailsScreen extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Stack(
-                  alignment: AlignmentDirectional.center,
-                  children: [
-                    Align(
-                      alignment: Alignment.topRight,
-                      child: IconButton(
-                        color: Colors.black,
-                        icon: const Icon(Icons.close),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ),
-                  ],
-                ),
+                const SizedBox(height: 20),
                 _title,
                 if (notification.message != null)
                   Padding(
-                    padding: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.only(left: 20, right: 20),
                     child: Html(
                       data: notification.message!.decodeHtml,
+                      // data: str,
                       style: {
                         'body': Style(
+                          textAlign: TextAlign.center,
                           color: AppColors.textDefault,
-                          fontSize: FontSize(16.0), // Set your custom font size
+                          fontSize: FontSize(14.0), // Set your custom font size
                         ),
                       },
                     ),
-                  )
-                // if (notification.message != null)
-                //   Padding(
-                //     padding: const EdgeInsets.all(10),
-                //     child: Text(
-                //       notification.message ?? '',
-                //     ),
-                //   )
+                  ),
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Flexible(
+                    child: PrimaryButton(
+                      title: 'Đã đọc',
+                      buttonHeight: 50,
+                      backgroundColor: AppColors.primary,
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ),
+                )
               ],
             ),
           ),

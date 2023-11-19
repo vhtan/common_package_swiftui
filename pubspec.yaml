@@ -69,6 +69,7 @@ dependencies:
   flutter_html: ^3.0.0-beta.2
   html: ^0.15.4
   html_unescape: ^2.0.0
+  diffutil_dart: ^4.0.0
   
 
 dev_dependencies:

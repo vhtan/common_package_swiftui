@@ -6,10 +6,12 @@ import 'package:mvvm_cubit/data/notification_service/notification_service.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class WebViewCustom extends StatefulWidget {
+  final String title;
   final int jobRequestId;
 
   const WebViewCustom({
     super.key,
+    required this.title,
     required this.jobRequestId,
   });
 
@@ -41,7 +43,7 @@ class _WebViewCustomState extends State<WebViewCustom> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Hoàn thành PYC: ${widget.jobRequestId}'),
+        title: Text(widget.title),
         leading: const BackButton(
           color: AppColors.white,
         ),
