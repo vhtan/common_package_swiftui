@@ -24,7 +24,9 @@ Future<dynamic> deleteRequestFormDialog(
           children: [
             const Icon(Icons.warning_rounded, color: AppColors.error, size: 40),
             const SizedBox(width: 10),
-            Text(title, textAlign: TextAlign.center),
+            Flexible(
+              child: Text(title, textAlign: TextAlign.left),
+            ),
           ],
         ),
         content: Column(
@@ -35,29 +37,47 @@ Future<dynamic> deleteRequestFormDialog(
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context, false);
-                  },
-                  child: const Text(
-                    'Không',
-                    style: textDefault,
+                Expanded(
+                  child: TextButton(
+                    style: ButtonStyle(
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          side: const BorderSide(color: AppColors.border),
+                          borderRadius:
+                              BorderRadius.circular(Dimension.radiusDefault),
+                        ),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context, false);
+                    },
+                    child: const Text(
+                      'Không',
+                      style: textDefault,
+                    ),
                   ),
                 ),
-                const SizedBox(width: 10),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.error),
-                  onPressed: () {
-                    Navigator.pop(context, true);
-                  },
-                  child: const Text(
-                    'Có',
-                    style: textDefault,
+                const SizedBox(width: 20),
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(Dimension
+                            .radiusDefault), // Set the desired border radius
+                      ),
+                      backgroundColor: AppColors.primary,
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context, true);
+                    },
+                    child: const Text(
+                      'Có',
+                      style: menuTextStyle,
+                    ),
                   ),
-                )
+                ),
               ],
-            )
+            ),
           ],
         ),
       );

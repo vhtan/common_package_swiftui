@@ -178,7 +178,6 @@ class _ContainerScreenState extends State<ContainerScreen>
                 )
                 .getUpdates();
 
-            logger.d('===listDiff ${listDiff.toList()}');
             if (list.isNotEmpty &&
                 _emergencyList.isNotEmpty &&
                 listDiff.isEmpty) {

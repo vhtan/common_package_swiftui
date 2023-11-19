@@ -26,7 +26,6 @@ Future<dynamic> deleteDialog(
             const Text("Are you sure you want to delete this user?"),
             const SizedBox(height: 20),
             Row(
-              mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 TextButton(
                   onPressed: () {

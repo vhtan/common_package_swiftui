@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'package:diffutil_dart/diffutil.dart' as diffutil;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
@@ -22,12 +24,14 @@ class ManagerWarningsHandlerScreen extends StatefulWidget {
   State<StatefulWidget> createState() => _ManagerWarningsHandlerScreen();
 }
 
-class _ManagerWarningsHandlerScreen
-    extends State<ManagerWarningsHandlerScreen> {
-  final cubit = ManagerWarningsHandlerCubit(repository: di());
+class _ManagerWarningsHandlerScreen extends State<ManagerWarningsHandlerScreen>
+    with WidgetsBindingObserver {
+  final _cubit = ManagerWarningsHandlerCubit(repository: di());
 
   WarningDetailsResponse? _details;
   List<ChatMessageResponse> _messageList = [];
+  static Timer? _fetchMessages;
+  final _timerDuration = const Duration(seconds: 10);
 
   final _commentController = TextEditingController();
 
@@ -45,28 +49,80 @@ class _ManagerWarningsHandlerScreen
     );
   }
 
+  PreferredSizeWidget get _appBar {
+    return AppBar(
+      bottom: PreferredSize(
+        preferredSize: const Size.fromHeight(90),
+        child: _buttons,
+      ),
+      leading: const BackButton(
+        color: AppColors.white,
+      ),
+      automaticallyImplyLeading: true,
+      title: const Text(
+        "Cảnh báo",
+        style: headLine1,
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
-    cubit.getWarningDetails(widget.id);
-    cubit.getChattingList(widget.id);
+    _cubit.getWarningDetails(widget.id);
+    _cubit.getChattingList(widget.id);
+    startFetchingMessages();
+  }
+
+  void startFetchingMessages() {
+    cancelFetchingMessages();
+    _fetchMessages = Timer.periodic(
+      _timerDuration,
+      (timer) {
+        _cubit.getChattingList(widget.id);
+      },
+    );
+  }
+
+  static void cancelFetchingMessages() {
+    _fetchMessages?.cancel();
+    _fetchMessages = null;
+  }
+
+  @override
+  void dispose() {
+    cancelFetchingMessages();
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => cubit,
+      create: (context) => _cubit,
       child: BlocConsumer<ManagerWarningsHandlerCubit, GenericCubitState>(
         listener: (context, state) {
           if (state is ProcessWarningSuccess) {
             _commentController.text = '';
-            cubit.getChattingList(widget.id);
+            _cubit.getChattingList(widget.id);
           }
           if (state is GetWarningDetailsSuccess) {
             setState(() {
               _details = state.warningDetails;
             });
           } else if (state is ChattingListWarningSuccess) {
+            var listDiff = diffutil
+                .calculateListDiff(
+                  _messageList,
+                  state.list,
+                )
+                .getUpdates();
+
+            if (state.list.isNotEmpty &&
+                _messageList.isNotEmpty &&
+                listDiff.isEmpty) {
+              return;
+            }
             setState(() {
               _messageList = state.list;
             });
@@ -76,6 +132,11 @@ class _ManagerWarningsHandlerScreen
           return BlocBuilder<ManagerWarningsHandlerCubit, GenericCubitState>(
             builder: (context, state) {
               return Scaffold(
+                appBar: _appBar,
+                bottomNavigationBar: Padding(
+                  padding: MediaQuery.of(context).viewInsets,
+                  child: _sendMessage,
+                ),
                 backgroundColor: AppColors.white,
                 body: KeyboardActions(
                   tapOutsideBehavior: TapOutsideBehavior.opaqueDismiss,
@@ -93,7 +154,7 @@ class _ManagerWarningsHandlerScreen
   Widget get _content {
     return Column(
       children: [
-        _title,
+        const SizedBox(height: 20.0),
         _warningMessage(_details),
         const SizedBox(height: 20.0),
         SingleChildScrollView(
@@ -120,85 +181,9 @@ class _ManagerWarningsHandlerScreen
                 },
               ),
               const SizedBox(height: 20.0),
-              Row(
-                children: [
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 20, right: 20),
-                      child: TextInput(
-                        hint: 'Nhập ý kiến',
-                        labelText: 'Nhập ý kiến',
-                        keyboardType: TextInputType.multiline,
-                        controller: _commentController,
-                        maxLines: 3,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  SizedBox(
-                    height: 50,
-                    child: ElevatedButton(
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                          AppColors.primary,
-                        ),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                      ),
-                      onPressed: () => cubit.warningProcess(
-                        WarningProcessRequest(
-                            warningId: widget.id,
-                            action: 'explain',
-                            message: _commentController.text),
-                      ),
-                      child: const Text(
-                        'Gửi',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.white,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 20),
-                ],
-              ),
-              const SizedBox(height: 20),
-              _sendMessage
             ],
           ),
         )
-      ],
-    );
-  }
-
-  Widget get _title {
-    return Stack(
-      alignment: AlignmentDirectional.center,
-      children: [
-        const Align(
-          alignment: Alignment.center,
-          child: Text(
-            'Cảnh báo',
-            style: headLine1,
-          ),
-        ),
-        Align(
-          alignment: Alignment.topRight,
-          child: IconButton(
-            color: Colors.black,
-            icon: const Icon(Icons.close),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-        ),
       ],
     );
   }
@@ -211,7 +196,6 @@ class _ManagerWarningsHandlerScreen
           child: Text(
             details?.warningMessage?.decodeHtml ?? '',
             style: headLine4,
-            maxLines: 3,
             overflow: TextOverflow.ellipsis,
           ),
         ),
@@ -242,36 +226,88 @@ class _ManagerWarningsHandlerScreen
   }
 
   Widget get _sendMessage {
-    return Row(
-      children: [
-        const SizedBox(width: 20),
-        Flexible(
-          child: PrimaryButton(
-            title: 'Đồng ý',
-            buttonHeight: 50,
-            onPressed: () => cubit.warningProcess(
-              WarningProcessRequest(
-                  warningId: widget.id,
-                  action: 'accept',
-                  message: _commentController.text),
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextInput(
+              hint: 'Nhập ý kiến',
+              labelText: 'Nhập ý kiến',
+              keyboardType: TextInputType.multiline,
+              focusNode: _nodeTextInput,
+              controller: _commentController,
             ),
           ),
-        ),
-        const SizedBox(width: 20),
-        Flexible(
-          child: PrimaryButton(
-            title: 'Từ chối',
-            buttonHeight: 50,
-            onPressed: () => cubit.warningProcess(
-              WarningProcessRequest(
-                  warningId: widget.id,
-                  action: 'reject',
-                  message: _commentController.text),
+          const SizedBox(width: 20),
+          SizedBox(
+            height: 50,
+            child: ElevatedButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(
+                  AppColors.primary,
+                ),
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+              onPressed: () => _cubit.warningProcess(
+                WarningProcessRequest(
+                    warningId: widget.id,
+                    action: 'explain',
+                    message: _commentController.text),
+              ),
+              child: const Text(
+                'Gửi',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.white,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             ),
           ),
-        ),
-        const SizedBox(width: 20),
-      ],
+        ],
+      ),
+    );
+  }
+
+  Widget get _buttons {
+    return Container(
+      color: AppColors.white,
+      padding: const EdgeInsets.all(20),
+      child: Row(
+        children: [
+          Flexible(
+            child: PrimaryButton(
+              title: 'Đồng ý',
+              buttonHeight: 50,
+              onPressed: () => _cubit.warningProcess(
+                WarningProcessRequest(
+                    warningId: widget.id,
+                    action: 'accept',
+                    message: _commentController.text),
+              ),
+            ),
+          ),
+          const SizedBox(width: 20),
+          Flexible(
+            child: PrimaryButton(
+              title: 'Từ chối',
+              buttonHeight: 50,
+              onPressed: () => _cubit.warningProcess(
+                WarningProcessRequest(
+                    warningId: widget.id,
+                    action: 'reject',
+                    message: _commentController.text),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -381,6 +417,8 @@ class _MessageWidget extends StatelessWidget {
             ],
           ),
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               const Icon(
                 Icons.person_2,
@@ -392,7 +430,6 @@ class _MessageWidget extends StatelessWidget {
                 child: Text(
                   message,
                   style: textDefault,
-                  maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),

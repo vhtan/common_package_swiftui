@@ -64,9 +64,20 @@ class FinishTempForm extends StatelessWidget {
                       ),
                       const SizedBox(height: 20.0),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          TextButton(
+                          Expanded(
+                              child: TextButton(
+                            style: ButtonStyle(
+                              shape: MaterialStateProperty.all<
+                                  RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  side:
+                                      const BorderSide(color: AppColors.border),
+                                  borderRadius: BorderRadius.circular(
+                                      Dimension.radiusDefault),
+                                ),
+                              ),
+                            ),
                             onPressed: () {
                               Navigator.pop(context);
                             },
@@ -74,18 +85,25 @@ class FinishTempForm extends StatelessWidget {
                               'Không',
                               style: textDefault,
                             ),
-                          ),
-                          const SizedBox(width: 10),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.primary),
-                            onPressed: () {
-                              okAction(_commentController.text);
-                              Navigator.pop(context, _commentController.text);
-                            },
-                            child: const Text(
-                              'Có',
-                              style: menuTextStyle,
+                          )),
+                          const SizedBox(width: 20),
+                          Expanded(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(Dimension
+                                      .radiusDefault), // Set the desired border radius
+                                ),
+                                backgroundColor: AppColors.primary,
+                              ),
+                              onPressed: () {
+                                okAction(_commentController.text);
+                                Navigator.pop(context, _commentController.text);
+                              },
+                              child: const Text(
+                                'Có',
+                                style: menuTextStyle,
+                              ),
                             ),
                           )
                         ],

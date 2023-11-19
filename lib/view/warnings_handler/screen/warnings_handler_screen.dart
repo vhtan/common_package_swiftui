@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'package:diffutil_dart/diffutil.dart' as diffutil;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
@@ -24,12 +26,15 @@ class WarningsHandlerScreen extends StatefulWidget {
   State<StatefulWidget> createState() => _WarningsHandlerScreen();
 }
 
-class _WarningsHandlerScreen extends State<WarningsHandlerScreen> {
-  final cubit = WarningsHandlerCubit(repository: di());
+class _WarningsHandlerScreen extends State<WarningsHandlerScreen>
+    with WidgetsBindingObserver {
+  final _cubit = WarningsHandlerCubit(repository: di());
 
   WarningDetailsResponse? _details;
   List<ChatMessageResponse> _messageList = [];
   final _commentController = TextEditingController();
+  static Timer? _fetchMessages;
+  final _timerDuration = const Duration(seconds: 10);
 
   final FocusNode _nodeTextInput = FocusNode();
   KeyboardActionsConfig _keyboardActionsConfig(BuildContext context) {
@@ -48,8 +53,31 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen> {
   @override
   void initState() {
     super.initState();
-    cubit.getWarningDetails(widget.id);
-    cubit.getChattingList(widget.id);
+    _cubit.getWarningDetails(widget.id);
+    _cubit.getChattingList(widget.id);
+    startFetchingMessages();
+  }
+
+  void startFetchingMessages() {
+    cancelFetchingMessages();
+    _fetchMessages = Timer.periodic(
+      _timerDuration,
+      (timer) {
+        _cubit.getChattingList(widget.id);
+      },
+    );
+  }
+
+  static void cancelFetchingMessages() {
+    _fetchMessages?.cancel();
+    _fetchMessages = null;
+  }
+
+  @override
+  void dispose() {
+    cancelFetchingMessages();
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   PreferredSizeWidget get _appBar {
@@ -68,18 +96,30 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => cubit,
+      create: (context) => _cubit,
       child: BlocConsumer<WarningsHandlerCubit, GenericCubitState>(
         listener: (context, state) {
           if (state is ProcessWarningSuccess) {
             _commentController.text = '';
-            cubit.getChattingList(widget.id);
+            _cubit.getChattingList(widget.id);
           }
           if (state is GetWarningDetailsSuccess) {
             setState(() {
               _details = state.warningDetails;
             });
           } else if (state is ChattingListWarningSuccess) {
+            var listDiff = diffutil
+                .calculateListDiff(
+                  _messageList,
+                  state.list,
+                )
+                .getUpdates();
+
+            if (state.list.isNotEmpty &&
+                _messageList.isNotEmpty &&
+                listDiff.isEmpty) {
+              return;
+            }
             setState(() {
               _messageList = state.list;
             });
@@ -175,48 +215,50 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen> {
   }
 
   Widget get _sendMessage {
-    return Row(
-      children: [
-        const SizedBox(width: 20),
-        Expanded(
-          child: TextInput(
-            focusNode: _nodeTextInput,
-            hint: 'Nhập ý kiến',
-            labelText: 'Nhập ý kiến',
-            controller: _commentController,
-          ),
-        ),
-        const SizedBox(width: 20),
-        SizedBox(
-          height: 50,
-          child: ElevatedButton(
-            style: ButtonStyle(
-              backgroundColor:
-                  MaterialStateProperty.all<Color>(AppColors.primary),
-              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-              ),
-            ),
-            onPressed: () => cubit.warningProcess(
-              WarningProcessRequest(
-                warningId: widget.id,
-                action: 'explain',
-                message: _commentController.text,
-              ),
-            ),
-            child: const Text(
-              'Gửi',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: AppColors.white,
-                overflow: TextOverflow.ellipsis,
-              ),
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextInput(
+              focusNode: _nodeTextInput,
+              hint: 'Nhập ý kiến',
+              labelText: 'Nhập ý kiến',
+              controller: _commentController,
             ),
           ),
-        ),
-        const SizedBox(width: 20),
-      ],
+          const SizedBox(width: 20),
+          SizedBox(
+            height: 50,
+            child: ElevatedButton(
+              style: ButtonStyle(
+                backgroundColor:
+                    MaterialStateProperty.all<Color>(AppColors.primary),
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8)),
+                ),
+              ),
+              onPressed: () => _cubit.warningProcess(
+                WarningProcessRequest(
+                  warningId: widget.id,
+                  action: 'explain',
+                  message: _commentController.text,
+                ),
+              ),
+              child: const Text(
+                'Gửi',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.white,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -323,6 +365,8 @@ class _MessageWidget extends StatelessWidget {
             ],
           ),
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               const Icon(
                 Icons.person_2,
