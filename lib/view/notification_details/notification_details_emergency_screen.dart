@@ -52,20 +52,18 @@ For 60 years, WWF has worked to help people and nature thrive. As the world's le
                         'body': Style(
                           textAlign: TextAlign.center,
                           color: AppColors.textDefault,
-                          fontSize: FontSize(14.0), // Set your custom font size
+                          fontSize: FontSize(14.0),
                         ),
                       },
                     ),
                   ),
-                Padding(
+                Container(
                   padding: const EdgeInsets.all(20),
-                  child: Flexible(
-                    child: PrimaryButton(
-                      title: 'Đã đọc',
-                      buttonHeight: 50,
-                      backgroundColor: AppColors.primary,
-                      onPressed: () => Navigator.pop(context),
-                    ),
+                  child: PrimaryButton(
+                    title: 'Đã đọc',
+                    buttonHeight: 50,
+                    backgroundColor: AppColors.primary,
+                    onPressed: () => Navigator.pop(context),
                   ),
                 )
               ],
