@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:mvvm_cubit/core/app_extension.dart';
+import 'package:mvvm_cubit/core/app_style.dart';
 
 Future<dynamic> deleteDialog(
     BuildContext context, VoidCallback? cancelCallback) {
@@ -7,7 +9,6 @@ Future<dynamic> deleteDialog(
     builder: (_) {
       return AlertDialog(
         shape: const RoundedRectangleBorder(
-          side: BorderSide(color: Colors.redAccent, width: 2.0),
           borderRadius: BorderRadius.all(
             Radius.circular(15.0),
           ),
@@ -23,7 +24,6 @@ Future<dynamic> deleteDialog(
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text("Are you sure you want to delete this user?"),
             const SizedBox(height: 20),
             Row(
               children: [
@@ -45,6 +45,72 @@ Future<dynamic> deleteDialog(
                 )
               ],
             )
+          ],
+        ),
+      );
+    },
+  );
+
+  return dialog.then((res) => res ?? false);
+}
+
+Future<dynamic> confirmDialog(BuildContext context, String message) {
+  Future<dynamic> dialog = showDialog(
+    context: context,
+    builder: (_) {
+      return AlertDialog(
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(15.0),
+          ),
+        ),
+        title: Text(message, textAlign: TextAlign.center),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                Expanded(
+                    child: TextButton(
+                  style: ButtonStyle(
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        side: const BorderSide(color: AppColors.border),
+                        borderRadius:
+                            BorderRadius.circular(Dimension.radiusDefault),
+                      ),
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context, false);
+                  },
+                  child: const Text(
+                    'Không',
+                    style: textDefault,
+                  ),
+                )),
+                const SizedBox(width: 20),
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(Dimension
+                            .radiusDefault), // Set the desired border radius
+                      ),
+                      backgroundColor: AppColors.primary,
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context, true);
+                    },
+                    child: const Text(
+                      'Có',
+                      style: menuTextStyle,
+                    ),
+                  ),
+                )
+              ],
+            ),
           ],
         ),
       );

@@ -14,8 +14,12 @@ class GetWarningDetailsSuccess extends ManagerWarningsHandlerState {
       {required this.warningDetails, required super.status});
 }
 
-class ProcessWarningSuccess extends ManagerWarningsHandlerState {
-  const ProcessWarningSuccess({required super.status});
+class DidProcessWarningSuccess extends ManagerWarningsHandlerState {
+  const DidProcessWarningSuccess({required super.status});
+}
+
+class DidSendWarningSuccess extends ManagerWarningsHandlerState {
+  const DidSendWarningSuccess({required super.status});
 }
 
 class ChattingListWarningSuccess extends ManagerWarningsHandlerState {

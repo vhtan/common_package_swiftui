@@ -52,7 +52,7 @@ class ManagerRoleWarningItem extends StatelessWidget {
               ),
               onPressed: onTap,
               child: Text(
-                isProcessed ? 'Đã xử lý' : 'Cần xử lý',
+                isProcessed ? 'Đã xử lý' : 'Xử lý',
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,

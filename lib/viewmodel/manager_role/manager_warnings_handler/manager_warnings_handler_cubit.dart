@@ -44,11 +44,24 @@ class ManagerWarningsHandlerCubit extends Cubit<GenericCubitState<dynamic>> {
     }
   }
 
+  void sendMessage(WarningProcessRequest request) async {
+    await repository.warningProcess(request);
+    try {
+      emit(
+        const DidSendWarningSuccess(status: Status.success),
+      );
+    } catch (ex) {
+      emit(
+        GenericCubitState.failure(ex.toString()),
+      );
+    }
+  }
+
   void warningProcess(WarningProcessRequest request) async {
     await repository.warningProcess(request);
     try {
       emit(
-        const ProcessWarningSuccess(status: Status.success),
+        const DidProcessWarningSuccess(status: Status.success),
       );
     } catch (ex) {
       emit(

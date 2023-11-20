@@ -99,7 +99,7 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen>
       create: (context) => _cubit,
       child: BlocConsumer<WarningsHandlerCubit, GenericCubitState>(
         listener: (context, state) {
-          if (state is ProcessWarningSuccess) {
+          if (state is DidSendWarningSuccess) {
             _commentController.text = '';
             _cubit.getChattingList(widget.id);
           }

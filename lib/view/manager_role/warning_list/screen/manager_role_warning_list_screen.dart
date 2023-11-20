@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
+import 'package:mvvm_cubit/common/dialog/delete_dialog.dart';
+import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/widget/empty_widget.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
@@ -19,23 +23,50 @@ class ManagerRoleWrningListScreen extends StatefulWidget {
   State<StatefulWidget> createState() => _ManagerRoleWrningListScreen();
 }
 
-class _ManagerRoleWrningListScreen extends State<ManagerRoleWrningListScreen> {
-  final cubit = ManagerRoleWarningListCubit(
+class _ManagerRoleWrningListScreen extends State<ManagerRoleWrningListScreen>
+    with WidgetsBindingObserver {
+  final _cubit = ManagerRoleWarningListCubit(
     repository: di(),
     authRepository: di(),
     secureStorageManager: di(),
   );
 
+  static Timer? _fetchWarningList;
+  final _timerDuration = const Duration(seconds: 10);
+
   @override
   void initState() {
     super.initState();
-    cubit.getWarningList();
+    _cubit.getWarningList();
+    startFetchingWarningList();
+  }
+
+  void startFetchingWarningList() {
+    cancelFetchingMessages();
+    _fetchWarningList = Timer.periodic(
+      _timerDuration,
+      (timer) {
+        _cubit.getWarningList();
+      },
+    );
+  }
+
+  static void cancelFetchingMessages() {
+    _fetchWarningList?.cancel();
+    _fetchWarningList = null;
+  }
+
+  @override
+  void dispose() {
+    cancelFetchingMessages();
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => cubit,
+      create: (context) => _cubit,
       child: BlocConsumer<ManagerRoleWarningListCubit, GenericCubitState>(
         listener: (context, state) {
           if (state is DidLogoutWarningListSuccess) {
@@ -68,7 +99,16 @@ class _ManagerRoleWrningListScreen extends State<ManagerRoleWrningListScreen> {
                           size: Dimension.menuIconSize,
                           color: Colors.white,
                         ),
-                        onPressed: () => cubit.logout(),
+                        // onPressed: () => cubit.logout(),
+                        onPressed: () {
+                          final dialog = confirmDialog(
+                              context, 'Bạn có chắc chắn muốn đăng xuất?');
+                          dialog.then((value) {
+                            if (value == true) {
+                              _cubit.logout();
+                            }
+                          });
+                        },
                       ),
                     ],
                   ),
@@ -83,7 +123,7 @@ class _ManagerRoleWrningListScreen extends State<ManagerRoleWrningListScreen> {
                               PrimaryButton(
                                 title: 'Kiểm tra danh sách cảnh báo',
                                 buttonHeight: 50,
-                                onPressed: () => cubit.getWarningList(),
+                                onPressed: () => _cubit.getWarningList(),
                               )
                             ],
                           ),
@@ -113,7 +153,7 @@ extension _TabBarView on _ManagerRoleWrningListScreen {
           warning: list[index],
           isProcessed: false,
           onTap: () {
-            Navigator.push(
+            final handleWarning = Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => ManagerWarningsHandlerScreen(
@@ -121,13 +161,13 @@ extension _TabBarView on _ManagerRoleWrningListScreen {
                 ),
               ),
             );
+            handleWarning.then((value) {
+              logger.d('===handleWarning $value');
+              if (value == true) {
+                _cubit.getWarningList();
+              }
+            });
           },
-          // onTap: () => showDialog(
-          //   context: context,
-          //   builder: (context) => ManagerWarningsHandlerScreen(
-          //     id: list[index].id ?? '',
-          //   ),
-          // ),
         );
       },
     );

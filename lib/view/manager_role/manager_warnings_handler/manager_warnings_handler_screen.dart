@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
+import 'package:mvvm_cubit/common/dialog/delete_dialog.dart';
+import 'package:mvvm_cubit/common/snack_bar/error_snack_bar.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/common/widget/text_input.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
@@ -102,7 +104,7 @@ class _ManagerWarningsHandlerScreen extends State<ManagerWarningsHandlerScreen>
       create: (context) => _cubit,
       child: BlocConsumer<ManagerWarningsHandlerCubit, GenericCubitState>(
         listener: (context, state) {
-          if (state is ProcessWarningSuccess) {
+          if (state is DidSendWarningSuccess) {
             _commentController.text = '';
             _cubit.getChattingList(widget.id);
           }
@@ -110,6 +112,8 @@ class _ManagerWarningsHandlerScreen extends State<ManagerWarningsHandlerScreen>
             setState(() {
               _details = state.warningDetails;
             });
+          } else if (state is DidProcessWarningSuccess) {
+            Navigator.pop(context, true);
           } else if (state is ChattingListWarningSuccess) {
             var listDiff = diffutil
                 .calculateListDiff(
@@ -253,7 +257,7 @@ class _ManagerWarningsHandlerScreen extends State<ManagerWarningsHandlerScreen>
                   ),
                 ),
               ),
-              onPressed: () => _cubit.warningProcess(
+              onPressed: () => _cubit.sendMessage(
                 WarningProcessRequest(
                     warningId: widget.id,
                     action: 'explain',
@@ -285,12 +289,20 @@ class _ManagerWarningsHandlerScreen extends State<ManagerWarningsHandlerScreen>
             child: PrimaryButton(
               title: 'Đồng ý',
               buttonHeight: 50,
-              onPressed: () => _cubit.warningProcess(
-                WarningProcessRequest(
-                    warningId: widget.id,
-                    action: 'accept',
-                    message: _commentController.text),
-              ),
+              onPressed: () {
+                final dialog =
+                    confirmDialog(context, 'Bạn có chắc chắn đồng ý cảnh báo?');
+                dialog.then((value) {
+                  if (value == true) {
+                    _cubit.warningProcess(
+                      WarningProcessRequest(
+                          warningId: widget.id,
+                          action: 'accept',
+                          message: _commentController.text),
+                    );
+                  }
+                });
+              },
             ),
           ),
           const SizedBox(width: 20),
@@ -298,12 +310,20 @@ class _ManagerWarningsHandlerScreen extends State<ManagerWarningsHandlerScreen>
             child: PrimaryButton(
               title: 'Từ chối',
               buttonHeight: 50,
-              onPressed: () => _cubit.warningProcess(
-                WarningProcessRequest(
-                    warningId: widget.id,
-                    action: 'reject',
-                    message: _commentController.text),
-              ),
+              onPressed: () {
+                final dialog = confirmDialog(
+                    context, 'Bạn có chắc chắn từ chối cảnh báo?');
+                dialog.then((value) {
+                  if (value == true) {
+                    _cubit.warningProcess(
+                      WarningProcessRequest(
+                          warningId: widget.id,
+                          action: 'reject',
+                          message: _commentController.text),
+                    );
+                  }
+                });
+              },
             ),
           ),
         ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mvvm_cubit/common/dialog/delete_dialog.dart';
 import 'package:mvvm_cubit/core/app_asset.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
@@ -89,7 +90,15 @@ class MenuScreen extends StatelessWidget {
             size: Dimension.menuIconSize,
             color: Colors.white,
           ),
-          onTap: () => valueChanged(MenuType.logOut),
+          onTap: () {
+            final dialog =
+                confirmDialog(context, 'Bạn có chắc chắn muốn đăng xuất?');
+            dialog.then((value) {
+              if (value == true) {
+                valueChanged(MenuType.logOut);
+              }
+            });
+          },
         ),
         const SizedBox(height: 30),
         Padding(

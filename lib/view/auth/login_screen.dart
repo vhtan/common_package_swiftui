@@ -157,7 +157,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             onPressed: () {
                               authCubit.login(
                                 LoginRequest(
-                                  username: 'user03',
+                                  username: 'HUNGLB01',
                                   password: 'Abc@123456',
                                 ),
                               );

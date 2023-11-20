@@ -33,7 +33,7 @@ class WarningsHandlerCubit extends Cubit<GenericCubitState<dynamic>> {
 
     try {
       emit(
-        const ProcessWarningSuccess(status: Status.success),
+        const DidSendWarningSuccess(status: Status.success),
       );
     } catch (ex) {
       emit(

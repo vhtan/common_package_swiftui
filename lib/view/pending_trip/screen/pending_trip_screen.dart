@@ -142,7 +142,7 @@ class PendingTripScreen extends StatelessWidget {
             children: [
               Expanded(
                 child: PrimaryButton(
-                  title: 'Hoàn thành PYC',
+                  title: 'Hoàn thành PYC tạm',
                   buttonHeight: 50,
                   onPressed: () async {
                     String? noted = await finishRequestFormDialog(

@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:material_text_fields/utils/extensions.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
+import 'package:mvvm_cubit/common/snack_bar/error_snack_bar.dart';
 import 'package:mvvm_cubit/common/widget/drop_down.dart';
 import 'package:mvvm_cubit/common/widget/image_capture.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
@@ -69,6 +70,7 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
             // );
           }
           if (data is DidSubmitReasonSuccess) {
+            showConfirmSnackBar(context, 'Đã báo cáo sự cố thành công');
             Navigator.of(context).pop();
           }
           if (data is UploadImageSuccess) {
