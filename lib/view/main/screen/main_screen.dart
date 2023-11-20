@@ -20,6 +20,7 @@ import 'package:mvvm_cubit/data/request/check_in/check_in_request.dart';
 import 'package:mvvm_cubit/di.dart';
 import 'package:mvvm_cubit/main.dart';
 import 'package:mvvm_cubit/manager/hive_storage_manager.dart';
+import 'package:mvvm_cubit/manager/secure_storage_manager.dart';
 import 'package:mvvm_cubit/view/add_trip/add_trip_screen.dart';
 import 'package:mvvm_cubit/view/auth/login_screen.dart';
 import 'package:mvvm_cubit/view/check_point/check_point_screen.dart';
@@ -54,6 +55,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   double _arrivalLimitRadius = 0;
   final _timerDuration = const Duration(seconds: 10);
   final GlobalKey<State> progressKey = GlobalKey<State>();
+  bool _isLogout = false;
 
   @override
   void initState() {
@@ -70,12 +72,17 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
         _cubit.getTempFormDetails();
       });
     });
-    AuthManager.setTokenExpiredCallback(() {
+    AuthManager.instance.setTokenExpiredCallback(() {
       cancelFetchingTrip();
       cancelFetchingWarning();
-      navigateTo(
-        const LoginScreen(),
-      );
+      final name = ModalRoute.of(context)?.settings.name;
+      logger.d('===name $name');
+      if (AuthManager.instance.isLoggedIn) {
+        navigateTo(
+          const LoginScreen(),
+        );
+      }
+      AuthManager.instance.setLoggedIn(false);
     });
 
     _hiveStorageManager.getLoginData().then(

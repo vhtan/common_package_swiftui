@@ -378,7 +378,7 @@ class _MessageWidget extends StatelessWidget {
                 child: Text(
                   message,
                   style: textDefault,
-                  // maxLines: 0,
+                  maxLines: 10,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),

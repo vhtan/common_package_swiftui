@@ -10,6 +10,7 @@ import 'package:mvvm_cubit/data/model/container/menu_type.dart';
 import 'package:mvvm_cubit/data/model/notification/notification_response.dart';
 import 'package:mvvm_cubit/data/notification_service/notification_service.dart';
 import 'package:mvvm_cubit/di.dart';
+import 'package:mvvm_cubit/main.dart';
 import 'package:mvvm_cubit/manager/hive_storage_manager.dart';
 import 'package:mvvm_cubit/view/account/account_screen.dart';
 import 'package:mvvm_cubit/view/auth/login_screen.dart';
@@ -165,12 +166,9 @@ class _ContainerScreenState extends State<ContainerScreen>
           if (data is MenuType) {
             titlePage(data);
           } else if (data is TotalUnreadNotificationMainState) {
-            logger.d('==== data ${data.total}');
             _totalUnreadNotification = data.total;
           } else if (data is EmergencyNotificationListSuccess) {
             var list = data.list;
-            logger.d('===list $list');
-            logger.d('===elis $_emergencyList');
             var listDiff = diffutil
                 .calculateListDiff(
                   _emergencyList,
@@ -299,9 +297,9 @@ class _ContainerScreenState extends State<ContainerScreen>
   }
 
   void forceLogout() {
+    _ContainerScreenState.cancelFetchingEmergency();
     authCubit.logout();
-    MainScreenState.cancelFetchingTrip();
-    MainScreenState.cancelFetchingWarning();
+    AuthManager.instance.setLoggedIn(false);
     navigateTo(const LoginScreen());
   }
 
@@ -330,10 +328,14 @@ class _ContainerScreenState extends State<ContainerScreen>
 
   void navigateTo(Widget screen) {
     if (!mounted) return;
+    final name = screen.runtimeType.toString();
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => screen,
+        settings: RouteSettings(
+          name: name,
+        ),
       ),
     );
   }

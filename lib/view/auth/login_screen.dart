@@ -10,6 +10,7 @@ import 'package:mvvm_cubit/core/app_asset.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/data/request/auth/login_request.dart';
 import 'package:mvvm_cubit/di.dart';
+import 'package:mvvm_cubit/main.dart';
 import 'package:mvvm_cubit/view/container/screen/container_screen.dart';
 import 'package:mvvm_cubit/view/manager_role/warning_list/screen/manager_role_warning_list_screen.dart';
 import 'package:mvvm_cubit/viewmodel/auth/auth_cubit.dart';
@@ -70,6 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
               case Status.success:
                 final loginSuccess = state.data;
                 logger.d('loginSuccess => $loginSuccess');
+                AuthManager.instance.setLoggedIn(true);
                 if (loginSuccess is LoginStateSuccess) {
                   if (loginSuccess.isManager) {
                     Navigator.push(
@@ -157,7 +159,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             onPressed: () {
                               authCubit.login(
                                 LoginRequest(
-                                  username: 'HUNGLB01',
+                                  username: 'loantd',
                                   password: 'Abc@123456',
                                 ),
                               );

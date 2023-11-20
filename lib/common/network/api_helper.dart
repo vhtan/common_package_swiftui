@@ -26,7 +26,7 @@ abstract mixin class ApiHelper<T> {
     } on DioException catch (e) {
       logger.d('===statusCode ${e.response?.statusCode}');
       if (e.response?.statusCode.tokenExpired ?? false) {
-        AuthManager.notifyTokenExpired();
+        AuthManager.instance.notifyTokenExpired();
       }
       rethrow;
     }

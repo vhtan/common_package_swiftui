@@ -19,25 +19,6 @@ import 'package:mvvm_cubit/view/manager_role/warning_list/screen/manager_role_wa
 
 import 'di.dart';
 
-// void main() {
-//   runApp(const MyApp1());
-// }
-
-class MyApp1 extends StatelessWidget {
-  const MyApp1({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightAppTheme,
-      home: Center(
-        child: Text(environment.environmentConfig.toString()),
-      ),
-    );
-  }
-}
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await init();
@@ -66,6 +47,8 @@ void main() async {
 
   String? loginToken = await di<SecureStorageManager>().getToken();
   String? roleCode = await di<SecureStorageManager>().getRole();
+
+  AuthManager.instance.setLoggedIn(true);
 
   ApiConfig.header['Authorization'] = loginToken;
   final osVersion = await _getOSVersion();
@@ -112,11 +95,25 @@ class MyApp extends StatelessWidget {
 class AuthManager {
   static List<Function> onTokenExpireds = [];
 
-  static void setTokenExpiredCallback(Function callback) {
+  bool _isLoggedIn = false;
+
+  AuthManager._();
+
+  static final AuthManager _instance = AuthManager._();
+
+  static AuthManager get instance => _instance;
+
+  bool get isLoggedIn => _isLoggedIn;
+
+  void setLoggedIn(bool isLoggedIn) {
+    _isLoggedIn = isLoggedIn;
+  }
+
+  void setTokenExpiredCallback(Function callback) {
     onTokenExpireds.add(callback);
   }
 
-  static void notifyTokenExpired() {
+  void notifyTokenExpired() {
     for (final onTokenExpired in onTokenExpireds) {
       onTokenExpired();
     }
