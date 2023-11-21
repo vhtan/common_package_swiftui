@@ -10,6 +10,7 @@ class CheckInRequest {
   CheckInRequest({
     required this.id,
     required this.imagePath,
+    required this.imgName,
     required this.latitude,
     required this.longitude,
     String? requestId,
@@ -20,6 +21,8 @@ class CheckInRequest {
   final String id;
   @JsonKey(name: "imagePath")
   final String imagePath;
+  @JsonKey(name: "imgName")
+  final String imgName;
   @JsonKey(name: "latitude")
   final double latitude;
   @JsonKey(name: "longitude")

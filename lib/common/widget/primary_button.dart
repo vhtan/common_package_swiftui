@@ -22,19 +22,31 @@ class PrimaryButton extends StatefulWidget {
 }
 
 class _PrimaryButtonState extends State<PrimaryButton> {
-  final _debouncer = _Debouncer(const Duration(milliseconds: 200));
+  final Duration _throttleDuration = const Duration(milliseconds: 10);
+  bool _isButtonEnabled = true;
+
+  void _throttleFunction() {
+    setState(() {
+      _isButtonEnabled = false;
+    });
+
+    Timer(_throttleDuration, () {
+      setState(() {
+        _isButtonEnabled = true;
+      });
+    });
+
+    widget.onPressed!();
+  }
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: widget.buttonHeight,
       child: FilledButton(
-        onPressed: widget.onPressed != null
+        onPressed: (widget.onPressed != null && _isButtonEnabled)
             ? () {
-                logger.d('_debouncer run');
-                _debouncer.run(() {
-                  widget.onPressed!();
-                });
+                _throttleFunction();
               }
             : null,
         style: widget.backgroundColor != null
@@ -58,17 +70,5 @@ class _PrimaryButtonState extends State<PrimaryButton> {
         ),
       ),
     );
-  }
-}
-
-class _Debouncer {
-  final Duration delay;
-  Timer? _timer;
-
-  _Debouncer(this.delay);
-
-  void run(VoidCallback action) {
-    _timer?.cancel();
-    _timer = Timer(delay, action);
   }
 }

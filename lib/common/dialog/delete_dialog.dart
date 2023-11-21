@@ -119,3 +119,39 @@ Future<dynamic> confirmDialog(BuildContext context, String message) {
 
   return dialog.then((res) => res ?? false);
 }
+
+Future<dynamic> forceDialog(BuildContext context, String message) {
+  Future<dynamic> dialog = showDialog(
+    context: context,
+    builder: (_) {
+      return AlertDialog(
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(15.0),
+          ),
+        ),
+        title: Text(
+          message,
+          textAlign: TextAlign.center,
+        ),
+        content: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(Dimension.radiusDefault),
+            ),
+            backgroundColor: AppColors.primary,
+          ),
+          onPressed: () {
+            Navigator.pop(context, true);
+          },
+          child: const Text(
+            'Có',
+            style: menuTextStyle,
+          ),
+        ),
+      );
+    },
+  );
+
+  return dialog.then((res) => res ?? false);
+}

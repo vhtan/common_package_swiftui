@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:location/location.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
+import 'package:mvvm_cubit/common/dialog/delete_dialog.dart';
 
 import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/snack_bar/error_snack_bar.dart';
@@ -31,6 +32,7 @@ import 'package:mvvm_cubit/view/warnings_handler/screen/warnings_handler_screen.
 import 'package:mvvm_cubit/view/webview/webview_screen.dart';
 import 'package:mvvm_cubit/viewmodel/main/main_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/main/main_state.dart';
+import 'package:app_settings/app_settings.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -159,6 +161,8 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   Future<LocationData?> getCurrentLocation() async {
     if (_serviceEnabled && _permissionGranted == PermissionStatus.granted) {
       return await location.getLocation();
+    } else {
+      checkLocationPermission();
     }
     return null;
   }
@@ -170,10 +174,22 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
         return;
       }
     }
-
+    logger.d('_permissionGranted');
     _permissionGranted = await location.hasPermission();
     if (_permissionGranted == PermissionStatus.denied) {
+      logger.d('_permissionGranted $_permissionGranted');
       _permissionGranted = await location.requestPermission();
+      logger.d('_permissionGranted $_permissionGranted');
+      if (_permissionGranted == PermissionStatus.deniedForever) {
+        // ignore: use_build_context_synchronously
+        forceDialog(context, 'Bạn phải cung cấp quyền truy cập vị trí!').then(
+          (value) {
+            if (value == true) {
+              AppSettings.openAppSettings();
+            }
+          },
+        );
+      }
       if (_permissionGranted != PermissionStatus.granted) {
         return;
       }
@@ -310,10 +326,11 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
             await showDialog(
               context: context,
               builder: (context) => CheckPointScreen(
-                didCapture: (imagePath) => _cubit.submitArrived(
+                didCapture: (image) => _cubit.submitArrived(
                   CheckInRequest(
                       id: stopPoint.id,
-                      imagePath: imagePath,
+                      imagePath: image.imagePath ?? '',
+                      imgName: image.imgName ?? '',
                       latitude: _locationData?.latitude ?? 0,
                       longitude: _locationData?.longitude ?? 0),
                 ),
