@@ -1,3 +1,4 @@
+import 'package:mvvm_cubit/common/network/api_response/api_response.dart';
 import 'package:mvvm_cubit/common/repository/repository_helper.dart';
 import 'package:mvvm_cubit/data/api/sos/sos_api.dart';
 import 'package:mvvm_cubit/data/api/sos/sos_submit_request.dart';
@@ -19,7 +20,7 @@ class SosRepository with RepositoryHelper<dynamic> {
     return _api.getReasons();
   }
 
-  Future<dynamic> submitSOS(SOSSubmitRequest request) async {
+  Future<ApiResponse> submitSOS(SOSSubmitRequest request) async {
     return _api.submitSos(request);
   }
 }

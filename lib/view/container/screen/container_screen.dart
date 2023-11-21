@@ -175,7 +175,8 @@ class _ContainerScreenState extends State<ContainerScreen>
                   list,
                 )
                 .getUpdates();
-
+            logger.d('===list $list');
+            logger.d('===_emergencyList $_emergencyList');
             if (list.isNotEmpty &&
                 _emergencyList.isNotEmpty &&
                 listDiff.isEmpty) {

@@ -1,6 +1,9 @@
-import 'package:flutter/material.dart';
+import 'dart:async';
 
-class PrimaryButton extends StatelessWidget {
+import 'package:flutter/material.dart';
+import 'package:mvvm_cubit/common/logger/logger.dart';
+
+class PrimaryButton extends StatefulWidget {
   final String title;
   final double buttonHeight;
   final VoidCallback? onPressed;
@@ -15,22 +18,36 @@ class PrimaryButton extends StatelessWidget {
   });
 
   @override
+  State<PrimaryButton> createState() => _PrimaryButtonState();
+}
+
+class _PrimaryButtonState extends State<PrimaryButton> {
+  final _debouncer = _Debouncer(const Duration(milliseconds: 200));
+
+  @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: buttonHeight,
+      height: widget.buttonHeight,
       child: FilledButton(
-        onPressed: onPressed,
-        style: backgroundColor != null
+        onPressed: widget.onPressed != null
+            ? () {
+                logger.d('_debouncer run');
+                _debouncer.run(() {
+                  widget.onPressed!();
+                });
+              }
+            : null,
+        style: widget.backgroundColor != null
             ? ButtonStyle(
                 backgroundColor:
-                    MaterialStateProperty.all<Color>(backgroundColor!),
+                    MaterialStateProperty.all<Color>(widget.backgroundColor!),
               )
             : null,
         child: Row(
           children: [
             const Spacer(),
             Text(
-              title,
+              widget.title,
               style: const TextStyle(
                 fontWeight: FontWeight.w500,
                 fontSize: 18,
@@ -41,5 +58,17 @@ class PrimaryButton extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class _Debouncer {
+  final Duration delay;
+  Timer? _timer;
+
+  _Debouncer(this.delay);
+
+  void run(VoidCallback action) {
+    _timer?.cancel();
+    _timer = Timer(delay, action);
   }
 }

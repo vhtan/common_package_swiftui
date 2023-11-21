@@ -15,11 +15,11 @@ class MainRepository with RepositoryHelper<dynamic> {
 
   const MainRepository({required MainApi api}) : _api = api;
 
-  Future<TripResponse> getTrip() async {
+  Future<TripResponse?> getTrip() async {
     return _api.getTrip();
   }
 
-  Future<TempFormResponse> getTempFormDetails() async {
+  Future<TempFormResponse?> getTempFormDetails() async {
     return _api.getTempFormDetails();
   }
 

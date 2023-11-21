@@ -5,7 +5,7 @@ import 'package:mvvm_cubit/common/network/dio_client.dart';
 import 'package:mvvm_cubit/core/api_config.dart';
 
 mixin UploadImageExt {
-  Future<String?> uploadImage(
+  Future<ImageResponse?> uploadImage(
       DioClient client, String path, ApiHelper<dynamic> apiHelper) async {
     try {
       logger.i('uploadImage path= $path');
@@ -15,10 +15,25 @@ mixin UploadImageExt {
       final apiResponse = await apiHelper.makePostRequest(
         client.dio.post(ApiConfig.uploadImage, data: formData),
       );
-      return apiResponse.detail['imgUrl'];
+      final imageUrl = apiResponse.detail['imgUrl'];
+      final imageName = apiResponse.detail['imgName'];
+      return ImageResponse(
+        imageUrl: imageUrl,
+        imageName: imageName,
+      );
     } on Error catch (e) {
       logger.e(e);
       return null;
     }
   }
+}
+
+class ImageResponse {
+  final String imageUrl;
+  final String imageName;
+
+  const ImageResponse({
+    required this.imageUrl,
+    required this.imageName,
+  });
 }

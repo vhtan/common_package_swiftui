@@ -15,11 +15,14 @@ abstract mixin class ApiHelper<T> {
       final Response response = await apiCallback;
       final apiResponse = ApiResponse.fromJson(response.data);
       logger.d('apiResponse $apiResponse');
+      logger.d('apiResponsess ${response.statusCode.success}');
       if (response.statusCode.success) {
-        if (apiResponse.code == ErrorCode.SUCCESS) {
-          return apiResponse;
-        }
-        throw Error();
+        logger.d('go here ${apiResponse.code}');
+        return apiResponse;
+        // if (apiResponse.code == ErrorCode.SUCCESS) {
+        //   return apiResponse;
+        // }
+        // throw Error();
       } else {
         throw DioExceptions;
       }

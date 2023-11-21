@@ -13,16 +13,21 @@ class MainCubit extends GenericCubit<MainState> {
   MainCubit({required this.repository});
 
   Future<void> getTrip() async {
-    emit(
-      GenericCubitState.loading(),
-    );
     try {
       final trip = await repository.getTrip();
-      emit(
-        GenericCubitState.success(
-          GetTripMainState(trip: trip),
-        ),
-      );
+      if (trip != null) {
+        emit(
+          GenericCubitState.success(
+            GetTripMainState(trip: trip),
+          ),
+        );
+      } else {
+        emit(
+          GenericCubitState.success(
+            EmptyTripMainState(),
+          ),
+        );
+      }
     } on DioException catch (e) {
       final statusCode = e.response?.statusCode;
       if (statusCode == 404) {
@@ -32,7 +37,6 @@ class MainCubit extends GenericCubit<MainState> {
           ),
         );
       } else {
-        logger.d('statusCode else main = $statusCode');
         emit(
           GenericCubitState.failure(e.message ?? 'Error'),
         );
@@ -41,16 +45,13 @@ class MainCubit extends GenericCubit<MainState> {
   }
 
   Future<void> getTempFormDetails() async {
-    emit(
-      GenericCubitState.loading(),
-    );
     try {
       final tempForm = await repository.getTempFormDetails();
-      if (tempForm.status == TempFormStatus.NEW ||
-          tempForm.status == TempFormStatus.APPROVED) {
+      if (tempForm?.status == TempFormStatus.NEW ||
+          tempForm?.status == TempFormStatus.APPROVED) {
         emit(
           GenericCubitState.success(
-            GetTempFormDetailsMainState(tempForm: tempForm),
+            GetTempFormDetailsMainState(tempForm: tempForm!),
           ),
         );
       } else {
@@ -62,6 +63,7 @@ class MainCubit extends GenericCubit<MainState> {
       }
     } on DioException catch (e) {
       final statusCode = e.response?.statusCode;
+
       if (statusCode == 404) {
         emit(
           GenericCubitState.success(
@@ -77,9 +79,6 @@ class MainCubit extends GenericCubit<MainState> {
   }
 
   Future<void> getWarningList() async {
-    emit(
-      GenericCubitState.loading(),
-    );
     try {
       final warningList = await repository.getWarningList();
       emit(
@@ -133,7 +132,6 @@ class MainCubit extends GenericCubit<MainState> {
   }
 
   void reloadState() {
-    logger.d('reloadState');
     emit(
       GenericCubitState.success(state.data),
     );
@@ -141,7 +139,6 @@ class MainCubit extends GenericCubit<MainState> {
 
   Future<void> submitArrived(CheckInRequest request) async {
     try {
-      logger.d('didCaptureAndUploadImage $request');
       await repository.submitArrived(request);
       emit(
         GenericCubitState.success(
@@ -150,7 +147,6 @@ class MainCubit extends GenericCubit<MainState> {
       );
       getTrip();
     } on DioException catch (e) {
-      logger.e(e.message);
       emit(
         GenericCubitState.failure(e.message ?? 'Error'),
       );

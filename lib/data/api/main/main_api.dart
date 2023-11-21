@@ -1,4 +1,5 @@
 import 'package:mvvm_cubit/common/logger/logger.dart';
+import 'package:mvvm_cubit/common/network/api_error.dart';
 import 'package:mvvm_cubit/common/network/api_helper.dart';
 import 'package:mvvm_cubit/common/network/dio_client.dart';
 import 'package:mvvm_cubit/core/api_config.dart';
@@ -18,22 +19,32 @@ class MainApi with ApiHelper<dynamic> {
 
   MainApi({required this.client});
 
-  Future<TripResponse> getTrip() async {
+  Future<TripResponse?> getTrip() async {
     final apiResponse = await makeGetRequest(
       client.dio.get(
         ApiConfig.getTrip,
       ),
     );
-    return TripResponse.fromJson(apiResponse.detail);
+
+    if (apiResponse.code == ErrorCode.SUCCESS) {
+      return TripResponse.fromJson(apiResponse.detail);
+    } else {
+      return null;
+    }
   }
 
-  Future<TempFormResponse> getTempFormDetails() async {
+  Future<TempFormResponse?> getTempFormDetails() async {
     final apiResponse = await makeGetRequest(
       client.dio.get(
         ApiConfig.tempFormDetails,
       ),
     );
-    return TempFormResponse.fromJson(apiResponse.detail);
+
+    if (apiResponse.code == ErrorCode.SUCCESS) {
+      return TempFormResponse.fromJson(apiResponse.detail);
+    } else {
+      return null;
+    }
   }
 
   Future<List<WarningResponse>> getWarningList() async {

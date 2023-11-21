@@ -18,6 +18,7 @@ class CheckPointCubit extends Cubit<GenericCubitState<CheckPointData>> {
           const CheckPointData(
             file: null,
             imagePath: null,
+            imgName: null,
           ),
         ),
       );
@@ -25,14 +26,14 @@ class CheckPointCubit extends Cubit<GenericCubitState<CheckPointData>> {
     }
 
     try {
-      final imagePath = await repository.uploadImage(file.path);
-      logger.i('imagePath $imagePath');
-      if (imagePath != null) {
+      final imageResponse = await repository.uploadImage(file.path);
+      if (imageResponse != null) {
         emit(
           GenericCubitState.success(
             CheckPointData(
               file: file,
-              imagePath: imagePath,
+              imagePath: imageResponse.imageUrl,
+              imgName: imageResponse.imageName,
             ),
           ),
         );
@@ -49,8 +50,10 @@ class CheckPointCubit extends Cubit<GenericCubitState<CheckPointData>> {
 class CheckPointData {
   final File? file;
   final String? imagePath;
+  final String? imgName;
   const CheckPointData({
     required this.file,
     required this.imagePath,
+    required this.imgName,
   });
 }

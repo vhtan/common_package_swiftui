@@ -2,6 +2,7 @@
 
 import 'dart:io';
 
+import 'package:mvvm_cubit/data/api/upload_image/upload_image_ext.dart';
 import 'package:mvvm_cubit/data/model/sos/child_sos_response.dart';
 
 class ReportState {
@@ -9,9 +10,12 @@ class ReportState {
 }
 
 class UploadImageSuccess extends ReportState {
-  String uploadUrl;
+  ImageResponse imageResponse;
   File? file;
-  UploadImageSuccess({required this.uploadUrl, required this.file});
+  UploadImageSuccess({
+    required this.imageResponse,
+    required this.file,
+  });
 }
 
 class GetReasonsSuccess extends ReportState {

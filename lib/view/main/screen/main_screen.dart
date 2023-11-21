@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:location/location.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
+
 import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/snack_bar/error_snack_bar.dart';
 import 'package:mvvm_cubit/common/widget/empty_widget.dart';
@@ -20,7 +21,7 @@ import 'package:mvvm_cubit/data/request/check_in/check_in_request.dart';
 import 'package:mvvm_cubit/di.dart';
 import 'package:mvvm_cubit/main.dart';
 import 'package:mvvm_cubit/manager/hive_storage_manager.dart';
-import 'package:mvvm_cubit/manager/secure_storage_manager.dart';
+
 import 'package:mvvm_cubit/view/add_trip/add_trip_screen.dart';
 import 'package:mvvm_cubit/view/auth/login_screen.dart';
 import 'package:mvvm_cubit/view/check_point/check_point_screen.dart';
@@ -55,28 +56,23 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   double _arrivalLimitRadius = 0;
   final _timerDuration = const Duration(seconds: 10);
   final GlobalKey<State> progressKey = GlobalKey<State>();
-  bool _isLogout = false;
+  int apiCounter = 0;
 
   @override
   void initState() {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _cubit.getTrip();
-      startFetchingWarning();
+      initLoadData();
 
       checkLocationPermission();
       Future.delayed(const Duration(seconds: 2), () {
-        _cubit.getWarningList();
         getCurrentLocation();
-        _cubit.getTempFormDetails();
       });
     });
     AuthManager.instance.setTokenExpiredCallback(() {
       cancelFetchingTrip();
       cancelFetchingWarning();
-      final name = ModalRoute.of(context)?.settings.name;
-      logger.d('===name $name');
       if (AuthManager.instance.isLoggedIn) {
         navigateTo(
           const LoginScreen(),
@@ -94,6 +90,20 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     );
 
     WidgetsBinding.instance.addObserver(this);
+  }
+
+  Future<void> initLoadData() async {
+    try {
+      final List<Future<void>> apiCalls = [
+        _cubit.getTrip(),
+        _cubit.getWarningList(),
+        _cubit.getTempFormDetails(),
+      ];
+
+      await Future.wait(apiCalls);
+    } catch (error) {
+      logger.e(error);
+    }
   }
 
   void startFetchingTrip() {
@@ -179,11 +189,11 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
       child: Scaffold(
         body: BlocConsumer<MainCubit, GenericCubitState>(
           listener: (context, state) {
+            setState(() {
+              apiCounter += 1;
+            });
             switch (state.status) {
               case Status.failure:
-                if (progressKey.currentContext != null) {
-                  Navigator.pop(context);
-                }
                 showErrorSnackBar(
                   context,
                   state.error ?? AppString.sendTimeOut,
@@ -212,10 +222,13 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                     _tempForm = null;
                   });
                 } else if (data is DidDeleteTripMainState) {
+                  showConfirmSnackBar(context, 'Đã huỷ PYC tạm thành công');
                   setState(() {
                     _tempForm = null;
                   });
                 } else if (data is DidCloseTripMainState) {
+                  showConfirmSnackBar(
+                      context, 'Đã hoàn thành PYC tạm thành công');
                   setState(() {
                     _tempForm = null;
                   });
@@ -227,6 +240,11 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
           builder: (context, state) {
             return BlocBuilder<MainCubit, GenericCubitState<MainState>>(
               builder: (context, state) {
+                if (apiCounter < 3) {
+                  return Center(
+                    child: _LoadingIndicator(),
+                  );
+                }
                 return Column(
                   children: [
                     warningWidgetList(),
@@ -347,7 +365,10 @@ extension _MainScreenDeliveryList on MainScreenState {
             onPressed: () => showDialog<String>(
               context: context,
               builder: (context) => AddTripScreen(
-                didAddTrip: () => _cubit.getTempFormDetails(),
+                didAddTrip: () {
+                  showConfirmSnackBar(context, 'Đã thêm PYC tạm thành công');
+                  _cubit.getTempFormDetails();
+                },
               ),
               barrierDismissible: false,
             ),
@@ -371,7 +392,11 @@ extension _MainScreenDeliveryList on MainScreenState {
               context: context,
               builder: (context) => AddTripScreen(
                 tempForm: _tempForm,
-                didAddTrip: () => _cubit.getTempFormDetails(),
+                didAddTrip: () {
+                  showConfirmSnackBar(
+                      context, 'Đã cập nhập PYC tạm thành công');
+                  _cubit.getTempFormDetails();
+                },
               ),
               barrierDismissible: false,
             ),
@@ -458,4 +483,13 @@ class StopPointItem {
   bool isExpanded;
 
   StopPointItem(this.stopPoint, {this.isExpanded = false});
+}
+
+class _LoadingIndicator extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return const CircularProgressIndicator(
+      color: AppColors.primary,
+    );
+  }
 }

@@ -4,6 +4,8 @@ import 'dart:io';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
+import 'package:mvvm_cubit/common/logger/logger.dart';
+import 'package:mvvm_cubit/common/network/api_error.dart';
 import 'package:mvvm_cubit/data/api/sos/sos_submit_request.dart';
 import 'package:mvvm_cubit/data/model/sos/sos_response.dart';
 import 'package:mvvm_cubit/repository/sos/sos_repository.dart';
@@ -26,7 +28,7 @@ class ReportSOSCubit extends Cubit<GenericCubitState<dynamic>> {
     try {
       emit(
         GenericCubitState.success(
-          UploadImageSuccess(uploadUrl: response, file: file),
+          UploadImageSuccess(imageResponse: response, file: file),
         ),
       );
     } catch (ex) {
@@ -60,12 +62,20 @@ class ReportSOSCubit extends Cubit<GenericCubitState<dynamic>> {
       GenericCubitState.loading(),
     );
     try {
-      await repository.submitSOS(request);
-      emit(
-        GenericCubitState.success(
-          const DidSubmitReasonSuccess(),
-        ),
-      );
+      final apiResponse = await repository.submitSOS(request);
+      logger.d('=== |||||| apiResponse $apiResponse');
+      if (apiResponse.code == ErrorCode.SUCCESS) {
+        emit(
+          GenericCubitState.success(
+            const DidSubmitReasonSuccess(),
+          ),
+        );
+      } else {
+        emit(
+          GenericCubitState.failure(
+              'Báo cáo sự cố thất bại. Vui lòng thử lại sau.'),
+        );
+      }
     } catch (ex) {
       emit(
         GenericCubitState.failure(ex.toString()),

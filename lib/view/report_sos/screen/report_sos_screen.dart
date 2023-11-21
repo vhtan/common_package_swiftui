@@ -12,8 +12,10 @@ import 'package:mvvm_cubit/common/widget/image_capture.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/common/widget/text_input.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
+import 'package:mvvm_cubit/core/app_string.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/data/api/sos/sos_submit_request.dart';
+import 'package:mvvm_cubit/data/api/upload_image/upload_image_ext.dart';
 import 'package:mvvm_cubit/data/model/sos/child_sos_response.dart';
 import 'package:mvvm_cubit/di.dart';
 import 'package:mvvm_cubit/viewmodel/report_sos/report_sos_cubit.dart';
@@ -30,7 +32,7 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
   final cubit = ReportSOSCubit(repository: di());
   List<ChildSOSResponse> reasons = [];
   ChildSOSResponse? selectedReason;
-  String? uploadedUrl;
+  ImageResponse? imageResponse;
   String? describeReason;
   File? localFile;
 
@@ -63,11 +65,15 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
       child: BlocConsumer<ReportSOSCubit, GenericCubitState>(
         listener: (context, state) {
           final data = state.data;
-          if (state.status == Status.loading) {
-            // showProgressDialog(
-            //   context,
-            //   progressKey,
-            // );
+          switch (state.status) {
+            case Status.failure:
+              showErrorSnackBar(
+                context,
+                state.error ?? AppString.sendTimeOut,
+              );
+              return;
+            default:
+              break;
           }
           if (data is DidSubmitReasonSuccess) {
             showConfirmSnackBar(context, 'Đã báo cáo sự cố thành công');
@@ -76,7 +82,7 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
           if (data is UploadImageSuccess) {
             setState(
               () {
-                uploadedUrl = data.uploadUrl;
+                imageResponse = data.imageResponse;
                 localFile = data.file;
               },
             );
@@ -159,7 +165,7 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
                                   deleteCallback: () => {
                                     setState(() {
                                       localFile = null;
-                                      uploadedUrl = null;
+                                      imageResponse = null;
                                     })
                                   },
                                 ),
@@ -190,7 +196,8 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
                                           cubit.submitSOS(
                                             SOSSubmitRequest(
                                               reasonId: selectedReason?.id,
-                                              imgUrl: uploadedUrl,
+                                              imgUrl: imageResponse?.imageUrl,
+                                              imgName: imageResponse?.imageName,
                                               sosMessage: describeReason,
                                               requestId:
                                                   selectedReason?.requestId,
@@ -219,7 +226,7 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
 
   bool validSubmitSOS() {
     if (selectedReason != null &&
-        uploadedUrl.isNotNullOrEmpty() &&
+        (imageResponse != null) &&
         describeReason.isNotNullOrEmpty()) {
       return true;
     }
@@ -237,11 +244,8 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
                 resolutionPreset: ResolutionPreset.medium,
                 onFile: (file) {
                   if (file.path.isNotNullOrEmpty()) {
-                    // upload photo here
                     cubit.didCapturePhoto(file);
-                  } else {
-                    // display error
-                  }
+                  } else {}
                   Navigator.pop(context);
                 },
               ),

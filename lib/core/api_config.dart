@@ -12,7 +12,7 @@ class ApiConfig {
   static const String login = '/user/login';
   static const String logout = '/user/logout';
   static const String currencyList = '/currency/list';
-  static const String uploadImage = '/sos/image/upload';
+  static const String uploadImage = '/image/upload';
 
   static const String taskPurposeList = '/task-purpose/list';
   static const String vehicleList = '/vehicle/list';
@@ -48,6 +48,7 @@ class ApiConfig {
   static String notificationList(bool isEmergency) {
     if (isEmergency) {
       return '/notification/list?isRead=false&type=EMERGENCY';
+      // return '/notification/list&type=EMERGENCY';
     } else {
       return '/notification/list';
     }

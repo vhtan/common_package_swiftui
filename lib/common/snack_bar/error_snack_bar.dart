@@ -37,7 +37,7 @@ void showConfirmSnackBar(BuildContext context, String message) {
       content: Row(
         children: <Widget>[
           const Icon(
-            Icons.error_outline,
+            Icons.check,
             color: AppColors.white,
           ),
           const SizedBox(width: 10),
