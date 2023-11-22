@@ -147,6 +147,7 @@ class _ContainerScreenState extends State<ContainerScreen>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
+      _containerCubit.getEmergencyNotificationList();
       startFetchingEmergency();
     } else if (state == AppLifecycleState.inactive) {
       cancelFetchingEmergency();

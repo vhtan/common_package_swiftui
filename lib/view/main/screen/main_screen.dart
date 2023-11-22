@@ -6,7 +6,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:location/location.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/common/dialog/delete_dialog.dart';
-
+import 'package:mvvm_cubit/common/dialog/progress_dialog.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/snack_bar/error_snack_bar.dart';
 import 'package:mvvm_cubit/common/widget/empty_widget.dart';
@@ -22,7 +22,6 @@ import 'package:mvvm_cubit/data/request/check_in/check_in_request.dart';
 import 'package:mvvm_cubit/di.dart';
 import 'package:mvvm_cubit/main.dart';
 import 'package:mvvm_cubit/manager/hive_storage_manager.dart';
-
 import 'package:mvvm_cubit/view/add_trip/add_trip_screen.dart';
 import 'package:mvvm_cubit/view/auth/login_screen.dart';
 import 'package:mvvm_cubit/view/check_point/check_point_screen.dart';
@@ -54,6 +53,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   final _cubit = MainCubit(repository: di());
   static Timer? _fetchTrip;
   static Timer? _fetchWarning;
+  static Timer? _fetchTempFormDetails;
   final HiveStorageManager _hiveStorageManager = di();
   double _arrivalLimitRadius = 0;
   final _timerDuration = const Duration(seconds: 10);
@@ -67,14 +67,14 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       initLoadData();
 
-      checkLocationPermission();
-      Future.delayed(const Duration(seconds: 2), () {
-        getCurrentLocation();
-      });
+      // Future.delayed(const Duration(seconds: 2), () {
+      //   getCurrentLocation();
+      // });
     });
     AuthManager.instance.setTokenExpiredCallback(() {
       cancelFetchingTrip();
       cancelFetchingWarning();
+      cancelFetchingTempFormDetails();
       if (AuthManager.instance.isLoggedIn) {
         navigateTo(
           const LoginScreen(),
@@ -106,6 +106,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     } catch (error) {
       logger.e(error);
     }
+    startFetchingWarning();
   }
 
   void startFetchingTrip() {
@@ -118,18 +119,29 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     );
   }
 
-  static void cancelFetchingTrip() {
-    _fetchTrip?.cancel();
-    _fetchTrip = null;
-  }
-
   void startFetchingWarning() {
     cancelFetchingWarning();
     _fetchWarning = Timer.periodic(
       _timerDuration,
       (timer) {
-        _cubit.getWarningList();
-        _cubit.getTempFormDetails();
+        logger.d('startFetchingWarning ${AuthManager.instance.isLoggedIn}');
+        if (AuthManager.instance.isLoggedIn) {
+          _cubit.getWarningList();
+        }
+      },
+    );
+  }
+
+  void startFetchingTempFormDetails() {
+    cancelFetchingTempFormDetails();
+    _fetchWarning = Timer.periodic(
+      _timerDuration,
+      (timer) {
+        logger.d(
+            'startFetchingTempFormDetails ${AuthManager.instance.isLoggedIn}');
+        if (AuthManager.instance.isLoggedIn) {
+          _cubit.getTempFormDetails();
+        }
       },
     );
   }
@@ -138,8 +150,14 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   void dispose() {
     cancelFetchingTrip();
     cancelFetchingWarning();
+    cancelFetchingTempFormDetails();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  static void cancelFetchingTrip() {
+    _fetchTrip?.cancel();
+    _fetchTrip = null;
   }
 
   static void cancelFetchingWarning() {
@@ -147,14 +165,25 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     _fetchWarning = null;
   }
 
+  static void cancelFetchingTempFormDetails() {
+    _fetchTempFormDetails?.cancel();
+    _fetchTempFormDetails = null;
+  }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       logger.d('===AppLifecycleState.resumed');
+      _cubit.getWarningList();
       startFetchingWarning();
+      if (_tempForm != null) {
+        _cubit.getTempFormDetails();
+        startFetchingTempFormDetails();
+      }
     } else if (state == AppLifecycleState.inactive) {
       logger.d('===AppLifecycleState.inactive');
       cancelFetchingWarning();
+      cancelFetchingTempFormDetails();
     }
   }
 
@@ -189,6 +218,8 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
             }
           },
         );
+      } else if (_permissionGranted == PermissionStatus.granted) {
+        _locationData = await getCurrentLocation();
       }
       if (_permissionGranted != PermissionStatus.granted) {
         return;
@@ -225,7 +256,11 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                   setState(() {
                     _trip = data.trip;
                   });
+                  checkLocationPermission();
                 } else if (data is GetTempFormDetailsMainState) {
+                  if (_tempForm == null) {
+                    startFetchingTempFormDetails();
+                  }
                   setState(() {
                     _tempForm = data.tempForm;
                   });
@@ -234,6 +269,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                     _trip = null;
                   });
                 } else if (data is EmptyTempFormMainState) {
+                  cancelFetchingTempFormDetails();
                   setState(() {
                     _tempForm = null;
                   });
@@ -305,7 +341,15 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     return TripContainer(
       trip: trip,
       onArrived: (stopPoint) async {
+        logger.d('====||tart getCurrentLocation');
+        showProgressDialog(context, progressKey);
         _locationData = await getCurrentLocation();
+        if (progressKey.currentContext != null) {
+          // ignore: use_build_context_synchronously
+          Navigator.pop(context);
+        }
+
+        logger.d('====||finish getCurrentLocation $_locationData');
         final stopPointLocation = LocationData.fromMap({
           'longitude': stopPoint.destination?.longitude,
           'latitude': stopPoint.destination?.latitude,
@@ -329,7 +373,6 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                 didCapture: (image) => _cubit.submitArrived(
                   CheckInRequest(
                       id: stopPoint.id,
-                      imagePath: image.imagePath ?? '',
                       imgName: image.imgName ?? '',
                       latitude: _locationData?.latitude ?? 0,
                       longitude: _locationData?.longitude ?? 0),

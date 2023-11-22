@@ -196,7 +196,6 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
                                           cubit.submitSOS(
                                             SOSSubmitRequest(
                                               reasonId: selectedReason?.id,
-                                              imgUrl: imageResponse?.imageUrl,
                                               imgName: imageResponse?.imageName,
                                               sosMessage: describeReason,
                                               requestId:

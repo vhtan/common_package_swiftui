@@ -9,7 +9,6 @@ part 'check_in_request.g.dart';
 class CheckInRequest {
   CheckInRequest({
     required this.id,
-    required this.imagePath,
     required this.imgName,
     required this.latitude,
     required this.longitude,
@@ -19,8 +18,6 @@ class CheckInRequest {
         requestTime = DateTime.now().millisecondsSinceEpoch;
   @JsonKey(name: "id")
   final String id;
-  @JsonKey(name: "imagePath")
-  final String imagePath;
   @JsonKey(name: "imgName")
   final String imgName;
   @JsonKey(name: "latitude")

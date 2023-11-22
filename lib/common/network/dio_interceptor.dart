@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
@@ -22,8 +24,9 @@ class DioInterceptor extends Interceptor {
         'Request => ${options.baseUrl}${options.path}${options.queryParameters.format}');
     _logger.i('Header  => ${options.headers}');
     final curlCommand = _generateCurlCommand(options);
-    _logger.i('cURL Request: $curlCommand');
-
+    // _logger.i('cURL Request: $curlCommand');
+    // print('cURL Request: $curlCommand');
+    log('cURL Request: $curlCommand');
     return super.onRequest(options, handler);
   }
 

@@ -22,7 +22,7 @@ class PrimaryButton extends StatefulWidget {
 }
 
 class _PrimaryButtonState extends State<PrimaryButton> {
-  final Duration _throttleDuration = const Duration(milliseconds: 10);
+  final Duration _throttleDuration = const Duration(milliseconds: 40);
   bool _isButtonEnabled = true;
 
   void _throttleFunction() {
@@ -35,7 +35,7 @@ class _PrimaryButtonState extends State<PrimaryButton> {
         _isButtonEnabled = true;
       });
     });
-
+    logger.d('======onPressed');
     widget.onPressed!();
   }
 
@@ -46,6 +46,7 @@ class _PrimaryButtonState extends State<PrimaryButton> {
       child: FilledButton(
         onPressed: (widget.onPressed != null && _isButtonEnabled)
             ? () {
+                logger.d('======_isButtonEnabled $_isButtonEnabled');
                 _throttleFunction();
               }
             : null,
