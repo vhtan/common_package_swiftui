@@ -94,18 +94,17 @@ class _ContainerScreenState extends State<ContainerScreen>
         });
       },
     );
-
     _initPackageInfo();
-
-    _containerCubit.totalUnreadNotification();
     WidgetsBinding.instance.addObserver(this);
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      startFetchingEmergency();
-      Future.delayed(const Duration(seconds: 2), () {
-        _containerCubit.getEmergencyNotificationList();
-      });
-    });
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) {
+        startFetchingEmergency();
+        _containerCubit.totalUnreadNotification();
+        Future.delayed(const Duration(seconds: 2), () {
+          _containerCubit.getEmergencyNotificationList();
+        });
+      },
+    );
   }
 
   void startFetchingEmergency() {
@@ -149,6 +148,7 @@ class _ContainerScreenState extends State<ContainerScreen>
     if (state == AppLifecycleState.resumed) {
       _containerCubit.getEmergencyNotificationList();
       startFetchingEmergency();
+      _containerCubit.totalUnreadNotification();
     } else if (state == AppLifecycleState.inactive) {
       cancelFetchingEmergency();
     }

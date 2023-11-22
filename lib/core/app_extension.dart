@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
 
+import 'package:dio/dio.dart';
 import 'package:html_unescape/html_unescape.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/core/app_asset.dart';
@@ -131,5 +133,14 @@ extension HtmlDecode on String {
     HtmlUnescape htmlUnescape = HtmlUnescape();
     logger.d(htmlUnescape.convert(this));
     return htmlUnescape.convert(this);
+  }
+}
+
+extension CustomDioException on DioException {
+  String get errorMessage {
+    if (this is TimeoutException) {
+      return 'Yêu cầu đã hết thời gian chờ. Vui lòng thử lại.';
+    }
+    return 'Đã có lỗi xảy ra vui lòng thử lại';
   }
 }

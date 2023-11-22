@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/common/dialog/progress_dialog.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
+import 'package:mvvm_cubit/common/snack_bar/error_snack_bar.dart';
 import 'package:mvvm_cubit/common/widget/empty_widget.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/data/model/notification/notification_response.dart';
@@ -41,6 +42,16 @@ class _NotificationScreen extends State<NotificationScreen> {
         listener: (context, state) {
           logger.d('=====Notification $state');
           switch (state.status) {
+            case Status.failure:
+              if (progressKey.currentContext != null) {
+                logger.d('message $progressKey');
+                Navigator.pop(context);
+              }
+              showErrorSnackBar(
+                context,
+                state.error ?? '',
+              );
+
             case Status.loading:
               if (progressKey.currentContext == null) {
                 showProgressDialog(

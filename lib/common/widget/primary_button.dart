@@ -46,7 +46,6 @@ class _PrimaryButtonState extends State<PrimaryButton> {
       child: FilledButton(
         onPressed: (widget.onPressed != null && _isButtonEnabled)
             ? () {
-                logger.d('======_isButtonEnabled $_isButtonEnabled');
                 _throttleFunction();
               }
             : null,

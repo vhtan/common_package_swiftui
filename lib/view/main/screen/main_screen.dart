@@ -1,12 +1,12 @@
 import 'dart:async';
 
+import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:location/location.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/common/dialog/delete_dialog.dart';
-import 'package:mvvm_cubit/common/dialog/progress_dialog.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/snack_bar/error_snack_bar.dart';
 import 'package:mvvm_cubit/common/widget/empty_widget.dart';
@@ -27,11 +27,11 @@ import 'package:mvvm_cubit/view/auth/login_screen.dart';
 import 'package:mvvm_cubit/view/check_point/check_point_screen.dart';
 import 'package:mvvm_cubit/view/main/widget/trip_container.dart';
 import 'package:mvvm_cubit/view/pending_trip/screen/pending_trip_screen.dart';
+import 'package:mvvm_cubit/view/verify_distance/verify_distance_screen.dart';
 import 'package:mvvm_cubit/view/warnings_handler/screen/warnings_handler_screen.dart';
 import 'package:mvvm_cubit/view/webview/webview_screen.dart';
 import 'package:mvvm_cubit/viewmodel/main/main_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/main/main_state.dart';
-import 'package:app_settings/app_settings.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -46,9 +46,6 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   TripResponse? _trip;
   TempFormResponse? _tempForm;
   List<WarningResponse>? _warningList;
-  bool _serviceEnabled = false;
-  PermissionStatus? _permissionGranted;
-  LocationData? _locationData;
 
   final _cubit = MainCubit(repository: di());
   static Timer? _fetchTrip;
@@ -56,6 +53,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   static Timer? _fetchTempFormDetails;
   final HiveStorageManager _hiveStorageManager = di();
   double _arrivalLimitRadius = 0;
+  String _loginCode = '';
   final _timerDuration = const Duration(seconds: 10);
   final GlobalKey<State> progressKey = GlobalKey<State>();
   int apiCounter = 0;
@@ -66,10 +64,6 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       initLoadData();
-
-      // Future.delayed(const Duration(seconds: 2), () {
-      //   getCurrentLocation();
-      // });
     });
     AuthManager.instance.setTokenExpiredCallback(() {
       cancelFetchingTrip();
@@ -87,6 +81,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
       (value) {
         setState(() {
           _arrivalLimitRadius = value?.arrivalLimitRadius ?? 0;
+          _loginCode = value?.code ?? '';
         });
       },
     );
@@ -187,46 +182,6 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     }
   }
 
-  Future<LocationData?> getCurrentLocation() async {
-    if (_serviceEnabled && _permissionGranted == PermissionStatus.granted) {
-      return await location.getLocation();
-    } else {
-      checkLocationPermission();
-    }
-    return null;
-  }
-
-  void checkLocationPermission() async {
-    if (!_serviceEnabled) {
-      _serviceEnabled = await location.requestService();
-      if (!_serviceEnabled) {
-        return;
-      }
-    }
-    logger.d('_permissionGranted');
-    _permissionGranted = await location.hasPermission();
-    if (_permissionGranted == PermissionStatus.denied) {
-      logger.d('_permissionGranted $_permissionGranted');
-      _permissionGranted = await location.requestPermission();
-      logger.d('_permissionGranted $_permissionGranted');
-      if (_permissionGranted == PermissionStatus.deniedForever) {
-        // ignore: use_build_context_synchronously
-        forceDialog(context, 'Bạn phải cung cấp quyền truy cập vị trí!').then(
-          (value) {
-            if (value == true) {
-              AppSettings.openAppSettings();
-            }
-          },
-        );
-      } else if (_permissionGranted == PermissionStatus.granted) {
-        _locationData = await getCurrentLocation();
-      }
-      if (_permissionGranted != PermissionStatus.granted) {
-        return;
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -256,7 +211,6 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                   setState(() {
                     _trip = data.trip;
                   });
-                  checkLocationPermission();
                 } else if (data is GetTempFormDetailsMainState) {
                   if (_tempForm == null) {
                     startFetchingTempFormDetails();
@@ -340,54 +294,52 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   Widget currentTrip(BuildContext context, TripResponse trip) {
     return TripContainer(
       trip: trip,
-      onArrived: (stopPoint) async {
-        logger.d('====||tart getCurrentLocation');
-        showProgressDialog(context, progressKey);
-        _locationData = await getCurrentLocation();
-        if (progressKey.currentContext != null) {
-          // ignore: use_build_context_synchronously
-          Navigator.pop(context);
-        }
-
-        logger.d('====||finish getCurrentLocation $_locationData');
-        final stopPointLocation = LocationData.fromMap({
-          'longitude': stopPoint.destination?.longitude,
-          'latitude': stopPoint.destination?.latitude,
-        });
-        if (_locationData != null) {
-          final isNeedCheckDistance = _arrivalLimitRadius > 0;
-          final calDistance =
-              calculateDistance(_locationData!, stopPointLocation);
-
-          if (isNeedCheckDistance && calDistance > _arrivalLimitRadius) {
-            // ignore: use_build_context_synchronously
-            showErrorSnackBar(
-              context,
-              AppString.farFromCheckIn,
-            );
-          } else {
-            // ignore: use_build_context_synchronously
-            await showDialog(
+      onArrived: (stopPoint) => showVerifyDistanceDialog(
+        context: context,
+        key: progressKey,
+        stopPoint: stopPoint,
+        arrivalLimitRadius: _arrivalLimitRadius,
+        onVerifyLocationData: (locationData) {},
+        onError: (value) => showErrorSnackBar(context, value),
+      ).then(
+        (value) {
+          logger.d('====ForceRequestLocationError $value');
+          if (value is LocationData) {
+            showDialog(
               context: context,
               builder: (context) => CheckPointScreen(
                 didCapture: (image) => _cubit.submitArrived(
                   CheckInRequest(
-                      id: stopPoint.id,
-                      imgName: image.imgName ?? '',
-                      latitude: _locationData?.latitude ?? 0,
-                      longitude: _locationData?.longitude ?? 0),
+                    id: stopPoint.id,
+                    imgName: image.imgName ?? '',
+                    latitude: value.latitude ?? 0,
+                    longitude: value.longitude ?? 0,
+                  ),
                 ),
               ),
               barrierDismissible: false,
             );
+          } else if (value is FarFromCheckInError) {
+            showErrorSnackBar(context, value.message);
+          } else if (value is ForceRequestLocationError) {
+            logger.d('====ForceRequestLocationError');
+            forceDialog(context, 'Bạn phải cung cấp quyền truy cập vị trí!')
+                .then(
+              (value) {
+                if (value == true) {
+                  AppSettings.openAppSettings();
+                }
+              },
+            );
           }
-        }
-      },
+        },
+      ),
       onConfirm: (value) {
         navigateTo(
           WebViewCustom(
             title: 'Xác nhận PYC: $value',
             jobRequestId: trip.routeId ?? 0,
+            code: _loginCode,
           ),
         );
       },
@@ -396,6 +348,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
           WebViewCustom(
             title: 'Hoàn thành PYC: $value',
             jobRequestId: trip.routeId ?? 0,
+            code: _loginCode,
           ),
         );
       },

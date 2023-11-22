@@ -1,4 +1,3 @@
-import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/config/base_config.dart';
 import 'package:mvvm_cubit/config/config_dev.dart';
 import 'package:mvvm_cubit/config/config_prod.dart';

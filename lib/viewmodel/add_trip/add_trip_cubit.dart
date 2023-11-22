@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
+import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/data/request/add_trip/add_trip_request.dart';
 import 'package:mvvm_cubit/repository/add_trip/add_trip_repository.dart';
 import 'package:mvvm_cubit/viewmodel/add_trip/add_trip_state.dart';
@@ -23,7 +24,7 @@ class AddTripCubit extends GenericCubit<AddTripState> {
       );
     } on DioException catch (e) {
       emit(
-        GenericCubitState.failure(e.message ?? 'Error'),
+        GenericCubitState.failure(e.errorMessage),
       );
     }
   }
@@ -41,7 +42,7 @@ class AddTripCubit extends GenericCubit<AddTripState> {
       );
     } on DioException catch (e) {
       emit(
-        GenericCubitState.failure(e.message ?? 'Error'),
+        GenericCubitState.failure(e.errorMessage),
       );
     }
   }
@@ -59,7 +60,7 @@ class AddTripCubit extends GenericCubit<AddTripState> {
       );
     } on DioException catch (e) {
       emit(
-        GenericCubitState.failure(e.message ?? 'Error'),
+        GenericCubitState.failure(e.errorMessage),
       );
     }
   }
@@ -77,7 +78,7 @@ class AddTripCubit extends GenericCubit<AddTripState> {
       );
     } on DioException catch (e) {
       emit(
-        GenericCubitState.failure(e.message ?? 'Error'),
+        GenericCubitState.failure(e.errorMessage),
       );
     }
   }
@@ -90,7 +91,7 @@ class AddTripCubit extends GenericCubit<AddTripState> {
       );
     } on DioException catch (e) {
       emit(
-        GenericCubitState.failure(e.message ?? 'Error'),
+        GenericCubitState.failure(e.errorMessage),
       );
     }
   }
@@ -103,7 +104,7 @@ class AddTripCubit extends GenericCubit<AddTripState> {
       );
     } on DioException catch (e) {
       emit(
-        GenericCubitState.failure(e.message ?? 'Error'),
+        GenericCubitState.failure(e.errorMessage),
       );
     }
   }
@@ -118,7 +119,7 @@ class AddTripCubit extends GenericCubit<AddTripState> {
       );
     } on DioException catch (e) {
       emit(
-        GenericCubitState.failure(e.message ?? 'Error'),
+        GenericCubitState.failure(e.errorMessage),
       );
     }
   }
@@ -131,7 +132,7 @@ class AddTripCubit extends GenericCubit<AddTripState> {
       );
     } on DioException catch (e) {
       emit(
-        GenericCubitState.failure(e.message ?? 'Error'),
+        GenericCubitState.failure(e.errorMessage),
       );
     }
   }

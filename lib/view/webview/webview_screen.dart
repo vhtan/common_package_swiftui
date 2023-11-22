@@ -8,11 +8,13 @@ import 'package:webview_flutter/webview_flutter.dart';
 class WebViewCustom extends StatefulWidget {
   final String title;
   final int jobRequestId;
+  final String code;
 
   const WebViewCustom({
     super.key,
     required this.title,
     required this.jobRequestId,
+    required this.code,
   });
 
   @override
@@ -25,7 +27,8 @@ class _WebViewCustomState extends State<WebViewCustom> {
   @override
   void initState() {
     super.initState();
-    final url = '${environment.vacomUrl()}${widget.jobRequestId}';
+    final url =
+        '${environment.vacomUrl()}${widget.jobRequestId}&persCode=${widget.code}';
     logger.i('url $url');
     controller.setJavaScriptMode(JavaScriptMode.unrestricted);
     controller.loadRequest(

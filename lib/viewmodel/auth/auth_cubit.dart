@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/core/api_config.dart';
+import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/data/request/auth/login_request.dart';
 import 'package:mvvm_cubit/manager/hive_storage_manager.dart';
 import 'package:mvvm_cubit/manager/secure_storage_manager.dart';
@@ -46,7 +47,7 @@ class AuthCubit extends Cubit<GenericCubitState<AuthState>> {
       }
     } on DioException catch (e) {
       emit(
-        GenericCubitState.failure(e.message ?? 'Error'),
+        GenericCubitState.failure(e.errorMessage),
       );
     }
   }
@@ -62,9 +63,7 @@ class AuthCubit extends Cubit<GenericCubitState<AuthState>> {
       );
     } on DioException catch (e) {
       emit(
-        GenericCubitState.failure(
-          e.message ?? 'Error',
-        ),
+        GenericCubitState.failure(e.errorMessage),
       );
     }
     secureStorageManager.deleteAll();

@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
+import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/data/model/temp_form/temp_form_response.dart';
 import 'package:mvvm_cubit/data/request/check_in/check_in_request.dart';
 import 'package:mvvm_cubit/repository/main/main_repository.dart';
@@ -38,7 +39,7 @@ class MainCubit extends GenericCubit<MainState> {
         );
       } else {
         emit(
-          GenericCubitState.failure(e.message ?? 'Error'),
+          GenericCubitState.failure(e.errorMessage),
         );
       }
     }
@@ -72,7 +73,7 @@ class MainCubit extends GenericCubit<MainState> {
         );
       } else {
         emit(
-          GenericCubitState.failure(e.message ?? 'Error'),
+          GenericCubitState.failure(e.errorMessage),
         );
       }
     }
@@ -88,7 +89,7 @@ class MainCubit extends GenericCubit<MainState> {
       );
     } on DioException catch (e) {
       emit(
-        GenericCubitState.failure(e.message ?? 'Error'),
+        GenericCubitState.failure(e.errorMessage),
       );
     }
   }
@@ -104,7 +105,7 @@ class MainCubit extends GenericCubit<MainState> {
       );
     } on DioException catch (e) {
       emit(
-        GenericCubitState.failure(e.message ?? 'Error'),
+        GenericCubitState.failure(e.errorMessage),
       );
     }
   }
@@ -120,7 +121,7 @@ class MainCubit extends GenericCubit<MainState> {
       );
     } on DioException catch (e) {
       emit(
-        GenericCubitState.failure(e.message ?? 'Error'),
+        GenericCubitState.failure(e.errorMessage),
       );
     }
   }
@@ -148,7 +149,7 @@ class MainCubit extends GenericCubit<MainState> {
       getTrip();
     } on DioException catch (e) {
       emit(
-        GenericCubitState.failure(e.message ?? 'Error'),
+        GenericCubitState.failure(e.errorMessage),
       );
     }
   }
