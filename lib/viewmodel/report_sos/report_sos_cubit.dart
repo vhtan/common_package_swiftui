@@ -1,11 +1,11 @@
-// ignore_for_file: unnecessary_brace_in_string_interps
-
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/network/api_error.dart';
+import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/data/api/sos/sos_submit_request.dart';
 import 'package:mvvm_cubit/data/model/sos/sos_response.dart';
 import 'package:mvvm_cubit/repository/sos/sos_repository.dart';
@@ -24,16 +24,16 @@ class ReportSOSCubit extends Cubit<GenericCubitState<dynamic>> {
       );
       return;
     }
-    final response = await repository.uploadImage(file.path);
     try {
+      final response = await repository.uploadImage(file.path);
       emit(
         GenericCubitState.success(
           UploadImageSuccess(imageResponse: response, file: file),
         ),
       );
-    } catch (ex) {
+    } on DioException catch (e) {
       emit(
-        GenericCubitState.failure(ex.toString()),
+        GenericCubitState.failure(e.errorMessage),
       );
     }
   }
@@ -50,9 +50,9 @@ class ReportSOSCubit extends Cubit<GenericCubitState<dynamic>> {
           GetReasonsSuccess(reasons: reasons ?? []),
         ),
       );
-    } catch (ex) {
+    } on DioException catch (e) {
       emit(
-        GenericCubitState.failure(ex.toString()),
+        GenericCubitState.failure(e.errorMessage),
       );
     }
   }
@@ -76,9 +76,9 @@ class ReportSOSCubit extends Cubit<GenericCubitState<dynamic>> {
               'Báo cáo sự cố thất bại. Vui lòng thử lại sau.'),
         );
       }
-    } catch (ex) {
+    } on DioException catch (e) {
       emit(
-        GenericCubitState.failure(ex.toString()),
+        GenericCubitState.failure(e.errorMessage),
       );
     }
   }

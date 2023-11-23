@@ -46,18 +46,18 @@ class ContainerCubit extends GenericCubit<ContainerState> {
           ),
         ),
       );
-    } catch (ex) {
+    } on DioException catch (e) {
       emit(
-        GenericCubitState.failure(ex.toString()),
+        GenericCubitState.failure(e.errorMessage),
       );
     }
   }
 
   void readNotification(String id) async {
     await repository.readNotification(id);
-    try {} catch (ex) {
+    try {} on DioException catch (e) {
       emit(
-        GenericCubitState.failure(ex.toString()),
+        GenericCubitState.failure(e.errorMessage),
       );
     }
   }

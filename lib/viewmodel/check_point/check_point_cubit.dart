@@ -1,8 +1,10 @@
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
+import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/repository/check_point/check_point_repository.dart';
 
 class CheckPointCubit extends Cubit<GenericCubitState<CheckPointData>> {
@@ -38,10 +40,9 @@ class CheckPointCubit extends Cubit<GenericCubitState<CheckPointData>> {
           ),
         );
       }
-    } catch (ex) {
-      logger.i(ex);
+    } on DioException catch (e) {
       emit(
-        GenericCubitState.failure(ex.toString()),
+        GenericCubitState.failure(e.errorMessage),
       );
     }
   }

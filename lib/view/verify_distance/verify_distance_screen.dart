@@ -104,7 +104,6 @@ class _VerifyDistanceScreenState extends State<VerifyDistanceScreen> {
   }
 
   double calculateDistance(LocationData start, LocationData end) {
-    return 10;
     double distance = Geolocator.distanceBetween(
       start.latitude ?? 0,
       start.longitude ?? 0,

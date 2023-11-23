@@ -24,7 +24,7 @@ class StopPointContainer extends StatelessWidget {
   final ValueChanged<int> onConfirm;
   final ValueChanged<int> onFinished;
 
-  final String _confirmText = "Điểm dừng trả quỹ của ĐVTLT";
+  final String _confirmText = "Điểm dừng nhận quỹ của ĐVTLT";
 
   @override
   Widget build(BuildContext context) {
