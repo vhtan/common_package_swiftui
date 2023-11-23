@@ -24,7 +24,8 @@ class StopPointContainer extends StatelessWidget {
   final ValueChanged<int> onConfirm;
   final ValueChanged<int> onFinished;
 
-  final String _confirmText = "Điểm dừng nhận quỹ của ĐVTLT";
+  final String _confirm1Text = "Điểm dừng nhận quỹ của ĐVTLT";
+  final String _confirm2Text = "Điểm dừng trả quỹ của ĐVTLT";
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +69,8 @@ class StopPointContainer extends StatelessWidget {
           _routingDetailBalances(stopPoint.routingDetailBalances ?? []),
         if (stopPoint.imagePath != null) const SizedBox(height: 10),
         if (stopPoint.imagePath != null) _imageWidget(stopPoint.imagePath!),
-        if (stopPoint.stopPointType == _confirmText &&
+        if ((stopPoint.stopPointType == _confirm1Text ||
+                stopPoint.stopPointType == _confirm2Text) &&
             stopPoint.status == StopPointStatus.PRO)
           _confirmButtonWithProStatus(),
         if (stopPoint.status?.canCheckIn() == true) _canCheckInButton(),

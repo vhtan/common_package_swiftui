@@ -37,14 +37,11 @@ class ManagerRoleWarningListCubit extends Cubit<GenericCubitState<dynamic>> {
 
   Future<void> logout() async {
     try {
-      emit(
-        GenericCubitState.loading(),
-      );
       await authRepository.logout();
+      secureStorageManager.deleteAll();
       emit(
         const DidLogoutWarningListSuccess(status: Status.success),
       );
-      secureStorageManager.deleteAll();
     } on DioException catch (e) {
       logger.e(e.message);
       secureStorageManager.deleteAll();
@@ -52,6 +49,5 @@ class ManagerRoleWarningListCubit extends Cubit<GenericCubitState<dynamic>> {
         const DidLogoutWarningListSuccess(status: Status.success),
       );
     }
-    secureStorageManager.deleteAll();
   }
 }
