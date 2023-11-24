@@ -17,7 +17,6 @@ class AddTripRequest {
     required this.driverId,
     required this.bodyguardId,
     required this.vehicleId,
-    required this.note,
     String? requestId,
     int? requestTime,
   })  : requestId = const Uuid().v4(),
@@ -41,8 +40,6 @@ class AddTripRequest {
   final String bodyguardId;
   @JsonKey(name: "vehicleId")
   final String vehicleId;
-  @JsonKey(name: "note")
-  final String note;
   @JsonKey(name: "requestId")
   final String requestId;
   @JsonKey(name: "requestTime")

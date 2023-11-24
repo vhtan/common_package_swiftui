@@ -16,6 +16,7 @@ class MainCubit extends GenericCubit<MainState> {
   Future<void> getTrip() async {
     try {
       final trip = await repository.getTrip();
+
       if (trip != null) {
         emit(
           GenericCubitState.success(
@@ -48,8 +49,10 @@ class MainCubit extends GenericCubit<MainState> {
   Future<void> getTempFormDetails() async {
     try {
       final tempForm = await repository.getTempFormDetails();
+      logger.d('====tempForm $tempForm');
       if (tempForm?.status == TempFormStatus.NEW ||
-          tempForm?.status == TempFormStatus.APPROVED) {
+          tempForm?.status == TempFormStatus.APPROVED ||
+          tempForm?.status == TempFormStatus.REJECTED) {
         emit(
           GenericCubitState.success(
             GetTempFormDetailsMainState(tempForm: tempForm!),

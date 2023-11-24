@@ -26,7 +26,7 @@ class DioInterceptor extends Interceptor {
     final curlCommand = _generateCurlCommand(options);
     // _logger.i('cURL Request: $curlCommand');
     // print('cURL Request: $curlCommand');
-    log('cURL Request: $curlCommand');
+    _logger.i('cURL Request: $curlCommand');
     return super.onRequest(options, handler);
   }
 

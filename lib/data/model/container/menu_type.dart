@@ -1,1 +1,1 @@
-enum MenuType { trip, account, notification, logOut }
+enum MenuType { trip, requestForm, account, notification, logOut }

@@ -15,14 +15,12 @@ class StopPointContainer extends StatelessWidget {
     super.key,
     required this.stopPoint,
     required this.onArrived,
-    required this.onConfirm,
     required this.onFinished,
   });
 
   final StopPointResponse stopPoint;
   final ValueChanged<StopPointResponse> onArrived;
-  final ValueChanged<int> onConfirm;
-  final ValueChanged<int> onFinished;
+  final VoidCallback onFinished;
 
   final String _confirm1Text = "Điểm dừng nhận quỹ của ĐVTLT";
   final String _confirm2Text = "Điểm dừng trả quỹ của ĐVTLT";
@@ -69,10 +67,6 @@ class StopPointContainer extends StatelessWidget {
           _routingDetailBalances(stopPoint.routingDetailBalances ?? []),
         if (stopPoint.imagePath != null) const SizedBox(height: 10),
         if (stopPoint.imagePath != null) _imageWidget(stopPoint.imagePath!),
-        if ((stopPoint.stopPointType == _confirm1Text ||
-                stopPoint.stopPointType == _confirm2Text) &&
-            stopPoint.status == StopPointStatus.PRO)
-          _confirmButtonWithProStatus(),
         if (stopPoint.status?.canCheckIn() == true) _canCheckInButton(),
         const SizedBox(height: 20),
       ],
@@ -97,12 +91,12 @@ class StopPointContainer extends StatelessWidget {
         ),
         clipBehavior: Clip.antiAlias,
         child: AspectRatio(
-          aspectRatio: 16 / 9,
+          aspectRatio: 1,
           child: CachedNetworkImage(
-            fit: BoxFit.fill,
+            fit: BoxFit.fitWidth,
             imageUrl: path,
             placeholder: (context, url) => AspectRatio(
-              aspectRatio: 16 / 9,
+              aspectRatio: 1,
               child: Image.asset(
                 AppAsset.placeHolder,
                 fit: BoxFit.fill,
@@ -114,28 +108,12 @@ class StopPointContainer extends StatelessWidget {
     );
   }
 
-  Widget _confirmButtonWithProStatus() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 20),
-      child: Flexible(
-        child: PrimaryButton(
-          title: 'Xác nhận',
-          buttonHeight: 50,
-          backgroundColor: AppColors.primary,
-          onPressed: () {
-            onConfirm(stopPoint.jobRequestId!);
-          },
-        ),
-      ),
-    );
-  }
-
   Widget _canCheckInButton() {
     return Padding(
       padding: const EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 20),
       child: Row(
         children: [
-          Flexible(
+          Expanded(
             child: PrimaryButton(
               title: stopPoint.imagePath != null ? 'Đã đến nơi' : 'Đến nơi',
               buttonHeight: 50,
@@ -149,22 +127,26 @@ class StopPointContainer extends StatelessWidget {
                     },
             ),
           ),
-          if (stopPoint.jobRequestId != null) const SizedBox(width: 20),
-          if (stopPoint.jobRequestId != null)
-            Flexible(
-              child: PrimaryButton(
-                title: 'Hoàn thành',
-                buttonHeight: 50,
-                backgroundColor: (stopPoint.imagePath != null)
-                    ? AppColors.primary
-                    : AppColors.textDefaultLight,
-                onPressed: (stopPoint.imagePath != null)
-                    ? () {
-                        onFinished(stopPoint.jobRequestId!);
-                      }
-                    : null,
-              ),
-            ),
+          if (stopPoint.stopPointType == _confirm1Text ||
+              stopPoint.stopPointType == _confirm2Text ||
+              stopPoint.jobRequestId != null)
+            const SizedBox(width: 20),
+          if (stopPoint.stopPointType == _confirm1Text ||
+              stopPoint.stopPointType == _confirm2Text ||
+              stopPoint.jobRequestId != null)
+            Expanded(
+                child: PrimaryButton(
+              title: 'Hoàn thành',
+              buttonHeight: 50,
+              backgroundColor: (stopPoint.imagePath != null)
+                  ? AppColors.primary
+                  : AppColors.textDefaultLight,
+              onPressed: (stopPoint.imagePath != null)
+                  ? () {
+                      onFinished();
+                    }
+                  : null,
+            )),
         ],
       ),
     );

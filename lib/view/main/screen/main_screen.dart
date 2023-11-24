@@ -254,7 +254,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                 return Column(
                   children: [
                     warningWidgetList(),
-                    if (_trip != null && _tempForm == null)
+                    if (_trip != null)
                       Expanded(
                         child: currentTrip(context, _trip!),
                       ),
@@ -292,66 +292,60 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   }
 
   Widget currentTrip(BuildContext context, TripResponse trip) {
-    return TripContainer(
-      trip: trip,
-      onArrived: (stopPoint) => showVerifyDistanceDialog(
-        context: context,
-        key: progressKey,
-        stopPoint: stopPoint,
-        arrivalLimitRadius: _arrivalLimitRadius,
-        onVerifyLocationData: (locationData) {},
-        onError: (value) => showErrorSnackBar(context, value),
-      ).then(
-        (value) {
-          logger.d('====ForceRequestLocationError $value');
-          if (value is LocationData) {
-            showDialog(
-              context: context,
-              builder: (context) => CheckPointScreen(
-                didCapture: (image) => _cubit.submitArrived(
-                  CheckInRequest(
-                    id: stopPoint.id,
-                    imgName: image.imgName ?? '',
-                    latitude: value.latitude ?? 0,
-                    longitude: value.longitude ?? 0,
+    return RefreshIndicator(
+      child: TripContainer(
+        trip: trip,
+        onArrived: (stopPoint) => showVerifyDistanceDialog(
+          context: context,
+          key: progressKey,
+          stopPoint: stopPoint,
+          arrivalLimitRadius: _arrivalLimitRadius,
+          onVerifyLocationData: (locationData) {},
+          onError: (value) => showErrorSnackBar(context, value),
+        ).then(
+          (value) {
+            logger.d('====ForceRequestLocationError $value');
+            if (value is LocationData) {
+              showDialog(
+                context: context,
+                builder: (context) => CheckPointScreen(
+                  didCapture: (image) => _cubit.submitArrived(
+                    CheckInRequest(
+                      id: stopPoint.id,
+                      imgName: image.imgName ?? '',
+                      latitude: value.latitude ?? 0,
+                      longitude: value.longitude ?? 0,
+                    ),
                   ),
                 ),
-              ),
-              barrierDismissible: false,
-            );
-          } else if (value is FarFromCheckInError) {
-            showErrorSnackBar(context, value.message);
-          } else if (value is ForceRequestLocationError) {
-            logger.d('====ForceRequestLocationError');
-            forceDialog(context, 'Bạn phải cung cấp quyền truy cập vị trí!')
-                .then(
-              (value) {
-                if (value == true) {
-                  AppSettings.openAppSettings();
-                }
-              },
-            );
-          }
+                barrierDismissible: false,
+              );
+            } else if (value is FarFromCheckInError) {
+              showErrorSnackBar(context, value.message);
+            } else if (value is ForceRequestLocationError) {
+              logger.d('====ForceRequestLocationError');
+              forceDialog(context, 'Bạn phải cung cấp quyền truy cập vị trí!')
+                  .then(
+                (value) {
+                  if (value == true) {
+                    AppSettings.openAppSettings();
+                  }
+                },
+              );
+            }
+          },
+        ),
+        onFinihed: () {
+          navigateTo(
+            WebViewCustom(
+              title: 'Hoàn thành PYC: ${trip.routeId ?? 0}',
+              jobRequestId: trip.routeId ?? 0,
+              code: _loginCode,
+            ),
+          );
         },
       ),
-      onConfirm: (value) {
-        navigateTo(
-          WebViewCustom(
-            title: 'Xác nhận PYC: $value',
-            jobRequestId: trip.routeId ?? 0,
-            code: _loginCode,
-          ),
-        );
-      },
-      onFinihed: (value) {
-        navigateTo(
-          WebViewCustom(
-            title: 'Hoàn thành PYC: $value',
-            jobRequestId: trip.routeId ?? 0,
-            code: _loginCode,
-          ),
-        );
-      },
+      onRefresh: () => _cubit.getTrip(),
     );
   }
 }
@@ -393,31 +387,39 @@ extension _MainScreenDeliveryList on MainScreenState {
   }
 
   Widget pendingTrip() {
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          PendingTripScreen(
-            tempForm: _tempForm!,
-            onDelete: () => _cubit.deleteNewTrip(),
-            onEdit: () => showDialog<String>(
-              context: context,
-              builder: (context) => AddTripScreen(
-                tempForm: _tempForm,
-                didAddTrip: () {
-                  showConfirmSnackBar(
-                      context, 'Đã cập nhập PYC tạm thành công');
-                  _cubit.getTempFormDetails();
-                },
-              ),
-              barrierDismissible: false,
-            ),
-            onClose: (value) => _cubit.closeNewTrip(value),
-          ),
-          const SizedBox(height: 20),
-        ],
+    return RefreshIndicator(
+      edgeOffset: 20,
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: ListView(
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                PendingTripScreen(
+                  tempForm: _tempForm!,
+                  onDelete: () => _cubit.deleteNewTrip(),
+                  onEdit: () => showDialog<String>(
+                    context: context,
+                    builder: (context) => AddTripScreen(
+                      tempForm: _tempForm,
+                      didAddTrip: () {
+                        showConfirmSnackBar(
+                            context, 'Đã cập nhập PYC tạm thành công');
+                        _cubit.getTempFormDetails();
+                      },
+                    ),
+                    barrierDismissible: false,
+                  ),
+                  onClose: (value) => _cubit.closeNewTrip(value),
+                ),
+                const SizedBox(height: 20),
+              ],
+            )
+          ],
+        ),
       ),
+      onRefresh: () => _cubit.getTempFormDetails(),
     );
   }
 
@@ -437,6 +439,8 @@ extension _MainScreenDeliveryList on MainScreenState {
       color = AppColors.warningHigh;
     } else if (level == 3) {
       color = AppColors.warningRisk;
+    } else if (level == 4) {
+      color = AppColors.error;
     }
     return Container(
       padding: const EdgeInsets.all(10),

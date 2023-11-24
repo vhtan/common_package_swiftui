@@ -86,6 +86,14 @@ class PendingTripScreen extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
+                  if ((tempForm.status == TempFormStatus.REJECTED ||
+                          tempForm.status == TempFormStatus.APPROVED) &&
+                      (tempForm.note ?? '').isNotEmpty)
+                    Text(
+                      'Lý do từ chối: ${tempForm.note ?? ''}',
+                      maxLines: 3,
+                      style: textDefault,
+                    ),
                 ],
               ),
             )
@@ -108,7 +116,8 @@ class PendingTripScreen extends StatelessWidget {
             ],
           ),
         const SizedBox(height: 10),
-        if (tempForm.status == TempFormStatus.NEW)
+        if (tempForm.status == TempFormStatus.NEW ||
+            tempForm.status == TempFormStatus.REJECTED)
           Row(
             children: [
               Expanded(
@@ -137,7 +146,7 @@ class PendingTripScreen extends StatelessWidget {
               ),
             ],
           ),
-        if (tempForm.status != TempFormStatus.NEW)
+        if (tempForm.status == TempFormStatus.APPROVED)
           Row(
             children: [
               Expanded(
@@ -178,6 +187,8 @@ extension _TempFormStatusDisplay on TempFormStatus {
         return 'Đã đóng';
       case TempFormStatus.CANCELED:
         return 'Đã huỷ';
+      case TempFormStatus.REJECTED:
+        return 'Từ chối';
     }
   }
 
@@ -190,6 +201,8 @@ extension _TempFormStatusDisplay on TempFormStatus {
       case TempFormStatus.CLOSED:
         return AppColors.warningHigh;
       case TempFormStatus.CANCELED:
+        return AppColors.red;
+      case TempFormStatus.REJECTED:
         return AppColors.red;
     }
   }

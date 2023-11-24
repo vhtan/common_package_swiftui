@@ -18,6 +18,7 @@ import 'package:mvvm_cubit/view/container/widget/menu_widget.dart';
 import 'package:mvvm_cubit/view/main/screen/main_screen.dart';
 import 'package:mvvm_cubit/view/notification/screen/notification_screen.dart';
 import 'package:mvvm_cubit/view/report_sos/screen/report_sos_screen.dart';
+import 'package:mvvm_cubit/view/temp_form_histories_screen/temp_form_histories_screen.dart';
 import 'package:mvvm_cubit/viewmodel/auth/auth_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/container/container_cubit.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -286,6 +287,8 @@ class _ContainerScreenState extends State<ContainerScreen>
     switch (menuType) {
       case MenuType.trip:
         title = 'Lộ trình';
+      case MenuType.requestForm:
+        title = 'Lịch sử PYC tạm';
       case MenuType.account:
         title = 'Tài khoản';
       case MenuType.notification:
@@ -309,6 +312,8 @@ class _ContainerScreenState extends State<ContainerScreen>
     switch (menuType) {
       case MenuType.trip:
         return const MainScreen();
+      case MenuType.requestForm:
+        return const TempFormHistoriesScreen();
       case MenuType.account:
         return const AccountScreen();
       case MenuType.notification:

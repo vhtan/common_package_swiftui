@@ -541,7 +541,6 @@ class _AddTripScreen extends State<AddTripScreen> {
       driverId: _driver?.id ?? '',
       bodyguardId: _guard?.id ?? '',
       vehicleId: _vehicle?.id ?? '',
-      note: 'note',
     );
   }
 }

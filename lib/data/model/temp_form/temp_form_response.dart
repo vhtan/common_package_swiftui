@@ -42,5 +42,6 @@ enum TempFormStatus {
   NEW,
   APPROVED,
   CLOSED,
+  REJECTED,
   CANCELED,
 }
