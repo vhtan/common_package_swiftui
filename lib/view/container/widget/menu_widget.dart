@@ -59,15 +59,15 @@ class MenuScreen extends StatelessWidget {
           ),
           onTap: () => valueChanged(MenuType.trip),
         ),
-        // _MenuListTile(
-        //   title: 'Lịch sử PYC tạm',
-        //   icon: const Icon(
-        //     Icons.edit_document,
-        //     size: Dimension.menuIconSize,
-        //     color: Colors.white,
-        //   ),
-        //   onTap: () => valueChanged(MenuType.requestForm),
-        // ),
+        _MenuListTile(
+          title: 'Lịch sử PYC tạm',
+          icon: const Icon(
+            Icons.edit_document,
+            size: Dimension.menuIconSize,
+            color: Colors.white,
+          ),
+          onTap: () => valueChanged(MenuType.requestForm),
+        ),
         _MenuListTile(
           title: 'Tài khoản',
           icon: const Icon(

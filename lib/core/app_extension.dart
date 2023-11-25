@@ -90,6 +90,10 @@ extension AppColors on Color {
   static const Color menuSelected = Color(0xFF000000);
   static const Color notificationUnread = Color(0xFFFFF7E9);
   static const Color notificationRead = Color(0xFFFFFFFF);
+  static const Color cancel = Color(0xFFA9A9A9);
+  static const Color rejected = Color(0xFFF5CCA0);
+  static const Color newColor = Color(0xFFF3FDE8);
+  static const Color approved = Color(0xFF9ADE7B);
 }
 
 extension DateTimeFormatCustom on DateTime {

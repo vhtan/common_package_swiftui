@@ -7,7 +7,6 @@ abstract class VehicleResponse with _$VehicleResponse {
   const factory VehicleResponse({
     String? id,
     String? plateNumber,
-    String? description,
   }) = _VehicleResponse;
   factory VehicleResponse.fromJson(Map<String, dynamic> json) =>
       _$VehicleResponseFromJson(json);

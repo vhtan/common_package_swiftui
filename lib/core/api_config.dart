@@ -58,6 +58,8 @@ class ApiConfig {
     return '/notification/$id';
   }
 
+  static String tempFormHistories = '/routing/job/list?page=0&size=20';
+
   static Map<String, String?> header = {
     'Content-Type': 'application/json',
     'X-CLIENT-ID': 'vndeli_app',

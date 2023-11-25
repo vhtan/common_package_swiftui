@@ -2,6 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:mvvm_cubit/common/logger/logger.dart';
+import 'package:mvvm_cubit/common/widget/empty_widget.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/core/app_asset.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
@@ -9,16 +11,20 @@ import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/data/model/main/routing_detail_balance/routing_detail_balance_response.dart';
 import 'package:mvvm_cubit/data/model/main/routing_job/routing_job_response.dart';
 import 'package:mvvm_cubit/data/model/main/stop_point/stop_point_response.dart';
+import 'package:mvvm_cubit/data/model/main/trip/trip_response.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class StopPointContainer extends StatelessWidget {
   const StopPointContainer({
     super.key,
     required this.stopPoint,
+    required this.routingPersons,
     required this.onArrived,
     required this.onFinished,
   });
 
   final StopPointResponse stopPoint;
+  final List<RoutingPersonRespone>? routingPersons;
   final ValueChanged<StopPointResponse> onArrived;
   final VoidCallback onFinished;
 
@@ -42,9 +48,9 @@ class StopPointContainer extends StatelessWidget {
               stopPoint.stopPointType?.decodeHtml ?? '',
               style: headLine2,
             ),
-            const Spacer(),
           ],
         ),
+        if (routingPersonWidget != null) routingPersonWidget!,
         Padding(
           padding: const EdgeInsets.only(left: 20, right: 20),
           child: Row(
@@ -264,5 +270,66 @@ class StopPointContainer extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget? get routingPersonWidget {
+    try {
+      final routingPerson = routingPersons?.firstWhere((element) =>
+          isMapUserType(stopPoint.stopPointType ?? '', element.title ?? ''));
+      if (routingPerson != null) {
+        return Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.only(
+                  left: 20, right: 20, top: 10, bottom: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${routingPerson.title == 'ATAI' ? 'Áp tải' : 'Bảo vệ'}: ${routingPerson.fullname ?? ''}',
+                    style: textDefault,
+                  ),
+                  TextButton(
+                    style: ButtonStyle(
+                      side: MaterialStateProperty.all(BorderSide.none),
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(AppColors.newColor),
+                    ),
+                    onPressed: () => _launchPhone(routingPerson.mobile ?? ''),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.call),
+                        const SizedBox(width: 8),
+                        Text(
+                          routingPerson.mobile ?? '',
+                          style: textDefault,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ],
+        );
+      } else {
+        return null;
+      }
+    } catch (e) {
+      return null;
+    }
+  }
+
+  bool isMapUserType(String stopPointType, String title) {
+    if (stopPointType == 'Điểm đón áp tải' && title == 'ATAI') return true;
+    if (stopPointType == 'Điểm đón bảo vệ' && title == 'BVE') return true;
+    return false;
+  }
+
+  Future<void> _launchPhone(String phone) async {
+    if (!await launchUrl(Uri.parse('tel:$phone'))) {
+      throw Exception('Could not call to $phone');
+    }
   }
 }

@@ -18,7 +18,7 @@ import 'package:mvvm_cubit/view/container/widget/menu_widget.dart';
 import 'package:mvvm_cubit/view/main/screen/main_screen.dart';
 import 'package:mvvm_cubit/view/notification/screen/notification_screen.dart';
 import 'package:mvvm_cubit/view/report_sos/screen/report_sos_screen.dart';
-import 'package:mvvm_cubit/view/temp_form_histories_screen/temp_form_histories_screen.dart';
+import 'package:mvvm_cubit/view/temp_form_histories/temp_form_histories_screen.dart';
 import 'package:mvvm_cubit/viewmodel/auth/auth_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/container/container_cubit.dart';
 import 'package:package_info_plus/package_info_plus.dart';

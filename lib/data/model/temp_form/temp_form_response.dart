@@ -10,7 +10,7 @@ part 'temp_form_response.freezed.dart';
 @freezed
 abstract class TempFormResponse with _$TempFormResponse {
   const factory TempFormResponse({
-    String? routeId,
+    int? routeId,
     PurposeResponse? purpose,
     UserRoleResponse? driver,
     UserRoleResponse? bodyguard,

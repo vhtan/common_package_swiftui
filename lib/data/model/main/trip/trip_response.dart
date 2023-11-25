@@ -14,8 +14,21 @@ abstract class TripResponse with _$TripResponse {
     String? createBy,
     String? routeStatus,
     List<StopPointResponse>? routingDetails,
+    List<RoutingPersonRespone>? routingPersons,
   }) = _TripResponse;
 
   factory TripResponse.fromJson(Map<String, dynamic> json) =>
       _$TripResponseFromJson(json);
+}
+
+@freezed
+abstract class RoutingPersonRespone with _$RoutingPersonRespone {
+  factory RoutingPersonRespone({
+    String? fullname,
+    String? title,
+    String? mobile,
+  }) = _RoutingPersonRespone;
+
+  factory RoutingPersonRespone.fromJson(Map<String, dynamic> json) =>
+      _$RoutingPersonResponeFromJson(json);
 }

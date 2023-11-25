@@ -253,7 +253,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                 }
                 return Column(
                   children: [
-                    warningWidgetList(),
+                    // warningWidgetList(),
                     if (_trip != null)
                       Expanded(
                         child: currentTrip(context, _trip!),
@@ -304,7 +304,6 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
           onError: (value) => showErrorSnackBar(context, value),
         ).then(
           (value) {
-            logger.d('====ForceRequestLocationError $value');
             if (value is LocationData) {
               showDialog(
                 context: context,
@@ -323,7 +322,6 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
             } else if (value is FarFromCheckInError) {
               showErrorSnackBar(context, value.message);
             } else if (value is ForceRequestLocationError) {
-              logger.d('====ForceRequestLocationError');
               forceDialog(context, 'Bạn phải cung cấp quyền truy cập vị trí!')
                   .then(
                 (value) {

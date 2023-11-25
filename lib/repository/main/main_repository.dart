@@ -4,6 +4,7 @@ import 'package:mvvm_cubit/data/model/chatting/chat_message_response.dart';
 import 'package:mvvm_cubit/data/model/main/trip/trip_response.dart';
 import 'package:mvvm_cubit/data/model/notification/notification_response.dart';
 import 'package:mvvm_cubit/data/model/temp_form/temp_form_response.dart';
+import 'package:mvvm_cubit/data/model/temp_form_history/temp_form_history_response.dart';
 import 'package:mvvm_cubit/data/model/warning/warning_response.dart';
 import 'package:mvvm_cubit/data/model/warning_details/warning_details_response.dart';
 import 'package:mvvm_cubit/data/request/check_in/check_in_request.dart';
@@ -66,5 +67,9 @@ class MainRepository with RepositoryHelper<dynamic> {
 
   Future<List<ChatMessageResponse>> getChattingList(String id) async {
     return _api.getChattingList(id);
+  }
+
+  Future<List<TempFormHistoryResponse>> getTempFormHistories() async {
+    return _api.getTempFormHistories();
   }
 }

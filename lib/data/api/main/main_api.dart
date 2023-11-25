@@ -7,6 +7,7 @@ import 'package:mvvm_cubit/data/model/chatting/chat_message_response.dart';
 import 'package:mvvm_cubit/data/model/main/trip/trip_response.dart';
 import 'package:mvvm_cubit/data/model/notification/notification_response.dart';
 import 'package:mvvm_cubit/data/model/temp_form/temp_form_response.dart';
+import 'package:mvvm_cubit/data/model/temp_form_history/temp_form_history_response.dart';
 import 'package:mvvm_cubit/data/model/warning/warning_response.dart';
 import 'package:mvvm_cubit/data/model/warning_details/warning_details_response.dart';
 import 'package:mvvm_cubit/data/request/add_trip/add_trip_request.dart';
@@ -150,5 +151,18 @@ class MainApi with ApiHelper<dynamic> {
       ),
     );
     return parseChatMessageResponseList(apiResponse.detail);
+  }
+
+  Future<List<TempFormHistoryResponse>> getTempFormHistories() async {
+    final apiResponse = await makeGetRequest(
+      client.dio.get(
+        ApiConfig.tempFormHistories,
+      ),
+    );
+    // logger.d('====getTempFormHistories ${apiResponse.detail['content']}');
+    final list =
+        parseTempFormHistoryResponseList(apiResponse.detail['content']);
+    logger.d('====getTempFormHistories $list');
+    return list;
   }
 }

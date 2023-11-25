@@ -48,6 +48,7 @@ class _TripContainer extends State<TripContainer> {
           (stopPoint) {
             return StopPointContainer(
               stopPoint: stopPoint,
+              routingPersons: _trip?.routingPersons,
               onArrived: widget.onArrived,
               onFinished: widget.onFinihed,
             );

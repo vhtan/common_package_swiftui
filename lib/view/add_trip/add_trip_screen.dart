@@ -99,6 +99,7 @@ class _AddTripScreen extends State<AddTripScreen> {
   }
 
   void _loadEditTempForm(TempFormResponse tempForm) {
+    logger.d('==== tempForm.vehicle ${tempForm.vehicle}');
     _purpose = tempForm.purpose;
     _driver = tempForm.driver;
     _vehicle = tempForm.vehicle;
@@ -152,7 +153,10 @@ class _AddTripScreen extends State<AddTripScreen> {
           } else if (data is GetVehiclesState) {
             setState(() {
               _vehicles = data.vehicles;
-              if (_tempForm == null) _vehicle = _vehicles.first;
+              if (_tempForm == null ||
+                  _vehicles.contains(_tempForm?.vehicle) == false) {
+                _vehicle = _vehicles.first;
+              }
             });
           } else if (data is GetCurrenciesState) {
             setState(() {
