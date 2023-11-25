@@ -90,7 +90,7 @@ class PendingTripScreen extends StatelessWidget {
                           tempForm.status == TempFormStatus.APPROVED) &&
                       (tempForm.note ?? '').isNotEmpty)
                     Text(
-                      'Lý do từ chối: ${tempForm.note ?? ''}',
+                      '${tempForm.status == TempFormStatus.REJECTED ? 'Lý do từ chối' : 'Lý do được duyệt'}: ${tempForm.note?.decodeHtml ?? ''}',
                       maxLines: 3,
                       style: textDefault,
                     ),

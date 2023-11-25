@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
+import 'package:mvvm_cubit/data/model/temp_form/temp_form_response.dart';
 import 'package:mvvm_cubit/data/model/temp_form_history/temp_form_history_response.dart';
 
 class TempFormHistoryDetailsScreen extends StatelessWidget {
@@ -98,6 +99,15 @@ class TempFormHistoryDetailsScreen extends StatelessWidget {
                           ),
                           SizedBox(height: _spacing),
                           const Text(
+                            'Loại tiền',
+                            style: textDefaultLight,
+                          ),
+                          Text(
+                            tempForm.currency ?? '',
+                            style: textDefault,
+                          ),
+                          SizedBox(height: _spacing),
+                          const Text(
                             'Bảo vệ',
                             style: textDefaultLight,
                           ),
@@ -124,6 +134,14 @@ class TempFormHistoryDetailsScreen extends StatelessWidget {
                             style: textDefault,
                           ),
                           SizedBox(height: _spacing),
+                          if ((tempForm.status == TempFormStatus.REJECTED ||
+                                  tempForm.status == TempFormStatus.APPROVED) &&
+                              (tempForm.note ?? '').isNotEmpty)
+                            Text(
+                              '${tempForm.status == TempFormStatus.REJECTED ? 'Lý do từ chối' : 'Lý do được duyệt'}: ${tempForm.note?.decodeHtml ?? ''}',
+                              maxLines: 3,
+                              style: textDefault,
+                            ),
                           Text(
                             'Thời gian tạo: ${tempForm.dateCreated?.toDate.toStringFormat()}',
                             style: textDefaultLight,

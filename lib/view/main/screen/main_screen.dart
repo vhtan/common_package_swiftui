@@ -121,7 +121,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
       (timer) {
         logger.d('startFetchingWarning ${AuthManager.instance.isLoggedIn}');
         if (AuthManager.instance.isLoggedIn) {
-          _cubit.getWarningList();
+          _cubit.getWarningListForFetching();
         }
       },
     );
@@ -135,7 +135,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
         logger.d(
             'startFetchingTempFormDetails ${AuthManager.instance.isLoggedIn}');
         if (AuthManager.instance.isLoggedIn) {
-          _cubit.getTempFormDetails();
+          _cubit.getTempFormDetailsForFecthing();
         }
       },
     );

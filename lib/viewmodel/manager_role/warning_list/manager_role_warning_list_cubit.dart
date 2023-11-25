@@ -20,8 +20,8 @@ class ManagerRoleWarningListCubit extends Cubit<GenericCubitState<dynamic>> {
   }) : super(GenericCubitState.loading());
 
   void getWarningList() async {
-    final warnings = await repository.getWarningList();
     try {
+      final warnings = await repository.getWarningList();
       emit(
         GetWarningListSuccess(
           warnings: warnings,
@@ -32,6 +32,20 @@ class ManagerRoleWarningListCubit extends Cubit<GenericCubitState<dynamic>> {
       emit(
         GenericCubitState.failure(e.errorMessage),
       );
+    }
+  }
+
+  void getWarningListForFetching() async {
+    try {
+      final warnings = await repository.getWarningList();
+      emit(
+        GetWarningListSuccess(
+          warnings: warnings,
+          status: Status.success,
+        ),
+      );
+    } on DioException catch (e) {
+      logger.e(e.errorMessage);
     }
   }
 

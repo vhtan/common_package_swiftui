@@ -3,6 +3,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
+import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/data/request/warning_process/warning_process_request.dart';
 import 'package:mvvm_cubit/repository/main/main_repository.dart';
@@ -57,6 +58,20 @@ class WarningsHandlerCubit extends Cubit<GenericCubitState<dynamic>> {
       emit(
         GenericCubitState.failure(e.errorMessage),
       );
+    }
+  }
+
+  void getChattingListForFetching(String id) async {
+    try {
+      final list = await repository.getChattingList(id);
+      emit(
+        ChattingListWarningSuccess(
+          list: list,
+          status: Status.success,
+        ),
+      );
+    } on DioException catch (e) {
+      logger.e(e.errorMessage);
     }
   }
 }

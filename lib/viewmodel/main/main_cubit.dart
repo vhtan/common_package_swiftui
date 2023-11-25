@@ -82,6 +82,29 @@ class MainCubit extends GenericCubit<MainState> {
     }
   }
 
+  Future<void> getTempFormDetailsForFecthing() async {
+    try {
+      final tempForm = await repository.getTempFormDetails();
+      if (tempForm?.status == TempFormStatus.NEW ||
+          tempForm?.status == TempFormStatus.APPROVED ||
+          tempForm?.status == TempFormStatus.REJECTED) {
+        emit(
+          GenericCubitState.success(
+            GetTempFormDetailsMainState(tempForm: tempForm!),
+          ),
+        );
+      } else {
+        emit(
+          GenericCubitState.success(
+            EmptyTempFormMainState(),
+          ),
+        );
+      }
+    } on DioException catch (e) {
+      logger.e(e.errorMessage);
+    }
+  }
+
   Future<void> getWarningList() async {
     try {
       final warningList = await repository.getWarningList();
@@ -94,6 +117,19 @@ class MainCubit extends GenericCubit<MainState> {
       emit(
         GenericCubitState.failure(e.errorMessage),
       );
+    }
+  }
+
+  Future<void> getWarningListForFetching() async {
+    try {
+      final warningList = await repository.getWarningList();
+      emit(
+        GenericCubitState.success(
+          GetWarningListMainState(warningList: warningList),
+        ),
+      );
+    } on DioException catch (e) {
+      logger.e(e.errorMessage);
     }
   }
 

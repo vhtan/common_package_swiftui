@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
+import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/data/model/container/menu_type.dart';
 import 'package:mvvm_cubit/data/model/notification/notification_response.dart';
@@ -47,9 +48,7 @@ class ContainerCubit extends GenericCubit<ContainerState> {
         ),
       );
     } on DioException catch (e) {
-      emit(
-        GenericCubitState.failure(e.errorMessage),
-      );
+      logger.e(e.errorMessage);
     }
   }
 

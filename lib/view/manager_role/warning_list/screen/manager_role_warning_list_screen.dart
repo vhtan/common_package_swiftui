@@ -46,7 +46,7 @@ class _ManagerRoleWrningListScreen extends State<ManagerRoleWrningListScreen>
     _fetchWarningList = Timer.periodic(
       _timerDuration,
       (timer) {
-        _cubit.getWarningList();
+        _cubit.getWarningListForFetching();
       },
     );
   }

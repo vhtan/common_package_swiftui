@@ -53,21 +53,12 @@ class TempFormHistoryItem extends StatelessWidget {
                 ),
                 const SizedBox(width: 10),
                 Text(
-                  tempFormHistoryResponse.status?.displayName ?? '',
+                  tempFormHistoryResponse.status?.displayName.decodeHtml ?? '',
                   maxLines: 3,
                   style: textDefault,
                 )
               ],
             ),
-            if ((tempFormHistoryResponse.status == TempFormStatus.REJECTED ||
-                    tempFormHistoryResponse.status ==
-                        TempFormStatus.APPROVED) &&
-                (tempFormHistoryResponse.note ?? '').isNotEmpty)
-              Text(
-                'Lý do từ chối: ${tempFormHistoryResponse.note ?? ''}',
-                maxLines: 3,
-                style: textDefault,
-              ),
             const SizedBox(height: 5),
             Text(
               'Thời gian tạo: ${tempFormHistoryResponse.dateCreated?.toDate.toStringFormat()}',

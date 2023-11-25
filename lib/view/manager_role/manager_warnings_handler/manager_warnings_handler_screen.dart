@@ -80,7 +80,7 @@ class _ManagerWarningsHandlerScreen extends State<ManagerWarningsHandlerScreen>
     _fetchMessages = Timer.periodic(
       _timerDuration,
       (timer) {
-        _cubit.getChattingList(widget.id);
+        _cubit.getChattingListForFetching(widget.id);
       },
     );
   }
