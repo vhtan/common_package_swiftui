@@ -49,6 +49,25 @@ class ManagerRoleWarningListCubit extends Cubit<GenericCubitState<dynamic>> {
     }
   }
 
+  void getTempFormListNeedToHandle() async {
+    emit(
+      GenericCubitState.loading(),
+    );
+    try {
+      final list = await repository.getTempFormHistories();
+      emit(
+        GetTempFormWarningListState(
+          list: list,
+          status: Status.success,
+        ),
+      );
+    } on DioException catch (e) {
+      emit(
+        GenericCubitState.failure(e.errorMessage),
+      );
+    }
+  }
+
   Future<void> logout() async {
     try {
       await authRepository.logout();

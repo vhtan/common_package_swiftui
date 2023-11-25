@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
+import 'package:mvvm_cubit/data/model/temp_form_history/temp_form_history_response.dart';
 import 'package:mvvm_cubit/data/model/warning/warning_response.dart';
 
 class WarningListState extends GenericCubitState<dynamic> {
@@ -9,9 +10,20 @@ class WarningListState extends GenericCubitState<dynamic> {
 
 class GetWarningListSuccess extends WarningListState {
   List<WarningResponse> warnings;
-  GetWarningListSuccess({required this.warnings, required super.status});
+  GetWarningListSuccess({
+    required this.warnings,
+    required super.status,
+  });
 }
 
 class DidLogoutWarningListSuccess extends WarningListState {
   const DidLogoutWarningListSuccess({required super.status});
+}
+
+class GetTempFormWarningListState extends WarningListState {
+  final List<TempFormHistoryResponse> list;
+  const GetTempFormWarningListState({
+    required this.list,
+    required super.status,
+  });
 }
