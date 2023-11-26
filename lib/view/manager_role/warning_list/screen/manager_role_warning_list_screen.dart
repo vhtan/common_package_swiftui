@@ -11,6 +11,7 @@ import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/data/model/temp_form_history/temp_form_history_response.dart';
 import 'package:mvvm_cubit/data/model/warning/warning_response.dart';
 import 'package:mvvm_cubit/di.dart';
+import 'package:mvvm_cubit/view/account/manager_account_screen.dart';
 import 'package:mvvm_cubit/view/auth/login_screen.dart';
 import 'package:mvvm_cubit/view/manager_role/manager_temp_form_handler/manager_temp_form_handler_screen.dart';
 import 'package:mvvm_cubit/view/manager_role/manager_warnings_handler/manager_warnings_handler_screen.dart';
@@ -18,6 +19,7 @@ import 'package:mvvm_cubit/view/manager_role/warning_list/widget/manager_role_wa
 import 'package:mvvm_cubit/view/temp_form_histories/temp_form_history_item.dart';
 import 'package:mvvm_cubit/viewmodel/manager_role/warning_list/manager_role_warning_list_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/manager_role/warning_list/manager_role_warning_list_state.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class ManagerRoleWrningListScreen extends StatefulWidget {
   const ManagerRoleWrningListScreen({super.key});
@@ -38,6 +40,14 @@ class _ManagerRoleWrningListScreen extends State<ManagerRoleWrningListScreen>
   final _timerDuration = const Duration(seconds: 10);
   List<WarningResponse> _warningList = [];
   List<TempFormHistoryResponse> _tempFormList = [];
+  PackageInfo _packageInfo = PackageInfo(
+    appName: 'Unknown',
+    packageName: 'Unknown',
+    version: 'Unknown',
+    buildNumber: 'Unknown',
+    buildSignature: 'Unknown',
+    installerStore: 'Unknown',
+  );
 
   @override
   void initState() {
@@ -45,6 +55,14 @@ class _ManagerRoleWrningListScreen extends State<ManagerRoleWrningListScreen>
     _cubit.getWarningList();
     startFetchingWarningList();
     _cubit.getTempFormListNeedToHandle();
+    _initPackageInfo();
+  }
+
+  Future<void> _initPackageInfo() async {
+    final info = await PackageInfo.fromPlatform();
+    setState(() {
+      _packageInfo = info;
+    });
   }
 
   void startFetchingWarningList() {
@@ -101,16 +119,43 @@ class _ManagerRoleWrningListScreen extends State<ManagerRoleWrningListScreen>
                   child: Scaffold(
                     appBar: AppBar(
                       automaticallyImplyLeading: false,
-                      title: const Text('Danh sách cảnh báo'),
-                      leading: null,
+                      title: Column(
+                        children: [
+                          const Text('Giám sát điều quỹ'),
+                          Text(
+                            'v.${_packageInfo.version}',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.white,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          )
+                        ],
+                      ),
+                      leading: IconButton(
+                        icon: const Icon(
+                          Icons.person,
+                          size: Dimension.menuIconSize,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const ManagerAccountScreen(),
+                            ),
+                          );
+                        },
+                      ),
                       actions: [
                         IconButton(
                           icon: const Icon(
-                            Icons.power_settings_new_rounded,
+                            Icons.logout,
                             size: Dimension.menuIconSize,
                             color: Colors.white,
                           ),
-                          // onPressed: () => cubit.logout(),
                           onPressed: () {
                             final dialog = confirmDialog(
                                 context, 'Bạn có chắc chắn muốn đăng xuất?');
@@ -121,6 +166,7 @@ class _ManagerRoleWrningListScreen extends State<ManagerRoleWrningListScreen>
                             });
                           },
                         ),
+                        const SizedBox(width: 10),
                       ],
                       bottom: const TabBar(
                         indicatorColor: AppColors.error,
@@ -245,20 +291,21 @@ extension _TabBarView on _ManagerRoleWrningListScreen {
                     context,
                     MaterialPageRoute(
                       builder: (context) => ManagerTempFormHandlerScreen(
-                          id: _tempFormList[index].id ?? ''),
+                        tempForm: _tempFormList[index],
+                      ),
                     ),
                   );
                   handleWarning.then(
                     (value) {
-                      logger.d('===handleWarning $value');
                       if (value == true) {
-                        _cubit.getWarningList();
+                        _cubit.getTempFormListNeedToHandle();
                       }
                     },
                   );
                 },
                 child: TempFormHistoryItem(
-                    tempFormHistoryResponse: _tempFormList[index]),
+                  tempFormHistoryResponse: _tempFormList[index],
+                ),
               );
             },
           );

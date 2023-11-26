@@ -13,6 +13,7 @@ import 'package:mvvm_cubit/data/model/warning_details/warning_details_response.d
 import 'package:mvvm_cubit/data/request/add_trip/add_trip_request.dart';
 import 'package:mvvm_cubit/data/request/check_in/check_in_request.dart';
 import 'package:mvvm_cubit/data/request/push_token/push_token_request.dart';
+import 'package:mvvm_cubit/data/request/temp_form_process/temp_form_process_request.dart';
 import 'package:mvvm_cubit/data/request/warning_process/warning_process_request.dart';
 
 class MainApi with ApiHelper<dynamic> {
@@ -130,8 +131,7 @@ class MainApi with ApiHelper<dynamic> {
         ApiConfig.totalUnreadNotification,
       ),
     );
-    logger.d(apiResponse);
-    return 0;
+    return apiResponse.detail['totalUnread'];
   }
 
   Future<dynamic> readNotification(String id) async {
@@ -159,10 +159,19 @@ class MainApi with ApiHelper<dynamic> {
         ApiConfig.tempFormHistories,
       ),
     );
-    // logger.d('====getTempFormHistories ${apiResponse.detail['content']}');
+
     final list =
         parseTempFormHistoryResponseList(apiResponse.detail['content']);
     logger.d('====getTempFormHistories $list');
     return list;
+  }
+
+  Future<dynamic> tempFormProcess(TempFormProcessRequest request) async {
+    return await makePostRequest(
+      client.dio.post(
+        ApiConfig.handleTempForm,
+        data: request,
+      ),
+    );
   }
 }

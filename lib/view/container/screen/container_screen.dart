@@ -168,6 +168,7 @@ class _ContainerScreenState extends State<ContainerScreen>
           if (data is MenuType) {
             titlePage(data);
           } else if (data is TotalUnreadNotificationMainState) {
+            logger.d('_totalUnreadNotification $_totalUnreadNotification');
             _totalUnreadNotification = data.total;
           } else if (data is EmergencyNotificationListSuccess) {
             var list = data.list;
@@ -212,7 +213,7 @@ class _ContainerScreenState extends State<ContainerScreen>
                   key: _sideMenuKey,
                   background: AppColors.primary,
                   type: SideMenuType.slide,
-                  maxMenuWidth: 230,
+                  maxMenuWidth: 260,
                   menu: Padding(
                     padding: const EdgeInsets.only(left: 10.0),
                     child: MenuScreen(

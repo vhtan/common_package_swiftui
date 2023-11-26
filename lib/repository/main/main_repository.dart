@@ -9,6 +9,7 @@ import 'package:mvvm_cubit/data/model/warning/warning_response.dart';
 import 'package:mvvm_cubit/data/model/warning_details/warning_details_response.dart';
 import 'package:mvvm_cubit/data/request/check_in/check_in_request.dart';
 import 'package:mvvm_cubit/data/request/push_token/push_token_request.dart';
+import 'package:mvvm_cubit/data/request/temp_form_process/temp_form_process_request.dart';
 import 'package:mvvm_cubit/data/request/warning_process/warning_process_request.dart';
 
 class MainRepository with RepositoryHelper<dynamic> {
@@ -71,5 +72,9 @@ class MainRepository with RepositoryHelper<dynamic> {
 
   Future<List<TempFormHistoryResponse>> getTempFormHistories() async {
     return _api.getTempFormHistories();
+  }
+
+  Future<dynamic> tempFormProcess(TempFormProcessRequest request) async {
+    return _api.tempFormProcess(request);
   }
 }

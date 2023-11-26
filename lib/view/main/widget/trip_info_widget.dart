@@ -6,18 +6,22 @@ class TripInfo extends StatelessWidget {
   final int tripCode;
   final DateTime startDate;
   final String createBy;
+  final String plateNumber;
+  final String driverName;
 
   const TripInfo({
     super.key,
     required this.tripCode,
     required this.startDate,
     required this.createBy,
+    required this.plateNumber,
+    required this.driverName,
   });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(20),
       child: Column(
         children: [
           Row(
@@ -33,7 +37,7 @@ class TripInfo extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 5),
           Row(
             children: [
               const Text(
@@ -47,7 +51,7 @@ class TripInfo extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 5),
           Row(
             children: [
               const Text(
@@ -61,12 +65,40 @@ class TripInfo extends StatelessWidget {
               ),
             ],
           ),
+          const SizedBox(height: 5),
+          Row(
+            children: [
+              const Text(
+                'Lái xe:',
+                style: textDefaultLight,
+              ),
+              const SizedBox(width: 10),
+              Text(
+                driverName,
+                style: textDefault,
+              ),
+            ],
+          ),
+          const SizedBox(height: 5),
+          Row(
+            children: [
+              const Text(
+                'Xe:',
+                style: textDefaultLight,
+              ),
+              const SizedBox(width: 10),
+              Text(
+                plateNumber,
+                style: textDefault,
+              ),
+            ],
+          ),
           const SizedBox(height: 10),
           const Row(
             children: [
               Text(
                 'Chi tiết lộ trình',
-                style: textDefaultLight,
+                style: headLine3,
               ),
             ],
           ),

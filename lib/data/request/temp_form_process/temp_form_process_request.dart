@@ -19,7 +19,7 @@ class TempFormProcessRequest {
   @JsonKey(name: "id")
   final String id;
   @JsonKey(name: "action")
-  final String action;
+  final TempFormAction action;
   @JsonKey(name: "message")
   final String message;
   @JsonKey(name: "requestId")
@@ -32,3 +32,6 @@ class TempFormProcessRequest {
 
   Map<String, dynamic> toJson() => _$TempFormProcessRequestToJson(this);
 }
+
+// ignore: constant_identifier_names
+enum TempFormAction { APPROVED, REJECTED }

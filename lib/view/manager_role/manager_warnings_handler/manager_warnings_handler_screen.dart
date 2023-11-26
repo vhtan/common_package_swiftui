@@ -136,10 +136,6 @@ class _ManagerWarningsHandlerScreen extends State<ManagerWarningsHandlerScreen>
             builder: (context, state) {
               return Scaffold(
                 appBar: _appBar,
-                bottomNavigationBar: Padding(
-                  padding: MediaQuery.of(context).viewInsets,
-                  child: _sendMessage,
-                ),
                 backgroundColor: AppColors.white,
                 body: KeyboardActions(
                   tapOutsideBehavior: TapOutsideBehavior.opaqueDismiss,
@@ -183,7 +179,7 @@ class _ManagerWarningsHandlerScreen extends State<ManagerWarningsHandlerScreen>
                   );
                 },
               ),
-              const SizedBox(height: 20.0),
+              _sendMessage,
             ],
           ),
         )

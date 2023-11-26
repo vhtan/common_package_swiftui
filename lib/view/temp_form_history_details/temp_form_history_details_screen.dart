@@ -7,7 +7,7 @@ import 'package:mvvm_cubit/data/model/temp_form_history/temp_form_history_respon
 
 class TempFormHistoryDetailsScreen extends StatelessWidget {
   final TempFormHistoryResponse tempForm;
-  final double _spacing = 10;
+  final double _spacing = 5;
   final _oCcy = NumberFormat("#,##0", "vi_VN");
 
   TempFormHistoryDetailsScreen({super.key, required this.tempForm});
@@ -134,6 +134,20 @@ class TempFormHistoryDetailsScreen extends StatelessWidget {
                             style: textDefault,
                           ),
                           SizedBox(height: _spacing),
+                          Row(
+                            children: [
+                              const Text(
+                                'Trạng thái:',
+                                style: textDefaultLight,
+                              ),
+                              const SizedBox(width: 10),
+                              Text(
+                                tempForm.status?.displayName.decodeHtml ?? '',
+                                maxLines: 3,
+                                style: textDefault,
+                              )
+                            ],
+                          ),
                           if ((tempForm.status == TempFormStatus.REJECTED ||
                                   tempForm.status == TempFormStatus.APPROVED) &&
                               (tempForm.note ?? '').isNotEmpty)
@@ -159,5 +173,22 @@ class TempFormHistoryDetailsScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+extension _TempFormStatusDisplay on TempFormStatus {
+  String get displayName {
+    switch (this) {
+      case TempFormStatus.NEW:
+        return 'Mới tạo';
+      case TempFormStatus.APPROVED:
+        return 'Đã duyệt';
+      case TempFormStatus.CLOSED:
+        return 'Đã đóng';
+      case TempFormStatus.CANCELED:
+        return 'Đã huỷ';
+      case TempFormStatus.REJECTED:
+        return 'Từ chối';
+    }
   }
 }

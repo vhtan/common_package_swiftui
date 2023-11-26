@@ -25,6 +25,7 @@ class ContainerCubit extends GenericCubit<ContainerState> {
     );
     try {
       final total = await repository.totalUnreadNotification();
+
       emit(
         GenericCubitState.success(
           TotalUnreadNotificationMainState(total: total),

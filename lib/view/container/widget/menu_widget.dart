@@ -69,6 +69,24 @@ class MenuScreen extends StatelessWidget {
           onTap: () => valueChanged(MenuType.requestForm),
         ),
         _MenuListTile(
+          title: 'Lịch sử cảnh báo',
+          icon: const Icon(
+            Icons.warning,
+            size: Dimension.menuIconSize,
+            color: Colors.white,
+          ),
+          onTap: () => valueChanged(MenuType.warnings),
+        ),
+        _MenuListTile(
+          title: 'Lỗi không tuân thủ',
+          icon: const Icon(
+            Icons.block,
+            size: Dimension.menuIconSize,
+            color: Colors.white,
+          ),
+          onTap: () => valueChanged(MenuType.fault),
+        ),
+        _MenuListTile(
           title: 'Tài khoản',
           icon: const Icon(
             Icons.person,

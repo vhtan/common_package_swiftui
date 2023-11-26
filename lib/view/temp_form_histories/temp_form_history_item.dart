@@ -15,7 +15,7 @@ class TempFormHistoryItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 10),
+      padding: const EdgeInsets.only(top: 10, left: 20, right: 20, bottom: 10),
       decoration: BoxDecoration(
         color: tempFormHistoryResponse.status?.backgroudColor,
       ),
