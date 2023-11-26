@@ -22,11 +22,14 @@ class PushNotificationService {
     if (token != null) {
       onTokenRefresh(token);
     }
-    FirebaseMessaging.onMessage.listen(
-      (RemoteMessage message) {
-        _handleMessage(message);
-      },
-    );
+
+    // FirebaseMessaging.onMessage.listen(
+    //   (RemoteMessage message) {
+    //     _handleMessage(message);
+    //   },
+    // );
+
+    FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
 
     FirebaseMessaging.instance.onTokenRefresh
         .listen((token) => onTokenRefresh(token));

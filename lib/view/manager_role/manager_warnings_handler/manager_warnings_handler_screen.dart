@@ -176,7 +176,7 @@ class _ManagerWarningsHandlerScreen extends State<ManagerWarningsHandlerScreen>
                 children: [
                   const SizedBox(width: 20),
                   Text(
-                    _details?.startAddress ?? '',
+                    _details?.startAddress?.decodeHtml ?? '',
                     maxLines: 3,
                     style: textDefault,
                   ),

@@ -131,12 +131,12 @@ class StopPointContainer extends StatelessWidget {
                     },
             ),
           ),
-          if (stopPoint.stopPointType == _confirm1Text ||
-              stopPoint.stopPointType == _confirm2Text ||
+          if (stopPoint.stopPointType?.decodeHtml == _confirm1Text ||
+              stopPoint.stopPointType?.decodeHtml == _confirm2Text ||
               stopPoint.jobRequestId != null)
             const SizedBox(width: 20),
-          if (stopPoint.stopPointType == _confirm1Text ||
-              stopPoint.stopPointType == _confirm2Text ||
+          if (stopPoint.stopPointType?.decodeHtml == _confirm1Text ||
+              stopPoint.stopPointType?.decodeHtml == _confirm2Text ||
               stopPoint.jobRequestId != null)
             Expanded(
                 child: PrimaryButton(
@@ -229,7 +229,7 @@ class StopPointContainer extends StatelessWidget {
           children: [
             const SizedBox(width: 20),
             Text(
-              'Loại tiền: ${item.currency ?? 'VNĐ'}',
+              'Loại tiền: ${item.currency?.decodeHtml ?? 'VNĐ'}',
               style: headLine2,
             ),
             const Spacer(),
@@ -273,7 +273,9 @@ class StopPointContainer extends StatelessWidget {
   Widget? get routingPersonWidget {
     try {
       final routingPerson = routingPersons?.firstWhere((element) =>
-          isMapUserType(stopPoint.stopPointType ?? '', element.title ?? ''));
+          isMapUserType(
+              stopPointType: stopPoint.stopPointType?.decodeHtml ?? '',
+              title: element.title ?? ''));
       if (routingPerson != null) {
         return Row(
           children: [
@@ -284,7 +286,7 @@ class StopPointContainer extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '${routingPerson.title == 'ATAI' ? 'Áp tải' : 'Bảo vệ'}: ${routingPerson.fullname ?? ''}',
+                    '${routingPerson.title == 'ATAI' ? 'Áp tải' : 'Bảo vệ'}: ${routingPerson.fullname?.decodeHtml ?? ''}',
                     style: textDefault,
                   ),
                   TextButton(
@@ -300,7 +302,7 @@ class StopPointContainer extends StatelessWidget {
                         const Icon(Icons.call),
                         const SizedBox(width: 8),
                         Text(
-                          routingPerson.mobile ?? '',
+                          routingPerson.mobile?.decodeHtml ?? '',
                           style: textDefault,
                         ),
                       ],
@@ -319,7 +321,7 @@ class StopPointContainer extends StatelessWidget {
     }
   }
 
-  bool isMapUserType(String stopPointType, String title) {
+  bool isMapUserType({required String stopPointType, required String title}) {
     if (stopPointType == 'Điểm đón áp tải' && title == 'ATAI') return true;
     if (stopPointType == 'Điểm đón bảo vệ' && title == 'BVE') return true;
     return false;

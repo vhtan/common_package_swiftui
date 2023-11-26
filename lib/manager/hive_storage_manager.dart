@@ -50,6 +50,7 @@ class _LoginResponseHiveAdapter extends TypeAdapter<LoginResponse> {
       role: fields[3] as RoleResponse?,
       arrivalLimitRadius: fields[4] as double?,
       code: fields[5] as String?,
+      manager: fields[6] as bool?,
     );
   }
 
@@ -68,7 +69,9 @@ class _LoginResponseHiveAdapter extends TypeAdapter<LoginResponse> {
       ..writeByte(4)
       ..write(obj.arrivalLimitRadius)
       ..writeByte(5)
-      ..write(obj.code);
+      ..write(obj.code)
+      ..writeByte(6)
+      ..write(obj.manager);
   }
 
   @override

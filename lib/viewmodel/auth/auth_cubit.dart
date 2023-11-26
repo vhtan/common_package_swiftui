@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
-import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/core/api_config.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/data/request/auth/login_request.dart';
@@ -29,16 +28,14 @@ class AuthCubit extends Cubit<GenericCubitState<AuthState>> {
       ApiConfig.header['Authorization'] = null;
       final loginResponse = await repository.login(request);
       final token = loginResponse.session ?? '';
-      final roleCode = loginResponse.role?.code ?? '';
-      logger.d('loginResponse ${loginResponse.arrivalLimitRadius}');
       hiveStorageManager.saveLoginData(loginResponse);
-
       if (loginResponse.session != null) {
-        secureStorageManager.saveToken(token, roleCode);
+        secureStorageManager.saveToken(token);
         ApiConfig.header['Authorization'] = loginResponse.session;
         emit(
           GenericCubitState.success(
-              LoginStateSuccess((loginResponse.role?.code == 'ATAI') == false)),
+            LoginStateSuccess(isManager: loginResponse.manager ?? false),
+          ),
         );
       } else {
         emit(

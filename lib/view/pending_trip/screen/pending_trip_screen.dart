@@ -42,7 +42,7 @@ class PendingTripScreen extends StatelessWidget {
         PendingTripItemRowWidget(
           icon: const Icon(Icons.map),
           title: 'Điểm đến:',
-          description: tempForm.address?.address ?? '',
+          description: tempForm.address?.address?.decodeHtml ?? '',
         ),
         const SizedBox(height: 10),
         PendingTripItemRowWidget(
@@ -110,7 +110,7 @@ class PendingTripScreen extends StatelessWidget {
                 style: textDefault,
               ),
               Text(
-                tempForm.currency ?? 'VNĐ',
+                tempForm.currency?.decodeHtml ?? 'VNĐ',
                 style: textDefault,
               ),
             ],

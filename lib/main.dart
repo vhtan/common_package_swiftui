@@ -46,7 +46,8 @@ void main() async {
   };
 
   String? loginToken = await di<SecureStorageManager>().getToken();
-  String? roleCode = await di<SecureStorageManager>().getRole();
+  final loginData = await di<HiveStorageManager>().getLoginData();
+  final isManager = loginData?.manager ?? false;
 
   AuthManager.instance.setLoggedIn(true);
 
@@ -55,7 +56,10 @@ void main() async {
   ApiConfig.header['os-version'] = osVersion;
 
   runApp(
-    MyApp(token: loginToken, roleCode: roleCode),
+    MyApp(
+      token: loginToken,
+      isManager: isManager,
+    ),
   );
 }
 
@@ -71,12 +75,12 @@ Future<void> setConfigSettings() async {
 
 class MyApp extends StatelessWidget {
   final String? token;
-  final String? roleCode;
+  final bool isManager;
 
   const MyApp({
     super.key,
-    this.token,
-    this.roleCode,
+    required this.token,
+    required this.isManager,
   });
 
   @override
@@ -86,9 +90,9 @@ class MyApp extends StatelessWidget {
         theme: AppTheme.lightAppTheme,
         home: (token == null)
             ? const LoginScreen()
-            : (roleCode == 'ATAI'
-                ? const ContainerScreen()
-                : const ManagerRoleWrningListScreen()));
+            : (isManager
+                ? const ManagerRoleWrningListScreen()
+                : const ContainerScreen()));
   }
 }
 

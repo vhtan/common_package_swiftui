@@ -82,18 +82,7 @@ class _FaultListScreenState extends State<FaultListScreen> {
                       shrinkWrap: true,
                       itemCount: list.length,
                       itemBuilder: (_, index) {
-                        return InkWell(
-                          onTap: () {
-                            final item = list[index];
-                            final dialog = showDialog(
-                              context: context,
-                              builder: (context) => Text('dasdas'),
-                              barrierDismissible: false,
-                            );
-                            dialog.then((value) {});
-                          },
-                          child: FaultListWidget(fault: list[index]),
-                        );
+                        return FaultListWidget(fault: list[index]);
                       },
                     ),
                   ),

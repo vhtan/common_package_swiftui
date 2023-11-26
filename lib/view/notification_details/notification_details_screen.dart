@@ -71,7 +71,7 @@ class NotificationDetailsScreen extends StatelessWidget {
     return Align(
       alignment: Alignment.center,
       child: Text(
-        notification.title!.decodeHtml,
+        notification.title?.decodeHtml ?? '',
         style: headLine1,
       ),
     );

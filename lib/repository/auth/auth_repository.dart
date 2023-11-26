@@ -8,7 +8,7 @@ class AuthRepository with RepositoryHelper<LoginResponse> {
 
   const AuthRepository({required AuthApi api}) : _api = api;
 
-  Future<dynamic> login(LoginRequest request) async {
+  Future<LoginResponse> login(LoginRequest request) async {
     return _api.login(request);
   }
 

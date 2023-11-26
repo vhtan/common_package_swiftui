@@ -7,6 +7,7 @@ import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/data/model/auth/login_response.dart';
 import 'package:mvvm_cubit/data/model/container/menu_type.dart';
 import 'package:mvvm_cubit/data/model/notification/notification_response.dart';
+import 'package:mvvm_cubit/data/model/push_notification/push_notification.dart';
 import 'package:mvvm_cubit/data/notification_service/notification_service.dart';
 import 'package:mvvm_cubit/di.dart';
 import 'package:mvvm_cubit/main.dart';
@@ -20,6 +21,7 @@ import 'package:mvvm_cubit/view/notification/screen/notification_screen.dart';
 import 'package:mvvm_cubit/view/report_sos/screen/report_sos_screen.dart';
 import 'package:mvvm_cubit/view/temp_form_histories/temp_form_histories_screen.dart';
 import 'package:mvvm_cubit/view/warning_histories/warning_histories_screen.dart';
+import 'package:mvvm_cubit/view/warnings_handler/screen/warnings_handler_screen.dart';
 import 'package:mvvm_cubit/viewmodel/auth/auth_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/container/container_cubit.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -37,8 +39,10 @@ class _ContainerScreenState extends State<ContainerScreen>
     with WidgetsBindingObserver {
   bool isOpened = false;
   String title = 'Lộ trình';
+
   final _containerCubit = ContainerCubit(repository: di());
   final HiveStorageManager _hiveStorageManager = di();
+
   AuthCubit authCubit = AuthCubit(
     repository: di(),
     secureStorageManager: di(),
@@ -51,6 +55,7 @@ class _ContainerScreenState extends State<ContainerScreen>
   List<NotificationResponse> _emergencyList = [];
   bool _isShowEmergency = false;
   final GlobalKey<SideMenuState> _sideMenuKey = GlobalKey<SideMenuState>();
+  final GlobalKey<State> _warningLoadedKey = GlobalKey<State>();
 
   int _totalUnreadNotification = 0;
   static Timer? _fetchEmergency;
@@ -107,6 +112,34 @@ class _ContainerScreenState extends State<ContainerScreen>
         });
       },
     );
+
+    PushNotificationService().onHandleMessage = (value) {
+      _sideMenuKey.currentState?.closeSideMenu();
+      switch (value.type ?? '') {
+        case PushNotificationType.warning:
+          if (_warningLoadedKey.currentContext != null) {
+            Navigator.pop(context);
+          }
+          showDialog(
+            context: context,
+            builder: (context) => WarningsHandlerScreen(
+              id: value.id ?? '',
+              isCanChat: true,
+              key: _warningLoadedKey,
+            ),
+          );
+        case PushNotificationType.routing:
+          setState(() {
+            _menuType = MenuType.trip;
+            titlePage(_menuType);
+          });
+        case PushNotificationType.routingjobtemp:
+          setState(() {
+            _menuType = MenuType.trip;
+            titlePage(_menuType);
+          });
+      }
+    };
   }
 
   void startFetchingEmergency() {

@@ -40,6 +40,7 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen>
   final _commentController = TextEditingController();
   static Timer? _fetchMessages;
   final _timerDuration = const Duration(seconds: 10);
+  final _scrollController = ScrollController();
 
   final FocusNode _nodeTextInput = FocusNode();
   KeyboardActionsConfig _keyboardActionsConfig(BuildContext context) {
@@ -127,6 +128,11 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen>
             }
             setState(() {
               _messageList = state.list;
+              // _scrollController.animateTo(
+              //   _scrollController.position.maxScrollExtent,
+              //   duration: const Duration(milliseconds: 500),
+              //   curve: Curves.easeInOut,
+              // );
             });
           }
         },
@@ -148,6 +154,7 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen>
                     tapOutsideBehavior: TapOutsideBehavior.opaqueDismiss,
                     config: _keyboardActionsConfig(context),
                     child: SingleChildScrollView(
+                      controller: _scrollController,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
@@ -327,11 +334,20 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen>
                       borderRadius: BorderRadius.circular(8)),
                 ),
               ),
+              // onPressed: () {
+              //   logger
+              //       .d('message ${_scrollController.position.maxScrollExtent}');
+              //   _scrollController.animateTo(
+              //     1000,
+              //     duration: const Duration(milliseconds: 100),
+              //     curve: Curves.easeInOut,
+              //   );
+              // },
               onPressed: () => _cubit.warningProcess(
                 WarningProcessRequest(
                   warningId: widget.id,
                   action: 'explain',
-                  message: _commentController.text,
+                  message: _commentController.text.trim(),
                 ),
               ),
               child: const Text(

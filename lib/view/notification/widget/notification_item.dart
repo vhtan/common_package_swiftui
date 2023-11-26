@@ -46,7 +46,7 @@ class NotificationItem extends StatelessWidget {
                   overflow: TextOverflow.clip,
                 ),
                 Text(
-                  notification.title!.decodeHtml,
+                  notification.title?.decodeHtml ?? '',
                   style: headLine4,
                   maxLines: 1,
                   overflow: TextOverflow.clip,

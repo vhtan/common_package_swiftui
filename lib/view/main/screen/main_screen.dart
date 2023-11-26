@@ -472,7 +472,7 @@ extension _MainScreenDeliveryList on MainScreenState {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Thời gian cảnh báo: ${(warning.startTime ?? 0).toDate.toStringFormat()}',
+                    'Cảnh báo cấp độ: ${warning.level ?? 1}',
                     style: headLine7,
                     maxLines: 2,
                     overflow: TextOverflow.clip,
@@ -482,6 +482,12 @@ extension _MainScreenDeliveryList on MainScreenState {
                     style: textDefault,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    'Thời gian cảnh báo: ${(warning.startTime ?? 0).toDate.toStringFormat()}',
+                    style: headLine7,
+                    maxLines: 2,
+                    overflow: TextOverflow.clip,
                   ),
                 ],
               ),

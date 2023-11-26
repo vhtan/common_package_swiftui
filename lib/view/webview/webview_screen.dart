@@ -35,11 +35,11 @@ class _WebViewCustomState extends State<WebViewCustom> {
       Uri.parse(url),
     );
 
-    PushNotificationService().onHandleMessage = (value) {
-      if (value.id == '${widget.jobRequestId}') {
-        Navigator.pop(context);
-      }
-    };
+    // PushNotificationService().onHandleMessage = (value) {
+    //   if (value.id == '${widget.jobRequestId}') {
+    //     Navigator.pop(context);
+    //   }
+    // };
   }
 
   @override

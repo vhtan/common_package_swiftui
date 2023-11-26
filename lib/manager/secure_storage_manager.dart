@@ -7,23 +7,27 @@ class SecureStorageManager {
     return await box.get(StoreKey.loginToken);
   }
 
-  Future<String?> getRole() async {
-    var box = await Hive.openBox(StoreKey.roleCode);
-    return await box.get(StoreKey.roleCode);
-  }
+  // Future<bool> isManager() async {
+  //   try {
+  //     var box = await Hive.openBox(StoreKey.isManager);
+  //     return await box.get(StoreKey.isManager);
+  //   } catch (e) {
+  //     return false;
+  //   }
+  // }
 
-  Future<void> saveToken(String token, String roleCode) async {
+  Future<void> saveToken(String token) async {
     var tokenBox = await Hive.openBox(StoreKey.loginToken);
     await tokenBox.put(StoreKey.loginToken, token);
 
-    var roleCodeBox = await Hive.openBox(StoreKey.roleCode);
-    await roleCodeBox.put(StoreKey.roleCode, roleCode);
+    // var isManagerBox = await Hive.openBox(StoreKey.isManager);
+    // await isManagerBox.put(StoreKey.isManager, isManager);
   }
 
   Future<void> deleteAll() async {
     var tokenBox = await Hive.openBox(StoreKey.loginToken);
-    var roleCodeBox = await Hive.openBox(StoreKey.roleCode);
+    // var isManagerBox = await Hive.openBox(StoreKey.isManager);
     await tokenBox.clear();
-    await roleCodeBox.clear();
+    // await isManagerBox.clear();
   }
 }

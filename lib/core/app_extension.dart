@@ -105,7 +105,7 @@ extension DateTimeFormatCustom on DateTime {
 extension StoreKey on String {
   // Store key
   static const loginToken = 'login_token';
-  static const roleCode = 'role_code';
+  static const isManager = 'is_manager';
   static const userData = 'user_data';
 }
 
