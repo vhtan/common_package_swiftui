@@ -3,7 +3,6 @@ import 'package:diffutil_dart/diffutil.dart' as diffutil;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
-import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/data/model/auth/login_response.dart';
 import 'package:mvvm_cubit/data/model/container/menu_type.dart';
@@ -15,10 +14,12 @@ import 'package:mvvm_cubit/manager/hive_storage_manager.dart';
 import 'package:mvvm_cubit/view/account/account_screen.dart';
 import 'package:mvvm_cubit/view/auth/login_screen.dart';
 import 'package:mvvm_cubit/view/container/widget/menu_widget.dart';
+import 'package:mvvm_cubit/view/fault_list/fault_list_screen.dart';
 import 'package:mvvm_cubit/view/main/screen/main_screen.dart';
 import 'package:mvvm_cubit/view/notification/screen/notification_screen.dart';
 import 'package:mvvm_cubit/view/report_sos/screen/report_sos_screen.dart';
 import 'package:mvvm_cubit/view/temp_form_histories/temp_form_histories_screen.dart';
+import 'package:mvvm_cubit/view/warning_histories/warning_histories_screen.dart';
 import 'package:mvvm_cubit/viewmodel/auth/auth_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/container/container_cubit.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -168,7 +169,6 @@ class _ContainerScreenState extends State<ContainerScreen>
           if (data is MenuType) {
             titlePage(data);
           } else if (data is TotalUnreadNotificationMainState) {
-            logger.d('_totalUnreadNotification $_totalUnreadNotification');
             _totalUnreadNotification = data.total;
           } else if (data is EmergencyNotificationListSuccess) {
             var list = data.list;
@@ -178,8 +178,6 @@ class _ContainerScreenState extends State<ContainerScreen>
                   list,
                 )
                 .getUpdates();
-            logger.d('===list $list');
-            logger.d('===_emergencyList $_emergencyList');
             if (list.isNotEmpty &&
                 _emergencyList.isNotEmpty &&
                 listDiff.isEmpty) {
@@ -294,6 +292,10 @@ class _ContainerScreenState extends State<ContainerScreen>
         title = 'Tài khoản';
       case MenuType.notification:
         title = 'Thông báo';
+      case MenuType.warnings:
+        title = 'Lịch sử cảnh báo';
+      case MenuType.fault:
+        title = 'Lỗi không tuân thủ';
       case MenuType.logOut:
         title = '';
         forceLogout();
@@ -319,6 +321,10 @@ class _ContainerScreenState extends State<ContainerScreen>
         return const AccountScreen();
       case MenuType.notification:
         return const NotificationScreen();
+      case MenuType.warnings:
+        return const WarningHistoriesScreen();
+      case MenuType.fault:
+        return const FaultListScreen();
       default:
         return const MainScreen();
     }

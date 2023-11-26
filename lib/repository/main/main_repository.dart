@@ -1,11 +1,11 @@
 import 'package:mvvm_cubit/common/repository/repository_helper.dart';
 import 'package:mvvm_cubit/data/api/main/main_api.dart';
 import 'package:mvvm_cubit/data/model/chatting/chat_message_response.dart';
+import 'package:mvvm_cubit/data/model/fault/fault_response.dart';
 import 'package:mvvm_cubit/data/model/main/trip/trip_response.dart';
 import 'package:mvvm_cubit/data/model/notification/notification_response.dart';
 import 'package:mvvm_cubit/data/model/temp_form/temp_form_response.dart';
 import 'package:mvvm_cubit/data/model/temp_form_history/temp_form_history_response.dart';
-import 'package:mvvm_cubit/data/model/warning/warning_response.dart';
 import 'package:mvvm_cubit/data/model/warning_details/warning_details_response.dart';
 import 'package:mvvm_cubit/data/request/check_in/check_in_request.dart';
 import 'package:mvvm_cubit/data/request/push_token/push_token_request.dart';
@@ -25,7 +25,7 @@ class MainRepository with RepositoryHelper<dynamic> {
     return _api.getTempFormDetails();
   }
 
-  Future<List<WarningResponse>> getWarningList() async {
+  Future<List<WarningDetailsResponse>> getWarningList() async {
     return _api.getWarningList();
   }
 
@@ -74,7 +74,15 @@ class MainRepository with RepositoryHelper<dynamic> {
     return _api.getTempFormHistories();
   }
 
+  Future<List<WarningDetailsResponse>> getWarningHistories() async {
+    return _api.getWarningHistories();
+  }
+
   Future<dynamic> tempFormProcess(TempFormProcessRequest request) async {
     return _api.tempFormProcess(request);
+  }
+
+  Future<List<FaultResponse>> getFaultList() async {
+    return _api.getFaultList();
   }
 }

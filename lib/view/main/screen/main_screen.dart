@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:location/location.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/common/dialog/delete_dialog.dart';
@@ -17,7 +16,7 @@ import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/data/model/main/stop_point/stop_point_response.dart';
 import 'package:mvvm_cubit/data/model/main/trip/trip_response.dart';
 import 'package:mvvm_cubit/data/model/temp_form/temp_form_response.dart';
-import 'package:mvvm_cubit/data/model/warning/warning_response.dart';
+import 'package:mvvm_cubit/data/model/warning_details/warning_details_response.dart';
 import 'package:mvvm_cubit/data/request/check_in/check_in_request.dart';
 import 'package:mvvm_cubit/di.dart';
 import 'package:mvvm_cubit/main.dart';
@@ -45,7 +44,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
 
   TripResponse? _trip;
   TempFormResponse? _tempForm;
-  List<WarningResponse>? _warningList;
+  List<WarningDetailsResponse>? _warningList;
 
   final _cubit = MainCubit(repository: di());
   static Timer? _fetchTrip;
@@ -253,7 +252,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                 }
                 return Column(
                   children: [
-                    // warningWidgetList(),
+                    warningWidgetList(),
                     if (_trip != null)
                       Expanded(
                         child: currentTrip(context, _trip!),
@@ -424,12 +423,23 @@ extension _MainScreenDeliveryList on MainScreenState {
   Widget warningWidgetList() {
     final ll =
         (_warningList ?? []).map<Widget>((e) => widgetWithWarning(e)).toList();
-    return Column(
-      children: ll,
+    List<Widget> newll = [];
+    for (int i = 0; i < ll.length; i++) {
+      newll.add(ll[i]);
+      newll.add(const Divider(
+          color: AppColors.textDefaultLight, thickness: 1, height: 1));
+    }
+    return Container(
+      constraints: const BoxConstraints(maxHeight: 400),
+      child: SingleChildScrollView(
+        child: Column(
+          children: newll,
+        ),
+      ),
     );
   }
 
-  Widget widgetWithWarning(WarningResponse warning) {
+  Widget widgetWithWarning(WarningDetailsResponse warning) {
     final level = warning.level ?? 1;
     // final level = 3;
     var color = AppColors.warning;
@@ -450,6 +460,7 @@ extension _MainScreenDeliveryList on MainScreenState {
         onTap: () {},
         child: Row(
           children: [
+            const SizedBox(width: 10),
             const Icon(
               Icons.warning,
               color: AppColors.red,
@@ -457,11 +468,22 @@ extension _MainScreenDeliveryList on MainScreenState {
             ),
             const SizedBox(width: 8.0),
             Expanded(
-              child: Text(
-                warning.warningMessage?.decodeHtml ?? '',
-                style: textDefault,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Thời gian cảnh báo: ${(warning.startTime ?? 0).toDate.toStringFormat()}',
+                    style: headLine7,
+                    maxLines: 2,
+                    overflow: TextOverflow.clip,
+                  ),
+                  Text(
+                    warning.warningMessage?.decodeHtml ?? '',
+                    style: textDefault,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
               ),
             ),
             ElevatedButton(
@@ -469,6 +491,7 @@ extension _MainScreenDeliveryList on MainScreenState {
                 context: context,
                 builder: (context) => WarningsHandlerScreen(
                   id: warning.id ?? '',
+                  isCanChat: true,
                 ),
               ),
               child: const Text(
@@ -480,16 +503,6 @@ extension _MainScreenDeliveryList on MainScreenState {
         ),
       ),
     );
-  }
-
-  double calculateDistance(LocationData start, LocationData end) {
-    double distance = Geolocator.distanceBetween(
-      start.latitude ?? 0,
-      start.longitude ?? 0,
-      end.latitude ?? 0,
-      end.longitude ?? 0,
-    );
-    return distance;
   }
 }
 

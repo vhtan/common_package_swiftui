@@ -2,24 +2,24 @@ import 'package:dio/dio.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
-import 'package:mvvm_cubit/data/model/temp_form_history/temp_form_history_response.dart';
+import 'package:mvvm_cubit/data/model/warning_details/warning_details_response.dart';
 import 'package:mvvm_cubit/repository/main/main_repository.dart';
 
-class TempFormHistoriesCubit extends GenericCubit<TempFormHistoriesState> {
+class WarningHistoriesCubit extends GenericCubit<WarningHistoriesState> {
   final MainRepository repository;
 
-  TempFormHistoriesCubit({required this.repository});
+  WarningHistoriesCubit({required this.repository});
 
-  void getTempFormHistories() async {
+  void getWarningHistories() async {
     emit(
       GenericCubitState.loading(),
     );
     try {
-      final list = await repository.getTempFormHistories();
+      final list = await repository.getWarningHistories();
 
       emit(
         GenericCubitState.success(
-          GetTempFormHistoriesState(list: list),
+          GetWarningHistoriesState(list: list),
         ),
       );
     } on DioException catch (e) {
@@ -30,9 +30,9 @@ class TempFormHistoriesCubit extends GenericCubit<TempFormHistoriesState> {
   }
 }
 
-class TempFormHistoriesState {}
+class WarningHistoriesState {}
 
-class GetTempFormHistoriesState extends TempFormHistoriesState {
-  final List<TempFormHistoryResponse> list;
-  GetTempFormHistoriesState({required this.list});
+class GetWarningHistoriesState extends WarningHistoriesState {
+  final List<WarningDetailsResponse> list;
+  GetWarningHistoriesState({required this.list});
 }

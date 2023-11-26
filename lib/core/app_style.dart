@@ -3,6 +3,13 @@ import 'package:material_text_fields/theme/material_text_field_theme.dart';
 
 import 'app_extension.dart';
 
+const headLine7 = TextStyle(
+  fontSize: 10,
+  fontWeight: FontWeight.w500,
+  color: AppColors.textDefault,
+  overflow: TextOverflow.ellipsis,
+);
+
 const headLine6 = TextStyle(
   fontSize: 12,
   fontWeight: FontWeight.w500,

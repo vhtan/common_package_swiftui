@@ -1,12 +1,11 @@
 import 'package:mvvm_cubit/data/model/main/trip/trip_response.dart';
-import 'package:mvvm_cubit/data/model/notification/notification_response.dart';
 import 'package:mvvm_cubit/data/model/temp_form/temp_form_response.dart';
-import 'package:mvvm_cubit/data/model/warning/warning_response.dart';
+import 'package:mvvm_cubit/data/model/warning_details/warning_details_response.dart';
 
 class MainState {}
 
 class GetWarningListMainState extends MainState {
-  List<WarningResponse> warningList;
+  List<WarningDetailsResponse> warningList;
 
   GetWarningListMainState({required this.warningList});
 }

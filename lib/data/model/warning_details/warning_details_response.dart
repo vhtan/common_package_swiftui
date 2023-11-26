@@ -14,10 +14,26 @@ abstract class WarningDetailsResponse with _$WarningDetailsResponse {
     PicUserResponse? acceptedUser,
     PicUserResponse? pic,
     PicUserResponse? warnedUser,
-    int? dateCreated,
+    int? startTime,
+    String? startAddress,
+    int? endTime,
+    String? endAddress,
+    double? startLatitude,
+    double? startLongitude,
+    double? endLatitude,
+    double? endLongitude,
+    int? status,
   }) = _WarningDetailsResponse;
   factory WarningDetailsResponse.fromJson(Map<String, dynamic> json) =>
       _$WarningDetailsResponseFromJson(json);
+}
+
+List<WarningDetailsResponse> parseWarningDetailsResponseList(
+    List<dynamic> parsedList) {
+  return parsedList
+      .map((json) =>
+          WarningDetailsResponse.fromJson(json as Map<String, dynamic>))
+      .toList();
 }
 
 @freezed

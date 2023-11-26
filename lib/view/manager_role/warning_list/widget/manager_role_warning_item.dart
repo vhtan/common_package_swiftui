@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
-import 'package:mvvm_cubit/data/model/warning/warning_response.dart';
+import 'package:mvvm_cubit/data/model/warning_details/warning_details_response.dart';
 
 class ManagerRoleWarningItem extends StatelessWidget {
-  final WarningResponse warning;
+  final WarningDetailsResponse warning;
   final bool isProcessed;
   final VoidCallback onTap;
 
@@ -36,13 +36,24 @@ class ManagerRoleWarningItem extends StatelessWidget {
               color: AppColors.red,
               size: 24.0,
             ),
-            const SizedBox(width: 8.0), // Add spacing between elements
+            const SizedBox(width: 8.0),
             Expanded(
-              child: Text(
-                warning.warningMessage?.decodeHtml ?? '',
-                style: textDefault,
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis, // Specify an overflow property
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Thời gian cảnh báo: ${(warning.startTime ?? 0).toDate.toStringFormat()}',
+                    style: headLine6,
+                    maxLines: 2,
+                    overflow: TextOverflow.clip,
+                  ),
+                  Text(
+                    warning.warningMessage?.decodeHtml ?? '',
+                    style: textDefault,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                  )
+                ],
               ),
             ),
             ElevatedButton(

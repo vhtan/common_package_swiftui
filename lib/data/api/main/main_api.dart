@@ -4,11 +4,11 @@ import 'package:mvvm_cubit/common/network/api_helper.dart';
 import 'package:mvvm_cubit/common/network/dio_client.dart';
 import 'package:mvvm_cubit/core/api_config.dart';
 import 'package:mvvm_cubit/data/model/chatting/chat_message_response.dart';
+import 'package:mvvm_cubit/data/model/fault/fault_response.dart';
 import 'package:mvvm_cubit/data/model/main/trip/trip_response.dart';
 import 'package:mvvm_cubit/data/model/notification/notification_response.dart';
 import 'package:mvvm_cubit/data/model/temp_form/temp_form_response.dart';
 import 'package:mvvm_cubit/data/model/temp_form_history/temp_form_history_response.dart';
-import 'package:mvvm_cubit/data/model/warning/warning_response.dart';
 import 'package:mvvm_cubit/data/model/warning_details/warning_details_response.dart';
 import 'package:mvvm_cubit/data/request/add_trip/add_trip_request.dart';
 import 'package:mvvm_cubit/data/request/check_in/check_in_request.dart';
@@ -49,13 +49,13 @@ class MainApi with ApiHelper<dynamic> {
     }
   }
 
-  Future<List<WarningResponse>> getWarningList() async {
+  Future<List<WarningDetailsResponse>> getWarningList() async {
     final apiResponse = await makeGetRequest(
       client.dio.get(
-        ApiConfig.warningList,
+        ApiConfig.warningList(true),
       ),
     );
-    return parseWarningResponseList(apiResponse.detail);
+    return parseWarningDetailsResponseList(apiResponse.detail);
   }
 
   Future<dynamic> submitArrived(CheckInRequest request) async {
@@ -160,10 +160,17 @@ class MainApi with ApiHelper<dynamic> {
       ),
     );
 
-    final list =
-        parseTempFormHistoryResponseList(apiResponse.detail['content']);
-    logger.d('====getTempFormHistories $list');
-    return list;
+    return parseTempFormHistoryResponseList(apiResponse.detail['content']);
+  }
+
+  Future<List<WarningDetailsResponse>> getWarningHistories() async {
+    final apiResponse = await makeGetRequest(
+      client.dio.get(
+        ApiConfig.warningList(false),
+      ),
+    );
+
+    return parseWarningDetailsResponseList(apiResponse.detail);
   }
 
   Future<dynamic> tempFormProcess(TempFormProcessRequest request) async {
@@ -173,5 +180,15 @@ class MainApi with ApiHelper<dynamic> {
         data: request,
       ),
     );
+  }
+
+  Future<List<FaultResponse>> getFaultList() async {
+    final apiResponse = await makeGetRequest(
+      client.dio.get(
+        ApiConfig.errorReportList,
+      ),
+    );
+
+    return parseFaultResponseList(apiResponse.detail['content']);
   }
 }

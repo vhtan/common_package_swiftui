@@ -2,14 +2,14 @@
 
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/data/model/temp_form_history/temp_form_history_response.dart';
-import 'package:mvvm_cubit/data/model/warning/warning_response.dart';
+import 'package:mvvm_cubit/data/model/warning_details/warning_details_response.dart';
 
 class WarningListState extends GenericCubitState<dynamic> {
   const WarningListState({required super.status});
 }
 
 class GetWarningListSuccess extends WarningListState {
-  List<WarningResponse> warnings;
+  List<WarningDetailsResponse> warnings;
   GetWarningListSuccess({
     required this.warnings,
     required super.status,

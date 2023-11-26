@@ -10,7 +10,6 @@ import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/data/model/temp_form_history/temp_form_history_response.dart';
 import 'package:mvvm_cubit/data/request/temp_form_process/temp_form_process_request.dart';
-import 'package:mvvm_cubit/data/request/warning_process/warning_process_request.dart';
 import 'package:mvvm_cubit/di.dart';
 import 'package:mvvm_cubit/viewmodel/manager_role/manager_temp_form_handler/manager_temp_form_handler_cubit.dart';
 
@@ -85,10 +84,6 @@ class _ManagerTempFormHandlerScreenState
               return Scaffold(
                 appBar: _appBar,
                 backgroundColor: AppColors.white,
-                bottomNavigationBar: Padding(
-                  padding: MediaQuery.of(context).viewInsets,
-                  child: _sendMessage,
-                ),
                 body: KeyboardActions(
                   tapOutsideBehavior: TapOutsideBehavior.opaqueDismiss,
                   config: _keyboardActionsConfig(context),
@@ -193,6 +188,8 @@ class _ManagerTempFormHandlerScreenState
                   maxLines: 1,
                   overflow: TextOverflow.clip,
                 ),
+                SizedBox(height: _spacing),
+                _sendMessage,
               ],
             ),
           ),
@@ -202,21 +199,18 @@ class _ManagerTempFormHandlerScreenState
   }
 
   Widget get _sendMessage {
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextInput(
-              hint: 'Nhập lý do',
-              labelText: 'Lý do',
-              keyboardType: TextInputType.multiline,
-              focusNode: _nodeTextInput,
-              controller: _commentController,
-            ),
+    return Row(
+      children: [
+        Expanded(
+          child: TextInput(
+            hint: 'Nhập lý do',
+            labelText: 'Lý do',
+            keyboardType: TextInputType.multiline,
+            focusNode: _nodeTextInput,
+            controller: _commentController,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -238,9 +232,9 @@ class _ManagerTempFormHandlerScreenState
                     if (value == true) {
                       _cubit.tempFormProcess(
                         TempFormProcessRequest(
-                          id: widget.tempForm.id ?? '',
-                          action: TempFormAction.APPROVED,
-                          message: _commentController.text,
+                          jobTempId: widget.tempForm.id ?? '',
+                          action: TempFormAction.APPROVAL,
+                          note: _commentController.text,
                         ),
                       );
                     }
@@ -262,9 +256,9 @@ class _ManagerTempFormHandlerScreenState
                     if (value == true) {
                       _cubit.tempFormProcess(
                         TempFormProcessRequest(
-                          id: widget.tempForm.id ?? '',
-                          action: TempFormAction.REJECTED,
-                          message: _commentController.text,
+                          jobTempId: widget.tempForm.id ?? '',
+                          action: TempFormAction.REJECT,
+                          note: _commentController.text,
                         ),
                       );
                     }

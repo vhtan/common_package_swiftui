@@ -3,7 +3,9 @@ import 'package:diffutil_dart/diffutil.dart' as diffutil;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
+import 'package:material_text_fields/utils/extensions.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
+import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/widget/text_input.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
@@ -13,13 +15,16 @@ import 'package:mvvm_cubit/data/request/warning_process/warning_process_request.
 import 'package:mvvm_cubit/di.dart';
 import 'package:mvvm_cubit/viewmodel/manager_role/manager_warnings_handler/manager_warnings_handler_state.dart';
 import 'package:mvvm_cubit/viewmodel/warnings_handler/warnings_handler_cubit.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class WarningsHandlerScreen extends StatefulWidget {
   final String id;
+  final bool isCanChat;
 
   const WarningsHandlerScreen({
     super.key,
     required this.id,
+    required this.isCanChat,
   });
 
   @override
@@ -29,7 +34,7 @@ class WarningsHandlerScreen extends StatefulWidget {
 class _WarningsHandlerScreen extends State<WarningsHandlerScreen>
     with WidgetsBindingObserver {
   final _cubit = WarningsHandlerCubit(repository: di());
-
+  final double _spacing = 5;
   WarningDetailsResponse? _details;
   List<ChatMessageResponse> _messageList = [];
   final _commentController = TextEditingController();
@@ -132,23 +137,144 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen>
                 child: Scaffold(
                   resizeToAvoidBottomInset: true,
                   appBar: _appBar,
-                  bottomNavigationBar: Padding(
-                    padding: MediaQuery.of(context).viewInsets,
-                    child: _sendMessage,
-                  ),
+                  bottomNavigationBar: widget.isCanChat
+                      ? Padding(
+                          padding: MediaQuery.of(context).viewInsets,
+                          child: _sendMessage,
+                        )
+                      : null,
                   backgroundColor: AppColors.white,
                   body: KeyboardActions(
                     tapOutsideBehavior: TapOutsideBehavior.opaqueDismiss,
                     config: _keyboardActionsConfig(context),
                     child: SingleChildScrollView(
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          const SizedBox(height: 20.0),
-                          _warningMessage(_details),
-                          const SizedBox(height: 10.0),
-                          _systemMessage(_details),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 20,
+                              right: 20,
+                              top: 20,
+                              bottom: 10,
+                            ),
+                            child: Text(
+                              _details?.warningMessage?.decodeHtml ?? '',
+                              style: headLine2,
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Row(
+                            children: [
+                              const SizedBox(width: 20),
+                              const Text(
+                                'Địa điểm bắt đầu cảnh báo',
+                                style: textDefaultLight,
+                              ),
+                              const Spacer(),
+                              TextButton(
+                                style: ButtonStyle(
+                                  side: MaterialStateProperty.all(
+                                      BorderSide.none),
+                                ),
+                                onPressed: () => openMap(
+                                  longitude: _details?.startLongitude ?? 0,
+                                  latitude: _details?.startLatitude ?? 0,
+                                ),
+                                child: const Icon(
+                                  Icons.map,
+                                  size: 20,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 20, right: 20),
+                            child: Text(
+                              _details?.startAddress?.decodeHtml ?? '',
+                              maxLines: 3,
+                              style: textDefault,
+                            ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              const SizedBox(width: 20),
+                              const Text(
+                                'Thời gian bắt đầu cảnh báo',
+                                style: textDefaultLight,
+                              ),
+                              const Spacer(),
+                              Text(
+                                (_details?.startTime ?? 0)
+                                    .toDate
+                                    .toStringFormat(),
+                                style: const TextStyle(
+                                  fontStyle: FontStyle.italic,
+                                  fontSize: 12,
+                                ),
+                              ),
+                              const SizedBox(width: 20),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
+                          if (_details?.endAddress.isNotNullOrEmpty() == true)
+                            Row(
+                              children: [
+                                const SizedBox(width: 20),
+                                const Text(
+                                  'Địa điểm kết thúc cảnh báo',
+                                  style: textDefaultLight,
+                                ),
+                                const Spacer(),
+                                TextButton(
+                                  style: ButtonStyle(
+                                    side: MaterialStateProperty.all(
+                                        BorderSide.none),
+                                  ),
+                                  onPressed: () => openMap(
+                                    longitude: _details?.endLongitude ?? 0,
+                                    latitude: _details?.endLatitude ?? 0,
+                                  ),
+                                  child: const Icon(Icons.map),
+                                ),
+                              ],
+                            ),
+                          if (_details?.endAddress.isNotNullOrEmpty() == true)
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 20, right: 20),
+                              child: Text(
+                                _details?.endAddress?.decodeHtml ?? '',
+                                maxLines: 3,
+                                style: textDefault,
+                              ),
+                            ),
+                          if ((_details?.endTime ?? 0) > 0)
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                const SizedBox(width: 20),
+                                const Text(
+                                  'Thời gian kết thúc cảnh báo',
+                                  style: textDefaultLight,
+                                ),
+                                const Spacer(),
+                                Text(
+                                  (_details?.endTime ?? 0)
+                                      .toDate
+                                      .toStringFormat(),
+                                  style: const TextStyle(
+                                    fontStyle: FontStyle.italic,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                                const SizedBox(width: 20),
+                              ],
+                            ),
                           systemWarning(_details?.level),
                           const Divider(),
                           ..._messageList.map(
@@ -173,44 +299,6 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen>
           );
         },
       ),
-    );
-  }
-
-  Widget _warningMessage(WarningDetailsResponse? details) {
-    return Row(
-      children: [
-        const SizedBox(width: 20),
-        Flexible(
-          child: Text(
-            details?.warningMessage?.decodeHtml ?? '',
-            style: headLine4,
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _systemMessage(WarningDetailsResponse? details) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        const SizedBox(width: 20),
-        const Text(
-          'Hệ thống',
-          style: headLine6,
-        ),
-        const Spacer(),
-        Text(
-          (details?.dateCreated ?? 0).toDate.toStringFormat(),
-          style: const TextStyle(
-            fontStyle: FontStyle.italic,
-            fontSize: 12,
-          ),
-        ),
-        const SizedBox(width: 20),
-      ],
     );
   }
 
@@ -318,6 +406,20 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen>
         ),
       ),
     );
+  }
+
+  void openMap({
+    required double latitude,
+    required double longitude,
+  }) async {
+    Uri mapUrl = Uri.parse(
+        'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude&hl=vi');
+    logger.d('openMap openMap $mapUrl');
+    if (await canLaunchUrl(mapUrl)) {
+      await launchUrl(mapUrl);
+    } else {
+      logger.e('Could not launch $mapUrl');
+    }
   }
 }
 

@@ -9,7 +9,7 @@ import 'package:mvvm_cubit/common/widget/empty_widget.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/data/model/temp_form_history/temp_form_history_response.dart';
-import 'package:mvvm_cubit/data/model/warning/warning_response.dart';
+import 'package:mvvm_cubit/data/model/warning_details/warning_details_response.dart';
 import 'package:mvvm_cubit/di.dart';
 import 'package:mvvm_cubit/view/account/manager_account_screen.dart';
 import 'package:mvvm_cubit/view/auth/login_screen.dart';
@@ -38,7 +38,7 @@ class _ManagerRoleWrningListScreen extends State<ManagerRoleWrningListScreen>
 
   static Timer? _fetchWarningList;
   final _timerDuration = const Duration(seconds: 10);
-  List<WarningResponse> _warningList = [];
+  List<WarningDetailsResponse> _warningList = [];
   List<TempFormHistoryResponse> _tempFormList = [];
   PackageInfo _packageInfo = PackageInfo(
     appName: 'Unknown',

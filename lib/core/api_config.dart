@@ -6,7 +6,10 @@ class ApiConfig {
   static const Duration receiveTimeout = Duration(milliseconds: 15000);
   static const Duration connectionTimeout = Duration(milliseconds: 15000);
   static const String getTrip = '/routing/detail';
-  static const String warningList = '/warning/list';
+  static String warningList(bool isOpen) {
+    return '/warning/list?isOpen=$isOpen';
+  }
+
   static const String createTrip = '/routing/job';
   static const String tempFormDetails = '/routing/job/detail';
   static const String login = '/user/login';
@@ -59,6 +62,8 @@ class ApiConfig {
   }
 
   static String tempFormHistories = '/routing/job/list?page=0&size=20';
+
+  static String errorReportList = '/error-report/list';
 
   static Map<String, String?> header = {
     'Content-Type': 'application/json',

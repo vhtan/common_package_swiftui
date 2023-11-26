@@ -8,20 +8,20 @@ part 'temp_form_process_request.g.dart';
 @JsonSerializable()
 class TempFormProcessRequest {
   TempFormProcessRequest({
-    required this.id,
+    required this.jobTempId,
     required this.action,
-    required this.message,
+    required this.note,
     String? requestId,
     int? requestTime,
   })  : requestId = const Uuid().v4(),
         requestTime = DateTime.now().millisecondsSinceEpoch;
 
-  @JsonKey(name: "id")
-  final String id;
+  @JsonKey(name: "jobTempId")
+  final String jobTempId;
   @JsonKey(name: "action")
   final TempFormAction action;
-  @JsonKey(name: "message")
-  final String message;
+  @JsonKey(name: "note")
+  final String note;
   @JsonKey(name: "requestId")
   final String requestId;
   @JsonKey(name: "requestTime")
@@ -34,4 +34,4 @@ class TempFormProcessRequest {
 }
 
 // ignore: constant_identifier_names
-enum TempFormAction { APPROVED, REJECTED }
+enum TempFormAction { APPROVAL, REJECT }

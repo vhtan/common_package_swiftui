@@ -97,7 +97,7 @@ extension AppColors on Color {
 }
 
 extension DateTimeFormatCustom on DateTime {
-  String toStringFormat({String format = 'kk:mm, dd-MM-yyyy'}) {
+  String toStringFormat({String format = 'dd/MM/yyyy kk:mm'}) {
     return DateFormat(format).format(this);
   }
 }

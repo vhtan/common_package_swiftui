@@ -28,7 +28,7 @@ class ManagerWarningsHandlerScreen extends StatefulWidget {
 class _ManagerWarningsHandlerScreen extends State<ManagerWarningsHandlerScreen>
     with WidgetsBindingObserver {
   final _cubit = ManagerWarningsHandlerCubit(repository: di());
-
+  final double _spacing = 5;
   WarningDetailsResponse? _details;
   List<ChatMessageResponse> _messageList = [];
   static Timer? _fetchMessages;
@@ -161,6 +161,29 @@ class _ManagerWarningsHandlerScreen extends State<ManagerWarningsHandlerScreen>
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
+              const Row(
+                children: [
+                  SizedBox(width: 20),
+                  Text(
+                    'Địa điểm bắt đầu cảnh báo',
+                    style: textDefaultLight,
+                  ),
+                ],
+              ),
+              SizedBox(height: _spacing),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const SizedBox(width: 20),
+                  Text(
+                    _details?.startAddress ?? '',
+                    maxLines: 3,
+                    style: textDefault,
+                  ),
+                  const SizedBox(width: 20),
+                ],
+              ),
+              SizedBox(height: _spacing),
               _systemMessage(_details),
               systemWarning(_details?.level),
               const Divider(),
@@ -213,7 +236,7 @@ class _ManagerWarningsHandlerScreen extends State<ManagerWarningsHandlerScreen>
         ),
         const Spacer(),
         Text(
-          (details?.dateCreated ?? 0).toDate.toStringFormat(),
+          (details?.startTime ?? 0).toDate.toStringFormat(),
           style: const TextStyle(
             fontStyle: FontStyle.italic,
             fontSize: 12,
