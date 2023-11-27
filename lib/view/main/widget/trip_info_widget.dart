@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
+import 'package:mvvm_cubit/data/model/main/trip/trip_response.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class TripInfo extends StatelessWidget {
   final int tripCode;
   final DateTime startDate;
-  final String createBy;
   final String plateNumber;
-  final String driverName;
+  final RoutingPersonRespone? driver;
+  final RoutingPersonRespone? bodyguard;
 
   const TripInfo({
     super.key,
     required this.tripCode,
     required this.startDate,
-    required this.createBy,
     required this.plateNumber,
-    required this.driverName,
+    required this.driver,
+    required this.bodyguard,
   });
 
   @override
@@ -55,14 +57,38 @@ class TripInfo extends StatelessWidget {
           Row(
             children: [
               const Text(
-                'Tạo bởi:',
+                'Bảo vệ:',
                 style: textDefaultLight,
               ),
               const SizedBox(width: 10),
               Text(
-                createBy,
+                bodyguard?.fullname?.decodeHtml ?? '',
                 style: textDefault,
               ),
+            ],
+          ),
+          Row(
+            children: [
+              TextButton(
+                style: ButtonStyle(
+                  side: MaterialStateProperty.all(BorderSide.none),
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(AppColors.newColor),
+                ),
+                onPressed: () =>
+                    _launchPhone(bodyguard?.mobile?.decodeHtml ?? ''),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.call),
+                    const SizedBox(width: 8),
+                    Text(
+                      bodyguard?.mobile?.decodeHtml ?? '',
+                      style: textDefault,
+                    ),
+                  ],
+                ),
+              )
             ],
           ),
           const SizedBox(height: 5),
@@ -74,9 +100,32 @@ class TripInfo extends StatelessWidget {
               ),
               const SizedBox(width: 10),
               Text(
-                driverName,
+                driver?.fullname?.decodeHtml ?? '',
                 style: textDefault,
               ),
+            ],
+          ),
+          Row(
+            children: [
+              TextButton(
+                style: ButtonStyle(
+                  side: MaterialStateProperty.all(BorderSide.none),
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(AppColors.newColor),
+                ),
+                onPressed: () => _launchPhone(driver?.mobile?.decodeHtml ?? ''),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.call),
+                    const SizedBox(width: 8),
+                    Text(
+                      driver?.mobile?.decodeHtml ?? '',
+                      style: textDefault,
+                    ),
+                  ],
+                ),
+              )
             ],
           ),
           const SizedBox(height: 5),
@@ -105,5 +154,11 @@ class TripInfo extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<void> _launchPhone(String phone) async {
+    if (!await launchUrl(Uri.parse('tel:$phone'))) {
+      throw Exception('Could not call to $phone');
+    }
   }
 }

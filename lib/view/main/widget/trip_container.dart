@@ -41,14 +41,12 @@ class _TripContainer extends State<TripContainer> {
       children: [
         TripInfo(
           tripCode: _trip?.routeId ?? 0,
-          createBy: _trip?.createBy?.decodeHtml ?? '',
           startDate: _trip?.startTime?.toDate ?? DateTime.now(),
           plateNumber: _trip?.vehicle?.plateNumber?.decodeHtml ?? '',
-          driverName: _trip?.routingPersons
-                  ?.firstWhere((element) => element.title == 'LXE')
-                  .fullname
-                  ?.decodeHtml ??
-              '',
+          driver: _trip?.routingPersons
+              ?.firstWhere((element) => element.title == 'LXE'),
+          bodyguard: _trip?.routingPersons
+              ?.firstWhere((element) => element.title == 'BVE'),
         ),
         ...stopPoints.map(
           (stopPoint) {

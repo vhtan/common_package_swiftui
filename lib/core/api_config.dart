@@ -51,7 +51,6 @@ class ApiConfig {
   static String notificationList(bool isEmergency) {
     if (isEmergency) {
       return '/notification/list?isRead=false&type=EMERGENCY';
-      // return '/notification/list&type=EMERGENCY';
     } else {
       return '/notification/list';
     }

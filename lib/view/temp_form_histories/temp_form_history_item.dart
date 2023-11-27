@@ -20,54 +20,52 @@ class TempFormHistoryItem extends StatelessWidget {
         color: tempFormHistoryResponse.status?.backgroudColor,
       ),
       clipBehavior: Clip.antiAlias,
-      child: Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Mã PYC tạm: ${tempFormHistoryResponse.code?.decodeHtml ?? ''}',
-              style: headLine4,
-              maxLines: 2,
-              overflow: TextOverflow.clip,
-            ),
-            const SizedBox(height: 5),
-            Text(
-              'Mục đích di chuyển: ${tempFormHistoryResponse.purpose?.name?.decodeHtml ?? ''}',
-              style: headLine4,
-              maxLines: 3,
-              overflow: TextOverflow.clip,
-            ),
-            const SizedBox(height: 5),
-            Text(
-              'Địa chỉ: ${tempFormHistoryResponse.address?.address?.decodeHtml ?? ''}',
-              style: textDefault,
-              maxLines: 4,
-              overflow: TextOverflow.clip,
-            ),
-            const SizedBox(height: 5),
-            Row(
-              children: [
-                const Text(
-                  'Trạng thái:',
-                  style: textDefaultLight,
-                ),
-                const SizedBox(width: 10),
-                Text(
-                  tempFormHistoryResponse.status?.displayName.decodeHtml ?? '',
-                  maxLines: 3,
-                  style: textDefault,
-                )
-              ],
-            ),
-            const SizedBox(height: 5),
-            Text(
-              'Thời gian tạo: ${tempFormHistoryResponse.dateCreated?.toDate.toStringFormat()}',
-              style: headLine6,
-              maxLines: 1,
-              overflow: TextOverflow.clip,
-            ),
-          ],
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Mã PYC tạm: ${tempFormHistoryResponse.code?.decodeHtml ?? ''}',
+            style: headLine4,
+            maxLines: 2,
+            overflow: TextOverflow.clip,
+          ),
+          const SizedBox(height: 5),
+          Text(
+            'Mục đích di chuyển: ${tempFormHistoryResponse.purpose?.name?.decodeHtml ?? ''}',
+            style: headLine4,
+            maxLines: 3,
+            overflow: TextOverflow.clip,
+          ),
+          const SizedBox(height: 5),
+          Text(
+            'Địa chỉ: ${tempFormHistoryResponse.address?.address?.decodeHtml ?? ''}',
+            style: textDefault,
+            maxLines: 4,
+            overflow: TextOverflow.clip,
+          ),
+          const SizedBox(height: 5),
+          Row(
+            children: [
+              const Text(
+                'Trạng thái:',
+                style: textDefaultLight,
+              ),
+              const SizedBox(width: 10),
+              Text(
+                tempFormHistoryResponse.status?.displayName.decodeHtml ?? '',
+                maxLines: 3,
+                style: textDefault,
+              )
+            ],
+          ),
+          const SizedBox(height: 5),
+          Text(
+            'Thời gian tạo: ${tempFormHistoryResponse.dateCreated?.toDate.toStringFormat()}',
+            style: headLine6,
+            maxLines: 1,
+            overflow: TextOverflow.clip,
+          ),
+        ],
       ),
     );
   }

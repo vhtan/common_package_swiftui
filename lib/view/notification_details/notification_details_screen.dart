@@ -19,14 +19,14 @@ class NotificationDetailsScreen extends StatelessWidget {
       backgroundColor: Colors.transparent,
       body: Center(
         child: Container(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.only(left: 20, right: 20),
           alignment: Alignment.center,
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
               color: Colors.white,
             ),
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.only(top: 10, bottom: 10),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.start,
@@ -54,7 +54,6 @@ class NotificationDetailsScreen extends StatelessWidget {
                   ],
                 ),
                 _title,
-                const SizedBox(height: 20.0),
                 if (notification.message != null)
                   Flexible(
                     child: Html(data: notification.message?.decodeHtml),

@@ -20,30 +20,28 @@ class FaultListWidget extends StatelessWidget {
         color: AppColors.white,
       ),
       clipBehavior: Clip.antiAlias,
-      child: Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Thời gian ghi nhận lỗi: ${(fault.dateCreated ?? 0).toDate.toStringFormat()}',
-              style: headLine4,
-              maxLines: 2,
-              overflow: TextOverflow.clip,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Thời gian ghi nhận lỗi: ${(fault.dateCreated ?? 0).toDate.toStringFormat()}',
+            style: headLine4,
+            maxLines: 2,
+            overflow: TextOverflow.clip,
+          ),
+          const SizedBox(height: 5),
+          Text(
+            fault.title?.decodeHtml ?? '',
+            style: headLine4,
+            maxLines: 3,
+            overflow: TextOverflow.clip,
+          ),
+          if (fault.body != null)
+            Html(
+              data: fault.body!.decodeHtml,
             ),
-            const SizedBox(height: 5),
-            Text(
-              fault.title?.decodeHtml ?? '',
-              style: headLine4,
-              maxLines: 3,
-              overflow: TextOverflow.clip,
-            ),
-            if (fault.body != null)
-              Html(
-                data: fault.body!.decodeHtml,
-              ),
-            const SizedBox(height: 5),
-          ],
-        ),
+          const SizedBox(height: 5),
+        ],
       ),
     );
   }

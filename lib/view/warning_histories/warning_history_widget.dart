@@ -19,49 +19,47 @@ class WarningHistoryWidget extends StatelessWidget {
         color: AppColors.white,
       ),
       clipBehavior: Clip.antiAlias,
-      child: Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Thời gian bắt đầu cảnh báo:',
-              style: textDefaultLight,
-            ),
-            Text(
-              (warning.startTime ?? 0).toDate.toStringFormat(),
-              style: headLine4,
-              maxLines: 2,
-              overflow: TextOverflow.clip,
-            ),
-            const SizedBox(height: 5),
-            const Text(
-              'Nội dung cảnh báo:',
-              style: textDefaultLight,
-            ),
-            Text(
-              warning.warningMessage?.decodeHtml ?? '',
-              style: headLine4,
-              maxLines: 3,
-              overflow: TextOverflow.clip,
-            ),
-            const SizedBox(height: 5),
-            Row(
-              children: [
-                const Text(
-                  'Trạng thái:',
-                  style: textDefaultLight,
-                ),
-                const SizedBox(width: 5),
-                Text(
-                  statusName,
-                  style: headLine4,
-                  maxLines: 3,
-                  overflow: TextOverflow.clip,
-                ),
-              ],
-            )
-          ],
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Thời gian bắt đầu cảnh báo:',
+            style: textDefaultLight,
+          ),
+          Text(
+            (warning.startTime ?? 0).toDate.toStringFormat(),
+            style: headLine4,
+            maxLines: 2,
+            overflow: TextOverflow.clip,
+          ),
+          const SizedBox(height: 5),
+          const Text(
+            'Nội dung cảnh báo:',
+            style: textDefaultLight,
+          ),
+          Text(
+            warning.warningMessage?.decodeHtml ?? '',
+            style: headLine4,
+            maxLines: 3,
+            overflow: TextOverflow.clip,
+          ),
+          const SizedBox(height: 5),
+          Row(
+            children: [
+              const Text(
+                'Trạng thái:',
+                style: textDefaultLight,
+              ),
+              const SizedBox(width: 5),
+              Text(
+                statusName,
+                style: headLine4,
+                maxLines: 3,
+                overflow: TextOverflow.clip,
+              ),
+            ],
+          )
+        ],
       ),
     );
   }
