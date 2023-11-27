@@ -431,10 +431,14 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen>
     Uri mapUrl = Uri.parse(
         'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude&hl=vi');
     logger.d('openMap openMap $mapUrl');
-    if (await canLaunchUrl(mapUrl)) {
-      await launchUrl(mapUrl);
-    } else {
-      logger.e('Could not launch $mapUrl');
+    try {
+      if (await canLaunchUrl(mapUrl)) {
+        await launchUrl(mapUrl);
+      } else {
+        logger.e('Could not launch $mapUrl');
+      }
+    } catch (e) {
+      logger.e(e);
     }
   }
 }

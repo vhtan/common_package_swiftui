@@ -57,7 +57,7 @@ class _LoginResponseHiveAdapter extends TypeAdapter<LoginResponse> {
   @override
   void write(BinaryWriter writer, LoginResponse obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.session)
       ..writeByte(1)

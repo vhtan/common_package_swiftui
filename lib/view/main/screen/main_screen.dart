@@ -131,8 +131,6 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     _fetchWarning = Timer.periodic(
       _timerDuration,
       (timer) {
-        logger.d(
-            'startFetchingTempFormDetails ${AuthManager.instance.isLoggedIn}');
         if (AuthManager.instance.isLoggedIn) {
           _cubit.getTempFormDetailsForFecthing();
         }
@@ -167,15 +165,14 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      logger.d('===AppLifecycleState.resumed');
       _cubit.getWarningList();
+      _cubit.getTrip;
       startFetchingWarning();
       if (_tempForm != null) {
         _cubit.getTempFormDetails();
         startFetchingTempFormDetails();
       }
     } else if (state == AppLifecycleState.inactive) {
-      logger.d('===AppLifecycleState.inactive');
       cancelFetchingWarning();
       cancelFetchingTempFormDetails();
     }

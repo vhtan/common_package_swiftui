@@ -105,7 +105,7 @@ class _AddTripScreen extends State<AddTripScreen> {
     _vehicle = tempForm.vehicle;
     _guard = tempForm.bodyguard;
     _location = MapLocationResponse(
-      display: tempForm.address?.address,
+      display: tempForm.address?.address?.decodeHtml,
       lat: tempForm.address?.lat,
       lng: tempForm.address?.lng,
     );
@@ -451,7 +451,6 @@ class _AddTripScreen extends State<AddTripScreen> {
       onChanged: (value) {
         setState(
           () {
-            logger.d('===selectedValueSingleDialogFuture $value');
             selectedValueSingleDialogFuture = value;
             addTripCubit.getMapLocation(value['ref_id']);
           },
@@ -459,8 +458,9 @@ class _AddTripScreen extends State<AddTripScreen> {
       },
       isExpanded: true,
       selectedValueWidgetFn: (item) {
+        String address = item['address'];
         return Text(
-          item['address'],
+          address.decodeHtml,
           style: textDefault,
           maxLines: 2,
         );
