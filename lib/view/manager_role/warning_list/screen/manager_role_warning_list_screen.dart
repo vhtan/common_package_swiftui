@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/common/dialog/delete_dialog.dart';
-import 'package:mvvm_cubit/common/logger/logger.dart';
+import 'package:mvvm_cubit/common/network/list_response/list_response.dart';
 import 'package:mvvm_cubit/common/widget/empty_widget.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
@@ -40,6 +40,10 @@ class _ManagerRoleWrningListScreen extends State<ManagerRoleWrningListScreen>
   final _timerDuration = const Duration(seconds: 10);
   List<WarningDetailsResponse> _warningList = [];
   List<TempFormHistoryResponse> _tempFormList = [];
+  final _scrollController = ScrollController();
+  bool _isLast = false;
+  int _currentPage = 0;
+
   PackageInfo _packageInfo = PackageInfo(
     appName: 'Unknown',
     packageName: 'Unknown',
@@ -54,8 +58,17 @@ class _ManagerRoleWrningListScreen extends State<ManagerRoleWrningListScreen>
     super.initState();
     _cubit.getWarningList();
     startFetchingWarningList();
-    _cubit.getTempFormListNeedToHandle();
+    _cubit.getTempFormListNeedToHandle(0);
     _initPackageInfo();
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        if (_isLast == false) {
+          _cubit.getTempFormListNeedToHandle(_currentPage);
+        }
+      }
+    });
   }
 
   Future<void> _initPackageInfo() async {
@@ -106,7 +119,22 @@ class _ManagerRoleWrningListScreen extends State<ManagerRoleWrningListScreen>
           }
 
           if (state is GetTempFormWarningListState) {
-            _tempFormList = state.list;
+            ListResponse listResponse = state.listResponse;
+            final list =
+                parseTempFormHistoryResponseList(listResponse.content ?? []);
+            _isLast = listResponse.last ?? false;
+            if (listResponse.first == true) {
+              _currentPage = 1;
+            } else {
+              _currentPage = _currentPage + 1;
+            }
+            setState(() {
+              if (listResponse.first == true) {
+                _tempFormList = list;
+              } else {
+                _tempFormList.addAll(list);
+              }
+            });
           }
         },
         builder: (context, state) {
@@ -229,35 +257,38 @@ extension _TabBarView on _ManagerRoleWrningListScreen {
               ],
             ),
           )
-        : ListView.separated(
-            separatorBuilder: (context, index) => const Divider(
-              height: 1,
-              color: AppColors.textDefaultLight,
-            ),
-            shrinkWrap: true,
-            itemCount: _warningList.length,
-            itemBuilder: (_, index) {
-              return ManagerRoleWarningItem(
-                warning: _warningList[index],
-                isProcessed: false,
-                onTap: () {
-                  final handleWarning = Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ManagerWarningsHandlerScreen(
-                        id: _warningList[index].id ?? '',
+        : RefreshIndicator(
+            edgeOffset: 20,
+            child: ListView.separated(
+              separatorBuilder: (context, index) => const Divider(
+                height: 1,
+                color: AppColors.textDefaultLight,
+              ),
+              shrinkWrap: true,
+              itemCount: _warningList.length,
+              itemBuilder: (_, index) {
+                return ManagerRoleWarningItem(
+                  warning: _warningList[index],
+                  isProcessed: false,
+                  onTap: () {
+                    final handleWarning = Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ManagerWarningsHandlerScreen(
+                          id: _warningList[index].id ?? '',
+                        ),
                       ),
-                    ),
-                  );
-                  handleWarning.then((value) {
-                    logger.d('===handleWarning $value');
-                    if (value == true) {
-                      _cubit.getWarningList();
-                    }
-                  });
-                },
-              );
-            },
+                    );
+                    handleWarning.then((value) {
+                      if (value == true) {
+                        _cubit.getWarningList();
+                      }
+                    });
+                  },
+                );
+              },
+            ),
+            onRefresh: () => _cubit.getWarningList(),
           );
   }
 
@@ -272,42 +303,47 @@ extension _TabBarView on _ManagerRoleWrningListScreen {
                 PrimaryButton(
                   title: 'Kiểm tra danh sách PYC tạm',
                   buttonHeight: 50,
-                  onPressed: () => _cubit.getTempFormListNeedToHandle(),
+                  onPressed: () => _cubit.getTempFormListNeedToHandle(0),
                 )
               ],
             ),
           )
-        : ListView.separated(
-            separatorBuilder: (context, index) => const Divider(
-              height: 1,
-              color: AppColors.textDefaultLight,
-            ),
-            shrinkWrap: true,
-            itemCount: _tempFormList.length,
-            itemBuilder: (_, index) {
-              return InkWell(
-                onTap: () {
-                  final handleWarning = Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ManagerTempFormHandlerScreen(
-                        tempForm: _tempFormList[index],
+        : RefreshIndicator(
+            edgeOffset: 20,
+            child: ListView.separated(
+              controller: _scrollController,
+              separatorBuilder: (context, index) => const Divider(
+                height: 1,
+                color: AppColors.textDefaultLight,
+              ),
+              shrinkWrap: true,
+              itemCount: _tempFormList.length,
+              itemBuilder: (_, index) {
+                return InkWell(
+                  onTap: () {
+                    final handleWarning = Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ManagerTempFormHandlerScreen(
+                          tempForm: _tempFormList[index],
+                        ),
                       ),
-                    ),
-                  );
-                  handleWarning.then(
-                    (value) {
-                      if (value == true) {
-                        _cubit.getTempFormListNeedToHandle();
-                      }
-                    },
-                  );
-                },
-                child: TempFormHistoryItem(
-                  tempFormHistoryResponse: _tempFormList[index],
-                ),
-              );
-            },
+                    );
+                    handleWarning.then(
+                      (value) {
+                        if (value == true) {
+                          _cubit.getTempFormListNeedToHandle(0);
+                        }
+                      },
+                    );
+                  },
+                  child: TempFormHistoryItem(
+                    tempFormHistoryResponse: _tempFormList[index],
+                  ),
+                );
+              },
+            ),
+            onRefresh: () => _cubit.getTempFormListNeedToHandle(0),
           );
   }
 }
