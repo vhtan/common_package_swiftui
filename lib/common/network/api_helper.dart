@@ -1,5 +1,4 @@
 import 'package:mvvm_cubit/common/logger/logger.dart';
-import 'package:mvvm_cubit/common/network/api_error.dart';
 import 'package:mvvm_cubit/common/network/api_response/api_response.dart';
 import 'package:mvvm_cubit/common/network/dio_exception.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
@@ -15,9 +14,7 @@ abstract mixin class ApiHelper<T> {
       final Response response = await apiCallback;
       final apiResponse = ApiResponse.fromJson(response.data);
       logger.d('apiResponse $apiResponse');
-      logger.d('apiResponsess ${response.statusCode.success}');
       if (response.statusCode.success) {
-        logger.d('go here ${apiResponse.code}');
         return apiResponse;
         // if (apiResponse.code == ErrorCode.SUCCESS) {
         //   return apiResponse;
@@ -27,7 +24,6 @@ abstract mixin class ApiHelper<T> {
         throw DioExceptions;
       }
     } on DioException catch (e) {
-      logger.d('===statusCode ${e.response?.statusCode}');
       if (e.response?.statusCode.tokenExpired ?? false) {
         AuthManager.instance.notifyTokenExpired();
         throw DioExceptions;

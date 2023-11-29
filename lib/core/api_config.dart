@@ -60,9 +60,13 @@ class ApiConfig {
     return '/notification/$id';
   }
 
-  static String tempFormHistories = '/routing/job/list?page=0&size=20';
+  static String tempFormHistories(int page) {
+    return '/routing/job/list?page=$page&size=10';
+  }
 
-  static String errorReportList = '/error-report/list';
+  static String errorReportList(int page) {
+    return '/error-report/list?page=$page&size=10';
+  }
 
   static Map<String, String?> header = {
     'Content-Type': 'application/json',

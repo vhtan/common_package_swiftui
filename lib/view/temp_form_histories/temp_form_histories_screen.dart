@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/common/dialog/progress_dialog.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
+import 'package:mvvm_cubit/common/network/list_response/list_response.dart';
 import 'package:mvvm_cubit/common/snack_bar/error_snack_bar.dart';
 import 'package:mvvm_cubit/common/widget/empty_widget.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
@@ -24,12 +25,26 @@ class TempFormHistoriesScreen extends StatefulWidget {
 class _TempFormHistoriesScreenState extends State<TempFormHistoriesScreen> {
   final GlobalKey<State> progressKey = GlobalKey<State>();
   final _cubit = TempFormHistoriesCubit(repository: di());
+  List<TempFormHistoryResponse> tempFormHistories = [];
+  final _scrollController = ScrollController();
+  bool _isLast = false;
+  int _currentPage = 0;
+
   @override
   void initState() {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _cubit.getTempFormHistories();
+      _cubit.getTempFormHistories(_currentPage);
+    });
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        if (_isLast == false) {
+          _cubit.getTempFormHistories(_currentPage);
+        }
+      }
     });
   }
 
@@ -39,6 +54,26 @@ class _TempFormHistoriesScreenState extends State<TempFormHistoriesScreen> {
       create: (context) => _cubit,
       child: BlocConsumer<TempFormHistoriesCubit, GenericCubitState>(
         listener: (context, state) {
+          ListResponse listResponse;
+          if (state.data is GetTempFormHistoriesState) {
+            listResponse = state.data.listResponse;
+
+            final list =
+                parseTempFormHistoryResponseList(listResponse.content ?? []);
+            _isLast = listResponse.last ?? false;
+            if (listResponse.first == true) {
+              _currentPage = 1;
+            } else {
+              _currentPage = _currentPage + 1;
+            }
+            setState(() {
+              if (listResponse.first == true) {
+                tempFormHistories = list;
+              } else {
+                tempFormHistories.addAll(list);
+              }
+            });
+          }
           switch (state.status) {
             case Status.failure:
               if (progressKey.currentContext != null) {
@@ -66,27 +101,23 @@ class _TempFormHistoriesScreenState extends State<TempFormHistoriesScreen> {
         builder: (context, state) {
           return BlocBuilder<TempFormHistoriesCubit, GenericCubitState>(
             builder: (context, state) {
-              List<TempFormHistoryResponse> list = [];
-              if (state.data is GetTempFormHistoriesState) {
-                list = state.data.list;
-              }
-              logger.d('====list $list');
-              if (list.isNotEmpty) {
+              if (tempFormHistories.isNotEmpty) {
                 return Padding(
                   padding: const EdgeInsets.only(top: 0, bottom: 20),
-                  child: Container(
-                    alignment: Alignment.topCenter,
+                  child: RefreshIndicator(
+                    edgeOffset: 20,
                     child: ListView.separated(
+                      controller: _scrollController,
                       separatorBuilder: (context, index) => const Divider(
                         height: 1,
                         color: AppColors.textDefaultLight,
                       ),
                       shrinkWrap: true,
-                      itemCount: list.length,
+                      itemCount: tempFormHistories.length,
                       itemBuilder: (_, index) {
                         return InkWell(
                           onTap: () {
-                            final item = list[index];
+                            final item = tempFormHistories[index];
                             final dialog = showDialog(
                               context: context,
                               builder: (context) =>
@@ -96,11 +127,12 @@ class _TempFormHistoriesScreenState extends State<TempFormHistoriesScreen> {
                             dialog.then((value) {});
                           },
                           child: TempFormHistoryItem(
-                            tempFormHistoryResponse: list[index],
+                            tempFormHistoryResponse: tempFormHistories[index],
                           ),
                         );
                       },
                     ),
+                    onRefresh: () => _cubit.getTempFormHistories(0),
                   ),
                 );
               } else {

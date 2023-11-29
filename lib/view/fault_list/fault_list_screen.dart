@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/common/dialog/progress_dialog.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
+import 'package:mvvm_cubit/common/network/list_response/list_response.dart';
 import 'package:mvvm_cubit/common/snack_bar/error_snack_bar.dart';
 import 'package:mvvm_cubit/common/widget/empty_widget.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
@@ -23,12 +24,26 @@ class FaultListScreen extends StatefulWidget {
 class _FaultListScreenState extends State<FaultListScreen> {
   final GlobalKey<State> progressKey = GlobalKey<State>();
   final _cubit = FaultListCubit(repository: di());
+  List<FaultResponse> faultList = [];
+  final _scrollController = ScrollController();
+  bool _isLast = false;
+  int _currentPage = 0;
+
   @override
   void initState() {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _cubit.getFaultList();
+      _cubit.getFaultList(_currentPage);
+    });
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        if (_isLast == false) {
+          _cubit.getFaultList(_currentPage);
+        }
+      }
     });
   }
 
@@ -38,6 +53,25 @@ class _FaultListScreenState extends State<FaultListScreen> {
       create: (context) => _cubit,
       child: BlocConsumer<FaultListCubit, GenericCubitState>(
         listener: (context, state) {
+          ListResponse listResponse;
+          if (state.data is GetFaultListState) {
+            listResponse = state.data.listResponse;
+
+            final list = parseFaultResponseList(listResponse.content ?? []);
+            _isLast = listResponse.last ?? false;
+            if (listResponse.first == true) {
+              _currentPage = 1;
+            } else {
+              _currentPage = _currentPage + 1;
+            }
+            setState(() {
+              if (listResponse.first == true) {
+                faultList = list;
+              } else {
+                faultList.addAll(list);
+              }
+            });
+          }
           switch (state.status) {
             case Status.failure:
               if (progressKey.currentContext != null) {
@@ -65,26 +99,24 @@ class _FaultListScreenState extends State<FaultListScreen> {
         builder: (context, state) {
           return BlocBuilder<FaultListCubit, GenericCubitState>(
             builder: (context, state) {
-              List<FaultResponse> list = [];
-              if (state.data is GetFaultListState) {
-                list = state.data.list;
-              }
-              if (list.isNotEmpty) {
+              if (faultList.isNotEmpty) {
                 return Padding(
                   padding: const EdgeInsets.only(top: 0, bottom: 20),
-                  child: Container(
-                    alignment: Alignment.topCenter,
+                  child: RefreshIndicator(
+                    edgeOffset: 20,
                     child: ListView.separated(
+                      controller: _scrollController,
                       separatorBuilder: (context, index) => const Divider(
                         height: 1,
                         color: AppColors.textDefaultLight,
                       ),
                       shrinkWrap: true,
-                      itemCount: list.length,
+                      itemCount: faultList.length,
                       itemBuilder: (_, index) {
-                        return FaultListWidget(fault: list[index]);
+                        return FaultListWidget(fault: faultList[index]);
                       },
                     ),
+                    onRefresh: () => _cubit.getFaultList(0),
                   ),
                 );
               } else {

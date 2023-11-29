@@ -54,10 +54,10 @@ class ManagerRoleWarningListCubit extends Cubit<GenericCubitState<dynamic>> {
       GenericCubitState.loading(),
     );
     try {
-      final list = await repository.getTempFormHistories();
+      final list = await repository.getTempFormHistories(0);
       emit(
         GetTempFormWarningListState(
-          list: list,
+          list: [],
           status: Status.success,
         ),
       );

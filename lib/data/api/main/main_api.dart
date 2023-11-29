@@ -2,6 +2,7 @@ import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/network/api_error.dart';
 import 'package:mvvm_cubit/common/network/api_helper.dart';
 import 'package:mvvm_cubit/common/network/dio_client.dart';
+import 'package:mvvm_cubit/common/network/list_response/list_response.dart';
 import 'package:mvvm_cubit/core/api_config.dart';
 import 'package:mvvm_cubit/data/model/chatting/chat_message_response.dart';
 import 'package:mvvm_cubit/data/model/fault/fault_response.dart';
@@ -153,14 +154,13 @@ class MainApi with ApiHelper<dynamic> {
     return parseChatMessageResponseList(apiResponse.detail);
   }
 
-  Future<List<TempFormHistoryResponse>> getTempFormHistories() async {
+  Future<ListResponse> getTempFormHistories(int page) async {
     final apiResponse = await makeGetRequest(
       client.dio.get(
-        ApiConfig.tempFormHistories,
+        ApiConfig.tempFormHistories(page),
       ),
     );
-
-    return parseTempFormHistoryResponseList(apiResponse.detail['content']);
+    return ListResponse.fromJson(apiResponse.detail);
   }
 
   Future<List<WarningDetailsResponse>> getWarningHistories() async {
@@ -182,13 +182,13 @@ class MainApi with ApiHelper<dynamic> {
     );
   }
 
-  Future<List<FaultResponse>> getFaultList() async {
+  Future<ListResponse> getFaultList(int page) async {
     final apiResponse = await makeGetRequest(
       client.dio.get(
-        ApiConfig.errorReportList,
+        ApiConfig.errorReportList(page),
       ),
     );
 
-    return parseFaultResponseList(apiResponse.detail['content']);
+    return ListResponse.fromJson(apiResponse.detail);
   }
 }
