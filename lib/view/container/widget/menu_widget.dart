@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mvvm_cubit/common/dialog/delete_dialog.dart';
+import 'package:mvvm_cubit/config/app_config.dart';
 import 'package:mvvm_cubit/core/app_asset.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
@@ -131,7 +132,9 @@ class MenuScreen extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(left: 20),
           child: Text(
-            'v.$version',
+            (environment.environmentConfig == Env.DEV)
+                ? 'dev.v.$version'
+                : 'v.$version',
             style: const TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w500,
