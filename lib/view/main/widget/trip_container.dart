@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
@@ -34,6 +37,7 @@ class _TripContainer extends State<TripContainer> {
   }
 
   Future<bool> isMockLocation() async {
+    if (Platform.isIOS) return false;
     return await const MethodChannel('request_check_mock')
         .invokeMethod('request_check_mock_method');
   }
