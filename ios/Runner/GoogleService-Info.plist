@@ -3,17 +3,17 @@
 <plist version="1.0">
 <dict>
 	<key>API_KEY</key>
-	<string>AIzaSyDwlh1BKFSLglZnwNjpRjWyfMMHQctKmYU</string>
+	<string>AIzaSyCHYibctayI0gfRPhfxSfmUPKxaZOS3NVQ</string>
 	<key>GCM_SENDER_ID</key>
-	<string>684147607119</string>
+	<string>1048221436499</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.acb.aptai</string>
+	<string>com.acb.fundtransport.app</string>
 	<key>PROJECT_ID</key>
-	<string>acb-gsxcd</string>
+	<string>fundtransport-a8c24</string>
 	<key>STORAGE_BUCKET</key>
-	<string>acb-gsxcd.appspot.com</string>
+	<string>fundtransport-a8c24.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:684147607119:ios:096dcc6d623a78b6458c3a</string>
+	<string>1:1048221436499:ios:c45c98ac3becd8b257d4a6</string>
 </dict>
 </plist>

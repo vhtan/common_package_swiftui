@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/config/app_config.dart';
@@ -28,15 +27,6 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  await setConfigSettings();
-
-  FirebaseRemoteConfig.instance.fetch();
-  FirebaseRemoteConfig.instance.onConfigUpdated.listen(
-    (event) async {
-      await FirebaseRemoteConfig.instance.activate();
-    },
-  );
-
   FlutterError.onError = (errorDetails) {
     FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
   };
@@ -59,16 +49,6 @@ void main() async {
     MyApp(
       token: loginToken,
       isManager: isManager,
-    ),
-  );
-}
-
-Future<void> setConfigSettings() async {
-  final remoteConfig = FirebaseRemoteConfig.instance;
-  await remoteConfig.setConfigSettings(
-    RemoteConfigSettings(
-      fetchTimeout: const Duration(minutes: 1),
-      minimumFetchInterval: const Duration(hours: 1),
     ),
   );
 }

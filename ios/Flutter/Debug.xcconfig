@@ -1,3 +1,3 @@
 #include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"
 #include "Generated.xcconfig"
-PRODUCT_BUNDLE_IDENTIFIER = com.acb.aptai
+PRODUCT_BUNDLE_IDENTIFIER = com.acb.fundtransport.app

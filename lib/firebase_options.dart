@@ -2,43 +2,15 @@
 // ignore_for_file: lines_longer_than_80_chars, avoid_classes_with_only_static_members
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
-    show defaultTargetPlatform, kIsWeb, TargetPlatform;
+    show defaultTargetPlatform, TargetPlatform;
 
-/// Default [FirebaseOptions] for use with your Firebase apps.
-///
-/// Example:
-/// ```dart
-/// import 'firebase_options.dart';
-/// // ...
-/// await Firebase.initializeApp(
-///   options: DefaultFirebaseOptions.currentPlatform,
-/// );
-/// ```
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
-    if (kIsWeb) {
-      return web;
-    }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
         return ios;
-      case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
-      case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
-      case TargetPlatform.linux:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for linux - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
       default:
         throw UnsupportedError(
           'DefaultFirebaseOptions are not supported for this platform.',
@@ -46,30 +18,20 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDImJ-gKJnp3mW126xucO1LlU50Fq09uc8',
-    appId: '1:684147607119:web:eb09d84449fa9afd458c3a',
-    messagingSenderId: '684147607119',
-    projectId: 'acb-gsxcd',
-    authDomain: 'acb-gsxcd.firebaseapp.com',
-    storageBucket: 'acb-gsxcd.appspot.com',
-    measurementId: 'G-B2L9W7D3P0',
-  );
-
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCf-xx4-EEyLYhnKJAVI2ZH_WLOcZqm2VU',
-    appId: '1:684147607119:android:ec2a31466acf086f458c3a',
-    messagingSenderId: '684147607119',
-    projectId: 'acb-gsxcd',
-    storageBucket: 'acb-gsxcd.appspot.com',
+    apiKey: 'AIzaSyALLd18gbMuLnPa2wF7D6WrND7InqQDgns',
+    appId: '1:1048221436499:android:eddbe49bbc1ed07157d4a6',
+    messagingSenderId: '1048221436499',
+    projectId: 'fundtransport-a8c24',
+    storageBucket: 'fundtransport-a8c24.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDwlh1BKFSLglZnwNjpRjWyfMMHQctKmYU',
-    appId: '1:684147607119:ios:096dcc6d623a78b6458c3a',
-    messagingSenderId: '684147607119',
-    projectId: 'acb-gsxcd',
-    storageBucket: 'acb-gsxcd.appspot.com',
-    iosBundleId: 'com.acb.aptai',
+    apiKey: 'AIzaSyCHYibctayI0gfRPhfxSfmUPKxaZOS3NVQ',
+    appId: '1:1048221436499:ios:c45c98ac3becd8b257d4a6',
+    messagingSenderId: '1048221436499',
+    projectId: 'fundtransport-a8c24',
+    storageBucket: 'fundtransport-a8c24.appspot.com',
+    iosBundleId: 'com.acb.fundtransport.app',
   );
 }
