@@ -4,8 +4,6 @@ class ConfigStag extends BaseConfig {
   @override
   // String get baseUrl => 'https://stage.acbtest.vn/stg/fund-transport';
 
-  // String get baseUrl => 'https://apiapp-stg.acb.com.vn/vietmap-api-app';
-
   String get baseUrl => 'https://apiapp-pat.acbtest.vn/vietmap-api-app';
 
   @override

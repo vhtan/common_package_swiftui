@@ -139,18 +139,19 @@ class StopPointContainer extends StatelessWidget {
               stopPoint.stopPointType?.decodeHtml == _confirm2Text ||
               stopPoint.jobRequestId != null)
             Expanded(
-                child: PrimaryButton(
-              title: 'Hoàn thành',
-              buttonHeight: 50,
-              backgroundColor: (stopPoint.imagePath != null)
-                  ? AppColors.primary
-                  : AppColors.textDefaultLight,
-              onPressed: (stopPoint.imagePath != null)
-                  ? () {
-                      onFinished();
-                    }
-                  : null,
-            )),
+              child: PrimaryButton(
+                title: 'Hoàn thành',
+                buttonHeight: 50,
+                backgroundColor: (stopPoint.imagePath != null)
+                    ? AppColors.primary
+                    : AppColors.textDefaultLight,
+                onPressed: (stopPoint.imagePath != null)
+                    ? () {
+                        onFinished();
+                      }
+                    : null,
+              ),
+            ),
         ],
       ),
     );

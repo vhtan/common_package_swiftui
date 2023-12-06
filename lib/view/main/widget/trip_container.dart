@@ -36,27 +36,6 @@ class _TripContainer extends State<TripContainer> {
     _trip = widget.trip;
   }
 
-  Future<bool> isMockLocation() async {
-    if (Platform.isIOS) return false;
-    return await const MethodChannel('request_check_mock')
-        .invokeMethod('request_check_mock_method');
-  }
-
-  Future<bool> checkWrong() async {
-    try {
-      bool isMock = await isMockLocation();
-      bool isRealDevice = await SafeDevice.isRealDevice;
-      bool isJailBroken = await SafeDevice.isJailBroken;
-      logger.d('isMock $isMock');
-      logger.d('isRealDevice $isRealDevice');
-      logger.d('isJailBroken $isJailBroken');
-      return isMock || !isRealDevice || isJailBroken;
-    } on PlatformException catch (e) {
-      logger.d("Error checking mock location: $e");
-      return false;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -80,33 +59,7 @@ class _TripContainer extends State<TripContainer> {
             return StopPointContainer(
               stopPoint: stopPoint,
               routingPersons: _trip?.routingPersons,
-              onArrived: (stopPoint) async {
-                bool isWrong = await checkWrong();
-                if (!mounted) return;
-                if (isWrong) {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: const Text(
-                          'Tín hiệu GPS hiện đang bị giả mạo, vui lòng kiểm tra',
-                          maxLines: 2,
-                        ),
-                        actions: <Widget>[
-                          TextButton(
-                            child: const Text('Đóng'),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                } else {
-                  widget.onArrived(stopPoint);
-                }
-              },
+              onArrived: widget.onArrived,
               onFinished: widget.onFinihed,
             );
           },

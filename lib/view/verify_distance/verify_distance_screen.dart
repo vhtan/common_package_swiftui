@@ -1,12 +1,14 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:location/location.dart';
 import 'package:mvvm_cubit/common/dialog/progress_dialog.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
-import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_string.dart';
 import 'package:mvvm_cubit/data/model/main/stop_point/stop_point_response.dart';
+import 'package:safe_device/safe_device.dart';
 
 class VerifyDistanceScreen extends StatefulWidget {
   final StopPointResponse stopPoint;
@@ -24,6 +26,7 @@ class VerifyDistanceScreen extends StatefulWidget {
 
 class _VerifyDistanceScreenState extends State<VerifyDistanceScreen> {
   bool _serviceEnabled = false;
+  bool? _isSomethingWrong = null;
   PermissionStatus? _permissionGranted;
   final Location _location = Location();
   Timer? _delayTimer;
@@ -35,23 +38,18 @@ class _VerifyDistanceScreenState extends State<VerifyDistanceScreen> {
 
   @override
   void initState() {
-    logger.d('=====start initstate');
     checkLocationPermission();
     _delayTimer = Timer(const Duration(milliseconds: 1500), () {
-      logger.d('===message');
       _doneDelayTimer = true;
       if (_locationData != null) {
-        logger.d('===_locationData $_locationData');
         Navigator.pop(context, _locationData);
         return;
       }
       if (_farFromCheckInError != null) {
-        logger.d('===_farFromCheckInError $_farFromCheckInError');
         Navigator.pop(context, _farFromCheckInError);
         return;
       }
       if (_forceRequestLocationError != null) {
-        logger.d('===_forceRequestLocationError $_forceRequestLocationError');
         Navigator.pop(context, _forceRequestLocationError);
         return;
       }
@@ -62,7 +60,9 @@ class _VerifyDistanceScreenState extends State<VerifyDistanceScreen> {
   @override
   Widget build(BuildContext context) {
     if (_serviceEnabled && _permissionGranted == PermissionStatus.granted) {
-      handleLocation(context);
+      if (_isSomethingWrong != null && _isSomethingWrong == false) {
+        handleLocation(context);
+      }
     }
 
     return Scaffold(
@@ -79,6 +79,41 @@ class _VerifyDistanceScreenState extends State<VerifyDistanceScreen> {
         ),
       ),
     );
+  }
+
+  Future<bool> _isMockLocation() async {
+    if (Platform.isIOS) return false;
+    return await const MethodChannel('my_location_plugin')
+        .invokeMethod('getCurrentLocation');
+  }
+
+  Future<bool> _checkWrong() async {
+    try {
+      bool isMock = await _isMockLocation();
+      bool isRealDevice = await SafeDevice.isRealDevice;
+      bool isJailBroken = await SafeDevice.isJailBroken;
+      logger.d('isMock $isMock');
+      logger.d('isRealDevice $isRealDevice');
+      logger.d('isJailBroken $isJailBroken');
+      return isMock || !isRealDevice || isJailBroken;
+    } on PlatformException catch (e) {
+      logger.d("Error checking mock location: $e");
+      return false;
+    }
+  }
+
+  void checkMockLocation() async {
+    bool isWrong = await _checkWrong();
+    if (!mounted) return;
+    if (isWrong) {
+      _farFromCheckInError =
+          const FarFromCheckInError(message: AppString.fakeGPS);
+      if (_doneDelayTimer) Navigator.pop(context, _farFromCheckInError);
+    } else {
+      setState(() {
+        _isSomethingWrong = false;
+      });
+    }
   }
 
   void handleLocation(BuildContext context) async {
@@ -100,6 +135,11 @@ class _VerifyDistanceScreenState extends State<VerifyDistanceScreen> {
             const FarFromCheckInError(message: AppString.farFromCheckIn);
         if (_doneDelayTimer) Navigator.pop(context, _farFromCheckInError);
       }
+    } else {
+      if (!context.mounted) return;
+      _farFromCheckInError =
+          const FarFromCheckInError(message: AppString.canNotGetLocation);
+      if (_doneDelayTimer) Navigator.pop(context, _farFromCheckInError);
     }
   }
 
@@ -130,12 +170,14 @@ class _VerifyDistanceScreenState extends State<VerifyDistanceScreen> {
     }
     PermissionStatus? permissionGranted = await _location.hasPermission();
     if (permissionGranted == PermissionStatus.granted) {
+      checkMockLocation();
       setState(() {
         _permissionGranted = permissionGranted;
       });
     } else {
       permissionGranted = await _location.requestPermission();
       if (permissionGranted == PermissionStatus.granted) {
+        checkMockLocation();
         setState(() {
           _permissionGranted = permissionGranted;
         });
@@ -169,15 +211,6 @@ Future<dynamic> showVerifyDistanceDialog({
       );
     },
   );
-}
-
-class _LoadingIndicator extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return const CircularProgressIndicator(
-      color: AppColors.primary,
-    );
-  }
 }
 
 class FarFromCheckInError {
