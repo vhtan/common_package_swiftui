@@ -7,6 +7,8 @@ class ConfigStag extends BaseConfig {
   String get baseUrl => 'https://apiapp-pat.acbtest.vn/vietmap-api-app';
 
   @override
+  // String get vacomUrl =>
+  //     'https://cash-optimization-stg.acbtest.vn/route-tracking/car1?searchText=';
   String get vacomUrl =>
-      'https://cash-optimization-stg.acbtest.vn/route-tracking/car1?searchText=';
+      'https://quanlydieuquypat.acbtest.vn/route-tracking/car1?searchText=';
 }
