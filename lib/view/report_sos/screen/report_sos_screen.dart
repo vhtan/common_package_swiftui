@@ -224,9 +224,7 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
   }
 
   bool validSubmitSOS() {
-    if (selectedReason != null &&
-        (imageResponse != null) &&
-        describeReason.isNotNullOrEmpty()) {
+    if (selectedReason != null) {
       return true;
     }
     return false;

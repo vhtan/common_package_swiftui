@@ -13,7 +13,7 @@ import 'package:mvvm_cubit/di.dart';
 import 'package:mvvm_cubit/viewmodel/check_point/check_point_cubit.dart';
 
 class CheckPointScreen extends StatefulWidget {
-  final ValueChanged<CheckPointData> didCapture;
+  final ValueChanged<CheckPointData?> didCapture;
 
   const CheckPointScreen({
     super.key,
@@ -132,17 +132,11 @@ class _CheckPointScreen extends State<CheckPointScreen> {
                           PrimaryButton(
                             title: 'Gửi',
                             buttonHeight: 50,
-                            backgroundColor: (state.data?.imagePath != null)
-                                ? AppColors.primary
-                                : AppColors.textDefaultLight,
-                            onPressed: (state.data != null)
-                                ? () {
-                                    if (state.data != null) {
-                                      widget.didCapture(state.data!);
-                                    }
-                                    Navigator.pop(context);
-                                  }
-                                : null,
+                            backgroundColor: AppColors.primary,
+                            onPressed: () {
+                              widget.didCapture(state.data);
+                              Navigator.pop(context);
+                            },
                           )
                         ],
                       ),

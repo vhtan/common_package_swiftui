@@ -22,6 +22,7 @@ abstract class StopPointResponse with _$StopPointResponse {
     DestinationResponse? destination,
     RoutingJobResponse? routingJob,
     List<RoutingDetailBalanceResponse>? routingDetailBalances,
+    int? arrivalTime,
   }) = _StopPointResponse;
 
   factory StopPointResponse.fromJson(Map<String, dynamic> json) =>

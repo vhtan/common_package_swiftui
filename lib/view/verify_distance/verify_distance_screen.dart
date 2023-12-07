@@ -197,7 +197,6 @@ Future<dynamic> showVerifyDistanceDialog({
   required GlobalKey key,
   required StopPointResponse stopPoint,
   required double arrivalLimitRadius,
-  required ValueChanged<LocationData> onVerifyLocationData,
   required ValueChanged<String> onError,
 }) {
   return showDialog(

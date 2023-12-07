@@ -119,12 +119,12 @@ class StopPointContainer extends StatelessWidget {
         children: [
           Expanded(
             child: PrimaryButton(
-              title: stopPoint.imagePath != null ? 'Đã đến nơi' : 'Đến nơi',
+              title: stopPoint.arrivalTime != null ? 'Đã đến nơi' : 'Đến nơi',
               buttonHeight: 50,
-              backgroundColor: stopPoint.imagePath != null
+              backgroundColor: stopPoint.arrivalTime != null
                   ? AppColors.white
                   : AppColors.primary,
-              onPressed: (stopPoint.imagePath != null)
+              onPressed: (stopPoint.arrivalTime != null)
                   ? null
                   : () {
                       onArrived(stopPoint);
@@ -142,10 +142,10 @@ class StopPointContainer extends StatelessWidget {
               child: PrimaryButton(
                 title: 'Hoàn thành',
                 buttonHeight: 50,
-                backgroundColor: (stopPoint.imagePath != null)
+                backgroundColor: (stopPoint.arrivalTime != null)
                     ? AppColors.primary
                     : AppColors.textDefaultLight,
-                onPressed: (stopPoint.imagePath != null)
+                onPressed: (stopPoint.arrivalTime != null)
                     ? () {
                         onFinished();
                       }

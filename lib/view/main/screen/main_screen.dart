@@ -296,7 +296,6 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
           key: progressKey,
           stopPoint: stopPoint,
           arrivalLimitRadius: _arrivalLimitRadius,
-          onVerifyLocationData: (locationData) {},
           onError: (value) => showErrorSnackBar(context, value),
         ).then(
           (value) {
@@ -307,7 +306,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                   didCapture: (image) => _cubit.submitArrived(
                     CheckInRequest(
                       id: stopPoint.id,
-                      imgName: image.imgName ?? '',
+                      imgName: image?.imgName,
                       latitude: value.latitude ?? 0,
                       longitude: value.longitude ?? 0,
                     ),

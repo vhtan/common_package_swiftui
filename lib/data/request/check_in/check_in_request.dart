@@ -19,7 +19,7 @@ class CheckInRequest {
   @JsonKey(name: "id")
   final String id;
   @JsonKey(name: "imgName")
-  final String imgName;
+  final String? imgName;
   @JsonKey(name: "latitude")
   final double latitude;
   @JsonKey(name: "longitude")
