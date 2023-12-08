@@ -95,6 +95,9 @@ class _AddTripScreen extends State<AddTripScreen> {
       setState(() {
         _loadEditTempForm(_tempForm!);
       });
+    } else {
+      _amountController.text = '0';
+      _amount = 0;
     }
   }
 
@@ -291,8 +294,12 @@ class _AddTripScreen extends State<AddTripScreen> {
                                                   TextInputType.number,
                                               onChanged: (value) {
                                                 setState(() {
-                                                  _amount = int.parse(value
-                                                      .replaceAll('.', ''));
+                                                  if (value.isEmpty) {
+                                                    _amount = null;
+                                                  } else {
+                                                    _amount = int.parse(value
+                                                        .replaceAll('.', ''));
+                                                  }
                                                 });
                                               },
                                               inputFormatters: [
@@ -517,12 +524,12 @@ class _AddTripScreen extends State<AddTripScreen> {
   }
 
   bool validSubmit() {
-    logger.d('validSubmit $_location');
     if (_purpose != null &&
         _driver != null &&
         _vehicle != null &&
         _guard != null &&
         _location != null &&
+        _amount != null &&
         _currency != null) {
       return true;
     }
