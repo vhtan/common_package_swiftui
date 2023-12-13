@@ -9,6 +9,7 @@ class ConfigStag extends BaseConfig {
   @override
   // String get vacomUrl =>
   //     'https://cash-optimization-stg.acbtest.vn/route-tracking/car1?searchText=';
+
   String get vacomUrl =>
-      'https://quanlydieuquypat.acbtest.vn/route-tracking/car1?searchText=';
+      'https://quanlydieuquypat.acbtest.vn/route-tracking/car1?pyc=';
 }
