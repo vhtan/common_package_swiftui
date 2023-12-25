@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import 'package:location/location.dart';
 import 'package:mvvm_cubit/common/dialog/progress_dialog.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
@@ -54,6 +55,7 @@ class _VerifyDistanceScreenState extends State<VerifyDistanceScreen> {
         return;
       }
     });
+    logger.d('====initState');
     super.initState();
   }
 
@@ -122,8 +124,24 @@ class _VerifyDistanceScreenState extends State<VerifyDistanceScreen> {
       'longitude': widget.stopPoint.destination?.longitude,
       'latitude': widget.stopPoint.destination?.latitude,
     });
+
+    if (stopPointLocation.latitude == null ||
+        stopPointLocation.longitude == null) {
+      if (!context.mounted) return;
+      _farFromCheckInError = const FarFromCheckInError(
+          message: 'Không xác định được vị trí điểm đến!');
+      if (_doneDelayTimer) Navigator.pop(context, _farFromCheckInError);
+      return;
+    }
+
     if (data != null) {
       final isNeedCheckDistance = widget.arrivalLimitRadius > 0;
+      if (isNeedCheckDistance == false) {
+        if (!context.mounted) return;
+        if (_doneDelayTimer) Navigator.pop(context, data);
+        _locationData = data;
+        return;
+      }
       final calDistance = calculateDistance(data, stopPointLocation);
       if (isNeedCheckDistance && calDistance <= widget.arrivalLimitRadius) {
         if (!context.mounted) return;
@@ -131,8 +149,9 @@ class _VerifyDistanceScreenState extends State<VerifyDistanceScreen> {
         _locationData = data;
       } else {
         if (!context.mounted) return;
-        _farFromCheckInError =
-            const FarFromCheckInError(message: AppString.farFromCheckIn);
+        _farFromCheckInError = FarFromCheckInError(
+            message:
+                '${AppString.farFromCheckIn}. Khoảng cách giới hạn là: ${formatCurrency(widget.arrivalLimitRadius)}m. Khoảng cách hiện tại là ${formatCurrency(calDistance)}m.');
         if (_doneDelayTimer) Navigator.pop(context, _farFromCheckInError);
       }
     } else {
@@ -141,6 +160,12 @@ class _VerifyDistanceScreenState extends State<VerifyDistanceScreen> {
           const FarFromCheckInError(message: AppString.canNotGetLocation);
       if (_doneDelayTimer) Navigator.pop(context, _farFromCheckInError);
     }
+  }
+
+  String formatCurrency(double amount) {
+    final currencyFormatter =
+        NumberFormat.currency(locale: 'vi_VN', symbol: '');
+    return currencyFormatter.format(amount);
   }
 
   double calculateDistance(LocationData start, LocationData end) {

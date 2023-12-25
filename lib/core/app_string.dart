@@ -10,7 +10,7 @@ class AppString {
   static const unexpectedError = "Unexpected error occurred";
   static const unknownError = "Something went wrong";
   static const duplicateEmail = "Email has already been taken";
-  static const farFromCheckIn = "Không thể xác nhận đến nơi vì còn xa điểm đến";
+  static const farFromCheckIn = "Không thể xác nhận vì còn xa điểm đến";
   static const canNotGetLocation =
       "Không thể lấy được vị trí hiện tại. Vui lòng thử lại sau!";
   //status code

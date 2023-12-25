@@ -14,7 +14,7 @@ void showErrorSnackBar(BuildContext context, String message) {
           Flexible(
             child: Text(
               message,
-              maxLines: 2,
+              maxLines: 4,
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w400,
