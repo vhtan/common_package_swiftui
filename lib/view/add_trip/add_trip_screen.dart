@@ -56,7 +56,8 @@ class _AddTripScreen extends State<AddTripScreen> {
   List<String> _currencies = [];
 
   PurposeResponse? _purpose;
-  int? _amount;
+  int? _amount1;
+  int? _amount2;
   UserRoleResponse? _driver;
   VehicleResponse? _vehicle;
   UserRoleResponse? _guard;
@@ -64,18 +65,19 @@ class _AddTripScreen extends State<AddTripScreen> {
   String? _currency;
   TempFormResponse? _tempForm;
 
-  final _amountController = TextEditingController();
+  final _amount1Controller = TextEditingController();
+  final _amount2Controller = TextEditingController();
 
-  final FocusNode _nodeTextInput = FocusNode();
+  final FocusNode _node1TextInput = FocusNode();
+  final FocusNode _node2TextInput = FocusNode();
   KeyboardActionsConfig _keyboardActionsConfig(BuildContext context) {
     return KeyboardActionsConfig(
       keyboardActionsPlatform: KeyboardActionsPlatform.IOS,
       keyboardBarColor: Colors.grey[200],
       nextFocus: false,
       actions: [
-        KeyboardActionsItem(
-          focusNode: _nodeTextInput,
-        ),
+        KeyboardActionsItem(focusNode: _node1TextInput),
+        KeyboardActionsItem(focusNode: _node2TextInput),
       ],
     );
   }
@@ -96,8 +98,8 @@ class _AddTripScreen extends State<AddTripScreen> {
         _loadEditTempForm(_tempForm!);
       });
     } else {
-      _amountController.text = '0';
-      _amount = 0;
+      _amount1Controller.text = '0';
+      _amount1 = 0;
     }
   }
 
@@ -113,9 +115,8 @@ class _AddTripScreen extends State<AddTripScreen> {
       lng: tempForm.address?.lng,
     );
     _currency = tempForm.currency;
-    _amount = tempForm.quantity?.toInt();
-    logger.d('====message $_amount');
-    _amountController.text = _amount.toString();
+    _amount1 = tempForm.quantity?.toInt();
+    _amount1Controller.text = _amount1.toString();
     selectedValueSingleDialogFuture = tempForm.address?.toJson();
   }
 
@@ -279,68 +280,11 @@ class _AddTripScreen extends State<AddTripScreen> {
                                         ],
                                       ),
                                       const SizedBox(height: 15),
-                                      Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                        children: [
-                                          Flexible(
-                                            flex: 2,
-                                            child: TextInput(
-                                              controller: _amountController,
-                                              focusNode: _nodeTextInput,
-                                              hint: 'Nhập số tiền',
-                                              labelText: 'Số tiền',
-                                              keyboardType:
-                                                  TextInputType.number,
-                                              onChanged: (value) {
-                                                setState(() {
-                                                  if (value.isEmpty) {
-                                                    _amount = null;
-                                                  } else {
-                                                    _amount = int.parse(value
-                                                        .replaceAll('.', ''));
-                                                  }
-                                                });
-                                              },
-                                              inputFormatters: [
-                                                CurrencyTextInputFormatter(
-                                                  locale: 'vi',
-                                                  decimalDigits: 0,
-                                                  symbol: '',
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                          const SizedBox(width: 16.0),
-                                          if (_currencies.isNotEmpty)
-                                            Flexible(
-                                              flex: 1,
-                                              child: Column(
-                                                children: [
-                                                  const Align(
-                                                    alignment:
-                                                        Alignment.topLeft,
-                                                    child: Text(
-                                                      'Loại tiền',
-                                                      style: textDefault,
-                                                    ),
-                                                  ),
-                                                  DropDown<String>(
-                                                    initialItem: _currency,
-                                                    items: _currencies,
-                                                    displayTextBuilder:
-                                                        (value) => value,
-                                                    onChanged: (value) {
-                                                      setState(() {
-                                                        _currency = value;
-                                                      });
-                                                    },
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                        ],
-                                      ),
+                                      _money1Widget,
+                                      const SizedBox(height: 10),
+                                      _money2Widget,
+                                      const SizedBox(height: 10),
+                                      _addMoneyWidget,
                                       const SizedBox(height: 15),
                                       const Align(
                                         alignment: Alignment.topLeft,
@@ -445,6 +389,198 @@ class _AddTripScreen extends State<AddTripScreen> {
     );
   }
 
+  Widget get _addMoneyWidget {
+    return Row(
+      children: [
+        const Spacer(),
+        IconButton(
+          onPressed: () => {},
+          icon: const Row(
+            children: [
+              Icon(Icons.add),
+              Text('Thêm loại tiền'),
+            ],
+          ),
+        ),
+        const Spacer(),
+      ],
+    );
+  }
+
+  Widget get _money1Widget {
+    return Column(
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Flexible(
+              flex: 2,
+              child: TextInput(
+                controller: _amount1Controller,
+                focusNode: _node1TextInput,
+                hint: 'Nhập số tiền',
+                labelText: 'Số tiền',
+                keyboardType: TextInputType.number,
+                onChanged: (value) {
+                  setState(() {
+                    if (value.isEmpty) {
+                      _amount1 = null;
+                    } else {
+                      _amount1 = int.parse(value.replaceAll('.', ''));
+                    }
+                  });
+                },
+                inputFormatters: [
+                  CurrencyTextInputFormatter(
+                    locale: 'vi',
+                    decimalDigits: 0,
+                    symbol: '',
+                  )
+                ],
+              ),
+            ),
+            const SizedBox(width: 16.0),
+            if (_currencies.isNotEmpty)
+              Flexible(
+                flex: 1,
+                child: Column(
+                  children: [
+                    const Align(
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                        'Loại tiền',
+                        style: textDefault,
+                      ),
+                    ),
+                    DropDown<String>(
+                      initialItem: _currency,
+                      items: _currencies,
+                      displayTextBuilder: (value) => value,
+                      onChanged: (value) {
+                        setState(() {
+                          _currency = value;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _standartWidget(onPressed: () => {}),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _standartWidget({required VoidCallback? onPressed}) {
+    return Container(
+      color: AppColors.error,
+      child: TextButton(
+        style: ButtonStyle(
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(0),
+              side: const BorderSide(color: Colors.transparent),
+            ),
+          ),
+          overlayColor: MaterialStateProperty.resolveWith<Color>(
+            (states) => Colors.transparent,
+          ),
+        ),
+        onPressed: onPressed,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              width: 28,
+              height: 28,
+              decoration: BoxDecoration(
+                shape: BoxShape.rectangle,
+                border: Border.all(color: AppColors.border, width: 2),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: const Center(
+                child: Icon(
+                  Icons.check,
+                  color: AppColors.primary,
+                ),
+              ),
+            ),
+            const SizedBox(width: 6),
+            Expanded(
+              child: Text('Đủ tiêu chuẩn'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget get _money2Widget {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Flexible(
+          flex: 2,
+          child: TextInput(
+            controller: _amount2Controller,
+            focusNode: _node2TextInput,
+            hint: 'Nhập số tiền',
+            labelText: 'Số tiền',
+            keyboardType: TextInputType.number,
+            onChanged: (value) {
+              setState(() {
+                if (value.isEmpty) {
+                  _amount2 = null;
+                } else {
+                  _amount2 = int.parse(value.replaceAll('.', ''));
+                }
+              });
+            },
+            inputFormatters: [
+              CurrencyTextInputFormatter(
+                locale: 'vi',
+                decimalDigits: 0,
+                symbol: '',
+              )
+            ],
+          ),
+        ),
+        const SizedBox(width: 16.0),
+        if (_currencies.isNotEmpty)
+          Flexible(
+            flex: 1,
+            child: Column(
+              children: [
+                const Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    'Loại tiền',
+                    style: textDefault,
+                  ),
+                ),
+                DropDown<String>(
+                  initialItem: _currency,
+                  items: _currencies,
+                  displayTextBuilder: (value) => value,
+                  onChanged: (value) {
+                    setState(() {
+                      _currency = value;
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+
   Widget search() {
     return SearchChoices.single(
       style: textDefault,
@@ -529,7 +665,7 @@ class _AddTripScreen extends State<AddTripScreen> {
         _vehicle != null &&
         _guard != null &&
         _location != null &&
-        _amount != null &&
+        _amount1 != null &&
         _currency != null) {
       return true;
     }
@@ -538,7 +674,7 @@ class _AddTripScreen extends State<AddTripScreen> {
 
   AddTripRequest get _toRequest {
     double amount = 0;
-    final text = _amountController.text.replaceAll('.', '');
+    final text = _amount1Controller.text.replaceAll('.', '');
     if (text.isNotEmpty) {
       amount = double.parse(text);
     }
