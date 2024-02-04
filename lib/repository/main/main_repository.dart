@@ -61,8 +61,13 @@ class MainRepository with RepositoryHelper<dynamic> {
   }
 
   Future<List<NotificationResponse>> getNotificationList(
-      bool isEmergency) async {
-    return _api.getNotificationList(isEmergency);
+    bool isEmergency, {
+    int? page,
+  }) async {
+    return _api.getNotificationList(
+      isEmergency,
+      page: page,
+    );
   }
 
   Future<List<ChatMessageResponse>> getChattingList(String id) async {

@@ -48,11 +48,11 @@ class ApiConfig {
   static const String getSOSReasons = '/sos/reason/list';
   static const String submitSOS = '/sos/submit';
 
-  static String notificationList(bool isEmergency) {
+  static String notificationList(bool isEmergency, {int? page}) {
     if (isEmergency) {
       return '/notification/list?isRead=false&type=EMERGENCY';
     } else {
-      return '/notification/list';
+      return '/notification/list?page=${page ?? 0}';
     }
   }
 

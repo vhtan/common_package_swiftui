@@ -117,10 +117,12 @@ class MainApi with ApiHelper<dynamic> {
   }
 
   Future<List<NotificationResponse>> getNotificationList(
-      bool isEmergency) async {
+    bool isEmergency, {
+    int? page,
+  }) async {
     final apiResponse = await makeGetRequest(
       client.dio.get(
-        ApiConfig.notificationList(isEmergency),
+        ApiConfig.notificationList(isEmergency, page: page),
       ),
     );
     return parseNotificationResponseList(apiResponse.detail);
