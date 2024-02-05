@@ -281,11 +281,8 @@ class _AddTripScreen extends State<AddTripScreen> {
                                       ),
                                       const SizedBox(height: 15),
                                       _money1Widget,
-                                      const SizedBox(height: 10),
                                       _money2Widget,
-                                      const SizedBox(height: 10),
                                       _addMoneyWidget,
-                                      const SizedBox(height: 15),
                                       const Align(
                                         alignment: Alignment.topLeft,
                                         child: Text(
@@ -470,113 +467,146 @@ class _AddTripScreen extends State<AddTripScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _standartWidget(onPressed: () => {}),
+            _standartWidget(
+              text: 'Đủ tiêu chuẩn',
+              isSelected: true,
+              onPressed: () => {},
+            ),
+            _standartWidget(
+              text: 'Không đủ tiêu chuẩn',
+              isSelected: false,
+              onPressed: () => {},
+            ),
           ],
         ),
       ],
     );
   }
 
-  Widget _standartWidget({required VoidCallback? onPressed}) {
-    return Container(
-      color: AppColors.error,
-      child: TextButton(
-        style: ButtonStyle(
-          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(0),
-              side: const BorderSide(color: Colors.transparent),
-            ),
-          ),
-          overlayColor: MaterialStateProperty.resolveWith<Color>(
-            (states) => Colors.transparent,
+  Widget _standartWidget({
+    required VoidCallback? onPressed,
+    required String text,
+    required bool isSelected,
+  }) {
+    return TextButton(
+      style: ButtonStyle(
+        padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+          const EdgeInsets.all(0.0),
+        ),
+        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(0),
+            side: const BorderSide(color: Colors.transparent),
           ),
         ),
-        onPressed: onPressed,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Container(
-              width: 28,
-              height: 28,
-              decoration: BoxDecoration(
-                shape: BoxShape.rectangle,
-                border: Border.all(color: AppColors.border, width: 2),
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: const Center(
-                child: Icon(
-                  Icons.check,
-                  color: AppColors.primary,
-                ),
-              ),
-            ),
-            const SizedBox(width: 6),
-            Expanded(
-              child: Text('Đủ tiêu chuẩn'),
-            ),
-          ],
+        overlayColor: MaterialStateProperty.resolveWith<Color>(
+          (states) => Colors.transparent,
         ),
+      ),
+      onPressed: onPressed,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Container(
+            width: 28,
+            height: 28,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: AppColors.border,
+                width: 3,
+              ),
+            ),
+            child: Center(
+              child: Icon(
+                isSelected ? Icons.circle : null,
+                color: AppColors.primary,
+                size: 20,
+              ),
+            ),
+          ),
+          const SizedBox(width: 6),
+          Text(text),
+        ],
       ),
     );
   }
 
   Widget get _money2Widget {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
+    return Column(
       children: [
-        Flexible(
-          flex: 2,
-          child: TextInput(
-            controller: _amount2Controller,
-            focusNode: _node2TextInput,
-            hint: 'Nhập số tiền',
-            labelText: 'Số tiền',
-            keyboardType: TextInputType.number,
-            onChanged: (value) {
-              setState(() {
-                if (value.isEmpty) {
-                  _amount2 = null;
-                } else {
-                  _amount2 = int.parse(value.replaceAll('.', ''));
-                }
-              });
-            },
-            inputFormatters: [
-              CurrencyTextInputFormatter(
-                locale: 'vi',
-                decimalDigits: 0,
-                symbol: '',
-              )
-            ],
-          ),
-        ),
-        const SizedBox(width: 16.0),
-        if (_currencies.isNotEmpty)
-          Flexible(
-            flex: 1,
-            child: Column(
-              children: [
-                const Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    'Loại tiền',
-                    style: textDefault,
-                  ),
-                ),
-                DropDown<String>(
-                  initialItem: _currency,
-                  items: _currencies,
-                  displayTextBuilder: (value) => value,
-                  onChanged: (value) {
-                    setState(() {
-                      _currency = value;
-                    });
-                  },
-                ),
-              ],
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Flexible(
+              flex: 2,
+              child: TextInput(
+                controller: _amount2Controller,
+                focusNode: _node2TextInput,
+                hint: 'Nhập số tiền',
+                labelText: 'Số tiền',
+                keyboardType: TextInputType.number,
+                onChanged: (value) {
+                  setState(() {
+                    if (value.isEmpty) {
+                      _amount2 = null;
+                    } else {
+                      _amount2 = int.parse(value.replaceAll('.', ''));
+                    }
+                  });
+                },
+                inputFormatters: [
+                  CurrencyTextInputFormatter(
+                    locale: 'vi',
+                    decimalDigits: 0,
+                    symbol: '',
+                  )
+                ],
+              ),
             ),
-          ),
+            const SizedBox(width: 16.0),
+            if (_currencies.isNotEmpty)
+              Flexible(
+                flex: 1,
+                child: Column(
+                  children: [
+                    const Align(
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                        'Loại tiền',
+                        style: textDefault,
+                      ),
+                    ),
+                    DropDown<String>(
+                      initialItem: _currency,
+                      items: _currencies,
+                      displayTextBuilder: (value) => value,
+                      onChanged: (value) {
+                        setState(() {
+                          _currency = value;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _standartWidget(
+              text: 'Đủ tiêu chuẩn',
+              isSelected: false,
+              onPressed: () => {},
+            ),
+            _standartWidget(
+              text: 'Không đủ tiêu chuẩn',
+              isSelected: true,
+              onPressed: () => {},
+            ),
+          ],
+        ),
       ],
     );
   }
