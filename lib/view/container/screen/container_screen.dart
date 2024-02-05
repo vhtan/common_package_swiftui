@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
+import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/data/model/auth/login_response.dart';
 import 'package:mvvm_cubit/data/model/container/menu_type.dart';
 import 'package:mvvm_cubit/data/model/notification/notification_response.dart';
@@ -274,27 +275,67 @@ class _ContainerScreenState extends State<ContainerScreen>
                           onPressed: () => toggleMenu(true),
                         ),
                         actions: [
-                          Padding(
-                            padding: const EdgeInsets.only(right: 10),
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 12, vertical: 5),
-                                  backgroundColor: AppColors.error),
-                              onPressed: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => const ReportSOSScreen(),
-                                  barrierDismissible: false,
-                                );
-                              },
-                              child: const Icon(
-                                Icons.sos,
-                                color: AppColors.white,
-                                size: Dimension.menuIconSize,
+                          // Padding(
+                          //   padding: const EdgeInsets.only(right: 0),
+                          //   child: ElevatedButton(
+                          //     style: ElevatedButton.styleFrom(
+                          //         padding: const EdgeInsets.symmetric(
+                          //             horizontal: 12, vertical: 5),
+                          //         backgroundColor: AppColors.error),
+                          //     onPressed: () {
+                          //       showDialog(
+                          //         context: context,
+                          //         builder: (context) => const ReportSOSScreen(),
+                          //         barrierDismissible: false,
+                          //       );
+                          //     },
+                          //     child: const Icon(
+                          //       Icons.sos,
+                          //       color: AppColors.white,
+                          //       size: Dimension.menuIconSize,
+                          //     ),
+                          //   ),
+                          // ),
+                          Container(
+                            height: 40,
+                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.rectangle,
+                              color: AppColors.red,
+                              borderRadius: BorderRadius.circular(25),
+                            ),
+                            child: Center(
+                              child: Text(
+                                'SOS',
+                                style: headLine6.copyWith(
+                                  fontSize: 14,
+                                  color: AppColors.white,
+                                ),
+                                textAlign: TextAlign.center,
                               ),
                             ),
                           ),
+                          const SizedBox(width: 10),
+                          Container(
+                            height: 40,
+                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.rectangle,
+                              color: AppColors.red,
+                              borderRadius: BorderRadius.circular(25),
+                            ),
+                            child: Center(
+                              child: Text(
+                                'SOS\nCướp',
+                                style: headLine6.copyWith(
+                                  fontSize: 14,
+                                  color: AppColors.white,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
                         ],
                         title: Text(title),
                       ),
