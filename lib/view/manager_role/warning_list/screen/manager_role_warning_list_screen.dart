@@ -42,7 +42,8 @@ class _ManagerRoleWrningListScreen extends State<ManagerRoleWrningListScreen>
   List<TempFormHistoryResponse> _tempFormList = [];
   final _scrollController = ScrollController();
   bool _isLast = false;
-  int _currentPage = 0;
+  int _currentPageTempForm = 0;
+  int _currentPageWarning = 0;
 
   PackageInfo _packageInfo = PackageInfo(
     appName: 'Unknown',
@@ -56,7 +57,7 @@ class _ManagerRoleWrningListScreen extends State<ManagerRoleWrningListScreen>
   @override
   void initState() {
     super.initState();
-    _cubit.getWarningList();
+    _cubit.getWarningList(_currentPageWarning);
     startFetchingWarningList();
     _cubit.getTempFormListNeedToHandle(0);
     _initPackageInfo();
@@ -65,7 +66,7 @@ class _ManagerRoleWrningListScreen extends State<ManagerRoleWrningListScreen>
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
         if (_isLast == false) {
-          _cubit.getTempFormListNeedToHandle(_currentPage);
+          _cubit.getTempFormListNeedToHandle(_currentPageTempForm);
         }
       }
     });
@@ -83,7 +84,7 @@ class _ManagerRoleWrningListScreen extends State<ManagerRoleWrningListScreen>
     _fetchWarningList = Timer.periodic(
       _timerDuration,
       (timer) {
-        _cubit.getWarningListForFetching();
+        _cubit.getWarningListForFetching(_currentPageWarning);
       },
     );
   }
@@ -124,9 +125,9 @@ class _ManagerRoleWrningListScreen extends State<ManagerRoleWrningListScreen>
                 parseTempFormHistoryResponseList(listResponse.content ?? []);
             _isLast = listResponse.last ?? false;
             if (listResponse.first == true) {
-              _currentPage = 1;
+              _currentPageTempForm = 1;
             } else {
-              _currentPage = _currentPage + 1;
+              _currentPageTempForm = _currentPageTempForm + 1;
             }
             setState(() {
               if (listResponse.first == true) {
@@ -252,7 +253,7 @@ extension _TabBarView on _ManagerRoleWrningListScreen {
                 PrimaryButton(
                   title: 'Kiểm tra danh sách cảnh báo',
                   buttonHeight: 50,
-                  onPressed: () => _cubit.getWarningList(),
+                  onPressed: () => _cubit.getWarningList(_currentPageWarning),
                 )
               ],
             ),
@@ -281,14 +282,14 @@ extension _TabBarView on _ManagerRoleWrningListScreen {
                     );
                     handleWarning.then((value) {
                       if (value == true) {
-                        _cubit.getWarningList();
+                        _cubit.getWarningList(_currentPageWarning);
                       }
                     });
                   },
                 );
               },
             ),
-            onRefresh: () => _cubit.getWarningList(),
+            onRefresh: () => _cubit.getWarningList(_currentPageWarning),
           );
   }
 

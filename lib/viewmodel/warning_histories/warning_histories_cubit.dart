@@ -10,12 +10,12 @@ class WarningHistoriesCubit extends GenericCubit<WarningHistoriesState> {
 
   WarningHistoriesCubit({required this.repository});
 
-  void getWarningHistories() async {
+  void getWarningHistories(int page) async {
     emit(
       GenericCubitState.loading(),
     );
     try {
-      final list = await repository.getWarningHistories();
+      final list = await repository.getWarningHistories(page);
 
       emit(
         GenericCubitState.success(

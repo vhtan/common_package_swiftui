@@ -24,8 +24,8 @@ class MainRepository with RepositoryHelper<dynamic> {
     return _api.getTempFormDetails();
   }
 
-  Future<List<WarningDetailsResponse>> getWarningList() async {
-    return _api.getWarningList();
+  Future<List<WarningDetailsResponse>> getWarningList(int page) async {
+    return _api.getWarningList(page);
   }
 
   Future<dynamic> submitArrived(CheckInRequest request) async {
@@ -78,8 +78,8 @@ class MainRepository with RepositoryHelper<dynamic> {
     return _api.getTempFormHistories(page);
   }
 
-  Future<List<WarningDetailsResponse>> getWarningHistories() async {
-    return _api.getWarningHistories();
+  Future<List<WarningDetailsResponse>> getWarningHistories(int page) async {
+    return _api.getWarningHistories(page);
   }
 
   Future<dynamic> tempFormProcess(TempFormProcessRequest request) async {

@@ -23,13 +23,13 @@ class WarningHistoriesScreen extends StatefulWidget {
 class _WarningHistoriesScreenState extends State<WarningHistoriesScreen> {
   final GlobalKey<State> progressKey = GlobalKey<State>();
   final _cubit = WarningHistoriesCubit(repository: di());
-
+  int _currentPage = 0;
   @override
   void initState() {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _cubit.getWarningHistories();
+      _cubit.getWarningHistories(_currentPage);
     });
   }
 

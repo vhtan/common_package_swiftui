@@ -105,9 +105,9 @@ class MainCubit extends GenericCubit<MainState> {
     }
   }
 
-  Future<void> getWarningList() async {
+  Future<void> getWarningList(int page) async {
     try {
-      final warningList = await repository.getWarningList();
+      final warningList = await repository.getWarningList(page);
       emit(
         GenericCubitState.success(
           GetWarningListMainState(warningList: warningList),
@@ -120,9 +120,9 @@ class MainCubit extends GenericCubit<MainState> {
     }
   }
 
-  Future<void> getWarningListForFetching() async {
+  Future<void> getWarningListForFetching(int page) async {
     try {
-      final warningList = await repository.getWarningList();
+      final warningList = await repository.getWarningList(page);
       emit(
         GenericCubitState.success(
           GetWarningListMainState(warningList: warningList),

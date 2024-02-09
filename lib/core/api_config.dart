@@ -6,8 +6,11 @@ class ApiConfig {
   static const Duration receiveTimeout = Duration(milliseconds: 15000);
   static const Duration connectionTimeout = Duration(milliseconds: 15000);
   static const String getTrip = '/routing/detail';
-  static String warningList(bool isOpen) {
-    return '/warning/list?isOpen=$isOpen';
+  static String warningList({
+    required bool isOpen,
+    required int page,
+  }) {
+    return '/warning/list?isOpen=$isOpen&page=$page';
   }
 
   static const String createTrip = '/routing/job';

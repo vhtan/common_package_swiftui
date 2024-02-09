@@ -1,3 +1,4 @@
+import 'package:mvvm_cubit/common/network/api_response/api_response.dart';
 import 'package:mvvm_cubit/common/repository/repository_helper.dart';
 import 'package:mvvm_cubit/data/api/add_trip/add_trip_api.dart';
 import 'package:mvvm_cubit/data/model/map_location/map_location_response.dart';
@@ -12,7 +13,7 @@ class AddTripRepository with RepositoryHelper<dynamic> {
 
   const AddTripRepository({required AddTripApi api}) : _api = api;
 
-  Future<dynamic> createTrip(AddTripRequest request) async {
+  Future<ApiResponse> createTrip(AddTripRequest request) async {
     return _api.createTrip(request);
   }
 
