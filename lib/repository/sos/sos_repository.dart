@@ -23,4 +23,8 @@ class SosRepository with RepositoryHelper<dynamic> {
   Future<ApiResponse> submitSOS(SOSSubmitRequest request) async {
     return _api.submitSos(request);
   }
+
+  Future<ApiResponse> warningSOS(SOSRobberSubmitRequest request) async {
+    return _api.warningSOS(request);
+  }
 }

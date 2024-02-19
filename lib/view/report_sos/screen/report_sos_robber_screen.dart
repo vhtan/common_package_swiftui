@@ -16,22 +16,25 @@ import 'package:mvvm_cubit/core/app_string.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/data/api/sos/sos_submit_request.dart';
 import 'package:mvvm_cubit/data/api/upload_image/upload_image_ext.dart';
-import 'package:mvvm_cubit/data/model/sos/child_sos_response.dart';
+import 'package:mvvm_cubit/data/model/vehicle/vehicle_response.dart';
 import 'package:mvvm_cubit/di.dart';
-import 'package:mvvm_cubit/viewmodel/report_sos/report_sos_cubit.dart';
+import 'package:mvvm_cubit/viewmodel/report_sos/report_sos_robber_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/report_sos/report_state.dart';
 
-class ReportSOSScreen extends StatefulWidget {
-  const ReportSOSScreen({super.key});
+class ReportSOSRobberScreen extends StatefulWidget {
+  const ReportSOSRobberScreen({super.key});
 
   @override
-  State<StatefulWidget> createState() => _ReportSOSScreen();
+  State<StatefulWidget> createState() => _ReportSOSRobberScreen();
 }
 
-class _ReportSOSScreen extends State<ReportSOSScreen> {
-  final cubit = ReportSOSCubit(repository: di());
-  List<ChildSOSResponse> reasons = [];
-  ChildSOSResponse? selectedReason;
+class _ReportSOSRobberScreen extends State<ReportSOSRobberScreen> {
+  final cubit = ReportSOSRobberCubit(
+    repository: di(),
+    addTripRepository: di(),
+  );
+  final List<VehicleResponse> _vehicleList = [];
+  VehicleResponse? selectedVehicle;
   ImageResponse? imageResponse;
   String? describeReason;
   File? localFile;
@@ -41,7 +44,7 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
   @override
   void initState() {
     super.initState();
-    cubit.getReasons();
+    cubit.vehicleList();
   }
 
   final FocusNode _nodeTextInput = FocusNode();
@@ -62,7 +65,7 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => cubit,
-      child: BlocConsumer<ReportSOSCubit, GenericCubitState>(
+      child: BlocConsumer<ReportSOSRobberCubit, GenericCubitState>(
         listener: (context, state) {
           final data = state.data;
           switch (state.status) {
@@ -86,18 +89,18 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
                 localFile = data.file;
               },
             );
-          } else if (data is GetReasonsSuccess) {
+          } else if (data is GetVehicleListSuccess) {
             setState(
               () {
-                reasons.clear();
-                reasons.addAll(data.reasons);
-                selectedReason = reasons.first;
+                _vehicleList.clear();
+                _vehicleList.addAll(data.vehicleList);
+                selectedVehicle = _vehicleList.first;
               },
             );
           }
         },
         builder: (context, state) {
-          return BlocBuilder<ReportSOSCubit, GenericCubitState>(
+          return BlocBuilder<ReportSOSRobberCubit, GenericCubitState>(
             builder: (context, state) {
               return Scaffold(
                 backgroundColor: Colors.transparent,
@@ -128,7 +131,7 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
                                     const Align(
                                       alignment: Alignment.center,
                                       child: Text(
-                                        'Báo cáo sự cố',
+                                        'Báo cáo sự cố bị cướp',
                                         style: headLine1,
                                       ),
                                     ),
@@ -145,14 +148,14 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
                                   ],
                                 ),
                                 const SizedBox(height: 20),
-                                (reasons.isNotEmpty)
-                                    ? DropDown<ChildSOSResponse>(
-                                        items: reasons,
+                                (_vehicleList.isNotEmpty)
+                                    ? DropDown<VehicleResponse>(
+                                        items: _vehicleList,
                                         displayTextBuilder: (value) =>
-                                            value.name?.decodeHtml ?? '',
+                                            value.plateNumber?.decodeHtml ?? '',
                                         onChanged: (value) {
                                           setState(() {
-                                            selectedReason = value;
+                                            selectedVehicle = value;
                                           });
                                         },
                                       )
@@ -194,10 +197,10 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
                                   onPressed: validSubmitSOS() == true
                                       ? () {
                                           cubit.submitSOS(
-                                            SOSSubmitRequest(
-                                              reasonId: selectedReason?.id,
+                                            SOSRobberSubmitRequest(
+                                              vehicleId: selectedVehicle?.id,
                                               imgName: imageResponse?.imageName,
-                                              sosMessage: describeReason,
+                                              message: describeReason,
                                             ),
                                           );
                                         }
@@ -220,7 +223,7 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
   }
 
   bool validSubmitSOS() {
-    if (selectedReason != null) {
+    if (selectedVehicle != null) {
       return true;
     }
     return false;

@@ -5,6 +5,7 @@ import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/data/model/temp_form/temp_form_response.dart';
 import 'package:mvvm_cubit/view/pending_trip/widget/delete_request_form.dart';
+import 'package:mvvm_cubit/view/pending_trip/widget/pending_trip_balance_details_widget.dart';
 import 'package:mvvm_cubit/view/pending_trip/widget/pending_trip_item_row_widget.dart';
 
 class PendingTripScreen extends StatelessWidget {
@@ -50,6 +51,11 @@ class PendingTripScreen extends StatelessWidget {
           title: 'Mục đích:',
           description: tempForm.purpose?.name?.decodeHtml ?? '',
         ),
+        const SizedBox(height: 10),
+        if ((tempForm.balanceDetails ?? []).isNotEmpty)
+          PendingTripBalanceDetailsWidget(
+            balanceDetails: tempForm.balanceDetails ?? [],
+          ),
         const SizedBox(height: 10),
         PendingTripItemRowWidget(
           icon: const Icon(Icons.drive_eta),

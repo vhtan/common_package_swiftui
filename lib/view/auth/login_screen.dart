@@ -24,7 +24,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  String _username = 'minhpd';
+  String _username = 'thanhnt07';
+  // String _username = 'minhpd';
   String _password = 'Abc@123456';
 
   final GlobalKey<State> progressKey = GlobalKey<State>();

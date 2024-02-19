@@ -19,6 +19,7 @@ import 'package:mvvm_cubit/view/container/widget/menu_widget.dart';
 import 'package:mvvm_cubit/view/fault_list/fault_list_screen.dart';
 import 'package:mvvm_cubit/view/main/screen/main_screen.dart';
 import 'package:mvvm_cubit/view/notification/screen/notification_screen.dart';
+import 'package:mvvm_cubit/view/report_sos/screen/report_sos_robber_screen.dart';
 import 'package:mvvm_cubit/view/report_sos/screen/report_sos_screen.dart';
 import 'package:mvvm_cubit/view/temp_form_histories/temp_form_histories_screen.dart';
 import 'package:mvvm_cubit/view/warning_histories/warning_histories_screen.dart';
@@ -39,7 +40,7 @@ class ContainerScreen extends StatefulWidget {
 class _ContainerScreenState extends State<ContainerScreen>
     with WidgetsBindingObserver {
   bool isOpened = false;
-  String title = 'Lộ trình';
+  String _title = 'Lộ trình';
 
   final _containerCubit = ContainerCubit(repository: di());
   final HiveStorageManager _hiveStorageManager = di();
@@ -132,12 +133,12 @@ class _ContainerScreenState extends State<ContainerScreen>
         case PushNotificationType.routing:
           setState(() {
             _menuType = MenuType.trip;
-            titlePage(_menuType);
+            _titlePage(_menuType);
           });
         case PushNotificationType.routingjobtemp:
           setState(() {
             _menuType = MenuType.trip;
-            titlePage(_menuType);
+            _titlePage(_menuType);
           });
       }
     };
@@ -201,7 +202,7 @@ class _ContainerScreenState extends State<ContainerScreen>
         listener: (context, state) {
           final data = state.data;
           if (data is MenuType) {
-            titlePage(data);
+            _titlePage(data);
           } else if (data is TotalUnreadNotificationMainState) {
             _totalUnreadNotification = data.total;
           } else if (data is EmergencyNotificationListSuccess) {
@@ -255,7 +256,7 @@ class _ContainerScreenState extends State<ContainerScreen>
                       valueChanged: (value) {
                         setState(() {
                           _menuType = value;
-                          titlePage(_menuType);
+                          _titlePage(_menuType);
                         });
                       },
                     ),
@@ -267,7 +268,7 @@ class _ContainerScreenState extends State<ContainerScreen>
                     ignoring: isOpened,
                     child: Scaffold(
                       appBar: AppBar(
-                        centerTitle: true,
+                        centerTitle: false,
                         leading: IconButton(
                           icon: const Icon(Icons.menu,
                               size: Dimension.menuIconSize,
@@ -275,69 +276,63 @@ class _ContainerScreenState extends State<ContainerScreen>
                           onPressed: () => toggleMenu(true),
                         ),
                         actions: [
-                          // Padding(
-                          //   padding: const EdgeInsets.only(right: 0),
-                          //   child: ElevatedButton(
-                          //     style: ElevatedButton.styleFrom(
-                          //         padding: const EdgeInsets.symmetric(
-                          //             horizontal: 12, vertical: 5),
-                          //         backgroundColor: AppColors.error),
-                          //     onPressed: () {
-                          //       showDialog(
-                          //         context: context,
-                          //         builder: (context) => const ReportSOSScreen(),
-                          //         barrierDismissible: false,
-                          //       );
-                          //     },
-                          //     child: const Icon(
-                          //       Icons.sos,
-                          //       color: AppColors.white,
-                          //       size: Dimension.menuIconSize,
-                          //     ),
-                          //   ),
-                          // ),
-                          Container(
-                            height: 40,
-                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.rectangle,
-                              color: AppColors.red,
-                              borderRadius: BorderRadius.circular(25),
+                          InkWell(
+                            onTap: () => showDialog(
+                              context: context,
+                              builder: (context) => const ReportSOSScreen(),
+                              barrierDismissible: false,
                             ),
-                            child: Center(
-                              child: Text(
-                                'SOS',
-                                style: headLine6.copyWith(
-                                  fontSize: 14,
-                                  color: AppColors.white,
+                            child: Container(
+                              height: 40,
+                              padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.rectangle,
+                                color: AppColors.red,
+                                borderRadius: BorderRadius.circular(25),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  'SOS',
+                                  style: headLine6.copyWith(
+                                    fontSize: 14,
+                                    color: AppColors.white,
+                                  ),
+                                  textAlign: TextAlign.center,
                                 ),
-                                textAlign: TextAlign.center,
                               ),
                             ),
                           ),
                           const SizedBox(width: 10),
-                          Container(
-                            height: 40,
-                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.rectangle,
-                              color: AppColors.red,
-                              borderRadius: BorderRadius.circular(25),
+                          InkWell(
+                            onTap: () => showDialog(
+                              context: context,
+                              builder: (context) =>
+                                  const ReportSOSRobberScreen(),
+                              barrierDismissible: false,
                             ),
-                            child: Center(
-                              child: Text(
-                                'SOS\nCướp',
-                                style: headLine6.copyWith(
-                                  fontSize: 14,
-                                  color: AppColors.white,
+                            child: Container(
+                              height: 40,
+                              padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.rectangle,
+                                color: AppColors.red,
+                                borderRadius: BorderRadius.circular(25),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  'SOS\nCướp',
+                                  style: headLine6.copyWith(
+                                    fontSize: 14,
+                                    color: AppColors.white,
+                                  ),
+                                  textAlign: TextAlign.center,
                                 ),
-                                textAlign: TextAlign.center,
                               ),
                             ),
                           ),
                           const SizedBox(width: 10),
                         ],
-                        title: Text(title),
+                        title: Text(_title),
                       ),
                       body: BlocBuilder<ContainerCubit, GenericCubitState>(
                         builder: (context, state) {
@@ -355,23 +350,23 @@ class _ContainerScreenState extends State<ContainerScreen>
     );
   }
 
-  void titlePage(MenuType? menuType) {
+  void _titlePage(MenuType? menuType) {
     toggleMenu();
     switch (menuType) {
       case MenuType.trip:
-        title = 'Lộ trình';
+        _title = 'Lộ trình';
       case MenuType.requestForm:
-        title = 'Lịch sử PYC tạm';
+        _title = 'Lịch sử PYC tạm';
       case MenuType.account:
-        title = 'Tài khoản';
+        _title = 'Tài khoản';
       case MenuType.notification:
-        title = 'Thông báo';
+        _title = 'Thông báo';
       case MenuType.warnings:
-        title = 'Lịch sử cảnh báo';
+        _title = 'Lịch sử cảnh báo';
       case MenuType.fault:
-        title = 'Lỗi không tuân thủ';
+        _title = 'Lỗi không tuân thủ';
       case MenuType.logOut:
-        title = '';
+        _title = '';
         forceLogout();
       default:
         break;

@@ -72,7 +72,6 @@ class _NotificationScreen extends State<NotificationScreen> {
               if (state is GetNotificationListSuccess) {
                 list = state.list;
               }
-
               if (list.isNotEmpty) {
                 return Padding(
                   padding: const EdgeInsets.only(top: 0, bottom: 20),

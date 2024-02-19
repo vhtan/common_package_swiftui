@@ -47,6 +47,7 @@ class ApiConfig {
   // paths of sos
   static const String getSOSReasons = '/sos/reason/list';
   static const String submitSOS = '/sos/submit';
+  static const String warningSOS = '/warning/sos';
 
   static String notificationList(bool isEmergency) {
     if (isEmergency) {
