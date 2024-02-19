@@ -106,21 +106,21 @@ class PendingTripScreen extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 10),
-        if (tempForm.quantity != null)
-          Row(
-            children: [
-              const Icon(Icons.attach_money_outlined),
-              const SizedBox(width: 10),
-              Text(
-                'Số lượng: ${formatCurrency(tempForm.quantity ?? 0)}',
-                style: textDefault,
-              ),
-              Text(
-                tempForm.currency?.decodeHtml ?? 'VNĐ',
-                style: textDefault,
-              ),
-            ],
-          ),
+        // if (tempForm.quantity != null)
+        //   Row(
+        //     children: [
+        //       const Icon(Icons.attach_money_outlined),
+        //       const SizedBox(width: 10),
+        //       Text(
+        //         'Số lượng: ${formatCurrency(tempForm.quantity ?? 0)}',
+        //         style: textDefault,
+        //       ),
+        //       Text(
+        //         tempForm.currency?.decodeHtml ?? 'VNĐ',
+        //         style: textDefault,
+        //       ),
+        //     ],
+        //   ),
         const SizedBox(height: 10),
         if (tempForm.status == TempFormStatus.NEW ||
             tempForm.status == TempFormStatus.REJECTED)
