@@ -24,8 +24,8 @@ class MainRepository with RepositoryHelper<dynamic> {
     return _api.getTempFormDetails();
   }
 
-  Future<List<WarningDetailsResponse>> getWarningList() async {
-    return _api.getWarningList();
+  Future<List<WarningDetailsResponse>> getWarningList(int page) async {
+    return _api.getWarningList(page);
   }
 
   Future<dynamic> submitArrived(CheckInRequest request) async {
@@ -61,8 +61,13 @@ class MainRepository with RepositoryHelper<dynamic> {
   }
 
   Future<List<NotificationResponse>> getNotificationList(
-      bool isEmergency) async {
-    return _api.getNotificationList(isEmergency);
+    bool isEmergency, {
+    int? page,
+  }) async {
+    return _api.getNotificationList(
+      isEmergency,
+      page: page,
+    );
   }
 
   Future<List<ChatMessageResponse>> getChattingList(String id) async {
@@ -73,8 +78,8 @@ class MainRepository with RepositoryHelper<dynamic> {
     return _api.getTempFormHistories(page);
   }
 
-  Future<List<WarningDetailsResponse>> getWarningHistories() async {
-    return _api.getWarningHistories();
+  Future<List<WarningDetailsResponse>> getWarningHistories(int page) async {
+    return _api.getWarningHistories(page);
   }
 
   Future<dynamic> tempFormProcess(TempFormProcessRequest request) async {

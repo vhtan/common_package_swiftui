@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/network/api_helper.dart';
+import 'package:mvvm_cubit/common/network/api_response/api_response.dart';
 import 'package:mvvm_cubit/common/network/dio_client.dart';
 import 'package:mvvm_cubit/core/api_config.dart';
 import 'package:mvvm_cubit/data/model/add_trip/add_trip_response.dart';
@@ -28,14 +29,15 @@ class AddTripApi with ApiHelper<AddTripResponse> {
     return apiResponse.detail;
   }
 
-  Future<dynamic> createTrip(AddTripRequest request) async {
+  Future<ApiResponse> createTrip(AddTripRequest request) async {
     final apiResponse = await makePostRequest(
       client.dio.post(
         ApiConfig.createTrip,
         data: request,
       ),
     );
-    return apiResponse.detail;
+
+    return apiResponse;
   }
 
   Future<List<PurposeResponse>> taskPurposeList() async {

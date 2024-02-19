@@ -3,6 +3,7 @@ import 'package:mvvm_cubit/common/cubit/generic_cubit.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
+import 'package:mvvm_cubit/core/app_string.dart';
 import 'package:mvvm_cubit/data/request/add_trip/add_trip_request.dart';
 import 'package:mvvm_cubit/repository/add_trip/add_trip_repository.dart';
 import 'package:mvvm_cubit/viewmodel/add_trip/add_trip_state.dart';
@@ -87,7 +88,14 @@ class AddTripCubit extends GenericCubit<AddTripState> {
   Future<void> createTrip(AddTripRequest request) async {
     logger.d('createTrip ${request.toJson()}');
     try {
-      await repository.createTrip(request);
+      final response = await repository.createTrip(request);
+      logger.d('==== response $response');
+      if (response.code != ErrorCode.SUCCESS) {
+        emit(
+          GenericCubitState.failure(AppString.canNotCreateTrip),
+        );
+        return;
+      }
       emit(
         GenericCubitState.success(DidAddTripState()),
       );

@@ -24,14 +24,38 @@ class _NotificationScreen extends State<NotificationScreen> {
   final _cubit = NotificationCubit(repository: di());
 
   final GlobalKey<State> progressKey = GlobalKey<State>();
+  final _scrollController = ScrollController();
+  List<NotificationResponse> _list = [];
+  bool _isLast = false;
+  int _currentPage = 0;
 
   @override
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _cubit.getNotificationList();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => _cubit.getNotificationList(page: _currentPage),
+    );
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        if (_isLast == false) {
+          loadMore();
+        }
+      }
     });
+  }
+
+  Future<void> _refreshList() async {
+    _isLast = false;
+    _currentPage = 0;
+    _cubit.getNotificationList(page: _currentPage);
+  }
+
+  void loadMore() {
+    _currentPage += 1;
+    _cubit.getNotificationList(page: _currentPage);
   }
 
   @override
@@ -40,8 +64,26 @@ class _NotificationScreen extends State<NotificationScreen> {
       create: (context) => _cubit,
       child: BlocConsumer<NotificationCubit, GenericCubitState>(
         listener: (context, state) {
-          logger.d('=====Notification $state');
+          logger.d('=====Notification ${state.status}');
           switch (state.status) {
+            case Status.success:
+              if (progressKey.currentContext != null) {
+                Navigator.pop(context);
+              }
+              if (state is GetNotificationListSuccess) {
+                if (state.list.isEmpty) {
+                  _isLast = true;
+                }
+                if (_currentPage == 0) {
+                  setState(() {
+                    _list = state.list;
+                  });
+                } else {
+                  setState(() {
+                    _list.addAll(state.list);
+                  });
+                }
+              }
             case Status.failure:
               if (progressKey.currentContext != null) {
                 logger.d('message $progressKey');
@@ -51,7 +93,6 @@ class _NotificationScreen extends State<NotificationScreen> {
                 context,
                 state.error ?? '',
               );
-
             case Status.loading:
               if (progressKey.currentContext == null) {
                 showProgressDialog(
@@ -68,43 +109,43 @@ class _NotificationScreen extends State<NotificationScreen> {
         builder: (context, state) {
           return BlocBuilder<NotificationCubit, GenericCubitState>(
             builder: (context, state) {
-              List<NotificationResponse> list = [];
-              if (state is GetNotificationListSuccess) {
-                list = state.list;
-              }
-              if (list.isNotEmpty) {
+              if (_list.isNotEmpty) {
                 return Padding(
                   padding: const EdgeInsets.only(top: 0, bottom: 20),
                   child: Container(
                     alignment: Alignment.topCenter,
-                    child: ListView.separated(
-                      separatorBuilder: (context, index) => const Divider(
-                        height: 1,
-                        color: AppColors.textDefaultLight,
+                    child: RefreshIndicator(
+                      onRefresh: () => _refreshList(),
+                      child: ListView.separated(
+                        controller: _scrollController,
+                        separatorBuilder: (context, index) => const Divider(
+                          height: 1,
+                          color: AppColors.textDefaultLight,
+                        ),
+                        shrinkWrap: true,
+                        itemCount: _list.length,
+                        itemBuilder: (_, index) {
+                          return InkWell(
+                            onTap: () {
+                              final item = _list[index];
+                              _cubit.readNotification(item.id ?? '');
+                              final dialog = showDialog(
+                                context: context,
+                                builder: (context) => NotificationDetailsScreen(
+                                  notification: item,
+                                ),
+                                barrierDismissible: false,
+                              );
+                              dialog.then((value) {
+                                _refreshList();
+                              });
+                            },
+                            child: NotificationItem(
+                              notification: _list[index],
+                            ),
+                          );
+                        },
                       ),
-                      shrinkWrap: true,
-                      itemCount: list.length,
-                      itemBuilder: (_, index) {
-                        return InkWell(
-                          onTap: () {
-                            final item = list[index];
-                            _cubit.readNotification(item.id ?? '');
-                            final dialog = showDialog(
-                              context: context,
-                              builder: (context) => NotificationDetailsScreen(
-                                notification: item,
-                              ),
-                              barrierDismissible: false,
-                            );
-                            dialog.then((value) {
-                              _cubit.getNotificationList();
-                            });
-                          },
-                          child: NotificationItem(
-                            notification: list[index],
-                          ),
-                        );
-                      },
                     ),
                   ),
                 );

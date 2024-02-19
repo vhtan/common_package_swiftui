@@ -6,8 +6,10 @@ import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:material_text_fields/utils/extensions.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
+import 'package:mvvm_cubit/common/snack_bar/error_snack_bar.dart';
 import 'package:mvvm_cubit/common/widget/text_input.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
+import 'package:mvvm_cubit/core/app_string.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/data/model/chatting/chat_message_response.dart';
 import 'package:mvvm_cubit/data/model/warning_details/warning_details_response.dart';
@@ -105,6 +107,12 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen>
       create: (context) => _cubit,
       child: BlocConsumer<WarningsHandlerCubit, GenericCubitState>(
         listener: (context, state) {
+          if (state.status == Status.failure) {
+            showErrorSnackBar(
+              context,
+              'Đã có lỗi xảy ra vui lòng thử lại',
+            );
+          }
           if (state is DidSendWarningSuccess) {
             _commentController.text = '';
             _cubit.getChattingList(widget.id);

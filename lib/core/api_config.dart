@@ -6,8 +6,11 @@ class ApiConfig {
   static const Duration receiveTimeout = Duration(milliseconds: 15000);
   static const Duration connectionTimeout = Duration(milliseconds: 15000);
   static const String getTrip = '/routing/detail';
-  static String warningList(bool isOpen) {
-    return '/warning/list?isOpen=$isOpen';
+  static String warningList({
+    required bool isOpen,
+    required int page,
+  }) {
+    return '/warning/list?isOpen=$isOpen&page=$page';
   }
 
   static const String createTrip = '/routing/job';
@@ -49,11 +52,11 @@ class ApiConfig {
   static const String submitSOS = '/sos/submit';
   static const String warningSOS = '/warning/sos';
 
-  static String notificationList(bool isEmergency) {
+  static String notificationList(bool isEmergency, {int? page}) {
     if (isEmergency) {
       return '/notification/list?isRead=false&type=EMERGENCY';
     } else {
-      return '/notification/list';
+      return '/notification/list?page=${page ?? 0}';
     }
   }
 

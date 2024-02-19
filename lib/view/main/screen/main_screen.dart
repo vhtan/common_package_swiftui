@@ -56,6 +56,9 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   final _timerDuration = const Duration(seconds: 10);
   final GlobalKey<State> progressKey = GlobalKey<State>();
   int apiCounter = 0;
+  int _currentPageWarning = 0;
+  final _warningListScrollController = ScrollController();
+  bool _isLast = false;
 
   @override
   void initState() {
@@ -85,6 +88,15 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
       },
     );
 
+    _warningListScrollController.addListener(() {
+      if (_warningListScrollController.position.pixels ==
+          _warningListScrollController.position.maxScrollExtent) {
+        if (_isLast == false) {
+          loadMoreWarningList();
+        }
+      }
+    });
+
     WidgetsBinding.instance.addObserver(this);
   }
 
@@ -92,7 +104,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     try {
       final List<Future<void>> apiCalls = [
         _cubit.getTrip(),
-        _cubit.getWarningList(),
+        _cubit.getWarningList(_currentPageWarning),
         _cubit.getTempFormDetails(),
       ];
 
@@ -113,6 +125,11 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     );
   }
 
+  void loadMoreWarningList() {
+    _currentPageWarning += 1;
+    _cubit.getWarningListForFetching(_currentPageWarning);
+  }
+
   void startFetchingWarning() {
     cancelFetchingWarning();
     _fetchWarning = Timer.periodic(
@@ -120,7 +137,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
       (timer) {
         logger.d('startFetchingWarning ${AuthManager.instance.isLoggedIn}');
         if (AuthManager.instance.isLoggedIn) {
-          _cubit.getWarningListForFetching();
+          _cubit.getWarningListForFetching(0);
         }
       },
     );
@@ -165,7 +182,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      _cubit.getWarningList();
+      _cubit.getWarningList(_currentPageWarning);
       _cubit.getTrip;
       startFetchingWarning();
       if (_tempForm != null) {
@@ -224,13 +241,18 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                     _tempForm = null;
                   });
                 } else if (data is DidDeleteTripMainState) {
-                  showConfirmSnackBar(context, 'Đã huỷ PYC tạm thành công');
+                  showConfirmSnackBar(
+                    context,
+                    'Đã huỷ PYC tạm thành công',
+                  );
                   setState(() {
                     _tempForm = null;
                   });
                 } else if (data is DidCloseTripMainState) {
                   showConfirmSnackBar(
-                      context, 'Đã hoàn thành PYC tạm thành công');
+                    context,
+                    'Đã hoàn thành PYC tạm thành công',
+                  );
                   setState(() {
                     _tempForm = null;
                   });
@@ -417,26 +439,25 @@ extension _MainScreenDeliveryList on MainScreenState {
   }
 
   Widget warningWidgetList() {
-    final ll =
-        (_warningList ?? []).map<Widget>((e) => widgetWithWarning(e)).toList();
-    List<Widget> newll = [];
-    for (int i = 0; i < ll.length; i++) {
-      newll.add(ll[i]);
-      newll.add(const Divider(
-          color: AppColors.textDefaultLight, thickness: 1, height: 1));
-    }
-    return Container(
-      constraints: const BoxConstraints(maxHeight: 400),
-      child: SingleChildScrollView(
-        child: Column(
-          children: newll,
+    return ConstrainedBox(
+      constraints:
+          BoxConstraints(maxHeight: _warningList?.isEmpty == true ? 0 : 300.0),
+      child: ListView.separated(
+        controller: _warningListScrollController,
+        itemBuilder: (_, index) {
+          return _widgetWithWarning(_warningList?[index]);
+        },
+        separatorBuilder: (context, index) => const Divider(
+          height: 1,
+          color: AppColors.textDefaultLight,
         ),
+        itemCount: _warningList?.length ?? 0,
       ),
     );
   }
 
-  Widget widgetWithWarning(WarningDetailsResponse warning) {
-    final level = warning.level ?? 1;
+  Widget _widgetWithWarning(WarningDetailsResponse? warning) {
+    final level = warning?.level ?? 1;
     // final level = 3;
     var color = AppColors.warning;
     if (level == 2) {
@@ -468,19 +489,19 @@ extension _MainScreenDeliveryList on MainScreenState {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Cảnh báo cấp độ: ${warning.level ?? 1}',
+                    'Cảnh báo cấp độ: ${warning?.level ?? 1}',
                     style: headLine7,
                     maxLines: 2,
                     overflow: TextOverflow.clip,
                   ),
                   Text(
-                    warning.warningMessage?.decodeHtml ?? '',
+                    warning?.warningMessage?.decodeHtml ?? '',
                     style: textDefault,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
-                    'Thời gian cảnh báo: ${(warning.startTime ?? 0).toDate.toStringFormat()}',
+                    'Thời gian cảnh báo: ${(warning?.startTime ?? 0).toDate.toStringFormat()}',
                     style: headLine7,
                     maxLines: 2,
                     overflow: TextOverflow.clip,
@@ -492,7 +513,7 @@ extension _MainScreenDeliveryList on MainScreenState {
               onPressed: () => showDialog(
                 context: context,
                 builder: (context) => WarningsHandlerScreen(
-                  id: warning.id ?? '',
+                  id: warning?.id ?? '',
                   isCanChat: true,
                 ),
               ),

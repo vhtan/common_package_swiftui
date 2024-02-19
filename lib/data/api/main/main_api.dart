@@ -50,10 +50,13 @@ class MainApi with ApiHelper<dynamic> {
     }
   }
 
-  Future<List<WarningDetailsResponse>> getWarningList() async {
+  Future<List<WarningDetailsResponse>> getWarningList(int page) async {
     final apiResponse = await makeGetRequest(
       client.dio.get(
-        ApiConfig.warningList(true),
+        ApiConfig.warningList(
+          isOpen: true,
+          page: page,
+        ),
       ),
     );
     return parseWarningDetailsResponseList(apiResponse.detail);
@@ -117,10 +120,12 @@ class MainApi with ApiHelper<dynamic> {
   }
 
   Future<List<NotificationResponse>> getNotificationList(
-      bool isEmergency) async {
+    bool isEmergency, {
+    int? page,
+  }) async {
     final apiResponse = await makeGetRequest(
       client.dio.get(
-        ApiConfig.notificationList(isEmergency),
+        ApiConfig.notificationList(isEmergency, page: page),
       ),
     );
     return parseNotificationResponseList(apiResponse.detail);
@@ -163,10 +168,13 @@ class MainApi with ApiHelper<dynamic> {
     return ListResponse.fromJson(apiResponse.detail);
   }
 
-  Future<List<WarningDetailsResponse>> getWarningHistories() async {
+  Future<List<WarningDetailsResponse>> getWarningHistories(int page) async {
     final apiResponse = await makeGetRequest(
       client.dio.get(
-        ApiConfig.warningList(false),
+        ApiConfig.warningList(
+          isOpen: false,
+          page: page,
+        ),
       ),
     );
 

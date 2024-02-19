@@ -19,9 +19,9 @@ class ManagerRoleWarningListCubit extends Cubit<GenericCubitState<dynamic>> {
     required this.secureStorageManager,
   }) : super(GenericCubitState.loading());
 
-  Future<void> getWarningList() async {
+  Future<void> getWarningList(int page) async {
     try {
-      final warnings = await repository.getWarningList();
+      final warnings = await repository.getWarningList(page);
       emit(
         GetWarningListSuccess(
           warnings: warnings,
@@ -35,9 +35,9 @@ class ManagerRoleWarningListCubit extends Cubit<GenericCubitState<dynamic>> {
     }
   }
 
-  Future<void> getWarningListForFetching() async {
+  Future<void> getWarningListForFetching(int page) async {
     try {
-      final warnings = await repository.getWarningList();
+      final warnings = await repository.getWarningList(page);
       emit(
         GetWarningListSuccess(
           warnings: warnings,
