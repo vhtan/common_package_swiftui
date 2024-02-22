@@ -1,15 +1,20 @@
 import 'package:uuid/uuid.dart';
 
 class SOSSubmitRequest {
-  late final String? reasonId;
-  late final String? imgName;
-  late final String? sosMessage;
-  late final String? requestId;
-  late final int? requestTime;
+  String? vehicleId;
+  String? reasonId;
+  String? imgName;
+  String? sosMessage;
+  SOSType? type;
+  String? requestId;
+  int? requestTime;
+
   SOSSubmitRequest({
     this.reasonId,
+    this.vehicleId,
     this.imgName,
     this.sosMessage,
+    this.type,
   })  : requestId = const Uuid().v4(),
         requestTime = DateTime.now().millisecondsSinceEpoch;
   Map<String, dynamic> toParams() {
@@ -23,26 +28,4 @@ class SOSSubmitRequest {
   }
 }
 
-class SOSRobberSubmitRequest {
-  late final String? vehicleId;
-  late final String? imgName;
-  late final String? message;
-  late final String? requestId;
-  late final int? requestTime;
-  SOSRobberSubmitRequest({
-    this.vehicleId,
-    this.imgName,
-    this.message,
-  })  : requestId = const Uuid().v4(),
-        requestTime = DateTime.now().millisecondsSinceEpoch;
-  Map<String, dynamic> toParams() {
-    return {
-      "vehicleId": vehicleId,
-      "imgName": imgName,
-      "message": message,
-      "robbed": true,
-      "requestId": requestId,
-      "requestTime": requestTime
-    };
-  }
-}
+enum SOSType { robbed, arrested, other }

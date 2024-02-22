@@ -44,7 +44,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
 
   TripResponse? _trip;
   TempFormResponse? _tempForm;
-  List<WarningDetailsResponse>? _warningList;
+  final List<WarningDetailsResponse> _warningList = [];
   final double _warningHeight = 70;
   final _cubit = MainCubit(repository: di());
   static Timer? _fetchTrip;

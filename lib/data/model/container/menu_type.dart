@@ -1,5 +1,6 @@
 enum MenuType {
   trip,
+  sosHistories,
   requestForm,
   warnings,
   fault,

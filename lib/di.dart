@@ -70,7 +70,10 @@ Future<void> init() async {
     ),
   );
   di.registerFactory(
-    () => ReportSOSCubit(repository: di()),
+    () => ReportSOSCubit(
+      repository: di(),
+      addTripRepository: di(),
+    ),
   );
   di.registerFactory(
     () => ReportSOSRobberCubit(repository: di(), addTripRepository: di()),

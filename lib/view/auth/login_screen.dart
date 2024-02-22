@@ -24,6 +24,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  // String _username = 'daohta.bit';
   String _username = 'thanhnt07';
   // String _username = 'minhpd';
   String _password = 'Abc@123456';

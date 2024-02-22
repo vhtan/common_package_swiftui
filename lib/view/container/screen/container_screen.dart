@@ -3,8 +3,11 @@ import 'package:diffutil_dart/diffutil.dart' as diffutil;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
+import 'package:mvvm_cubit/common/dialog/delete_dialog.dart';
+import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
+import 'package:mvvm_cubit/data/api/sos/sos_submit_request.dart';
 import 'package:mvvm_cubit/data/model/auth/login_response.dart';
 import 'package:mvvm_cubit/data/model/container/menu_type.dart';
 import 'package:mvvm_cubit/data/model/notification/notification_response.dart';
@@ -21,6 +24,7 @@ import 'package:mvvm_cubit/view/main/screen/main_screen.dart';
 import 'package:mvvm_cubit/view/notification/screen/notification_screen.dart';
 import 'package:mvvm_cubit/view/report_sos/screen/report_sos_robber_screen.dart';
 import 'package:mvvm_cubit/view/report_sos/screen/report_sos_screen.dart';
+import 'package:mvvm_cubit/view/sos_histories/sos_histories_screen.dart';
 import 'package:mvvm_cubit/view/temp_form_histories/temp_form_histories_screen.dart';
 import 'package:mvvm_cubit/view/warning_histories/warning_histories_screen.dart';
 import 'package:mvvm_cubit/view/warnings_handler/screen/warnings_handler_screen.dart';
@@ -277,11 +281,13 @@ class _ContainerScreenState extends State<ContainerScreen>
                         ),
                         actions: [
                           InkWell(
-                            onTap: () => showDialog(
+                            onTap: () => showSOSSelection(
                               context: context,
-                              builder: (context) => const ReportSOSScreen(),
-                              barrierDismissible: false,
-                            ),
+                            ).then((value) => showDialog(
+                                  context: context,
+                                  builder: (context) => const ReportSOSScreen(),
+                                  barrierDismissible: false,
+                                )),
                             child: Container(
                               height: 40,
                               padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
@@ -303,33 +309,33 @@ class _ContainerScreenState extends State<ContainerScreen>
                             ),
                           ),
                           const SizedBox(width: 10),
-                          InkWell(
-                            onTap: () => showDialog(
-                              context: context,
-                              builder: (context) =>
-                                  const ReportSOSRobberScreen(),
-                              barrierDismissible: false,
-                            ),
-                            child: Container(
-                              height: 40,
-                              padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.rectangle,
-                                color: AppColors.red,
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  'SOS\nCướp',
-                                  style: headLine6.copyWith(
-                                    fontSize: 14,
-                                    color: AppColors.white,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ),
-                          ),
+                          // InkWell(
+                          //   onTap: () => showDialog(
+                          //     context: context,
+                          //     builder: (context) =>
+                          //         const ReportSOSRobberScreen(),
+                          //     barrierDismissible: false,
+                          //   ),
+                          //   child: Container(
+                          //     height: 40,
+                          //     padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                          //     decoration: BoxDecoration(
+                          //       shape: BoxShape.rectangle,
+                          //       color: AppColors.red,
+                          //       borderRadius: BorderRadius.circular(25),
+                          //     ),
+                          //     child: Center(
+                          //       child: Text(
+                          //         'SOS\nCướp',
+                          //         style: headLine6.copyWith(
+                          //           fontSize: 14,
+                          //           color: AppColors.white,
+                          //         ),
+                          //         textAlign: TextAlign.center,
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
                           const SizedBox(width: 10),
                         ],
                         title: Text(_title),
@@ -355,6 +361,8 @@ class _ContainerScreenState extends State<ContainerScreen>
     switch (menuType) {
       case MenuType.trip:
         _title = 'Lộ trình';
+      case MenuType.sosHistories:
+        _title = 'Lịch sử SOS';
       case MenuType.requestForm:
         _title = 'Lịch sử PYC tạm';
       case MenuType.account:
@@ -394,6 +402,8 @@ class _ContainerScreenState extends State<ContainerScreen>
         return const WarningHistoriesScreen();
       case MenuType.fault:
         return const FaultListScreen();
+      case MenuType.sosHistories:
+        return const SOSHistoriesScreen();
       default:
         return const MainScreen();
     }

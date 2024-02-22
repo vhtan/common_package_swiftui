@@ -17,6 +17,7 @@ import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/data/api/sos/sos_submit_request.dart';
 import 'package:mvvm_cubit/data/api/upload_image/upload_image_ext.dart';
 import 'package:mvvm_cubit/data/model/sos/child_sos_response.dart';
+import 'package:mvvm_cubit/data/model/vehicle/vehicle_response.dart';
 import 'package:mvvm_cubit/di.dart';
 import 'package:mvvm_cubit/viewmodel/report_sos/report_sos_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/report_sos/report_state.dart';
@@ -29,19 +30,24 @@ class ReportSOSScreen extends StatefulWidget {
 }
 
 class _ReportSOSScreen extends State<ReportSOSScreen> {
-  final cubit = ReportSOSCubit(repository: di());
+  final cubit = ReportSOSCubit(
+    repository: di(),
+    addTripRepository: di(),
+  );
   List<ChildSOSResponse> reasons = [];
   ChildSOSResponse? selectedReason;
   ImageResponse? imageResponse;
   String? describeReason;
   File? localFile;
-
+  final List<VehicleResponse> _vehicleList = [];
+  VehicleResponse? selectedVehicle;
   final GlobalKey<State> progressKey = GlobalKey<State>();
 
   @override
   void initState() {
     super.initState();
     cubit.getReasons();
+    cubit.vehicleList();
   }
 
   final FocusNode _nodeTextInput = FocusNode();
@@ -92,6 +98,14 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
                 reasons.clear();
                 reasons.addAll(data.reasons);
                 selectedReason = reasons.first;
+              },
+            );
+          } else if (data is GetVehicleListSuccess) {
+            setState(
+              () {
+                _vehicleList.clear();
+                _vehicleList.addAll(data.vehicleList);
+                selectedVehicle = _vehicleList.first;
               },
             );
           }
@@ -153,6 +167,19 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
                                         onChanged: (value) {
                                           setState(() {
                                             selectedReason = value;
+                                          });
+                                        },
+                                      )
+                                    : const SizedBox(),
+                                const SizedBox(height: 20),
+                                (_vehicleList.isNotEmpty)
+                                    ? DropDown<VehicleResponse>(
+                                        items: _vehicleList,
+                                        displayTextBuilder: (value) =>
+                                            value.plateNumber?.decodeHtml ?? '',
+                                        onChanged: (value) {
+                                          setState(() {
+                                            selectedVehicle = value;
                                           });
                                         },
                                       )

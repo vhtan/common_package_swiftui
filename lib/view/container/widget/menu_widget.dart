@@ -61,6 +61,15 @@ class MenuScreen extends StatelessWidget {
           onTap: () => valueChanged(MenuType.trip),
         ),
         _MenuListTile(
+          title: 'Lịch sử SOS',
+          icon: const Icon(
+            Icons.sos_sharp,
+            size: Dimension.menuIconSize,
+            color: Colors.white,
+          ),
+          onTap: () => valueChanged(MenuType.sosHistories),
+        ),
+        _MenuListTile(
           title: 'Lịch sử PYC tạm',
           icon: const Icon(
             Icons.edit_document,

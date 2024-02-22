@@ -16,12 +16,6 @@ class SosApi extends ApiHelper<dynamic> with UploadImageExt {
     );
   }
 
-  Future<ApiResponse> warningSOS(SOSRobberSubmitRequest request) async {
-    return await makePostRequest(
-      client.dio.post(ApiConfig.warningSOS, data: request.toParams()),
-    );
-  }
-
   Future<dynamic> getReasons() async {
     return await makeGetRequest(client.dio.get(ApiConfig.getSOSReasons));
   }

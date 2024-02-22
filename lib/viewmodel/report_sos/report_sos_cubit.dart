@@ -8,14 +8,18 @@ import 'package:mvvm_cubit/common/network/api_error.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/data/api/sos/sos_submit_request.dart';
 import 'package:mvvm_cubit/data/model/sos/sos_response.dart';
+import 'package:mvvm_cubit/repository/add_trip/add_trip_repository.dart';
 import 'package:mvvm_cubit/repository/sos/sos_repository.dart';
 import 'package:mvvm_cubit/viewmodel/report_sos/report_state.dart';
 
 class ReportSOSCubit extends Cubit<GenericCubitState<dynamic>> {
   final SosRepository repository;
+  final AddTripRepository addTripRepository;
 
-  ReportSOSCubit({required this.repository})
-      : super(GenericCubitState.loading());
+  ReportSOSCubit({
+    required this.repository,
+    required this.addTripRepository,
+  }) : super(GenericCubitState.loading());
 
   void didCapturePhoto(File? file) async {
     if (file == null) {
@@ -29,6 +33,24 @@ class ReportSOSCubit extends Cubit<GenericCubitState<dynamic>> {
       emit(
         GenericCubitState.success(
           UploadImageSuccess(imageResponse: response, file: file),
+        ),
+      );
+    } on DioException catch (e) {
+      emit(
+        GenericCubitState.failure(e.errorMessage),
+      );
+    }
+  }
+
+  void vehicleList() async {
+    try {
+      emit(
+        GenericCubitState.loading(),
+      );
+      final list = await addTripRepository.vehicleList();
+      emit(
+        GenericCubitState.success(
+          GetVehicleListSuccess(vehicleList: list),
         ),
       );
     } on DioException catch (e) {
