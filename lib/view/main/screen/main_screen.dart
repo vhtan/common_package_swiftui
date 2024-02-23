@@ -44,8 +44,8 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
 
   TripResponse? _trip;
   TempFormResponse? _tempForm;
-  List<WarningDetailsResponse>? _warningList;
-
+  final List<WarningDetailsResponse> _warningList = [];
+  final double _warningHeight = 70;
   final _cubit = MainCubit(repository: di());
   static Timer? _fetchTrip;
   static Timer? _fetchWarning;
@@ -127,7 +127,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
 
   void loadMoreWarningList() {
     _currentPageWarning += 1;
-    _cubit.getWarningListForFetching(_currentPageWarning);
+    _cubit.getWarningList(_currentPageWarning);
   }
 
   void startFetchingWarning() {
@@ -137,7 +137,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
       (timer) {
         logger.d('startFetchingWarning ${AuthManager.instance.isLoggedIn}');
         if (AuthManager.instance.isLoggedIn) {
-          _cubit.getWarningListForFetching(0);
+          _cubit.getWarningListForFetching();
         }
       },
     );
@@ -217,9 +217,24 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                 logger.d('main success $state');
                 final data = state.data;
                 if (data is GetWarningListMainState) {
+                  if (data.warningList.isEmpty) {
+                    _isLast = true;
+                  }
                   setState(() {
-                    _warningList = data.warningList;
+                    _warningList.addAll(data.warningList);
                   });
+                } else if (data is FetchWarningListMainState) {
+                  bool isContains = data.warningList.any(
+                    (element) => _warningList.contains(element),
+                  );
+                  if (isContains) {
+                    setState(() {
+                      _currentPageWarning = 0;
+                      _isLast = false;
+                      _warningList.clear();
+                      _warningList.addAll(data.warningList);
+                    });
+                  }
                 } else if (data is GetTripMainState) {
                   setState(() {
                     _trip = data.trip;
@@ -438,20 +453,29 @@ extension _MainScreenDeliveryList on MainScreenState {
     );
   }
 
+  double _calculateWarningHeight(int length) {
+    if (length > 4) {
+      return 300;
+    } else {
+      return length * _warningHeight;
+    }
+  }
+
   Widget warningWidgetList() {
     return ConstrainedBox(
-      constraints:
-          BoxConstraints(maxHeight: _warningList?.isEmpty == true ? 0 : 300.0),
+      constraints: BoxConstraints(
+        maxHeight: _calculateWarningHeight(_warningList.length),
+      ),
       child: ListView.separated(
         controller: _warningListScrollController,
         itemBuilder: (_, index) {
-          return _widgetWithWarning(_warningList?[index]);
+          return _widgetWithWarning(_warningList[index]);
         },
         separatorBuilder: (context, index) => const Divider(
           height: 1,
           color: AppColors.textDefaultLight,
         ),
-        itemCount: _warningList?.length ?? 0,
+        itemCount: _warningList.length,
       ),
     );
   }
@@ -468,62 +492,65 @@ extension _MainScreenDeliveryList on MainScreenState {
       color = AppColors.error;
     }
     return Container(
-      padding: const EdgeInsets.all(10),
+      height: _warningHeight,
+      padding: const EdgeInsets.only(
+        left: 10,
+        right: 10,
+      ),
       decoration: BoxDecoration(
         color: color,
       ),
       clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: () {},
-        child: Row(
-          children: [
-            const SizedBox(width: 10),
-            const Icon(
-              Icons.warning,
-              color: AppColors.red,
-              size: 24.0,
-            ),
-            const SizedBox(width: 8.0),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Cảnh báo cấp độ: ${warning?.level ?? 1}',
-                    style: headLine7,
-                    maxLines: 2,
-                    overflow: TextOverflow.clip,
-                  ),
-                  Text(
-                    warning?.warningMessage?.decodeHtml ?? '',
-                    style: textDefault,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Text(
-                    'Thời gian cảnh báo: ${(warning?.startTime ?? 0).toDate.toStringFormat()}',
-                    style: headLine7,
-                    maxLines: 2,
-                    overflow: TextOverflow.clip,
-                  ),
-                ],
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () => showDialog(
-                context: context,
-                builder: (context) => WarningsHandlerScreen(
-                  id: warning?.id ?? '',
-                  isCanChat: true,
+      child: Row(
+        children: [
+          const SizedBox(width: 10),
+          const Icon(
+            Icons.warning,
+            color: AppColors.red,
+            size: 24.0,
+          ),
+          const SizedBox(width: 8.0),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Cảnh báo cấp độ: ${warning?.level ?? 1}',
+                  style: headLine7,
+                  maxLines: 2,
+                  overflow: TextOverflow.clip,
                 ),
-              ),
-              child: const Text(
-                "Xử lý",
-                style: menuTextStyle,
+                Text(
+                  warning?.warningMessage?.decodeHtml ?? '',
+                  style: textDefault,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  'Thời gian cảnh báo: ${(warning?.startTime ?? 0).toDate.toStringFormat()}',
+                  style: headLine7,
+                  maxLines: 2,
+                  overflow: TextOverflow.clip,
+                ),
+              ],
+            ),
+          ),
+          // if (warning?.type != 'SOS-robbed')
+          ElevatedButton(
+            onPressed: () => showDialog(
+              context: context,
+              builder: (context) => WarningsHandlerScreen(
+                id: warning?.id ?? '',
+                isCanChat: true,
               ),
             ),
-          ],
-        ),
+            child: const Text(
+              "Xử lý",
+              style: menuTextStyle,
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -7,19 +7,33 @@ class MainState {}
 class GetWarningListMainState extends MainState {
   List<WarningDetailsResponse> warningList;
 
-  GetWarningListMainState({required this.warningList});
+  GetWarningListMainState({
+    required this.warningList,
+  });
+}
+
+class FetchWarningListMainState extends MainState {
+  List<WarningDetailsResponse> warningList;
+
+  FetchWarningListMainState({
+    required this.warningList,
+  });
 }
 
 class GetTempFormDetailsMainState extends MainState {
   TempFormResponse tempForm;
 
-  GetTempFormDetailsMainState({required this.tempForm});
+  GetTempFormDetailsMainState({
+    required this.tempForm,
+  });
 }
 
 class GetTripMainState extends MainState {
   TripResponse trip;
 
-  GetTripMainState({required this.trip});
+  GetTripMainState({
+    required this.trip,
+  });
 }
 
 class DidDeleteTripMainState extends MainState {

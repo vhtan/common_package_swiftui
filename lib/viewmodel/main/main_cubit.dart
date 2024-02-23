@@ -120,12 +120,12 @@ class MainCubit extends GenericCubit<MainState> {
     }
   }
 
-  Future<void> getWarningListForFetching(int page) async {
+  Future<void> getWarningListForFetching() async {
     try {
-      final warningList = await repository.getWarningList(page);
+      final warningList = await repository.getWarningList(0);
       emit(
         GenericCubitState.success(
-          GetWarningListMainState(warningList: warningList),
+          FetchWarningListMainState(warningList: warningList),
         ),
       );
     } on DioException catch (e) {
