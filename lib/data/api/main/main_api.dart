@@ -199,4 +199,14 @@ class MainApi with ApiHelper<dynamic> {
 
     return ListResponse.fromJson(apiResponse.detail);
   }
+
+  Future<ListResponse> getSOSHistories(int page) async {
+    final apiResponse = await makeGetRequest(
+      client.dio.get(
+        ApiConfig.sosHistories(page),
+      ),
+    );
+
+    return ListResponse.fromJson(apiResponse.detail);
+  }
 }

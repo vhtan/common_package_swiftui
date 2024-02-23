@@ -60,6 +60,10 @@ class ApiConfig {
     }
   }
 
+  static String sosHistories(int page) {
+    return '/sos/list?page=$page&size=20';
+  }
+
   static String readNotification(String id) {
     return '/notification/$id';
   }

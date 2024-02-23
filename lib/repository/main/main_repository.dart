@@ -89,4 +89,8 @@ class MainRepository with RepositoryHelper<dynamic> {
   Future<ListResponse> getFaultList(int page) async {
     return _api.getFaultList(page);
   }
+
+  Future<ListResponse> getSOSHistories(int page) async {
+    return _api.getSOSHistories(page);
+  }
 }

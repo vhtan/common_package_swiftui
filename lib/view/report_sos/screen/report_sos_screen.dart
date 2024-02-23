@@ -23,7 +23,11 @@ import 'package:mvvm_cubit/viewmodel/report_sos/report_sos_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/report_sos/report_state.dart';
 
 class ReportSOSScreen extends StatefulWidget {
-  const ReportSOSScreen({super.key});
+  final SOSType sosType;
+  const ReportSOSScreen({
+    super.key,
+    required this.sosType,
+  });
 
   @override
   State<StatefulWidget> createState() => _ReportSOSScreen();
@@ -225,6 +229,7 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
                                               reasonId: selectedReason?.id,
                                               imgName: imageResponse?.imageName,
                                               sosMessage: describeReason,
+                                              type: widget.sosType,
                                             ),
                                           );
                                         }

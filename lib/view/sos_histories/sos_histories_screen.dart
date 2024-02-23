@@ -28,7 +28,7 @@ class _SOSHistoriesScreenState extends State<SOSHistoriesScreen> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _cubit.getWarningHistories(_currentPage);
+      _cubit.getSOSHistories(_currentPage);
     });
 
     _list = [

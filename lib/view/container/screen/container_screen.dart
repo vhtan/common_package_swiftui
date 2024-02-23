@@ -285,7 +285,8 @@ class _ContainerScreenState extends State<ContainerScreen>
                               context: context,
                             ).then((value) => showDialog(
                                   context: context,
-                                  builder: (context) => const ReportSOSScreen(),
+                                  builder: (context) =>
+                                      ReportSOSScreen(sosType: value),
                                   barrierDismissible: false,
                                 )),
                             child: Container(

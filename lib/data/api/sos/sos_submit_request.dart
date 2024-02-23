@@ -14,7 +14,7 @@ class SOSSubmitRequest {
     this.vehicleId,
     this.imgName,
     this.sosMessage,
-    this.type,
+    required this.type,
   })  : requestId = const Uuid().v4(),
         requestTime = DateTime.now().millisecondsSinceEpoch;
   Map<String, dynamic> toParams() {
@@ -23,9 +23,25 @@ class SOSSubmitRequest {
       "imgName": imgName,
       "sosMessage": sosMessage,
       "requestId": requestId,
-      "requestTime": requestTime
+      "requestTime": requestTime,
+      "type": type?.value
     };
   }
 }
 
-enum SOSType { robbed, arrested, other }
+enum SOSType {
+  robbed,
+  arrested,
+  other;
+
+  String? get value {
+    switch (this) {
+      case SOSType.robbed:
+        return 'robbed';
+      case SOSType.arrested:
+        return 'arrested';
+      default:
+        return null;
+    }
+  }
+}
