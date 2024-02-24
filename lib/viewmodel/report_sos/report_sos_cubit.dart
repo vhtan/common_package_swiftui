@@ -85,17 +85,17 @@ class ReportSOSCubit extends Cubit<GenericCubitState<dynamic>> {
     );
     try {
       final apiResponse = await repository.submitSOS(request);
-      logger.d('=== |||||| apiResponse $apiResponse');
       if (apiResponse.code == ErrorCode.SUCCESS) {
         emit(
           GenericCubitState.success(
-            const DidSubmitReasonSuccess(),
+            DidSubmitReasonSuccess(sosId: apiResponse.detail['id']),
           ),
         );
       } else {
         emit(
           GenericCubitState.failure(
-              'Báo cáo sự cố thất bại. Vui lòng thử lại sau.'),
+            'Báo cáo sự cố thất bại. Vui lòng thử lại sau.',
+          ),
         );
       }
     } on DioException catch (e) {

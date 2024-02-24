@@ -51,6 +51,8 @@ class ApiConfig {
     return '/warning/$id';
   }
 
+  static String sosProcess = '/sos/process';
+
   // paths of sos
   static const String getSOSReasons = '/sos/reason/list';
   static const String submitSOS = '/sos/submit';

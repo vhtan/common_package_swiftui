@@ -12,7 +12,10 @@ class EmptyWidget extends StatelessWidget {
     return Center(
       child: Column(
         children: [
-          Image.asset(AppAsset.emptyState),
+          Image.asset(
+            AppAsset.emptyState,
+            height: 200,
+          ),
           Text(
             message,
             style: headLine2,

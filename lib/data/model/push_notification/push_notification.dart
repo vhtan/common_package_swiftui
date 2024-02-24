@@ -13,4 +13,4 @@ abstract class PushNotification with _$PushNotification {
       _$PushNotificationFromJson(json);
 }
 
-enum PushNotificationType { warning, routing, routingjobtemp }
+enum PushNotificationType { warning, routing, routingjobtemp, sos }

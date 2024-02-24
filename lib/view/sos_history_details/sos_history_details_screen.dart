@@ -10,27 +10,23 @@ import 'package:material_text_fields/utils/extensions.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/snack_bar/error_snack_bar.dart';
-import 'package:mvvm_cubit/common/widget/image_capture.dart';
 import 'package:mvvm_cubit/common/widget/text_input.dart';
 import 'package:mvvm_cubit/core/app_asset.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/data/model/chatting/chat_message_response.dart';
 import 'package:mvvm_cubit/data/model/sos_history_details/sos_history_details_response.dart';
-import 'package:mvvm_cubit/data/model/warning_details/warning_details_response.dart';
+import 'package:mvvm_cubit/data/request/sos_process_request/sos_process_request.dart';
 import 'package:mvvm_cubit/di.dart';
-import 'package:mvvm_cubit/viewmodel/manager_role/manager_warnings_handler/manager_warnings_handler_state.dart';
 import 'package:mvvm_cubit/viewmodel/sos_history_details/sos_history_details_cubit.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SOSHistoryDetailsScreen extends StatefulWidget {
   final String id;
-  final bool isCanChat;
 
   const SOSHistoryDetailsScreen({
     super.key,
     required this.id,
-    required this.isCanChat,
   });
 
   @override
@@ -48,6 +44,7 @@ class _SOSHistoryDetailsScreen extends State<SOSHistoryDetailsScreen>
   final _timerDuration = const Duration(seconds: 10);
   final _scrollController = ScrollController();
   File? localFile;
+  bool _isCanChat = false;
   final FocusNode _nodeTextInput = FocusNode();
   KeyboardActionsConfig _keyboardActionsConfig(BuildContext context) {
     return KeyboardActionsConfig(
@@ -66,7 +63,7 @@ class _SOSHistoryDetailsScreen extends State<SOSHistoryDetailsScreen>
   void initState() {
     super.initState();
     _cubit.getSOSHistoryDetails(widget.id);
-    // _cubit.getChattingList(widget.id);
+    _cubit.getChattingList(widget.id);
     startFetchingMessages();
   }
 
@@ -75,7 +72,7 @@ class _SOSHistoryDetailsScreen extends State<SOSHistoryDetailsScreen>
     _fetchMessages = Timer.periodic(
       _timerDuration,
       (timer) {
-        // _cubit.getChattingListForFetching(widget.id);
+        _cubit.getChattingListForFetching(widget.id);
       },
     );
   }
@@ -117,15 +114,16 @@ class _SOSHistoryDetailsScreen extends State<SOSHistoryDetailsScreen>
               'Đã có lỗi xảy ra vui lòng thử lại',
             );
           }
-          if (state is DidSendWarningSuccess) {
+          if (state is DidSendSOSMessageSuccess) {
             _commentController.text = '';
-            // _cubit.getChattingList(widget.id);
+            _cubit.getChattingList(widget.id);
           }
           if (state is GetSOSHistoryDetailsState) {
             setState(() {
               _details = state.sosDetails;
+              _isCanChat = (_details?.status ?? 0) < 5;
             });
-          } else if (state is ChattingListWarningSuccess) {
+          } else if (state is ChattingListSOSSuccess) {
             var listDiff = diffutil
                 .calculateListDiff(
                   _messageList,
@@ -155,7 +153,7 @@ class _SOSHistoryDetailsScreen extends State<SOSHistoryDetailsScreen>
                 child: Scaffold(
                   resizeToAvoidBottomInset: true,
                   appBar: _appBar,
-                  bottomNavigationBar: widget.isCanChat
+                  bottomNavigationBar: _isCanChat
                       ? Padding(
                           padding: MediaQuery.of(context).viewInsets,
                           child: _sendMessage,
@@ -220,26 +218,29 @@ class _SOSHistoryDetailsScreen extends State<SOSHistoryDetailsScreen>
                           if (_details?.image?.isNotNullOrEmpty() == true)
                             _imageWidget(_details?.image ?? ''),
                           const SizedBox(height: 10),
-                          const Row(
-                            children: [
-                              SizedBox(width: 20),
-                              Text(
-                                'Ghi chú',
-                                style: textDefaultLight,
-                              ),
-                              Spacer(),
-                            ],
-                          ),
-                          const Row(
-                            children: [
-                              SizedBox(width: 20),
-                              Text(
-                                'va chạm tại ngã tư hàng xanh',
-                                style: headLine4,
-                              ),
-                              Spacer(),
-                            ],
-                          ),
+                          if (_details?.note.isNotNullOrEmpty() == true)
+                            const Row(
+                              children: [
+                                SizedBox(width: 20),
+                                Text(
+                                  'Ghi chú',
+                                  style: textDefaultLight,
+                                ),
+                                Spacer(),
+                              ],
+                            ),
+                          if (_details?.note.isNotNullOrEmpty() == true)
+                            Row(
+                              children: [
+                                const SizedBox(width: 20),
+                                Expanded(
+                                  child: Text(
+                                    _details?.note?.decodeHtml ?? '',
+                                    style: headLine4,
+                                  ),
+                                ),
+                              ],
+                            ),
                           const Divider(),
                           ..._messageList.map(
                             (item) {
@@ -337,7 +338,12 @@ class _SOSHistoryDetailsScreen extends State<SOSHistoryDetailsScreen>
               //     curve: Curves.easeInOut,
               //   );
               // },
-              onPressed: () => {},
+              onPressed: () => _cubit.sendMessage(
+                SOSProcessRequest(
+                  sosId: widget.id,
+                  message: _commentController.text,
+                ),
+              ),
               child: const Text(
                 'Gửi',
                 style: TextStyle(
@@ -350,64 +356,6 @@ class _SOSHistoryDetailsScreen extends State<SOSHistoryDetailsScreen>
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget systemWarning(int? level) {
-    return Container(
-      padding: const EdgeInsets.only(left: 20, right: 20, top: 10),
-      decoration: const BoxDecoration(),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: () {},
-        child: Row(
-          children: [
-            const Icon(
-              Icons.settings,
-              color: AppColors.red,
-              size: 24.0,
-            ),
-            const SizedBox(width: 8.0),
-            Expanded(
-              child: Text(
-                'Hệ thống gửi cảnh báo cấp ${level ?? 1}',
-                style: textDefault,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget normalWarning() {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: const BoxDecoration(),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: () {},
-        child: const Row(
-          children: [
-            Icon(
-              Icons.request_quote,
-              color: AppColors.red,
-              size: 24.0,
-            ),
-            SizedBox(width: 8.0),
-            Expanded(
-              child: Text(
-                'Yêu cầu giải trình',
-                style: textDefault,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

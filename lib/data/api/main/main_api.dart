@@ -233,7 +233,7 @@ class MainApi with ApiHelper<dynamic> {
   Future<dynamic> sosProcess(SOSProcessRequest request) async {
     return await makePostRequest(
       client.dio.post(
-        ApiConfig.warningProcess,
+        ApiConfig.sosProcess,
         data: request,
       ),
     );

@@ -9,6 +9,7 @@ abstract class SOSHistoryResponse with _$SOSHistoryResponse {
     String? id,
     int? dateCreated,
     int? type,
+    int? status,
     String? note,
     ChildSOSResponse? reason,
   }) = _SOSHistoryResponse;

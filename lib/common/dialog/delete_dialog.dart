@@ -169,9 +169,9 @@ Future<dynamic> showSOSSelection({
             Radius.circular(15.0),
           ),
         ),
-        title: Text('SOS', textAlign: TextAlign.center),
-        content: Container(
-          height: 200,
+        title: const Text('SOS', textAlign: TextAlign.center),
+        content: SizedBox(
+          height: 230,
           child: Column(
             children: [
               Row(
@@ -196,6 +196,7 @@ Future<dynamic> showSOSSelection({
                   ),
                 ],
               ),
+              const SizedBox(height: 5),
               Row(
                 children: [
                   Expanded(
@@ -218,6 +219,7 @@ Future<dynamic> showSOSSelection({
                   ),
                 ],
               ),
+              const SizedBox(height: 5),
               Row(
                 children: [
                   Expanded(
@@ -240,6 +242,7 @@ Future<dynamic> showSOSSelection({
                   ),
                 ],
               ),
+              const SizedBox(height: 5),
               Row(
                 children: [
                   Expanded(
@@ -255,7 +258,7 @@ Future<dynamic> showSOSSelection({
                         ),
                       ),
                       onPressed: () {
-                        Navigator.pop(context, false);
+                        Navigator.pop(context, null);
                       },
                       child: const Text(
                         'Đóng',
@@ -272,5 +275,5 @@ Future<dynamic> showSOSSelection({
     },
   );
 
-  return dialog.then((res) => res ?? false);
+  return dialog;
 }

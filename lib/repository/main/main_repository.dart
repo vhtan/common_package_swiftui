@@ -10,6 +10,7 @@ import 'package:mvvm_cubit/data/model/temp_form/temp_form_response.dart';
 import 'package:mvvm_cubit/data/model/warning_details/warning_details_response.dart';
 import 'package:mvvm_cubit/data/request/check_in/check_in_request.dart';
 import 'package:mvvm_cubit/data/request/push_token/push_token_request.dart';
+import 'package:mvvm_cubit/data/request/sos_process_request/sos_process_request.dart';
 import 'package:mvvm_cubit/data/request/temp_form_process/temp_form_process_request.dart';
 import 'package:mvvm_cubit/data/request/warning_process/warning_process_request.dart';
 
@@ -102,5 +103,9 @@ class MainRepository with RepositoryHelper<dynamic> {
 
   Future<List<ChatMessageResponse>> getSOSChattingList(String id) async {
     return _api.getSOSChattingList(id);
+  }
+
+  Future<dynamic> sosProcess(SOSProcessRequest request) async {
+    return _api.sosProcess(request);
   }
 }

@@ -1,7 +1,7 @@
 import 'package:uuid/uuid.dart';
 
 class SOSSubmitRequest {
-  String? vehicleId;
+  String vehicleId;
   String? reasonId;
   String? imgName;
   String? sosMessage;
@@ -11,7 +11,7 @@ class SOSSubmitRequest {
 
   SOSSubmitRequest({
     this.reasonId,
-    this.vehicleId,
+    required this.vehicleId,
     this.imgName,
     this.sosMessage,
     required this.type,
@@ -24,7 +24,8 @@ class SOSSubmitRequest {
       "sosMessage": sosMessage,
       "requestId": requestId,
       "requestTime": requestTime,
-      "type": type?.value
+      "type": type?.value,
+      "vehicleId": vehicleId,
     };
   }
 }

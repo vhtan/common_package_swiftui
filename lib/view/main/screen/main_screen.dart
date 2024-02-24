@@ -218,7 +218,7 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                 final data = state.data;
                 if (data is GetWarningListMainState) {
                   setState(() {
-                    _warningList?.addAll(data.warningList);
+                    _warningList.addAll(data.warningList);
                   });
                 } else if (data is GetTripMainState) {
                   setState(() {
@@ -440,7 +440,7 @@ extension _MainScreenDeliveryList on MainScreenState {
 
   double _calculateWarningHeight(int length) {
     if (length > 4) {
-      return 300;
+      return 260;
     } else {
       return length * _warningHeight;
     }
@@ -449,18 +449,18 @@ extension _MainScreenDeliveryList on MainScreenState {
   Widget warningWidgetList() {
     return ConstrainedBox(
       constraints: BoxConstraints(
-        maxHeight: _calculateWarningHeight(_warningList?.length ?? 0),
+        maxHeight: _calculateWarningHeight(_warningList.length),
       ),
       child: ListView.separated(
         controller: _warningListScrollController,
         itemBuilder: (_, index) {
-          return _widgetWithWarning(_warningList?[index]);
+          return _widgetWithWarning(_warningList[index]);
         },
         separatorBuilder: (context, index) => const Divider(
           height: 1,
           color: AppColors.textDefaultLight,
         ),
-        itemCount: _warningList?.length ?? 0,
+        itemCount: _warningList.length,
       ),
     );
   }

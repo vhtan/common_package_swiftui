@@ -25,7 +25,10 @@ class GetReasonsSuccess extends ReportState {
 }
 
 class DidSubmitReasonSuccess extends ReportState {
-  const DidSubmitReasonSuccess();
+  String sosId;
+  DidSubmitReasonSuccess({
+    required this.sosId,
+  });
 }
 
 class GetVehicleListSuccess extends ReportState {

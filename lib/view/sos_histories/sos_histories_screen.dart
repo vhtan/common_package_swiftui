@@ -91,7 +91,6 @@ class _SOSHistoriesScreenState extends State<SOSHistoriesScreen> {
                           MaterialPageRoute(
                             builder: (context) => SOSHistoryDetailsScreen(
                               id: _list[index].id ?? '',
-                              isCanChat: true,
                             ),
                           ),
                         ),

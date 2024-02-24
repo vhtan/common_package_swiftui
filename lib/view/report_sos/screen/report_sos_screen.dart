@@ -25,9 +25,11 @@ import 'package:mvvm_cubit/viewmodel/report_sos/report_state.dart';
 
 class ReportSOSScreen extends StatefulWidget {
   final SOSType sosType;
+  final String? vehicleId;
   const ReportSOSScreen({
     super.key,
     required this.sosType,
+    required this.vehicleId,
   });
 
   @override
@@ -45,14 +47,14 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
   String? describeReason;
   File? localFile;
   final List<VehicleResponse> _vehicleList = [];
-  VehicleResponse? selectedVehicle;
+  VehicleResponse? _selectedVehicle;
   final GlobalKey<State> progressKey = GlobalKey<State>();
 
   @override
   void initState() {
     super.initState();
     cubit.getReasons();
-    cubit.vehicleList();
+    if (widget.vehicleId.isNullOrEmpty()) cubit.vehicleList();
   }
 
   final FocusNode _nodeTextInput = FocusNode();
@@ -88,7 +90,7 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
           }
           if (data is DidSubmitReasonSuccess) {
             showConfirmSnackBar(context, 'Đã báo cáo sự cố thành công');
-            Navigator.of(context).pop();
+            Navigator.of(context).pop(data.sosId);
           }
           if (data is UploadImageSuccess) {
             setState(
@@ -110,7 +112,7 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
               () {
                 _vehicleList.clear();
                 _vehicleList.addAll(data.vehicleList);
-                selectedVehicle = _vehicleList.first;
+                _selectedVehicle = _vehicleList.first;
               },
             );
           }
@@ -184,7 +186,7 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
                                             value.plateNumber?.decodeHtml ?? '',
                                         onChanged: (value) {
                                           setState(() {
-                                            selectedVehicle = value;
+                                            _selectedVehicle = value;
                                           });
                                         },
                                       )
@@ -223,21 +225,21 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
                                 PrimaryButton(
                                   title: 'Gửi',
                                   buttonHeight: 50,
-                                  backgroundColor: validSubmitSOS() == true
-                                      ? AppColors.primary
-                                      : AppColors.textDefaultLight,
-                                  onPressed: validSubmitSOS() == true
-                                      ? () {
-                                          cubit.submitSOS(
-                                            SOSSubmitRequest(
-                                              reasonId: selectedReason?.id,
-                                              imgName: imageResponse?.imageName,
-                                              sosMessage: describeReason,
-                                              type: widget.sosType,
-                                            ),
-                                          );
-                                        }
-                                      : null,
+                                  backgroundColor: AppColors.primary,
+                                  onPressed: () {
+                                    cubit.submitSOS(
+                                      SOSSubmitRequest(
+                                        vehicleId:
+                                            widget.vehicleId.isNotNullOrEmpty()
+                                                ? (widget.vehicleId ?? '')
+                                                : (_selectedVehicle?.id ?? ''),
+                                        reasonId: selectedReason?.id,
+                                        imgName: imageResponse?.imageName,
+                                        sosMessage: describeReason,
+                                        type: widget.sosType,
+                                      ),
+                                    );
+                                  },
                                 )
                               ],
                             ),
@@ -253,13 +255,6 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
         },
       ),
     );
-  }
-
-  bool validSubmitSOS() {
-    if (selectedReason != null) {
-      return true;
-    }
-    return false;
   }
 
   void openCamera(BuildContext context) async {

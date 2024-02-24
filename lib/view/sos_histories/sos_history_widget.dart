@@ -40,7 +40,7 @@ class SOSHistoryWidget extends StatelessWidget {
             style: textDefaultLight,
           ),
           Text(
-            DateTime.now().toStringFormat(),
+            sosHistory.dateCreated?.toDate.toStringFormat() ?? '',
             style: headLine4,
             maxLines: 2,
             overflow: TextOverflow.clip,
@@ -66,7 +66,7 @@ class SOSHistoryWidget extends StatelessWidget {
             ),
           if (sosHistory.note.isNotNullOrEmpty())
             Text(
-              sosHistory.note ?? '',
+              sosHistory.note?.decodeHtml ?? '',
               style: headLine4,
               maxLines: 3,
               overflow: TextOverflow.clip,
@@ -83,7 +83,7 @@ class SOSHistoryWidget extends StatelessWidget {
       case 1:
         return 'Bị bắt giữ';
       default:
-        return sosHistory.reason?.name ?? '';
+        return sosHistory.reason?.name?.decodeHtml ?? '';
     }
   }
 }

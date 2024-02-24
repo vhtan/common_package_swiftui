@@ -83,7 +83,10 @@ Future<void> init() async {
   );
 
   di.registerFactory(
-    () => ContainerCubit(repository: di()),
+    () => ContainerCubit(
+      repository: di(),
+      sosRepository: di(),
+    ),
   );
   di.registerFactory(
     () => AddTripCubit(repository: di()),
