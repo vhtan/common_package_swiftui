@@ -493,7 +493,7 @@ class _AddTripScreen extends State<AddTripScreen> {
             children: [
               Flexible(
                 flex: 3,
-                child: TextInput(
+                child: TextInputCustom(
                   controller: moneyModelWidget.controller,
                   focusNode: moneyModelWidget.focusNode,
                   hint: 'Nhập số tiền',

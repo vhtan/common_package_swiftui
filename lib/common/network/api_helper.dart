@@ -1,4 +1,3 @@
-import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/network/api_response/api_response.dart';
 import 'package:mvvm_cubit/common/network/dio_exception.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
@@ -13,7 +12,7 @@ abstract mixin class ApiHelper<T> {
     try {
       final Response response = await apiCallback;
       final apiResponse = ApiResponse.fromJson(response.data);
-      logger.d('apiResponse $apiResponse');
+
       if (response.statusCode.success) {
         return apiResponse;
         // if (apiResponse.code == ErrorCode.SUCCESS) {

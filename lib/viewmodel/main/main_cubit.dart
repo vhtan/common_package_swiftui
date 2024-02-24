@@ -108,7 +108,6 @@ class MainCubit extends GenericCubit<MainState> {
   Future<void> getWarningList(int page) async {
     try {
       final warningList = await repository.getWarningList(page);
-      logger.d('===== warningList ${warningList.length}');
       emit(
         GenericCubitState.success(
           GetWarningListMainState(warningList: warningList),

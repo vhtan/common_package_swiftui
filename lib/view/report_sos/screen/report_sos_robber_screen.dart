@@ -173,7 +173,7 @@
 //                                   },
 //                                 ),
 //                                 const SizedBox(height: 20),
-//                                 TextInput(
+//                                 TextInputCustom(
 //                                   focusNode: _nodeTextInput,
 //                                   hint: 'Nhập mô tả sự cố',
 //                                   labelText: 'Mô tả sự cố',

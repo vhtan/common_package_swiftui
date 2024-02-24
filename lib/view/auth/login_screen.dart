@@ -25,9 +25,9 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   // String _username = 'daohta.bit';
-  String _username = 'thanhnt07';
-  // String _username = 'minhpd';
-  String _password = 'Abc@123456';
+  String _username = '';
+  // String _username = '';
+  String _password = '';
 
   final GlobalKey<State> progressKey = GlobalKey<State>();
 
@@ -114,7 +114,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             height: 50,
                           ),
                           const SizedBox(height: 40),
-                          TextInput(
+                          TextInputCustom(
                             keyboardType: TextInputType.emailAddress,
                             hint: 'Nhập tên đăng nhập',
                             labelText: 'Tên đăng nhập',
@@ -127,7 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             },
                           ),
                           const SizedBox(height: 20),
-                          TextInput(
+                          TextInputCustom(
                             hint: 'Nhập mật khẩu',
                             labelText: 'Mật khẩu',
                             icon: const Icon(Icons.lock),

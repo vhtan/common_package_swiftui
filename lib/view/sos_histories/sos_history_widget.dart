@@ -1,23 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:material_text_fields/utils/extensions.dart';
+import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
+import 'package:mvvm_cubit/data/model/sos_history/sos_history_response.dart';
 import 'package:mvvm_cubit/data/model/warning_details/warning_details_response.dart';
 
 class SOSHistoryWidget extends StatelessWidget {
   final double _sosHeight = 70;
-  final String message;
+  final SOSHistoryResponse sosHistory;
 
   const SOSHistoryWidget({
     super.key,
-    required this.message,
+    required this.sosHistory,
   });
 
   @override
   Widget build(BuildContext context) {
+    final level = sosHistory.type ?? 0;
+    logger.d('==== level $level');
+    // final level = 3;
+    var color = AppColors.warning;
+    if (level == 1) {
+      color = AppColors.warningRisk;
+    } else if (level == 2) {
+      color = AppColors.error;
+    }
     return Container(
       padding: const EdgeInsets.only(top: 10, left: 20, right: 20, bottom: 10),
-      decoration: const BoxDecoration(
-        color: AppColors.white,
+      decoration: BoxDecoration(
+        color: color,
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -34,83 +46,44 @@ class SOSHistoryWidget extends StatelessWidget {
             overflow: TextOverflow.clip,
           ),
           const SizedBox(height: 5),
-          const Text(
-            'Nội dung SOS:',
-            style: textDefaultLight,
-          ),
-          Text(
-            message,
-            style: headLine4,
-            maxLines: 3,
-            overflow: TextOverflow.clip,
-          ),
+          if (_sosContent.isNotNullOrEmpty())
+            const Text(
+              'Nội dung SOS:',
+              style: textDefaultLight,
+            ),
+          if (_sosContent.isNotNullOrEmpty())
+            Text(
+              _sosContent,
+              style: headLine4,
+              maxLines: 3,
+              overflow: TextOverflow.clip,
+            ),
           const SizedBox(height: 5),
+          if (sosHistory.note.isNotNullOrEmpty())
+            const Text(
+              'Mô tả sự cố:',
+              style: textDefaultLight,
+            ),
+          if (sosHistory.note.isNotNullOrEmpty())
+            Text(
+              sosHistory.note ?? '',
+              style: headLine4,
+              maxLines: 3,
+              overflow: TextOverflow.clip,
+            ),
         ],
       ),
     );
   }
 
-  Widget _widgetWithSOS({
-    required WarningDetailsResponse? warning,
-    required BuildContext context,
-  }) {
-    final level = warning?.level ?? 1;
-    // final level = 3;
-    var color = AppColors.warning;
-    if (level == 2) {
-      color = AppColors.warningHigh;
-    } else if (level == 3) {
-      color = AppColors.warningRisk;
-    } else if (level == 4) {
-      color = AppColors.error;
+  String get _sosContent {
+    switch (sosHistory.type) {
+      case 2:
+        return 'Bị cướp';
+      case 1:
+        return 'Bị bắt giữ';
+      default:
+        return sosHistory.reason?.name ?? '';
     }
-    return Container(
-      height: _sosHeight,
-      padding: const EdgeInsets.only(
-        left: 10,
-        right: 10,
-      ),
-      decoration: BoxDecoration(
-        color: color,
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Row(
-        children: [
-          const SizedBox(width: 10),
-          const Icon(
-            Icons.warning,
-            color: AppColors.red,
-            size: 24.0,
-          ),
-          const SizedBox(width: 8.0),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Cảnh báo cấp độ: ${warning?.level ?? 1}',
-                  style: headLine7,
-                  maxLines: 2,
-                  overflow: TextOverflow.clip,
-                ),
-                Text(
-                  warning?.warningMessage?.decodeHtml ?? '',
-                  style: textDefault,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                Text(
-                  'Thời gian cảnh báo: ${(warning?.startTime ?? 0).toDate.toStringFormat()}',
-                  style: headLine7,
-                  maxLines: 2,
-                  overflow: TextOverflow.clip,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }

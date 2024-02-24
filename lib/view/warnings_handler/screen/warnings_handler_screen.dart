@@ -324,7 +324,7 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen>
       child: Row(
         children: [
           Expanded(
-            child: TextInput(
+            child: TextInputCustom(
               focusNode: _nodeTextInput,
               hint: 'Nhập ý kiến',
               labelText: 'Nhập ý kiến',

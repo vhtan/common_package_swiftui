@@ -54,7 +54,7 @@ class FinishTempForm extends StatelessWidget {
                       _title,
                       const SizedBox(height: 20.0),
                       Expanded(
-                        child: TextInput(
+                        child: TextInputCustom(
                           maxLines: 4,
                           focusNode: _nodeTextInput,
                           hint: 'Nhập ghi chú',

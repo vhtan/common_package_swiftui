@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:camera_camera/camera_camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:material_text_fields/utils/extensions.dart';
@@ -201,7 +202,10 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
                                   },
                                 ),
                                 const SizedBox(height: 20),
-                                TextInput(
+                                TextInputCustom(
+                                  inputFormatters: [
+                                    LengthLimitingTextInputFormatter(500)
+                                  ],
                                   focusNode: _nodeTextInput,
                                   hint: 'Nhập mô tả sự cố',
                                   labelText: 'Mô tả sự cố',

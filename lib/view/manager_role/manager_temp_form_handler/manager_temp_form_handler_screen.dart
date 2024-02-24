@@ -4,6 +4,9 @@ import 'package:intl/intl.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/common/dialog/delete_dialog.dart';
+import 'package:mvvm_cubit/common/dialog/progress_dialog.dart';
+import 'package:mvvm_cubit/common/snack_bar/error_snack_bar.dart';
+import 'package:mvvm_cubit/common/widget/empty_widget.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/common/widget/text_input.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
@@ -11,6 +14,7 @@ import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/data/model/temp_form_history/temp_form_history_response.dart';
 import 'package:mvvm_cubit/data/request/temp_form_process/temp_form_process_request.dart';
 import 'package:mvvm_cubit/di.dart';
+import 'package:mvvm_cubit/view/pending_trip/widget/pending_trip_balance_details_widget.dart';
 import 'package:mvvm_cubit/viewmodel/manager_role/manager_temp_form_handler/manager_temp_form_handler_cubit.dart';
 
 class ManagerTempFormHandlerScreen extends StatefulWidget {
@@ -27,6 +31,7 @@ class ManagerTempFormHandlerScreen extends StatefulWidget {
 
 class _ManagerTempFormHandlerScreenState
     extends State<ManagerTempFormHandlerScreen> with WidgetsBindingObserver {
+  final GlobalKey<State> progressKey = GlobalKey<State>();
   final _cubit = ManagerTempFormHandlerCubit(repository: di());
   final double _spacing = 10;
   final _oCcy = NumberFormat("#,##0", "vi_VN");
@@ -76,6 +81,28 @@ class _ManagerTempFormHandlerScreenState
         listener: (context, state) {
           if (state is DidProcessTempFormSuccess) {
             Navigator.pop(context, true);
+          }
+          switch (state.status) {
+            case Status.failure:
+              if (progressKey.currentContext != null) {
+                Navigator.pop(context);
+              }
+              showErrorSnackBar(
+                context,
+                state.error ?? '',
+              );
+
+            case Status.loading:
+              if (progressKey.currentContext == null) {
+                showProgressDialog(
+                  context,
+                  progressKey,
+                );
+              }
+            default:
+              if (progressKey.currentContext != null) {
+                Navigator.pop(context);
+              }
           }
         },
         builder: (context, state) {
@@ -141,19 +168,10 @@ class _ManagerTempFormHandlerScreenState
                   'Số tiền',
                   style: textDefaultLight,
                 ),
-                Text(
-                  _oCcy.format(tempForm.quantity),
-                  style: textDefault,
-                ),
-                SizedBox(height: _spacing),
-                const Text(
-                  'Loại tiền',
-                  style: textDefaultLight,
-                ),
-                Text(
-                  tempForm.currency ?? '',
-                  style: textDefault,
-                ),
+                if ((tempForm.balanceDetails ?? []).isNotEmpty)
+                  PendingTripBalanceDetailsWidget(
+                    balanceDetails: tempForm.balanceDetails ?? [],
+                  ),
                 SizedBox(height: _spacing),
                 const Text(
                   'Bảo vệ',
@@ -202,7 +220,7 @@ class _ManagerTempFormHandlerScreenState
     return Row(
       children: [
         Expanded(
-          child: TextInput(
+          child: TextInputCustom(
             hint: 'Nhập lý do',
             labelText: 'Lý do',
             keyboardType: TextInputType.multiline,

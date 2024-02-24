@@ -18,12 +18,11 @@ class SOSHistoriesCubit extends GenericCubit<SOSHistoriesState> {
     );
     try {
       final listResponse = await repository.getSOSHistories(page);
-
-      // emit(
-      //   GenericCubitState.success(
-      //     GetSOSHistoriesState(list: listResponse),
-      //   ),
-      // );
+      emit(
+        GenericCubitState.success(
+          GetSOSHistoriesState(list: listResponse),
+        ),
+      );
     } on DioException catch (e) {
       emit(
         GenericCubitState.failure(e.errorMessage),

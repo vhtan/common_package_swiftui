@@ -47,7 +47,7 @@ class WarningsHandlerCubit extends Cubit<GenericCubitState<dynamic>> {
 
   void getChattingList(String id) async {
     try {
-      final list = await repository.getChattingList(id);
+      final list = await repository.getWarningChattingList(id);
       emit(
         ChattingListWarningSuccess(
           list: list,
@@ -63,7 +63,7 @@ class WarningsHandlerCubit extends Cubit<GenericCubitState<dynamic>> {
 
   void getChattingListForFetching(String id) async {
     try {
-      final list = await repository.getChattingList(id);
+      final list = await repository.getWarningChattingList(id);
       emit(
         ChattingListWarningSuccess(
           list: list,

@@ -253,7 +253,7 @@ class _ManagerWarningsHandlerScreen extends State<ManagerWarningsHandlerScreen>
       child: Row(
         children: [
           Expanded(
-            child: TextInput(
+            child: TextInputCustom(
               hint: 'Nhập ý kiến',
               labelText: 'Nhập ý kiến',
               keyboardType: TextInputType.multiline,

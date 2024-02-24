@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:camera_camera/camera_camera.dart';
 import 'package:diffutil_dart/diffutil.dart' as diffutil;
 import 'package:flutter/material.dart';
@@ -11,9 +12,11 @@ import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/snack_bar/error_snack_bar.dart';
 import 'package:mvvm_cubit/common/widget/image_capture.dart';
 import 'package:mvvm_cubit/common/widget/text_input.dart';
+import 'package:mvvm_cubit/core/app_asset.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/data/model/chatting/chat_message_response.dart';
+import 'package:mvvm_cubit/data/model/sos_history_details/sos_history_details_response.dart';
 import 'package:mvvm_cubit/data/model/warning_details/warning_details_response.dart';
 import 'package:mvvm_cubit/di.dart';
 import 'package:mvvm_cubit/viewmodel/manager_role/manager_warnings_handler/manager_warnings_handler_state.dart';
@@ -38,7 +41,7 @@ class _SOSHistoryDetailsScreen extends State<SOSHistoryDetailsScreen>
     with WidgetsBindingObserver {
   final _cubit = SOSHistoryDetailsCubit(repository: di());
   final double _spacing = 5;
-  WarningDetailsResponse? _details;
+  SOSHistoryDetailsResponse? _details;
   List<ChatMessageResponse> _messageList = [];
   final _commentController = TextEditingController();
   static Timer? _fetchMessages;
@@ -62,7 +65,7 @@ class _SOSHistoryDetailsScreen extends State<SOSHistoryDetailsScreen>
   @override
   void initState() {
     super.initState();
-    // _cubit.getWarningDetails(widget.id);
+    _cubit.getSOSHistoryDetails(widget.id);
     // _cubit.getChattingList(widget.id);
     startFetchingMessages();
   }
@@ -118,9 +121,9 @@ class _SOSHistoryDetailsScreen extends State<SOSHistoryDetailsScreen>
             _commentController.text = '';
             // _cubit.getChattingList(widget.id);
           }
-          if (state is GetWarningDetailsSuccess) {
+          if (state is GetSOSHistoryDetailsState) {
             setState(() {
-              _details = state.warningDetails;
+              _details = state.sosDetails;
             });
           } else if (state is ChattingListWarningSuccess) {
             var listDiff = diffutil
@@ -180,50 +183,43 @@ class _SOSHistoryDetailsScreen extends State<SOSHistoryDetailsScreen>
                               ),
                               const Spacer(),
                               Text(
-                                DateTime.now().toStringFormat(),
+                                (_details?.dateCreated ?? 0)
+                                    .toDate
+                                    .toStringFormat(),
                                 style: headLine4,
                               ),
                               const SizedBox(width: 20),
                             ],
                           ),
                           const SizedBox(height: 10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              const SizedBox(width: 20),
-                              const Text(
-                                'Nội dung SOS',
-                                style: textDefaultLight,
-                              ),
-                              const Spacer(),
-                            ],
-                          ),
                           const Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               SizedBox(width: 20),
                               Text(
-                                'Va chạm cần hổ trợ',
-                                style: headLine4,
-                                maxLines: 3,
-                                overflow: TextOverflow.clip,
+                                'Nội dung SOS',
+                                style: textDefaultLight,
                               ),
                               Spacer(),
                             ],
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              left: 20,
-                              right: 20,
-                              top: 10,
-                              bottom: 10,
-                            ),
-                            child: ImageCapture(
-                              title: 'Chụp ảnh sự cố',
-                              imageFile: localFile,
-                              captureCallback: () => openCamera(context),
-                              deleteCallback: () => {},
-                            ),
+                          Row(
+                            children: [
+                              const SizedBox(width: 20),
+                              Text(
+                                _sosContent,
+                                style: headLine4,
+                                maxLines: 3,
+                                overflow: TextOverflow.clip,
+                              ),
+                              const Spacer(),
+                            ],
                           ),
+                          if (_details?.image?.isNotNullOrEmpty() == true)
+                            const SizedBox(height: 10),
+                          if (_details?.image?.isNotNullOrEmpty() == true)
+                            _imageWidget(_details?.image ?? ''),
+                          const SizedBox(height: 10),
                           const Row(
                             children: [
                               SizedBox(width: 20),
@@ -239,7 +235,7 @@ class _SOSHistoryDetailsScreen extends State<SOSHistoryDetailsScreen>
                               SizedBox(width: 20),
                               Text(
                                 'va chạm tại ngã tư hàng xanh',
-                                style: textDefaultLight,
+                                style: headLine4,
                               ),
                               Spacer(),
                             ],
@@ -270,13 +266,50 @@ class _SOSHistoryDetailsScreen extends State<SOSHistoryDetailsScreen>
     );
   }
 
+  String get _sosContent {
+    switch (_details?.type) {
+      case 2:
+        return 'Bị cướp';
+      case 1:
+        return 'Bị bắt giữ';
+      default:
+        return _details?.reason?.name ?? '';
+    }
+  }
+
+  Widget _imageWidget(String path) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 20, right: 20),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: AspectRatio(
+          aspectRatio: 16 / 9,
+          child: CachedNetworkImage(
+            fit: BoxFit.fitWidth,
+            imageUrl: path,
+            placeholder: (context, url) => AspectRatio(
+              aspectRatio: 1,
+              child: Image.asset(
+                AppAsset.placeHolder,
+                fit: BoxFit.fill,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget get _sendMessage {
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Row(
         children: [
           Expanded(
-            child: TextInput(
+            child: TextInputCustom(
               focusNode: _nodeTextInput,
               hint: 'Nhập ý kiến',
               labelText: 'Nhập ý kiến',

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/common/dialog/progress_dialog.dart';
-import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/network/list_response/list_response.dart';
 import 'package:mvvm_cubit/common/snack_bar/error_snack_bar.dart';
 import 'package:mvvm_cubit/common/widget/empty_widget.dart';
@@ -77,7 +76,6 @@ class _TempFormHistoriesScreenState extends State<TempFormHistoriesScreen> {
           switch (state.status) {
             case Status.failure:
               if (progressKey.currentContext != null) {
-                logger.d('message $progressKey');
                 Navigator.pop(context);
               }
               showErrorSnackBar(
