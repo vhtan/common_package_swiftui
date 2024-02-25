@@ -22,9 +22,11 @@ class SOSHistoriesScreen extends StatefulWidget {
 
 class _SOSHistoriesScreenState extends State<SOSHistoriesScreen> {
   final GlobalKey<State> progressKey = GlobalKey<State>();
+  final _scrollController = ScrollController();
   final _cubit = SOSHistoriesCubit(repository: di());
+  bool _isLast = false;
   int _currentPage = 0;
-  List<SOSHistoryResponse> _list = [];
+  final List<SOSHistoryResponse> _list = [];
 
   @override
   void initState() {
@@ -33,6 +35,27 @@ class _SOSHistoriesScreenState extends State<SOSHistoriesScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _cubit.getSOSHistories(_currentPage);
     });
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        if (_isLast == false) {
+          loadMore();
+        }
+      }
+    });
+  }
+
+  Future<void> _refreshList() async {
+    _isLast = false;
+    _currentPage = 0;
+    _list.clear();
+    _cubit.getSOSHistories(_currentPage);
+  }
+
+  void loadMore() {
+    _currentPage += 1;
+    _cubit.getSOSHistories(_currentPage);
   }
 
   @override
@@ -43,10 +66,13 @@ class _SOSHistoriesScreenState extends State<SOSHistoriesScreen> {
         listener: (context, state) {
           final data = state.data;
           if (data is GetSOSHistoriesState) {
-            logger.d('===== getSOSHistories ${data.list}');
-            setState(() {
-              _list = data.list;
-            });
+            if (data.list.isEmpty) {
+              _isLast = true;
+            } else {
+              setState(() {
+                _list.addAll(data.list);
+              });
+            }
           }
           switch (state.status) {
             case Status.failure:
@@ -73,30 +99,35 @@ class _SOSHistoriesScreenState extends State<SOSHistoriesScreen> {
         builder: (context, state) {
           return BlocBuilder<SOSHistoriesCubit, GenericCubitState>(
             builder: (context, state) {
+              logger.d('===== _list.length ${_list.length}');
               return Padding(
                 padding: const EdgeInsets.only(top: 0, bottom: 20),
                 child: Container(
                   alignment: Alignment.topCenter,
-                  child: ListView.separated(
-                    separatorBuilder: (context, index) => const Divider(
-                      height: 1,
-                      color: AppColors.textDefaultLight,
-                    ),
-                    shrinkWrap: true,
-                    itemCount: _list.length,
-                    itemBuilder: (_, index) {
-                      return InkWell(
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => SOSHistoryDetailsScreen(
-                              id: _list[index].id ?? '',
+                  child: RefreshIndicator(
+                    child: ListView.separated(
+                      controller: _scrollController,
+                      separatorBuilder: (context, index) => const Divider(
+                        height: 1,
+                        color: AppColors.textDefaultLight,
+                      ),
+                      shrinkWrap: true,
+                      itemCount: _list.length,
+                      itemBuilder: (_, index) {
+                        return InkWell(
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SOSHistoryDetailsScreen(
+                                id: _list[index].id ?? '',
+                              ),
                             ),
                           ),
-                        ),
-                        child: SOSHistoryWidget(sosHistory: _list[index]),
-                      );
-                    },
+                          child: SOSHistoryWidget(sosHistory: _list[index]),
+                        );
+                      },
+                    ),
+                    onRefresh: () => _refreshList(),
                   ),
                 ),
               );
