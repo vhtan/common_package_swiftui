@@ -8,12 +8,15 @@ import 'package:mvvm_cubit/data/model/chatting/chat_message_response.dart';
 import 'package:mvvm_cubit/data/model/fault/fault_response.dart';
 import 'package:mvvm_cubit/data/model/main/trip/trip_response.dart';
 import 'package:mvvm_cubit/data/model/notification/notification_response.dart';
+import 'package:mvvm_cubit/data/model/sos_history/sos_history_response.dart';
+import 'package:mvvm_cubit/data/model/sos_history_details/sos_history_details_response.dart';
 import 'package:mvvm_cubit/data/model/temp_form/temp_form_response.dart';
 import 'package:mvvm_cubit/data/model/temp_form_history/temp_form_history_response.dart';
 import 'package:mvvm_cubit/data/model/warning_details/warning_details_response.dart';
 import 'package:mvvm_cubit/data/request/add_trip/add_trip_request.dart';
 import 'package:mvvm_cubit/data/request/check_in/check_in_request.dart';
 import 'package:mvvm_cubit/data/request/push_token/push_token_request.dart';
+import 'package:mvvm_cubit/data/request/sos_process_request/sos_process_request.dart';
 import 'package:mvvm_cubit/data/request/temp_form_process/temp_form_process_request.dart';
 import 'package:mvvm_cubit/data/request/warning_process/warning_process_request.dart';
 
@@ -150,10 +153,10 @@ class MainApi with ApiHelper<dynamic> {
     return 0;
   }
 
-  Future<List<ChatMessageResponse>> getChattingList(String id) async {
+  Future<List<ChatMessageResponse>> getWarningChattingList(String id) async {
     final apiResponse = await makeGetRequest(
       client.dio.get(
-        ApiConfig.chattingList(id),
+        ApiConfig.warningChattingList(id),
       ),
     );
     return parseChatMessageResponseList(apiResponse.detail);
@@ -198,5 +201,41 @@ class MainApi with ApiHelper<dynamic> {
     );
 
     return ListResponse.fromJson(apiResponse.detail);
+  }
+
+  Future<List<SOSHistoryResponse>> getSOSHistories(int page) async {
+    final apiResponse = await makeGetRequest(
+      client.dio.get(
+        ApiConfig.sosHistories(page),
+      ),
+    );
+    return parseSOSHistoryResponseList(apiResponse.detail);
+  }
+
+  Future<SOSHistoryDetailsResponse> getSOSHistoryDetails(String id) async {
+    final apiResponse = await makeGetRequest(
+      client.dio.get(
+        ApiConfig.sosHistoryDetails(id),
+      ),
+    );
+    return SOSHistoryDetailsResponse.fromJson(apiResponse.detail);
+  }
+
+  Future<List<ChatMessageResponse>> getSOSChattingList(String id) async {
+    final apiResponse = await makeGetRequest(
+      client.dio.get(
+        ApiConfig.sosChattingList(id),
+      ),
+    );
+    return parseChatMessageResponseList(apiResponse.detail);
+  }
+
+  Future<dynamic> sosProcess(SOSProcessRequest request) async {
+    return await makePostRequest(
+      client.dio.post(
+        ApiConfig.sosProcess,
+        data: request,
+      ),
+    );
   }
 }

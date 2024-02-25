@@ -19,10 +19,9 @@ abstract class TempFormHistoryResponse with _$TempFormHistoryResponse {
     VehicleResponse? vehicle,
     AddressResponse? address,
     TempFormStatus? status,
-    double? quantity,
-    String? currency,
     String? note,
     String? code,
+    List<BalanceDetailsResponse>? balanceDetails,
   }) = _TempFormHistoryResponse;
 
   factory TempFormHistoryResponse.fromJson(Map<String, dynamic> json) =>

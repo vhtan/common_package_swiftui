@@ -17,10 +17,9 @@ abstract class TempFormResponse with _$TempFormResponse {
     VehicleResponse? vehicle,
     AddressResponse? address,
     TempFormStatus? status,
-    double? quantity,
-    String? currency,
     String? note,
     String? code,
+    List<BalanceDetailsResponse>? balanceDetails,
   }) = _TempFormResponse;
 
   factory TempFormResponse.fromJson(Map<String, dynamic> json) =>
@@ -44,4 +43,15 @@ enum TempFormStatus {
   CLOSED,
   REJECTED,
   CANCELED,
+}
+
+@freezed
+abstract class BalanceDetailsResponse with _$BalanceDetailsResponse {
+  const factory BalanceDetailsResponse({
+    String? currency,
+    double? quantity,
+    int? attr,
+  }) = _BalanceDetailsResponse;
+  factory BalanceDetailsResponse.fromJson(Map<String, dynamic> json) =>
+      _$BalanceDetailsResponseFromJson(json);
 }

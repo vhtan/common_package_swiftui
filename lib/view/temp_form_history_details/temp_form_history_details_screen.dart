@@ -4,6 +4,7 @@ import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/data/model/temp_form/temp_form_response.dart';
 import 'package:mvvm_cubit/data/model/temp_form_history/temp_form_history_response.dart';
+import 'package:mvvm_cubit/view/pending_trip/widget/pending_trip_balance_details_widget.dart';
 
 class TempFormHistoryDetailsScreen extends StatelessWidget {
   final TempFormHistoryResponse tempForm;
@@ -89,23 +90,10 @@ class TempFormHistoryDetailsScreen extends StatelessWidget {
                             maxLines: 4,
                           ),
                           SizedBox(height: _spacing),
-                          const Text(
-                            'Số tiền',
-                            style: textDefaultLight,
-                          ),
-                          Text(
-                            _oCcy.format(tempForm.quantity),
-                            style: textDefault,
-                          ),
-                          SizedBox(height: _spacing),
-                          const Text(
-                            'Loại tiền',
-                            style: textDefaultLight,
-                          ),
-                          Text(
-                            tempForm.currency ?? '',
-                            style: textDefault,
-                          ),
+                          if ((tempForm.balanceDetails ?? []).isNotEmpty)
+                            PendingTripBalanceDetailsWidget(
+                              balanceDetails: tempForm.balanceDetails ?? [],
+                            ),
                           SizedBox(height: _spacing),
                           const Text(
                             'Bảo vệ',

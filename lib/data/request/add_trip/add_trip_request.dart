@@ -12,11 +12,10 @@ class AddTripRequest {
     required this.stopPointAddress,
     required this.latitude,
     required this.longitude,
-    required this.quantity,
-    required this.currency,
     required this.driverId,
     required this.bodyguardId,
     required this.vehicleId,
+    required this.balanceDetails,
     String? requestId,
     int? requestTime,
   })  : requestId = const Uuid().v4(),
@@ -30,10 +29,6 @@ class AddTripRequest {
   final double latitude;
   @JsonKey(name: "longitude")
   final double longitude;
-  @JsonKey(name: "quantity")
-  final double quantity;
-  @JsonKey(name: "currency")
-  final String currency;
   @JsonKey(name: "driverId")
   final String driverId;
   @JsonKey(name: "bodyguardId")
@@ -44,11 +39,35 @@ class AddTripRequest {
   final String requestId;
   @JsonKey(name: "requestTime")
   final int requestTime;
+  @JsonKey(name: "balanceDetails")
+  final List<BalanceDetail>? balanceDetails;
 
   factory AddTripRequest.fromJson(Map<String, dynamic> json) =>
       _$AddTripRequestFromJson(json);
 
   Map<String, dynamic> toJson() => _$AddTripRequestToJson(this);
+}
+
+@immutable
+@JsonSerializable()
+class BalanceDetail {
+  @JsonKey(name: "currency")
+  final String currency;
+  @JsonKey(name: "quantity")
+  final int quantity;
+  @JsonKey(name: "attr")
+  final int attribute;
+
+  const BalanceDetail({
+    required this.currency,
+    required this.quantity,
+    required this.attribute,
+  });
+
+  factory BalanceDetail.fromJson(Map<String, dynamic> json) =>
+      _$BalanceDetailFromJson(json);
+
+  Map<String, dynamic> toJson() => _$BalanceDetailToJson(this);
 }
 
 @immutable

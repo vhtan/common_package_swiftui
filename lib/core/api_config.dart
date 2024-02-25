@@ -39,17 +39,24 @@ class ApiConfig {
   static const String totalUnreadNotification =
       '/notification/count?isRead=false';
 
-  static String chattingList(String id) {
+  static String warningChattingList(String id) {
     return '/warning/list/chatting?warningId=$id';
+  }
+
+  static String sosChattingList(String id) {
+    return '/sos/chatting/list?sosId=$id';
   }
 
   static String warningDetails(String id) {
     return '/warning/$id';
   }
 
+  static String sosProcess = '/sos/process';
+
   // paths of sos
   static const String getSOSReasons = '/sos/reason/list';
   static const String submitSOS = '/sos/submit';
+  static const String warningSOS = '/warning/sos';
 
   static String notificationList(bool isEmergency, {int? page}) {
     if (isEmergency) {
@@ -58,6 +65,15 @@ class ApiConfig {
       return '/notification/list?page=${page ?? 0}';
     }
   }
+
+  static String sosHistories(int page) {
+    return '/sos/list?page=$page&size=20';
+  }
+
+  static String sosHistoryDetails(id) {
+    return '/sos/$id';
+  }
+  // /sos/chatting/list?sosId=
 
   static String readNotification(String id) {
     return '/notification/$id';

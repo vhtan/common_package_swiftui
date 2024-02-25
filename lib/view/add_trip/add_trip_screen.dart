@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:flutter/material.dart';
@@ -54,29 +55,25 @@ class _AddTripScreen extends State<AddTripScreen> {
   List<UserRoleResponse> _guards = [];
   List<VehicleResponse> _vehicles = [];
   List<String> _currencies = [];
+  List<MoneyModelWidget> _moneyModelWidgets = [];
 
   PurposeResponse? _purpose;
-  int? _amount;
   UserRoleResponse? _driver;
   VehicleResponse? _vehicle;
   UserRoleResponse? _guard;
   MapLocationResponse? _location;
-  String? _currency;
   TempFormResponse? _tempForm;
 
-  final _amountController = TextEditingController();
-
-  final FocusNode _nodeTextInput = FocusNode();
   KeyboardActionsConfig _keyboardActionsConfig(BuildContext context) {
     return KeyboardActionsConfig(
       keyboardActionsPlatform: KeyboardActionsPlatform.IOS,
       keyboardBarColor: Colors.grey[200],
       nextFocus: false,
-      actions: [
-        KeyboardActionsItem(
-          focusNode: _nodeTextInput,
-        ),
-      ],
+      actions: _moneyModelWidgets
+          .map(
+            (e) => KeyboardActionsItem(focusNode: e.focusNode),
+          )
+          .toList(),
     );
   }
 
@@ -89,6 +86,14 @@ class _AddTripScreen extends State<AddTripScreen> {
     addTripCubit.getGuardGuyList();
     addTripCubit.getCurrencyList();
     _tempForm = widget.tempForm;
+    _moneyModelWidgets = [
+      MoneyModelWidget(
+        controller: TextEditingController(),
+        focusNode: FocusNode(),
+        isStandard: true,
+        currency: 'VND',
+      )
+    ];
 
     logger.d('===_tempForm $_tempForm');
     if (_tempForm != null) {
@@ -96,8 +101,7 @@ class _AddTripScreen extends State<AddTripScreen> {
         _loadEditTempForm(_tempForm!);
       });
     } else {
-      _amountController.text = '0';
-      _amount = 0;
+      _moneyModelWidgets.first.controller.text = '0';
     }
   }
 
@@ -112,11 +116,21 @@ class _AddTripScreen extends State<AddTripScreen> {
       lat: tempForm.address?.lat,
       lng: tempForm.address?.lng,
     );
-    _currency = tempForm.currency;
-    _amount = tempForm.quantity?.toInt();
-    logger.d('====message $_amount');
-    _amountController.text = _amount.toString();
+    // _amount1 = tempForm.quantity?.toInt();
+    // _moneyModelWidgets.first.controller.text = _amount1.toString();
     selectedValueSingleDialogFuture = tempForm.address?.toJson();
+    if (tempForm.balanceDetails != null) {
+      _moneyModelWidgets = tempForm.balanceDetails!.map((e) {
+        final controller = TextEditingController();
+        controller.text = e.quantity.toString();
+        return MoneyModelWidget(
+          controller: controller,
+          focusNode: FocusNode(),
+          isStandard: e.attr == 1 ? true : false,
+          currency: e.currency ?? '',
+        );
+      }).toList();
+    }
   }
 
   @override
@@ -164,7 +178,6 @@ class _AddTripScreen extends State<AddTripScreen> {
           } else if (data is GetCurrenciesState) {
             setState(() {
               _currencies = data.currencies;
-              if (_tempForm == null) _currency = _currencies.first;
             });
           } else if (data is GetMapLocationSate) {
             setState(() {
@@ -177,270 +190,444 @@ class _AddTripScreen extends State<AddTripScreen> {
         },
         builder: (context, state) {
           return BlocBuilder<AddTripCubit, GenericCubitState<AddTripState>>(
-            builder:
-                (BuildContext context, GenericCubitState<AddTripState> state) {
+            builder: (context, state) {
               return Scaffold(
                 backgroundColor: Colors.transparent,
-                resizeToAvoidBottomInset: true,
-                body: KeyboardActions(
-                  tapOutsideBehavior: TapOutsideBehavior.opaqueDismiss,
-                  config: _keyboardActionsConfig(context),
-                  child: Center(
-                    child: SingleChildScrollView(
-                      child: Container(
-                        padding: const EdgeInsets.all(20),
-                        alignment: Alignment.center,
-                        child: IntrinsicHeight(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              color: Colors.white,
-                            ),
-                            padding: const EdgeInsets.only(bottom: 20, top: 0),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Stack(
-                                  alignment: AlignmentDirectional.center,
-                                  children: [
-                                    Align(
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        (_tempForm == null)
-                                            ? 'Thêm phiếu yêu cầu'
-                                            : 'Sửa phiếu yêu cầu',
-                                        style: headLine1,
-                                      ),
-                                    ),
-                                    Align(
-                                      alignment: Alignment.topRight,
-                                      child: IconButton(
-                                        color: Colors.black,
-                                        icon: const Icon(Icons.close),
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 20, right: 20),
-                                  child: Column(
-                                    children: [
-                                      const Align(
-                                        alignment: Alignment.topLeft,
-                                        child: Text(
-                                          'Mục đích di chuyển',
-                                          style: textDefault,
-                                        ),
-                                      ),
-                                      if (_purposes.isNotEmpty)
-                                        DropDown<PurposeResponse>(
-                                          initialItem: _purpose,
-                                          items: _purposes,
-                                          displayTextBuilder: (value) =>
-                                              value.name?.decodeHtml ?? '',
-                                          onChanged: (value) {
-                                            setState(() {
-                                              _purpose = value;
-                                            });
-                                          },
-                                        ),
-                                      if (_purposes.isEmpty)
-                                        const Text(
-                                            'Yêu cầu phải chọn Mục đích di chuyển'),
-                                      const SizedBox(height: 15),
-                                      Column(
-                                        children: [
-                                          const Align(
-                                            alignment: Alignment.topLeft,
-                                            child: Text(
-                                              'Điểm dừng',
-                                              style: textDefault,
-                                            ),
-                                          ),
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                Dimension.radiusDefault,
-                                              ),
-                                              color: Colors.white,
-                                              border: Border.all(
-                                                color: AppColors.border,
-                                                width: 1.0,
-                                              ),
-                                            ),
-                                            child: search(),
-                                          )
-                                        ],
-                                      ),
-                                      const SizedBox(height: 15),
-                                      Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                        children: [
-                                          Flexible(
-                                            flex: 2,
-                                            child: TextInput(
-                                              controller: _amountController,
-                                              focusNode: _nodeTextInput,
-                                              hint: 'Nhập số tiền',
-                                              labelText: 'Số tiền',
-                                              keyboardType:
-                                                  TextInputType.number,
-                                              onChanged: (value) {
-                                                setState(() {
-                                                  if (value.isEmpty) {
-                                                    _amount = null;
-                                                  } else {
-                                                    _amount = int.parse(value
-                                                        .replaceAll('.', ''));
-                                                  }
-                                                });
-                                              },
-                                              inputFormatters: [
-                                                CurrencyTextInputFormatter(
-                                                  locale: 'vi',
-                                                  decimalDigits: 0,
-                                                  symbol: '',
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                          const SizedBox(width: 16.0),
-                                          if (_currencies.isNotEmpty)
-                                            Flexible(
-                                              flex: 1,
-                                              child: Column(
-                                                children: [
-                                                  const Align(
-                                                    alignment:
-                                                        Alignment.topLeft,
-                                                    child: Text(
-                                                      'Loại tiền',
-                                                      style: textDefault,
-                                                    ),
-                                                  ),
-                                                  DropDown<String>(
-                                                    initialItem: _currency,
-                                                    items: _currencies,
-                                                    displayTextBuilder:
-                                                        (value) => value,
-                                                    onChanged: (value) {
-                                                      setState(() {
-                                                        _currency = value;
-                                                      });
-                                                    },
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 15),
-                                      const Align(
-                                        alignment: Alignment.topLeft,
-                                        child: Text(
-                                          'Chọn bảo vệ',
-                                          style: textDefault,
-                                        ),
-                                      ),
-                                      if (_guards.isNotEmpty)
-                                        DropDown<UserRoleResponse>(
-                                          initialItem: _guard,
-                                          items: _guards,
-                                          displayTextBuilder: (value) =>
-                                              value.name?.decodeHtml ?? '',
-                                          onChanged: (value) {
-                                            setState(() {
-                                              _guard = value;
-                                            });
-                                          },
-                                        ),
-                                      if (_guards.isEmpty)
-                                        const Text('Yêu cầu phải chọn bảo vệ'),
-                                      const SizedBox(height: 15),
-                                      const Align(
-                                        alignment: Alignment.topLeft,
-                                        child: Text(
-                                          'Chọn lái xe',
-                                          style: textDefault,
-                                        ),
-                                      ),
-                                      if (_drivers.isNotEmpty)
-                                        DropDown<UserRoleResponse>(
-                                          initialItem: _driver,
-                                          items: _drivers,
-                                          displayTextBuilder: (value) =>
-                                              value.name?.decodeHtml ?? '',
-                                          onChanged: (value) {
-                                            setState(() {
-                                              _driver = value;
-                                            });
-                                          },
-                                        ),
-                                      if (_drivers.isEmpty)
-                                        const Text('Yêu cầu phải chọn lái xe'),
-                                      const SizedBox(height: 15),
-                                      const Align(
-                                        alignment: Alignment.topLeft,
-                                        child: Text(
-                                          'Chọn xe',
-                                          style: textDefault,
-                                        ),
-                                      ),
-                                      if (_vehicles.isNotEmpty)
-                                        DropDown<VehicleResponse>(
-                                          initialItem: _vehicle,
-                                          items: _vehicles,
-                                          displayTextBuilder: (value) =>
-                                              value.plateNumber ?? '',
-                                          onChanged: (value) {
-                                            setState(() {
-                                              _vehicle = value;
-                                            });
-                                          },
-                                        ),
-                                      if (_vehicles.isEmpty)
-                                        const Text('Yêu cầu phải chọn xe'),
-                                      const SizedBox(height: 15),
-                                      PrimaryButton(
-                                        title: 'Gửi',
-                                        buttonHeight: 50,
-                                        backgroundColor: validSubmit()
-                                            ? AppColors.primary
-                                            : AppColors.textDefaultLight,
-                                        onPressed: validSubmit()
-                                            ? () {
-                                                if (_tempForm == null) {
-                                                  addTripCubit
-                                                      .createTrip(_toRequest);
-                                                } else {
-                                                  addTripCubit
-                                                      .updateTrip(_toRequest);
-                                                }
-                                              }
-                                            : null,
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                body: buildBody(state),
+                // body: KeyboardActions(
+                //   tapOutsideBehavior: TapOutsideBehavior.opaqueDismiss,
+                //   config: _keyboardActionsConfig(context),
+                //   child: buildBody(state),
+                // ),
               );
             },
           );
         },
+      ),
+    );
+  }
+
+  Widget buildBody(GenericCubitState state) {
+    return Container(
+      padding: const EdgeInsets.only(
+        left: 20,
+        right: 20,
+        top: 40,
+        bottom: 40,
+      ),
+      child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            color: Colors.white,
+          ),
+          padding: const EdgeInsets.only(
+            bottom: 20,
+            top: 0,
+          ),
+          child: Column(
+            children: [
+              _titleWidget,
+              Expanded(
+                child: SingleChildScrollView(
+                  child: _contentWidget,
+                ),
+              ),
+            ],
+          )),
+    );
+  }
+
+  Widget get _titleWidget {
+    return Stack(
+      alignment: AlignmentDirectional.center,
+      children: [
+        Align(
+          alignment: Alignment.center,
+          child: Text(
+            (_tempForm == null) ? 'Thêm phiếu yêu cầu' : 'Sửa phiếu yêu cầu',
+            style: headLine1,
+          ),
+        ),
+        Align(
+          alignment: Alignment.topRight,
+          child: IconButton(
+            color: Colors.black,
+            icon: const Icon(
+              Icons.close,
+              size: 34,
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget get _contentWidget {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(
+            left: 20,
+            right: 20,
+          ),
+          child: Column(
+            children: [
+              _purposesWidget,
+              _stopPointWidget,
+            ],
+          ),
+        ),
+        const SizedBox(height: 15),
+        ..._moneyModelWidgets.map(
+          (e) => _generateMoneyWidget(e),
+        ),
+        _addMoneyWidget,
+        Padding(
+          padding: const EdgeInsets.only(
+            left: 20,
+            right: 20,
+          ),
+          child: Column(
+            children: [
+              _bodyGuardWidget,
+              _driverWidget,
+              const SizedBox(height: 15),
+              _vehicleWidget,
+              const SizedBox(height: 15),
+              PrimaryButton(
+                title: 'Gửi',
+                buttonHeight: 50,
+                backgroundColor: validSubmit()
+                    ? AppColors.primary
+                    : AppColors.textDefaultLight,
+                onPressed: validSubmit()
+                    ? () {
+                        if (_tempForm == null) {
+                          addTripCubit.createTrip(_toRequest);
+                        } else {
+                          addTripCubit.updateTrip(_toRequest);
+                        }
+                      }
+                    : null,
+              )
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget get _purposesWidget {
+    return Column(
+      children: [
+        const Align(
+          alignment: Alignment.topLeft,
+          child: Text(
+            'Mục đích di chuyển',
+            style: textDefault,
+          ),
+        ),
+        if (_purposes.isNotEmpty)
+          DropDown<PurposeResponse>(
+            initialItem: _purpose,
+            items: _purposes,
+            displayTextBuilder: (value) => value.name?.decodeHtml ?? '',
+            onChanged: (value) {
+              setState(() {
+                _purpose = value;
+              });
+            },
+          ),
+        if (_purposes.isEmpty)
+          const Text('Yêu cầu phải chọn Mục đích di chuyển'),
+        const SizedBox(height: 15),
+      ],
+    );
+  }
+
+  Widget get _stopPointWidget {
+    return Column(
+      children: [
+        const Align(
+          alignment: Alignment.topLeft,
+          child: Text(
+            'Điểm dừng',
+            style: textDefault,
+          ),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(
+              Dimension.radiusDefault,
+            ),
+            color: Colors.white,
+            border: Border.all(
+              color: AppColors.border,
+              width: 1.0,
+            ),
+          ),
+          child: search(),
+        )
+      ],
+    );
+  }
+
+  Widget get _bodyGuardWidget {
+    return Column(
+      children: [
+        const Align(
+          alignment: Alignment.topLeft,
+          child: Text(
+            'Chọn bảo vệ',
+            style: textDefault,
+          ),
+        ),
+        if (_guards.isNotEmpty)
+          DropDown<UserRoleResponse>(
+            initialItem: _guard,
+            items: _guards,
+            displayTextBuilder: (value) => value.name?.decodeHtml ?? '',
+            onChanged: (value) {
+              setState(() {
+                _guard = value;
+              });
+            },
+          ),
+        if (_guards.isEmpty) const Text('Yêu cầu phải chọn bảo vệ'),
+        const SizedBox(height: 15),
+      ],
+    );
+  }
+
+  Widget get _driverWidget {
+    return Column(
+      children: [
+        const Align(
+          alignment: Alignment.topLeft,
+          child: Text(
+            'Chọn lái xe',
+            style: textDefault,
+          ),
+        ),
+        if (_drivers.isNotEmpty)
+          DropDown<UserRoleResponse>(
+            initialItem: _driver,
+            items: _drivers,
+            displayTextBuilder: (value) => value.name?.decodeHtml ?? '',
+            onChanged: (value) {
+              setState(() {
+                _driver = value;
+              });
+            },
+          ),
+        if (_drivers.isEmpty) const Text('Yêu cầu phải chọn lái xe'),
+      ],
+    );
+  }
+
+  Widget get _vehicleWidget {
+    return Column(
+      children: [
+        const Align(
+          alignment: Alignment.topLeft,
+          child: Text(
+            'Chọn xe',
+            style: textDefault,
+          ),
+        ),
+        if (_vehicles.isNotEmpty)
+          DropDown<VehicleResponse>(
+            initialItem: _vehicle,
+            items: _vehicles,
+            displayTextBuilder: (value) => value.plateNumber ?? '',
+            onChanged: (value) {
+              setState(() {
+                _vehicle = value;
+              });
+            },
+          ),
+        if (_vehicles.isEmpty) const Text('Yêu cầu phải chọn xe'),
+      ],
+    );
+  }
+
+  Widget get _addMoneyWidget {
+    return Row(
+      children: [
+        const Spacer(),
+        IconButton(
+          onPressed: () => setState(() {
+            _moneyModelWidgets.add(
+              MoneyModelWidget(
+                controller: TextEditingController(),
+                focusNode: FocusNode(),
+                isStandard: true,
+                currency: _currencies.first,
+              ),
+            );
+          }),
+          icon: const Row(
+            children: [
+              Icon(Icons.add),
+              Text('Thêm loại tiền'),
+            ],
+          ),
+        ),
+        const Spacer(),
+      ],
+    );
+  }
+
+  Widget _generateMoneyWidget(
+    MoneyModelWidget moneyModelWidget,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 20),
+      child: Column(
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Flexible(
+                flex: 3,
+                child: TextInputCustom(
+                  controller: moneyModelWidget.controller,
+                  focusNode: moneyModelWidget.focusNode,
+                  hint: 'Nhập số tiền',
+                  labelText: 'Số tiền',
+                  keyboardType: TextInputType.number,
+                  onChanged: (value) {
+                    setState(() {
+                      if (value.isEmpty) {
+                        // _amount1 = null;
+                      } else {
+                        // _amount1 = int.parse(value.replaceAll('.', ''));
+                      }
+                    });
+                  },
+                  inputFormatters: [
+                    CurrencyTextInputFormatter(
+                      locale: 'vi',
+                      decimalDigits: 0,
+                      symbol: '',
+                    )
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8.0),
+              if (_currencies.isNotEmpty)
+                Flexible(
+                  flex: 2,
+                  child: Column(
+                    children: [
+                      const Align(
+                        alignment: Alignment.topLeft,
+                        child: Text(
+                          'Loại tiền',
+                          style: textDefault,
+                        ),
+                      ),
+                      DropDown<String>(
+                        initialItem: moneyModelWidget.currency,
+                        items: _currencies,
+                        displayTextBuilder: (value) => value,
+                        onChanged: (value) {
+                          setState(() {
+                            moneyModelWidget.currency = value;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              IconButton(
+                color: Colors.black,
+                icon: const Icon(
+                  Icons.close,
+                ),
+                onPressed: () => setState(() {
+                  _moneyModelWidgets.removeWhere(
+                    (element) => moneyModelWidget.id == element.id,
+                  );
+                }),
+              )
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.only(right: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _standartWidget(
+                  text: 'Đủ tiêu chuẩn',
+                  isSelected: moneyModelWidget.isStandard,
+                  onPressed: () => setState(() {
+                    moneyModelWidget.isStandard = true;
+                  }),
+                ),
+                _standartWidget(
+                  text: 'Không đủ tiêu chuẩn',
+                  isSelected: !moneyModelWidget.isStandard,
+                  onPressed: () => setState(() {
+                    moneyModelWidget.isStandard = false;
+                  }),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _standartWidget({
+    required VoidCallback? onPressed,
+    required String text,
+    required bool isSelected,
+  }) {
+    return TextButton(
+      style: ButtonStyle(
+        padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+          const EdgeInsets.all(0.0),
+        ),
+        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(0),
+            side: const BorderSide(color: Colors.transparent),
+          ),
+        ),
+        overlayColor: MaterialStateProperty.resolveWith<Color>(
+          (states) => Colors.transparent,
+        ),
+      ),
+      onPressed: onPressed,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Container(
+            width: 24,
+            height: 24,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: AppColors.border,
+                width: 3,
+              ),
+            ),
+            child: Center(
+              child: Icon(
+                isSelected ? Icons.circle : null,
+                color: AppColors.primary,
+                size: 16,
+              ),
+            ),
+          ),
+          const SizedBox(width: 6),
+          Text(text),
+        ],
       ),
     );
   }
@@ -528,9 +715,7 @@ class _AddTripScreen extends State<AddTripScreen> {
         _driver != null &&
         _vehicle != null &&
         _guard != null &&
-        _location != null &&
-        _amount != null &&
-        _currency != null) {
+        _location != null) {
       return true;
     }
     return false;
@@ -538,20 +723,52 @@ class _AddTripScreen extends State<AddTripScreen> {
 
   AddTripRequest get _toRequest {
     double amount = 0;
-    final text = _amountController.text.replaceAll('.', '');
-    if (text.isNotEmpty) {
-      amount = double.parse(text);
-    }
+    // final text = _amount1Controller.text.replaceAll('.', '');
+    // if (text.isNotEmpty) {
+    //   amount = double.parse(text);
+    // }
     return AddTripRequest(
       purposeId: _purpose?.id ?? '',
       stopPointAddress: _location?.display ?? '',
       latitude: _location?.lat ?? 0,
       longitude: _location?.lng ?? 0,
-      quantity: amount,
-      currency: _currency ?? '',
       driverId: _driver?.id ?? '',
       bodyguardId: _guard?.id ?? '',
       vehicleId: _vehicle?.id ?? '',
+      balanceDetails: _getBalanceDetails,
     );
+  }
+
+  List<BalanceDetail>? get _getBalanceDetails {
+    final list = _moneyModelWidgets.where((element) => element.amount > 0);
+    if (list.isEmpty) return null;
+    return list
+        .map(
+          (e) => BalanceDetail(
+            currency: e.currency,
+            quantity: e.amount,
+            attribute: e.isStandard ? 1 : 0,
+          ),
+        )
+        .toList();
+  }
+}
+
+class MoneyModelWidget {
+  int id;
+  TextEditingController controller;
+  FocusNode focusNode;
+  bool isStandard;
+  String currency;
+
+  MoneyModelWidget({
+    required this.controller,
+    required this.focusNode,
+    required this.isStandard,
+    required this.currency,
+  }) : id = Random().nextInt(100000);
+
+  int get amount {
+    return int.parse(controller.text.replaceAll('.', ''));
   }
 }

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
 
-class TextInput extends StatelessWidget {
-  const TextInput({
+class TextInputCustom extends StatelessWidget {
+  const TextInputCustom({
     super.key,
     this.initialValue,
     this.onChanged,

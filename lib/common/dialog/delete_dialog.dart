@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
+import 'package:mvvm_cubit/data/api/sos/sos_submit_request.dart';
 
 Future<dynamic> deleteDialog(
     BuildContext context, VoidCallback? cancelCallback) {
@@ -154,4 +155,125 @@ Future<dynamic> forceDialog(BuildContext context, String message) {
   );
 
   return dialog.then((res) => res ?? false);
+}
+
+Future<dynamic> showSOSSelection({
+  required BuildContext context,
+}) {
+  Future<dynamic> dialog = showDialog(
+    context: context,
+    builder: (_) {
+      return AlertDialog(
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(15.0),
+          ),
+        ),
+        title: const Text('SOS', textAlign: TextAlign.center),
+        content: SizedBox(
+          height: 230,
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(Dimension
+                              .radiusDefault), // Set the desired border radius
+                        ),
+                        backgroundColor: AppColors.primary,
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context, SOSType.robbed);
+                      },
+                      child: const Text(
+                        'SOS cướp',
+                        style: menuTextStyle,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 5),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(Dimension
+                              .radiusDefault), // Set the desired border radius
+                        ),
+                        backgroundColor: AppColors.primary,
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context, SOSType.arrested);
+                      },
+                      child: const Text(
+                        'SOS bị bắt giữ',
+                        style: menuTextStyle,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 5),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(Dimension
+                              .radiusDefault), // Set the desired border radius
+                        ),
+                        backgroundColor: AppColors.primary,
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context, SOSType.other);
+                      },
+                      child: const Text(
+                        'SOS khác',
+                        style: menuTextStyle,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 5),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextButton(
+                      style: ButtonStyle(
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            side: const BorderSide(color: AppColors.border),
+                            borderRadius:
+                                BorderRadius.circular(Dimension.radiusDefault),
+                          ),
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context, null);
+                      },
+                      child: const Text(
+                        'Đóng',
+                        style: textDefault,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+
+  return dialog;
 }

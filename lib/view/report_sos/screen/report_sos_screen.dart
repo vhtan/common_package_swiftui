@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:camera_camera/camera_camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:material_text_fields/utils/extensions.dart';
@@ -17,31 +18,43 @@ import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/data/api/sos/sos_submit_request.dart';
 import 'package:mvvm_cubit/data/api/upload_image/upload_image_ext.dart';
 import 'package:mvvm_cubit/data/model/sos/child_sos_response.dart';
+import 'package:mvvm_cubit/data/model/vehicle/vehicle_response.dart';
 import 'package:mvvm_cubit/di.dart';
 import 'package:mvvm_cubit/viewmodel/report_sos/report_sos_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/report_sos/report_state.dart';
 
 class ReportSOSScreen extends StatefulWidget {
-  const ReportSOSScreen({super.key});
+  final SOSType sosType;
+  final String? vehicleId;
+  const ReportSOSScreen({
+    super.key,
+    required this.sosType,
+    required this.vehicleId,
+  });
 
   @override
   State<StatefulWidget> createState() => _ReportSOSScreen();
 }
 
 class _ReportSOSScreen extends State<ReportSOSScreen> {
-  final cubit = ReportSOSCubit(repository: di());
+  final cubit = ReportSOSCubit(
+    repository: di(),
+    addTripRepository: di(),
+  );
   List<ChildSOSResponse> reasons = [];
   ChildSOSResponse? selectedReason;
   ImageResponse? imageResponse;
   String? describeReason;
   File? localFile;
-
+  final List<VehicleResponse> _vehicleList = [];
+  VehicleResponse? _selectedVehicle;
   final GlobalKey<State> progressKey = GlobalKey<State>();
 
   @override
   void initState() {
     super.initState();
     cubit.getReasons();
+    if (widget.vehicleId.isNullOrEmpty()) cubit.vehicleList();
   }
 
   final FocusNode _nodeTextInput = FocusNode();
@@ -77,7 +90,7 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
           }
           if (data is DidSubmitReasonSuccess) {
             showConfirmSnackBar(context, 'Đã báo cáo sự cố thành công');
-            Navigator.of(context).pop();
+            Navigator.of(context).pop(data.sosId);
           }
           if (data is UploadImageSuccess) {
             setState(
@@ -92,6 +105,14 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
                 reasons.clear();
                 reasons.addAll(data.reasons);
                 selectedReason = reasons.first;
+              },
+            );
+          } else if (data is GetVehicleListSuccess) {
+            setState(
+              () {
+                _vehicleList.clear();
+                _vehicleList.addAll(data.vehicleList);
+                _selectedVehicle = _vehicleList.first;
               },
             );
           }
@@ -158,6 +179,19 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
                                       )
                                     : const SizedBox(),
                                 const SizedBox(height: 20),
+                                (_vehicleList.isNotEmpty)
+                                    ? DropDown<VehicleResponse>(
+                                        items: _vehicleList,
+                                        displayTextBuilder: (value) =>
+                                            value.plateNumber?.decodeHtml ?? '',
+                                        onChanged: (value) {
+                                          setState(() {
+                                            _selectedVehicle = value;
+                                          });
+                                        },
+                                      )
+                                    : const SizedBox(),
+                                const SizedBox(height: 20),
                                 ImageCapture(
                                   title: 'Chụp ảnh sự cố',
                                   imageFile: localFile,
@@ -170,7 +204,10 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
                                   },
                                 ),
                                 const SizedBox(height: 20),
-                                TextInput(
+                                TextInputCustom(
+                                  inputFormatters: [
+                                    LengthLimitingTextInputFormatter(500)
+                                  ],
                                   focusNode: _nodeTextInput,
                                   hint: 'Nhập mô tả sự cố',
                                   labelText: 'Mô tả sự cố',
@@ -188,24 +225,21 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
                                 PrimaryButton(
                                   title: 'Gửi',
                                   buttonHeight: 50,
-                                  backgroundColor: validSubmitSOS() == true
-                                      ? AppColors.primary
-                                      : AppColors.textDefaultLight,
-                                  onPressed: validSubmitSOS() == true
-                                      ? () {
-                                          cubit.submitSOS(
-                                            SOSSubmitRequest(
-                                              reasonId: selectedReason?.id,
-                                              imgName: imageResponse?.imageName,
-                                              sosMessage: describeReason,
-                                              requestId:
-                                                  selectedReason?.requestId,
-                                              requestTime:
-                                                  selectedReason?.requestTime,
-                                            ),
-                                          );
-                                        }
-                                      : null,
+                                  backgroundColor: AppColors.primary,
+                                  onPressed: () {
+                                    cubit.submitSOS(
+                                      SOSSubmitRequest(
+                                        vehicleId:
+                                            widget.vehicleId.isNotNullOrEmpty()
+                                                ? (widget.vehicleId ?? '')
+                                                : (_selectedVehicle?.id ?? ''),
+                                        reasonId: selectedReason?.id,
+                                        imgName: imageResponse?.imageName,
+                                        sosMessage: describeReason,
+                                        type: widget.sosType,
+                                      ),
+                                    );
+                                  },
                                 )
                               ],
                             ),
@@ -221,13 +255,6 @@ class _ReportSOSScreen extends State<ReportSOSScreen> {
         },
       ),
     );
-  }
-
-  bool validSubmitSOS() {
-    if (selectedReason != null) {
-      return true;
-    }
-    return false;
   }
 
   void openCamera(BuildContext context) async {

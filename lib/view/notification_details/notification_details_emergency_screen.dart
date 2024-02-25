@@ -44,19 +44,17 @@ class NotificationEmergencyDetailsScreen extends StatelessWidget {
                 Container(
                   height: MediaQuery.sizeOf(context).height - 300,
                   padding: const EdgeInsets.only(left: 20, right: 20),
-                  child: Expanded(
-                    child: Scrollbar(
-                      child: SingleChildScrollView(
-                        child: Html(
-                          data: notification.message!.decodeHtml,
-                          style: {
-                            'body': Style(
-                              textAlign: TextAlign.center,
-                              color: AppColors.textDefault,
-                              fontSize: FontSize(14.0),
-                            ),
-                          },
-                        ),
+                  child: Scrollbar(
+                    child: SingleChildScrollView(
+                      child: Html(
+                        data: notification.message!.decodeHtml,
+                        style: {
+                          'body': Style(
+                            textAlign: TextAlign.center,
+                            color: AppColors.textDefault,
+                            fontSize: FontSize(14.0),
+                          ),
+                        },
                       ),
                     ),
                   ),

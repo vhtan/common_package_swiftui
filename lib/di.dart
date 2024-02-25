@@ -20,6 +20,7 @@ import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
 import 'package:mvvm_cubit/viewmodel/manager_role/warning_list/manager_role_warning_list_cubit.dart';
 import 'package:mvvm_cubit/viewmodel/report_sos/report_sos_cubit.dart';
+import 'package:mvvm_cubit/viewmodel/report_sos/report_sos_robber_cubit.dart';
 
 final di = GetIt.instance;
 
@@ -69,14 +70,23 @@ Future<void> init() async {
     ),
   );
   di.registerFactory(
-    () => ReportSOSCubit(repository: di()),
+    () => ReportSOSCubit(
+      repository: di(),
+      addTripRepository: di(),
+    ),
+  );
+  di.registerFactory(
+    () => ReportSOSRobberCubit(repository: di(), addTripRepository: di()),
   );
   di.registerFactory(
     () => CheckPointCubit(repository: di()),
   );
 
   di.registerFactory(
-    () => ContainerCubit(repository: di()),
+    () => ContainerCubit(
+      repository: di(),
+      sosRepository: di(),
+    ),
   );
   di.registerFactory(
     () => AddTripCubit(repository: di()),

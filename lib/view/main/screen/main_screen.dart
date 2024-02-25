@@ -455,7 +455,7 @@ extension _MainScreenDeliveryList on MainScreenState {
 
   double _calculateWarningHeight(int length) {
     if (length > 4) {
-      return 300;
+      return 260;
     } else {
       return length * _warningHeight;
     }

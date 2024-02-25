@@ -43,13 +43,13 @@ class ImageCapture extends StatelessWidget {
                     imageFile!,
                     fit: BoxFit.fitWidth,
                   ),
-                  IconButton(
-                    onPressed: deleteCallback,
-                    icon: const Icon(
-                      Icons.delete,
-                      size: 40,
-                    ),
-                  )
+                  // IconButton(
+                  //   onPressed: deleteCallback,
+                  //   icon: const Icon(
+                  //     Icons.delete,
+                  //     size: 40,
+                  //   ),
+                  // )
                 ],
               )
             : GestureDetector(

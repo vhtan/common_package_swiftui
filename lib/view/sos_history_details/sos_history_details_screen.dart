@@ -1,4 +1,7 @@
 import 'dart:async';
+import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:camera_camera/camera_camera.dart';
 import 'package:diffutil_dart/diffutil.dart' as diffutil;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,42 +11,40 @@ import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/snack_bar/error_snack_bar.dart';
 import 'package:mvvm_cubit/common/widget/text_input.dart';
+import 'package:mvvm_cubit/core/app_asset.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
-import 'package:mvvm_cubit/core/app_string.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/data/model/chatting/chat_message_response.dart';
-import 'package:mvvm_cubit/data/model/warning_details/warning_details_response.dart';
-import 'package:mvvm_cubit/data/request/warning_process/warning_process_request.dart';
+import 'package:mvvm_cubit/data/model/sos_history_details/sos_history_details_response.dart';
+import 'package:mvvm_cubit/data/request/sos_process_request/sos_process_request.dart';
 import 'package:mvvm_cubit/di.dart';
-import 'package:mvvm_cubit/viewmodel/manager_role/manager_warnings_handler/manager_warnings_handler_state.dart';
-import 'package:mvvm_cubit/viewmodel/warnings_handler/warnings_handler_cubit.dart';
+import 'package:mvvm_cubit/viewmodel/sos_history_details/sos_history_details_cubit.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class WarningsHandlerScreen extends StatefulWidget {
+class SOSHistoryDetailsScreen extends StatefulWidget {
   final String id;
-  final bool isCanChat;
 
-  const WarningsHandlerScreen({
+  const SOSHistoryDetailsScreen({
     super.key,
     required this.id,
-    required this.isCanChat,
   });
 
   @override
-  State<StatefulWidget> createState() => _WarningsHandlerScreen();
+  State<StatefulWidget> createState() => _SOSHistoryDetailsScreen();
 }
 
-class _WarningsHandlerScreen extends State<WarningsHandlerScreen>
+class _SOSHistoryDetailsScreen extends State<SOSHistoryDetailsScreen>
     with WidgetsBindingObserver {
-  final _cubit = WarningsHandlerCubit(repository: di());
+  final _cubit = SOSHistoryDetailsCubit(repository: di());
   final double _spacing = 5;
-  WarningDetailsResponse? _details;
+  SOSHistoryDetailsResponse? _details;
   List<ChatMessageResponse> _messageList = [];
   final _commentController = TextEditingController();
   static Timer? _fetchMessages;
   final _timerDuration = const Duration(seconds: 10);
   final _scrollController = ScrollController();
-
+  File? localFile;
+  bool _isCanChat = false;
   final FocusNode _nodeTextInput = FocusNode();
   KeyboardActionsConfig _keyboardActionsConfig(BuildContext context) {
     return KeyboardActionsConfig(
@@ -61,7 +62,7 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen>
   @override
   void initState() {
     super.initState();
-    _cubit.getWarningDetails(widget.id);
+    _cubit.getSOSHistoryDetails(widget.id);
     _cubit.getChattingList(widget.id);
     startFetchingMessages();
   }
@@ -94,11 +95,10 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen>
         color: AppColors.white,
       ),
       automaticallyImplyLeading: true,
-      // title: const Text(
-      //   "Cảnh báo",
-      //   style: headLine1,
-      // ),
-      title: Text('${widget.id}'),
+      title: const Text(
+        "SOS",
+        style: headLine1,
+      ),
     );
   }
 
@@ -106,7 +106,7 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen>
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => _cubit,
-      child: BlocConsumer<WarningsHandlerCubit, GenericCubitState>(
+      child: BlocConsumer<SOSHistoryDetailsCubit, GenericCubitState>(
         listener: (context, state) {
           if (state.status == Status.failure) {
             showErrorSnackBar(
@@ -114,15 +114,16 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen>
               'Đã có lỗi xảy ra vui lòng thử lại',
             );
           }
-          if (state is DidSendWarningSuccess) {
+          if (state is DidSendSOSMessageSuccess) {
             _commentController.text = '';
             _cubit.getChattingList(widget.id);
           }
-          if (state is GetWarningDetailsSuccess) {
+          if (state is GetSOSHistoryDetailsState) {
             setState(() {
-              _details = state.warningDetails;
+              _details = state.sosDetails;
+              _isCanChat = (_details?.status ?? 0) < 5;
             });
-          } else if (state is ChattingListWarningSuccess) {
+          } else if (state is ChattingListSOSSuccess) {
             var listDiff = diffutil
                 .calculateListDiff(
                   _messageList,
@@ -146,13 +147,13 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen>
           }
         },
         builder: (context, state) {
-          return BlocBuilder<WarningsHandlerCubit, GenericCubitState>(
+          return BlocBuilder<SOSHistoryDetailsCubit, GenericCubitState>(
             builder: (context, state) {
               return SafeArea(
                 child: Scaffold(
                   resizeToAvoidBottomInset: true,
                   appBar: _appBar,
-                  bottomNavigationBar: widget.isCanChat
+                  bottomNavigationBar: _isCanChat
                       ? Padding(
                           padding: MediaQuery.of(context).viewInsets,
                           child: _sendMessage,
@@ -169,129 +170,77 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen>
                         mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              left: 20,
-                              right: 20,
-                              top: 20,
-                              bottom: 10,
-                            ),
-                            child: Text(
-                              _details?.warningMessage?.decodeHtml ?? '',
-                              style: headLine2,
-                              maxLines: 3,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          Row(
-                            children: [
-                              const SizedBox(width: 20),
-                              const Text(
-                                'Địa điểm bắt đầu cảnh báo',
-                                style: textDefaultLight,
-                              ),
-                              const Spacer(),
-                              TextButton(
-                                style: ButtonStyle(
-                                  side: MaterialStateProperty.all(
-                                      BorderSide.none),
-                                ),
-                                onPressed: () => openMap(
-                                  longitude: _details?.startLongitude ?? 0,
-                                  latitude: _details?.startLatitude ?? 0,
-                                ),
-                                child: const Icon(
-                                  Icons.map,
-                                  size: 20,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 20, right: 20),
-                            child: Text(
-                              _details?.startAddress?.decodeHtml ?? '',
-                              maxLines: 3,
-                              style: textDefault,
-                            ),
-                          ),
+                          const SizedBox(height: 20),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               const SizedBox(width: 20),
                               const Text(
-                                'Thời gian bắt đầu cảnh báo',
+                                'Thời gian tạo SOS',
                                 style: textDefaultLight,
                               ),
                               const Spacer(),
                               Text(
-                                (_details?.startTime ?? 0)
+                                (_details?.dateCreated ?? 0)
                                     .toDate
                                     .toStringFormat(),
-                                style: const TextStyle(
-                                  fontStyle: FontStyle.italic,
-                                  fontSize: 12,
-                                ),
+                                style: headLine4,
                               ),
                               const SizedBox(width: 20),
                             ],
                           ),
-                          const SizedBox(height: 20),
-                          if (_details?.endAddress.isNotNullOrEmpty() == true)
-                            Row(
-                              children: [
-                                const SizedBox(width: 20),
-                                const Text(
-                                  'Địa điểm kết thúc cảnh báo',
-                                  style: textDefaultLight,
-                                ),
-                                const Spacer(),
-                                TextButton(
-                                  style: ButtonStyle(
-                                    side: MaterialStateProperty.all(
-                                        BorderSide.none),
-                                  ),
-                                  onPressed: () => openMap(
-                                    longitude: _details?.endLongitude ?? 0,
-                                    latitude: _details?.endLatitude ?? 0,
-                                  ),
-                                  child: const Icon(Icons.map),
-                                ),
-                              ],
-                            ),
-                          if (_details?.endAddress.isNotNullOrEmpty() == true)
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 20, right: 20),
-                              child: Text(
-                                _details?.endAddress?.decodeHtml ?? '',
-                                maxLines: 3,
-                                style: textDefault,
+                          const SizedBox(height: 10),
+                          const Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              SizedBox(width: 20),
+                              Text(
+                                'Nội dung SOS',
+                                style: textDefaultLight,
                               ),
-                            ),
-                          if ((_details?.endTime ?? 0) > 0)
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
+                              Spacer(),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              const SizedBox(width: 20),
+                              Text(
+                                _sosContent,
+                                style: headLine4,
+                                maxLines: 3,
+                                overflow: TextOverflow.clip,
+                              ),
+                              const Spacer(),
+                            ],
+                          ),
+                          if (_details?.image?.isNotNullOrEmpty() == true)
+                            const SizedBox(height: 10),
+                          if (_details?.image?.isNotNullOrEmpty() == true)
+                            _imageWidget(_details?.image ?? ''),
+                          const SizedBox(height: 10),
+                          if (_details?.note.isNotNullOrEmpty() == true)
+                            const Row(
                               children: [
-                                const SizedBox(width: 20),
-                                const Text(
-                                  'Thời gian kết thúc cảnh báo',
+                                SizedBox(width: 20),
+                                Text(
+                                  'Ghi chú',
                                   style: textDefaultLight,
                                 ),
-                                const Spacer(),
-                                Text(
-                                  (_details?.endTime ?? 0)
-                                      .toDate
-                                      .toStringFormat(),
-                                  style: const TextStyle(
-                                    fontStyle: FontStyle.italic,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                                const SizedBox(width: 20),
+                                Spacer(),
                               ],
                             ),
-                          systemWarning(_details?.level),
+                          if (_details?.note.isNotNullOrEmpty() == true)
+                            Row(
+                              children: [
+                                const SizedBox(width: 20),
+                                Expanded(
+                                  child: Text(
+                                    _details?.note?.decodeHtml ?? '',
+                                    style: headLine4,
+                                  ),
+                                ),
+                              ],
+                            ),
                           const Divider(),
                           ..._messageList.map(
                             (item) {
@@ -314,6 +263,43 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen>
             },
           );
         },
+      ),
+    );
+  }
+
+  String get _sosContent {
+    switch (_details?.type) {
+      case 2:
+        return 'Bị cướp';
+      case 1:
+        return 'Bị bắt giữ';
+      default:
+        return _details?.reason?.name ?? '';
+    }
+  }
+
+  Widget _imageWidget(String path) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 20, right: 20),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: AspectRatio(
+          aspectRatio: 16 / 9,
+          child: CachedNetworkImage(
+            fit: BoxFit.fitWidth,
+            imageUrl: path,
+            placeholder: (context, url) => AspectRatio(
+              aspectRatio: 1,
+              child: Image.asset(
+                AppAsset.placeHolder,
+                fit: BoxFit.fill,
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -352,11 +338,10 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen>
               //     curve: Curves.easeInOut,
               //   );
               // },
-              onPressed: () => _cubit.warningProcess(
-                WarningProcessRequest(
-                  warningId: widget.id,
-                  action: 'explain',
-                  message: _commentController.text.trim(),
+              onPressed: () => _cubit.sendMessage(
+                SOSProcessRequest(
+                  sosId: widget.id,
+                  message: _commentController.text,
                 ),
               ),
               child: const Text(
@@ -371,64 +356,6 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen>
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget systemWarning(int? level) {
-    return Container(
-      padding: const EdgeInsets.only(left: 20, right: 20, top: 10),
-      decoration: const BoxDecoration(),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: () {},
-        child: Row(
-          children: [
-            const Icon(
-              Icons.settings,
-              color: AppColors.red,
-              size: 24.0,
-            ),
-            const SizedBox(width: 8.0),
-            Expanded(
-              child: Text(
-                'Hệ thống gửi cảnh báo cấp ${level ?? 1}',
-                style: textDefault,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget normalWarning() {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: const BoxDecoration(),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: () {},
-        child: const Row(
-          children: [
-            Icon(
-              Icons.request_quote,
-              color: AppColors.red,
-              size: 24.0,
-            ),
-            SizedBox(width: 8.0),
-            Expanded(
-              child: Text(
-                'Yêu cầu giải trình',
-                style: textDefault,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -449,6 +376,42 @@ class _WarningsHandlerScreen extends State<WarningsHandlerScreen>
     } catch (e) {
       logger.e(e);
     }
+  }
+
+  void openCamera(BuildContext context) async {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => Scaffold(
+          body: Stack(
+            children: [
+              CameraCamera(
+                resolutionPreset: ResolutionPreset.medium,
+                onFile: (file) {
+                  if (file.path.isNotNullOrEmpty()) {
+                    setState(() {
+                      localFile = file;
+                    });
+                  } else {}
+                  Navigator.pop(context);
+                },
+              ),
+              Positioned(
+                top: 60,
+                left: 16,
+                child: FloatingActionButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  backgroundColor: Colors.black45,
+                  child: const Icon(Icons.close),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 

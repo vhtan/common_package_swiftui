@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:mvvm_cubit/data/api/upload_image/upload_image_ext.dart';
 import 'package:mvvm_cubit/data/model/sos/child_sos_response.dart';
+import 'package:mvvm_cubit/data/model/vehicle/vehicle_response.dart';
 
 class ReportState {
   const ReportState();
@@ -24,5 +25,15 @@ class GetReasonsSuccess extends ReportState {
 }
 
 class DidSubmitReasonSuccess extends ReportState {
-  const DidSubmitReasonSuccess();
+  String sosId;
+  DidSubmitReasonSuccess({
+    required this.sosId,
+  });
+}
+
+class GetVehicleListSuccess extends ReportState {
+  List<VehicleResponse> vehicleList;
+  GetVehicleListSuccess({
+    required this.vehicleList,
+  });
 }

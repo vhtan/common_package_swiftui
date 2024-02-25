@@ -87,6 +87,7 @@ class AddTripCubit extends GenericCubit<AddTripState> {
   }
 
   Future<void> createTrip(AddTripRequest request) async {
+    logger.d('createTrip ${request.toJson()}');
     try {
       final response = await repository.createTrip(request);
       logger.d('==== response $response');

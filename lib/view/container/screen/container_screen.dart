@@ -3,7 +3,12 @@ import 'package:diffutil_dart/diffutil.dart' as diffutil;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
+import 'package:mvvm_cubit/common/dialog/delete_dialog.dart';
+import 'package:mvvm_cubit/common/dialog/progress_dialog.dart';
+import 'package:mvvm_cubit/common/snack_bar/error_snack_bar.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
+import 'package:mvvm_cubit/core/app_style.dart';
+import 'package:mvvm_cubit/data/api/sos/sos_submit_request.dart';
 import 'package:mvvm_cubit/data/model/auth/login_response.dart';
 import 'package:mvvm_cubit/data/model/container/menu_type.dart';
 import 'package:mvvm_cubit/data/model/notification/notification_response.dart';
@@ -19,6 +24,8 @@ import 'package:mvvm_cubit/view/fault_list/fault_list_screen.dart';
 import 'package:mvvm_cubit/view/main/screen/main_screen.dart';
 import 'package:mvvm_cubit/view/notification/screen/notification_screen.dart';
 import 'package:mvvm_cubit/view/report_sos/screen/report_sos_screen.dart';
+import 'package:mvvm_cubit/view/sos_histories/sos_histories_screen.dart';
+import 'package:mvvm_cubit/view/sos_history_details/sos_history_details_screen.dart';
 import 'package:mvvm_cubit/view/temp_form_histories/temp_form_histories_screen.dart';
 import 'package:mvvm_cubit/view/warning_histories/warning_histories_screen.dart';
 import 'package:mvvm_cubit/view/warnings_handler/screen/warnings_handler_screen.dart';
@@ -37,10 +44,14 @@ class ContainerScreen extends StatefulWidget {
 
 class _ContainerScreenState extends State<ContainerScreen>
     with WidgetsBindingObserver {
+  final GlobalKey<State> progressKey = GlobalKey<State>();
   bool isOpened = false;
-  String title = 'Lộ trình';
+  String _title = 'Lộ trình';
 
-  final _containerCubit = ContainerCubit(repository: di());
+  final _containerCubit = ContainerCubit(
+    repository: di(),
+    sosRepository: di(),
+  );
   final HiveStorageManager _hiveStorageManager = di();
 
   AuthCubit authCubit = AuthCubit(
@@ -56,6 +67,7 @@ class _ContainerScreenState extends State<ContainerScreen>
   bool _isShowEmergency = false;
   final GlobalKey<SideMenuState> _sideMenuKey = GlobalKey<SideMenuState>();
   final GlobalKey<State> _warningLoadedKey = GlobalKey<State>();
+  final GlobalKey<State> _sosLoadedKey = GlobalKey<State>();
 
   int _totalUnreadNotification = 0;
   static Timer? _fetchEmergency;
@@ -131,13 +143,24 @@ class _ContainerScreenState extends State<ContainerScreen>
         case PushNotificationType.routing:
           setState(() {
             _menuType = MenuType.trip;
-            titlePage(_menuType);
+            _titlePage(_menuType);
           });
         case PushNotificationType.routingjobtemp:
           setState(() {
             _menuType = MenuType.trip;
-            titlePage(_menuType);
+            _titlePage(_menuType);
           });
+        case PushNotificationType.sos:
+          if (_sosLoadedKey.currentContext != null) {
+            Navigator.pop(context);
+          }
+          showDialog(
+            context: context,
+            builder: (context) => SOSHistoryDetailsScreen(
+              id: value.id ?? '',
+              key: _sosLoadedKey,
+            ),
+          );
       }
     };
   }
@@ -198,9 +221,31 @@ class _ContainerScreenState extends State<ContainerScreen>
       ],
       child: BlocConsumer<ContainerCubit, GenericCubitState>(
         listener: (context, state) {
+          // switch (state.status) {
+          //   case Status.failure:
+          //     if (progressKey.currentContext != null) {
+          //       Navigator.pop(context);
+          //     }
+          //     showErrorSnackBar(
+          //       context,
+          //       state.error ?? '',
+          //     );
+
+          //   case Status.loading:
+          //     if (progressKey.currentContext == null) {
+          //       showProgressDialog(
+          //         context,
+          //         progressKey,
+          //       );
+          //     }
+          //   default:
+          //     if (progressKey.currentContext != null) {
+          //       Navigator.pop(context);
+          //     }
+          // }
           final data = state.data;
           if (data is MenuType) {
-            titlePage(data);
+            _titlePage(data);
           } else if (data is TotalUnreadNotificationMainState) {
             _totalUnreadNotification = data.total;
           } else if (data is EmergencyNotificationListSuccess) {
@@ -233,6 +278,64 @@ class _ContainerScreenState extends State<ContainerScreen>
                 }
               },
             );
+          } else if (data is ExistedVehicleContainerState) {
+            if (data.type == SOSType.other) {
+              showDialog(
+                context: context,
+                builder: (context) => ReportSOSScreen(
+                  sosType: data.type,
+                  vehicleId: data.id,
+                ),
+                barrierDismissible: false,
+              ).then((value) {
+                if (value != null) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SOSHistoryDetailsScreen(
+                        id: value,
+                      ),
+                    ),
+                  );
+                }
+              });
+            } else {
+              _containerCubit.submitSOS(
+                SOSSubmitRequest(
+                  vehicleId: data.id,
+                  type: data.type,
+                ),
+              );
+            }
+          } else if (data is NotExistedVehicleContainerState) {
+            showDialog(
+              context: context,
+              builder: (context) => ReportSOSScreen(
+                sosType: data.type,
+                vehicleId: null,
+              ),
+              barrierDismissible: false,
+            ).then((value) {
+              if (value != null) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SOSHistoryDetailsScreen(
+                      id: value,
+                    ),
+                  ),
+                );
+              }
+            });
+          } else if (data is DidSubmitSOSSuccessContainerState) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SOSHistoryDetailsScreen(
+                  id: data.sosId,
+                ),
+              ),
+            );
           }
         },
         builder: (context, state) {
@@ -254,7 +357,7 @@ class _ContainerScreenState extends State<ContainerScreen>
                       valueChanged: (value) {
                         setState(() {
                           _menuType = value;
-                          titlePage(_menuType);
+                          _titlePage(_menuType);
                         });
                       },
                     ),
@@ -266,7 +369,7 @@ class _ContainerScreenState extends State<ContainerScreen>
                     ignoring: isOpened,
                     child: Scaffold(
                       appBar: AppBar(
-                        centerTitle: true,
+                        centerTitle: false,
                         leading: IconButton(
                           icon: const Icon(Icons.menu,
                               size: Dimension.menuIconSize,
@@ -274,29 +377,36 @@ class _ContainerScreenState extends State<ContainerScreen>
                           onPressed: () => toggleMenu(true),
                         ),
                         actions: [
-                          Padding(
-                            padding: const EdgeInsets.only(right: 10),
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 12, vertical: 5),
-                                  backgroundColor: AppColors.error),
-                              onPressed: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => const ReportSOSScreen(),
-                                  barrierDismissible: false,
-                                );
-                              },
-                              child: const Icon(
-                                Icons.sos,
-                                color: AppColors.white,
-                                size: Dimension.menuIconSize,
+                          InkWell(
+                            onTap: () => showSOSSelection(
+                              context: context,
+                            ).then(
+                              (value) =>
+                                  _containerCubit.checkVehicleExisted(value),
+                            ),
+                            child: Container(
+                              height: 40,
+                              padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.rectangle,
+                                color: AppColors.red,
+                                borderRadius: BorderRadius.circular(25),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  'SOS',
+                                  style: headLine6.copyWith(
+                                    fontSize: 14,
+                                    color: AppColors.white,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
                               ),
                             ),
                           ),
+                          const SizedBox(width: 10),
                         ],
-                        title: Text(title),
+                        title: Text(_title),
                       ),
                       body: BlocBuilder<ContainerCubit, GenericCubitState>(
                         builder: (context, state) {
@@ -314,23 +424,25 @@ class _ContainerScreenState extends State<ContainerScreen>
     );
   }
 
-  void titlePage(MenuType? menuType) {
+  void _titlePage(MenuType? menuType) {
     toggleMenu();
     switch (menuType) {
       case MenuType.trip:
-        title = 'Lộ trình';
+        _title = 'Lộ trình';
+      case MenuType.sosHistories:
+        _title = 'Lịch sử SOS';
       case MenuType.requestForm:
-        title = 'Lịch sử PYC tạm';
+        _title = 'Lịch sử PYC tạm';
       case MenuType.account:
-        title = 'Tài khoản';
+        _title = 'Tài khoản';
       case MenuType.notification:
-        title = 'Thông báo';
+        _title = 'Thông báo';
       case MenuType.warnings:
-        title = 'Lịch sử cảnh báo';
+        _title = 'Lịch sử cảnh báo';
       case MenuType.fault:
-        title = 'Lỗi không tuân thủ';
+        _title = 'Lỗi không tuân thủ';
       case MenuType.logOut:
-        title = '';
+        _title = '';
         forceLogout();
       default:
         break;
@@ -358,6 +470,8 @@ class _ContainerScreenState extends State<ContainerScreen>
         return const WarningHistoriesScreen();
       case MenuType.fault:
         return const FaultListScreen();
+      case MenuType.sosHistories:
+        return const SOSHistoriesScreen();
       default:
         return const MainScreen();
     }
