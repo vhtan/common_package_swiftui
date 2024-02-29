@@ -6,6 +6,7 @@ import 'package:mvvm_cubit/common/network/api_helper.dart';
 import 'package:mvvm_cubit/common/network/api_response/api_response.dart';
 import 'package:mvvm_cubit/common/network/dio_client.dart';
 import 'package:mvvm_cubit/core/api_config.dart';
+import 'package:mvvm_cubit/data/api/upload_image/upload_image_ext.dart';
 import 'package:mvvm_cubit/data/model/add_trip/add_trip_response.dart';
 import 'package:mvvm_cubit/data/model/map_location/map_location_response.dart';
 import 'package:mvvm_cubit/data/model/purpose/purpose_response.dart';
@@ -14,7 +15,7 @@ import 'package:mvvm_cubit/data/model/vehicle/vehicle_response.dart';
 import 'package:mvvm_cubit/data/request/add_trip/add_trip_request.dart';
 import 'package:mvvm_cubit/data/request/add_trip/user_type.dart';
 
-class AddTripApi with ApiHelper<AddTripResponse> {
+class AddTripApi with ApiHelper<AddTripResponse>, UploadImageExt {
   final DioClient client;
 
   AddTripApi({required this.client});

@@ -1,22 +1,27 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 
+import 'package:camera_camera/camera_camera.dart';
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
+import 'package:material_text_fields/utils/extensions.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
 import 'package:mvvm_cubit/common/dialog/progress_dialog.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/common/snack_bar/error_snack_bar.dart';
 import 'package:mvvm_cubit/common/widget/drop_down.dart';
+import 'package:mvvm_cubit/common/widget/image_capture.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/common/widget/text_input.dart';
 import 'package:mvvm_cubit/core/api_config.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_string.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
+import 'package:mvvm_cubit/data/api/upload_image/upload_image_ext.dart';
 import 'package:mvvm_cubit/data/model/map_location/map_location_response.dart';
 import 'package:mvvm_cubit/data/model/purpose/purpose_response.dart';
 import 'package:mvvm_cubit/data/model/temp_form/temp_form_response.dart';
@@ -63,6 +68,8 @@ class _AddTripScreen extends State<AddTripScreen> {
   UserRoleResponse? _guard;
   MapLocationResponse? _location;
   TempFormResponse? _tempForm;
+  File? _localFile;
+  ImageResponse? _imageResponse;
 
   KeyboardActionsConfig _keyboardActionsConfig(BuildContext context) {
     return KeyboardActionsConfig(
@@ -186,6 +193,13 @@ class _AddTripScreen extends State<AddTripScreen> {
           } else if (data is DidAddTripState) {
             widget.didAddTrip();
             Navigator.pop(context);
+          } else if (data is UploadImageAddTripSuccess) {
+            setState(
+              () {
+                _imageResponse = data.imageResponse;
+                _localFile = data.file;
+              },
+            );
           }
         },
         builder: (context, state) {
@@ -297,6 +311,18 @@ class _AddTripScreen extends State<AddTripScreen> {
               const SizedBox(height: 15),
               _vehicleWidget,
               const SizedBox(height: 15),
+              ImageCapture(
+                title: 'Chụp ảnh',
+                imageFile: _localFile,
+                captureCallback: () => openCamera(context),
+                deleteCallback: () => {
+                  setState(() {
+                    _localFile = null;
+                    _imageResponse = null;
+                  })
+                },
+              ),
+              const SizedBox(height: 15),
               PrimaryButton(
                 title: 'Gửi',
                 buttonHeight: 50,
@@ -335,6 +361,7 @@ class _AddTripScreen extends State<AddTripScreen> {
             initialItem: _purpose,
             items: _purposes,
             displayTextBuilder: (value) => value.name?.decodeHtml ?? '',
+            // displayTextBuilder: (value) => "dadsads",
             onChanged: (value) {
               setState(() {
                 _purpose = value;
@@ -710,12 +737,47 @@ class _AddTripScreen extends State<AddTripScreen> {
     );
   }
 
+  void openCamera(BuildContext context) async {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => Scaffold(
+          body: Stack(
+            children: [
+              CameraCamera(
+                resolutionPreset: ResolutionPreset.medium,
+                onFile: (file) {
+                  if (file.path.isNotNullOrEmpty()) {
+                    addTripCubit.didCapturePhoto(file);
+                  } else {}
+                  Navigator.pop(context);
+                },
+              ),
+              Positioned(
+                top: 60,
+                left: 16,
+                child: FloatingActionButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  backgroundColor: Colors.black45,
+                  child: const Icon(Icons.close),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   bool validSubmit() {
     if (_purpose != null &&
         _driver != null &&
         _vehicle != null &&
         _guard != null &&
-        _location != null) {
+        _location != null &&
+        _imageResponse != null) {
       return true;
     }
     return false;

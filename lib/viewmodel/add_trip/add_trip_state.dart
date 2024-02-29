@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:mvvm_cubit/data/api/upload_image/upload_image_ext.dart';
 import 'package:mvvm_cubit/data/model/map_location/map_location_response.dart';
 import 'package:mvvm_cubit/data/model/purpose/purpose_response.dart';
 import 'package:mvvm_cubit/data/model/user_role/user_role_response.dart';
@@ -49,4 +52,13 @@ class GetMapLocationSate extends AddTripState {
 
 class DidAddTripState extends AddTripState {
   DidAddTripState();
+}
+
+class UploadImageAddTripSuccess extends AddTripState {
+  ImageResponse? imageResponse;
+  File? file;
+  UploadImageAddTripSuccess({
+    required this.imageResponse,
+    required this.file,
+  });
 }

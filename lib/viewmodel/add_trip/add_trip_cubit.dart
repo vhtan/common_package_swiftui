@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit.dart';
 import 'package:mvvm_cubit/common/cubit/generic_cubit_state.dart';
@@ -8,6 +10,7 @@ import 'package:mvvm_cubit/core/app_string.dart';
 import 'package:mvvm_cubit/data/request/add_trip/add_trip_request.dart';
 import 'package:mvvm_cubit/repository/add_trip/add_trip_repository.dart';
 import 'package:mvvm_cubit/viewmodel/add_trip/add_trip_state.dart';
+import 'package:mvvm_cubit/viewmodel/report_sos/report_state.dart';
 
 class AddTripCubit extends GenericCubit<AddTripState> {
   final AddTripRepository repository;
@@ -140,6 +143,27 @@ class AddTripCubit extends GenericCubit<AddTripState> {
       await repository.updateTrip(request);
       emit(
         GenericCubitState.success(DidAddTripState()),
+      );
+    } on DioException catch (e) {
+      emit(
+        GenericCubitState.failure(e.errorMessage),
+      );
+    }
+  }
+
+  void didCapturePhoto(File? file) async {
+    if (file == null) {
+      emit(
+        GenericCubitState.loading(),
+      );
+      return;
+    }
+    try {
+      final response = await repository.uploadImage(file.path);
+      emit(
+        GenericCubitState.success(
+          UploadImageAddTripSuccess(imageResponse: response, file: file),
+        ),
       );
     } on DioException catch (e) {
       emit(

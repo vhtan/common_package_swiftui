@@ -53,11 +53,12 @@ class _DropDownState<T> extends State<DropDown<T>> {
               (item) => DropdownMenuItem<T>(
                 value: item,
                 child: Container(
-                    padding: const EdgeInsets.only(left: 10, right: 10),
-                    child: Text(
-                      widget.displayTextBuilder(item),
-                      style: textDefault,
-                    )),
+                  padding: const EdgeInsets.only(left: 10, right: 10),
+                  child: Text(
+                    widget.displayTextBuilder(item),
+                    style: textDefault.copyWith(fontSize: 14),
+                  ),
+                ),
               ),
             )
             .toList(),
