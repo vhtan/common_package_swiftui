@@ -1,5 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:mvvm_cubit/core/app_asset.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/data/model/temp_form/temp_form_response.dart';
@@ -122,6 +124,8 @@ class TempFormHistoryDetailsScreen extends StatelessWidget {
                             style: textDefault,
                           ),
                           SizedBox(height: _spacing),
+                          if (tempForm.image != null)
+                            _imageWidget(tempForm.image!),
                           Row(
                             children: [
                               const Text(
@@ -155,6 +159,32 @@ class TempFormHistoryDetailsScreen extends StatelessWidget {
                     )
                   ],
                 ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _imageWidget(String path) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: AspectRatio(
+          aspectRatio: 16 / 9,
+          child: CachedNetworkImage(
+            fit: BoxFit.fitWidth,
+            imageUrl: path,
+            placeholder: (context, url) => AspectRatio(
+              aspectRatio: 16 / 9,
+              child: Image.asset(
+                AppAsset.placeHolder,
+                fit: BoxFit.fill,
               ),
             ),
           ),

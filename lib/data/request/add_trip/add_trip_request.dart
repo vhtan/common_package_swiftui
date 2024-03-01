@@ -16,6 +16,7 @@ class AddTripRequest {
     required this.bodyguardId,
     required this.vehicleId,
     required this.balanceDetails,
+    required this.imgName,
     String? requestId,
     int? requestTime,
   })  : requestId = const Uuid().v4(),
@@ -41,6 +42,8 @@ class AddTripRequest {
   final int requestTime;
   @JsonKey(name: "balanceDetails")
   final List<BalanceDetail>? balanceDetails;
+  @JsonKey(name: "imgName")
+  final String imgName;
 
   factory AddTripRequest.fromJson(Map<String, dynamic> json) =>
       _$AddTripRequestFromJson(json);

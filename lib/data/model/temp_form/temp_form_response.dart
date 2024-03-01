@@ -20,6 +20,8 @@ abstract class TempFormResponse with _$TempFormResponse {
     String? note,
     String? code,
     List<BalanceDetailsResponse>? balanceDetails,
+    String? imgName,
+    String? image,
   }) = _TempFormResponse;
 
   factory TempFormResponse.fromJson(Map<String, dynamic> json) =>

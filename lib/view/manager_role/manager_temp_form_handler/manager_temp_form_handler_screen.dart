@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -9,6 +10,7 @@ import 'package:mvvm_cubit/common/snack_bar/error_snack_bar.dart';
 import 'package:mvvm_cubit/common/widget/empty_widget.dart';
 import 'package:mvvm_cubit/common/widget/primary_button.dart';
 import 'package:mvvm_cubit/common/widget/text_input.dart';
+import 'package:mvvm_cubit/core/app_asset.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
 import 'package:mvvm_cubit/data/model/temp_form_history/temp_form_history_response.dart';
@@ -200,6 +202,7 @@ class _ManagerTempFormHandlerScreenState
                   style: textDefault,
                 ),
                 SizedBox(height: _spacing),
+                if (tempForm.image != null) _imageWidget(tempForm.image!),
                 Text(
                   'Thời gian tạo: ${tempForm.dateCreated?.toDate.toStringFormat()}',
                   style: textDefaultLight,
@@ -213,6 +216,32 @@ class _ManagerTempFormHandlerScreenState
           ),
         )
       ],
+    );
+  }
+
+  Widget _imageWidget(String path) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: AspectRatio(
+          aspectRatio: 16 / 9,
+          child: CachedNetworkImage(
+            fit: BoxFit.fitWidth,
+            imageUrl: path,
+            placeholder: (context, url) => AspectRatio(
+              aspectRatio: 16 / 9,
+              child: Image.asset(
+                AppAsset.placeHolder,
+                fit: BoxFit.fill,
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 

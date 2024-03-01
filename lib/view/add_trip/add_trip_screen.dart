@@ -21,7 +21,6 @@ import 'package:mvvm_cubit/core/api_config.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
 import 'package:mvvm_cubit/core/app_string.dart';
 import 'package:mvvm_cubit/core/app_style.dart';
-import 'package:mvvm_cubit/data/api/upload_image/upload_image_ext.dart';
 import 'package:mvvm_cubit/data/model/map_location/map_location_response.dart';
 import 'package:mvvm_cubit/data/model/purpose/purpose_response.dart';
 import 'package:mvvm_cubit/data/model/temp_form/temp_form_response.dart';
@@ -69,7 +68,8 @@ class _AddTripScreen extends State<AddTripScreen> {
   MapLocationResponse? _location;
   TempFormResponse? _tempForm;
   File? _localFile;
-  ImageResponse? _imageResponse;
+  String? _uploadedImageName;
+  String? _uploadedImagePath;
 
   KeyboardActionsConfig _keyboardActionsConfig(BuildContext context) {
     return KeyboardActionsConfig(
@@ -113,18 +113,19 @@ class _AddTripScreen extends State<AddTripScreen> {
   }
 
   void _loadEditTempForm(TempFormResponse tempForm) {
-    logger.d('==== tempForm.vehicle ${tempForm.vehicle}');
+    logger.d('==== tempForm.vehicle ${tempForm.image}');
     _purpose = tempForm.purpose;
     _driver = tempForm.driver;
     _vehicle = tempForm.vehicle;
     _guard = tempForm.bodyguard;
+    _uploadedImageName = tempForm.imgName;
+    _uploadedImagePath = tempForm.image;
     _location = MapLocationResponse(
       display: tempForm.address?.address?.decodeHtml,
       lat: tempForm.address?.lat,
       lng: tempForm.address?.lng,
     );
-    // _amount1 = tempForm.quantity?.toInt();
-    // _moneyModelWidgets.first.controller.text = _amount1.toString();
+
     selectedValueSingleDialogFuture = tempForm.address?.toJson();
     if (tempForm.balanceDetails != null) {
       _moneyModelWidgets = tempForm.balanceDetails!.map((e) {
@@ -196,7 +197,7 @@ class _AddTripScreen extends State<AddTripScreen> {
           } else if (data is UploadImageAddTripSuccess) {
             setState(
               () {
-                _imageResponse = data.imageResponse;
+                _uploadedImageName = data.imageResponse?.imageName;
                 _localFile = data.file;
               },
             );
@@ -314,11 +315,13 @@ class _AddTripScreen extends State<AddTripScreen> {
               ImageCapture(
                 title: 'Chụp ảnh',
                 imageFile: _localFile,
+                imagePath: _uploadedImagePath,
                 captureCallback: () => openCamera(context),
                 deleteCallback: () => {
                   setState(() {
                     _localFile = null;
-                    _imageResponse = null;
+                    _uploadedImageName = null;
+                    _uploadedImagePath = null;
                   })
                 },
               ),
@@ -777,18 +780,13 @@ class _AddTripScreen extends State<AddTripScreen> {
         _vehicle != null &&
         _guard != null &&
         _location != null &&
-        _imageResponse != null) {
+        _uploadedImageName != null) {
       return true;
     }
     return false;
   }
 
   AddTripRequest get _toRequest {
-    double amount = 0;
-    // final text = _amount1Controller.text.replaceAll('.', '');
-    // if (text.isNotEmpty) {
-    //   amount = double.parse(text);
-    // }
     return AddTripRequest(
       purposeId: _purpose?.id ?? '',
       stopPointAddress: _location?.display ?? '',
@@ -798,6 +796,7 @@ class _AddTripScreen extends State<AddTripScreen> {
       bodyguardId: _guard?.id ?? '',
       vehicleId: _vehicle?.id ?? '',
       balanceDetails: _getBalanceDetails,
+      imgName: _uploadedImageName ?? '',
     );
   }
 
