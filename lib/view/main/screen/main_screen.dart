@@ -73,7 +73,8 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
       cancelFetchingTempFormDetails();
       if (AuthManager.instance.isLoggedIn) {
         navigateTo(
-          const LoginScreen(),
+          context: context,
+          screen: const LoginScreen(),
         );
       }
       AuthManager.instance.setLoggedIn(false);
@@ -309,11 +310,10 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     );
   }
 
-  void navigateTo(Widget screen) {
-    if (!mounted) return;
+  Future<T?> navigateTo<T extends Object?>(
+      {required BuildContext context, required Widget screen}) {
     final name = screen.runtimeType.toString();
-    logger.d('navigateTo $name');
-    Navigator.push(
+    return Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => screen,
@@ -365,14 +365,15 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
             }
           },
         ),
-        onFinihed: () {
+        onFinished: () {
           navigateTo(
-            WebViewCustom(
+            context: context,
+            screen: WebViewCustom(
               title: 'Hoàn thành PYC: ${trip.routeId ?? 0}',
               jobRequestId: trip.routeId ?? 0,
               code: _loginCode,
             ),
-          );
+          ).then((value) => _cubit.getTrip());
         },
       ),
       onRefresh: () => _cubit.getTrip(),

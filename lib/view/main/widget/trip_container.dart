@@ -10,12 +10,12 @@ class TripContainer extends StatefulWidget {
     super.key,
     required this.trip,
     required this.onArrived,
-    required this.onFinihed,
+    required this.onFinished,
   });
 
   final TripResponse trip;
   final ValueChanged<StopPointResponse> onArrived;
-  final VoidCallback onFinihed;
+  final VoidCallback onFinished;
 
   @override
   State<TripContainer> createState() => _TripContainer();
@@ -54,7 +54,7 @@ class _TripContainer extends State<TripContainer> {
               stopPoint: stopPoint,
               routingPersons: _trip?.routingPersons,
               onArrived: widget.onArrived,
-              onFinished: widget.onFinihed,
+              onFinished: widget.onFinished,
             );
           },
         ),

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:mvvm_cubit/common/logger/logger.dart';
 import 'package:mvvm_cubit/config/app_config.dart';
 import 'package:mvvm_cubit/core/app_extension.dart';
-import 'package:mvvm_cubit/data/notification_service/notification_service.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class WebViewCustom extends StatefulWidget {
