@@ -689,6 +689,7 @@ class _AddTripScreen extends State<AddTripScreen> {
           maxLines: 2,
         );
       },
+      searchDelay: 300,
       futureSearchFn: (String? keyword, String? orderBy, bool? orderAsc,
           List<Tuple2<String, String>>? filters, int? pageNb) async {
         if (keyword?.isEmpty == true) {
