@@ -87,7 +87,7 @@ private extension URLQueryItem {
 
 extension APICall {
     
-    func urlRequest(baseURL: URL, encoder: JSONEncoder, headers: [String : String]) -> URLRequest {
+    public func urlRequest(baseURL: URL, encoder: JSONEncoder, headers: [String : String]) -> URLRequest {
         let url = baseURL.appendingPathComponent(path)
         var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData)
         request.httpMethod = method.method

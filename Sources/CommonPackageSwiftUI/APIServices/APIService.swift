@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 open class APIService: NSObject {
-    lazy private var session: URLSession = {
+    lazy private (set) var session: URLSession = {
         let configuration = URLSessionConfiguration.default
         configuration.timeoutIntervalForRequest = 10
         configuration.timeoutIntervalForResource = 20
