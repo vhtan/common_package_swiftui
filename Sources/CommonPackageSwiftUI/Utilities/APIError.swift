@@ -9,7 +9,7 @@ public struct APIError: Error {
     public var code: Int?
     public var messageResponse: String?
 
-    init(code: Int? = nil, messageResponse: String? = nil) {
+    public init(code: Int? = nil, messageResponse: String? = nil) {
         self.code = code
         self.messageResponse = messageResponse
     }
