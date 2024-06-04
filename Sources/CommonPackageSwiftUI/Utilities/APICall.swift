@@ -102,7 +102,7 @@ extension APICall {
             var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
             urlComponents?.queryItems = dataTask?.queryItem(encoder: encoder)
             request.url = urlComponents?.url
-            request.allHTTPHeaderFields?["Content-Type"] = "application/x-www-form-urlencoded; charset=utf-8"
+//            request.allHTTPHeaderFields?["Content-Type"] = "application/x-www-form-urlencoded; charset=utf-8"
         } else {
             request.allHTTPHeaderFields?["Content-Type"] = "application/json"
             do {
