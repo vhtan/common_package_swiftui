@@ -108,7 +108,7 @@ extension APICall {
             request.url = queryItems(url: url, encoder: encoder)
 //            request.allHTTPHeaderFields?["Content-Type"] = "application/x-www-form-urlencoded; charset=utf-8"
         } else {
-            request.allHTTPHeaderFields?["Content-Type"] = "application/json"
+//            request.allHTTPHeaderFields?["Content-Type"] = "application/json"
             request.url = queryItems(url: url, encoder: encoder)
             do {
 //                switch dataTask {
