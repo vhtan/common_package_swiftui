@@ -33,6 +33,7 @@ public struct AnyDecodable: Decodable {
 public enum DataTask {
     case encodable(Encodable)
     case parameters([String: Any])
+    case urlQueryItems([URLQueryItem])
     case uploadFile(MultipartFormData)
     case downloadFile(url: URL)
 }
@@ -59,9 +60,14 @@ extension DataTask {
     fileprivate func queryItem(encoder: JSONEncoder) -> [URLQueryItem]? {
         switch self {
         case let .encodable(v):
-            return v.asDictionary(encoder: encoder)?.map { URLQueryItem(name: $0.key, value: $0.value) }
+            return v.asDictionary(encoder: encoder)?.map { URLQueryItem(name: $0.key, 
+                                                                        value: $0.value) }
         case let .parameters(p):
-            return p.map { URLQueryItem(name: $0.key, value: $0.value) }
+            return p.map { URLQueryItem(name: $0.key, 
+                                        value: $0.value) }
+            
+        case let .urlQueryItems(items):
+            return items
         default:
             return nil
         }
