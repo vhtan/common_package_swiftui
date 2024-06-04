@@ -99,12 +99,11 @@ extension APICall {
         request.allHTTPHeaderFields = baseHeaders
         
         if method == .get {
-            var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
-            urlComponents?.queryItems = dataTask?.queryItem(encoder: encoder)
-            request.url = urlComponents?.url
+            request.url = queryItems(url: url, encoder: encoder)
 //            request.allHTTPHeaderFields?["Content-Type"] = "application/x-www-form-urlencoded; charset=utf-8"
         } else {
             request.allHTTPHeaderFields?["Content-Type"] = "application/json"
+            request.url = queryItems(url: url, encoder: encoder)
             do {
                 switch dataTask {
                 case let .encodable(v):
@@ -138,6 +137,12 @@ extension APICall {
         logData(url: url.absoluteString, method: method, headers: request.allHTTPHeaderFields ?? [:], body: request.httpBody)
         
         return request
+    }
+    
+    private func queryItems(url: URL, encoder: JSONEncoder) -> URL? {
+        var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
+        urlComponents?.queryItems = dataTask?.queryItem(encoder: encoder)
+        return urlComponents?.url
     }
     
     private func createData(binaryData: Data, name: String, mimeType: String, boundary: String) -> Data {
