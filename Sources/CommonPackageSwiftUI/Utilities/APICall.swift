@@ -105,30 +105,30 @@ extension APICall {
             request.allHTTPHeaderFields?["Content-Type"] = "application/json"
             request.url = queryItems(url: url, encoder: encoder)
             do {
-                switch dataTask {
-                case let .encodable(v):
-                    request.httpBody = try encoder.encode(AnyEncodable(v))
-                    
-                case let .parameters(p):
-                    request.httpBody = p.toData()
-                    
-                case let .uploadFile(multipartFormData):
-                    let boundary = multipartFormData.boundary
-                    var mimeType: String!
-                    var imageData: Data!
-                    switch multipartFormData.provider {
-                    case let .file(url):
-                        let da = try Data(contentsOf: url)
-                        mimeType = da.mimeType
-                        imageData = da
-                    case let .data(da):
-                        imageData = da
-                        mimeType = da.mimeType
-                    }
-                    request.httpBody = createData(binaryData: imageData, name: multipartFormData.name, mimeType: mimeType, boundary: boundary)
-                    request.allHTTPHeaderFields?["Content-Type"] = "multipart/form-data; boundary=\(boundary)"
-                default: break
-                }
+//                switch dataTask {
+//                case let .encodable(v):
+//                    request.httpBody = try encoder.encode(AnyEncodable(v))
+//                    
+//                case let .parameters(p):
+//                    request.httpBody = p.toData()
+//                    
+//                case let .uploadFile(multipartFormData):
+//                    let boundary = multipartFormData.boundary
+//                    var mimeType: String!
+//                    var imageData: Data!
+//                    switch multipartFormData.provider {
+//                    case let .file(url):
+//                        let da = try Data(contentsOf: url)
+//                        mimeType = da.mimeType
+//                        imageData = da
+//                    case let .data(da):
+//                        imageData = da
+//                        mimeType = da.mimeType
+//                    }
+//                    request.httpBody = createData(binaryData: imageData, name: multipartFormData.name, mimeType: mimeType, boundary: boundary)
+//                    request.allHTTPHeaderFields?["Content-Type"] = "multipart/form-data; boundary=\(boundary)"
+//                default: break
+//                }
             } catch {
                 log.error(error.localizedDescription)
             }
