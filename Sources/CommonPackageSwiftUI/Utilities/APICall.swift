@@ -129,15 +129,6 @@ extension APICall {
         if method == .get {
             request.url = queryItems(url: url, encoder: encoder)
             request.allHTTPHeaderFields?["Content-Type"] = "application/x-www-form-urlencoded; charset=utf-8"
-            do {
-                switch dataTask {
-                case let .encodable(v):
-                    request.httpBody = try encoder.encode(AnyEncodable(v))
-                default: break
-                }
-            } catch {
-                log.error(error.localizedDescription)
-            }
         } else {
             request.allHTTPHeaderFields?["Content-Type"] = "application/json"
 //            request.url = queryItems(url: url, encoder: encoder)
