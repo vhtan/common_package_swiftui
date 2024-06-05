@@ -93,6 +93,28 @@ private extension URLQueryItem {
 
 extension APICall {
     
+    public func urlRequestMexc(baseURL: URL, encoder: JSONEncoder, headers: [String : String]) -> URLRequest {
+        let url = baseURL.appendingPathComponent(path)
+        var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData)
+        request.httpMethod = method.method
+        
+        var baseHeaders = headers
+        if let apiHeaders = self.headers {
+            apiHeaders.forEach { baseHeaders[$0.key] = $0.value }
+        }
+        request.allHTTPHeaderFields = baseHeaders
+        
+        if method == .get {
+            request.url = queryItems(url: url, encoder: encoder)
+        } else {
+            request.url = queryItems(url: url, encoder: encoder)
+        }
+        
+        logData(url: url.absoluteString, method: method, headers: request.allHTTPHeaderFields ?? [:], body: request.httpBody)
+        
+        return request
+    }
+    
     public func urlRequest(baseURL: URL, encoder: JSONEncoder, headers: [String : String]) -> URLRequest {
         let url = baseURL.appendingPathComponent(path)
         var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData)
@@ -106,35 +128,35 @@ extension APICall {
         
         if method == .get {
             request.url = queryItems(url: url, encoder: encoder)
-//            request.allHTTPHeaderFields?["Content-Type"] = "application/x-www-form-urlencoded; charset=utf-8"
+            request.allHTTPHeaderFields?["Content-Type"] = "application/x-www-form-urlencoded; charset=utf-8"
         } else {
-//            request.allHTTPHeaderFields?["Content-Type"] = "application/json"
-            request.url = queryItems(url: url, encoder: encoder)
+            request.allHTTPHeaderFields?["Content-Type"] = "application/json"
+//            request.url = queryItems(url: url, encoder: encoder)
             do {
-//                switch dataTask {
-//                case let .encodable(v):
-//                    request.httpBody = try encoder.encode(AnyEncodable(v))
-//                    
-//                case let .parameters(p):
-//                    request.httpBody = p.toData()
-//                    
-//                case let .uploadFile(multipartFormData):
-//                    let boundary = multipartFormData.boundary
-//                    var mimeType: String!
-//                    var imageData: Data!
-//                    switch multipartFormData.provider {
-//                    case let .file(url):
-//                        let da = try Data(contentsOf: url)
-//                        mimeType = da.mimeType
-//                        imageData = da
-//                    case let .data(da):
-//                        imageData = da
-//                        mimeType = da.mimeType
-//                    }
-//                    request.httpBody = createData(binaryData: imageData, name: multipartFormData.name, mimeType: mimeType, boundary: boundary)
-//                    request.allHTTPHeaderFields?["Content-Type"] = "multipart/form-data; boundary=\(boundary)"
-//                default: break
-//                }
+                switch dataTask {
+                case let .encodable(v):
+                    request.httpBody = try encoder.encode(AnyEncodable(v))
+                    
+                case let .parameters(p):
+                    request.httpBody = p.toData()
+                    
+                case let .uploadFile(multipartFormData):
+                    let boundary = multipartFormData.boundary
+                    var mimeType: String!
+                    var imageData: Data!
+                    switch multipartFormData.provider {
+                    case let .file(url):
+                        let da = try Data(contentsOf: url)
+                        mimeType = da.mimeType
+                        imageData = da
+                    case let .data(da):
+                        imageData = da
+                        mimeType = da.mimeType
+                    }
+                    request.httpBody = createData(binaryData: imageData, name: multipartFormData.name, mimeType: mimeType, boundary: boundary)
+                    request.allHTTPHeaderFields?["Content-Type"] = "multipart/form-data; boundary=\(boundary)"
+                default: break
+                }
             } catch {
                 log.error(error.localizedDescription)
             }
