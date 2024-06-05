@@ -37,7 +37,11 @@ public struct BuildConfiguration {
         case missingKey, invalidValue
     }
     
-    public init() { }
+    let apiKey: String
+    
+    public init(apiKey: String) {
+        self.apiKey = apiKey
+    }
     
     static func value(for key: String) throws -> String {
         guard let value = Bundle.main.object(forInfoDictionaryKey: key) as? String else {
@@ -69,14 +73,14 @@ public struct BuildConfiguration {
             return nil
         }).first.map { $0 }
         do {
-            let path = try BuildConfiguration.value(for: "BASE_API_URL")
+            let path = try BuildConfiguration.value(for: apiKey)
             if let pathComponent = pathComponent {
                 return URL(string: "\(http)://\(path)")!.appendingPathComponent(pathComponent, conformingTo: .url)
             } else {
                 return URL(string: "\(http)://\(path)")!
             }
         } catch {
-            assertionFailure("Missing BASE_API_URL in Info.plist")
+            assertionFailure("Missing \(apiKey) in Info.plist")
             return URL(string: "")!
         }
     }
