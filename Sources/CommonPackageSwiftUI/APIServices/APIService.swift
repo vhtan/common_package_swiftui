@@ -58,9 +58,12 @@ extension APIService: URLSessionDelegate {
 //            completionHandler(.useCredential, credential)
 //        }
         
-        let trust: SecTrust = challenge.protectionSpace.serverTrust!
-        let credential = URLCredential(trust: trust)
-        completionHandler(.useCredential, credential)
+//        let trust: SecTrust = challenge.protectionSpace.serverTrust!
+//        let credential = URLCredential(trust: trust)
+//        completionHandler(., credential)
+        
+        let urlCredential = URLCredential(trust: challenge.protectionSpace.serverTrust!)
+        completionHandler(.useCredential, urlCredential)
     }
 }
 
