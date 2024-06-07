@@ -11,8 +11,8 @@ import Combine
 open class APIService: NSObject {
     lazy public private (set) var session: URLSession = {
         let configuration = URLSessionConfiguration.default
-        configuration.timeoutIntervalForRequest = 10
-        configuration.timeoutIntervalForResource = 20
+        configuration.timeoutIntervalForRequest = 30
+        configuration.timeoutIntervalForResource = 30
         configuration.waitsForConnectivity = true
         configuration.httpMaximumConnectionsPerHost = 5
         configuration.requestCachePolicy = .returnCacheDataElseLoad
@@ -50,13 +50,17 @@ extension APIService: URLSessionDelegate {
     public func urlSession(_ session: URLSession,
                            didReceive challenge: URLAuthenticationChallenge,
                            completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
-        if challenge.protectionSpace.serverTrust == nil {
-            completionHandler(.useCredential, nil)
-        } else {
-            let trust: SecTrust = challenge.protectionSpace.serverTrust!
-            let credential = URLCredential(trust: trust)
-            completionHandler(.useCredential, credential)
-        }
+//        if challenge.protectionSpace.serverTrust == nil {
+//            completionHandler(.useCredential, nil)
+//        } else {
+//            let trust: SecTrust = challenge.protectionSpace.serverTrust!
+//            let credential = URLCredential(trust: trust)
+//            completionHandler(.useCredential, credential)
+//        }
+        
+        let trust: SecTrust = challenge.protectionSpace.serverTrust!
+        let credential = URLCredential(trust: trust)
+        completionHandler(.useCredential, credential)
     }
 }
 
