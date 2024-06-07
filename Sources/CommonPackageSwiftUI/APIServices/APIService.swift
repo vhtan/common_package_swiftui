@@ -50,20 +50,20 @@ extension APIService: URLSessionDelegate {
     public func urlSession(_ session: URLSession,
                            didReceive challenge: URLAuthenticationChallenge,
                            completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
-//        if challenge.protectionSpace.serverTrust == nil {
-//            completionHandler(.useCredential, nil)
-//        } else {
-//            let trust: SecTrust = challenge.protectionSpace.serverTrust!
-//            let credential = URLCredential(trust: trust)
-//            completionHandler(.useCredential, credential)
-//        }
+        if challenge.protectionSpace.serverTrust == nil {
+            completionHandler(.useCredential, nil)
+        } else {
+            let trust: SecTrust = challenge.protectionSpace.serverTrust!
+            let credential = URLCredential(trust: trust)
+            completionHandler(.useCredential, credential)
+        }
         
 //        let trust: SecTrust = challenge.protectionSpace.serverTrust!
 //        let credential = URLCredential(trust: trust)
 //        completionHandler(., credential)
         
-        let urlCredential = URLCredential(trust: challenge.protectionSpace.serverTrust!)
-        completionHandler(.useCredential, urlCredential)
+//        let urlCredential = URLCredential(trust: challenge.protectionSpace.serverTrust!)
+//        completionHandler(.useCredential, urlCredential)
     }
 }
 
@@ -89,8 +89,8 @@ private extension Publisher where Output == URLSession.DataTaskPublisher.Output 
             return $0.data
         }
         .extractUnderlyingError()
-        .decode(type: Response<Value>.self, decoder: decoder)
         .logError()
+        .decode(type: Response<Value>.self, decoder: decoder)
         .tryMap { response in
             guard let errorCode = response.code else {
                 throw APIError.defaultError()
