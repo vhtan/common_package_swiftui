@@ -12,8 +12,6 @@ public protocol APICall {
     var method: HTTPMethod { get }
     var headers: [String : String]? { get }
     var dataTask: DataTask? { get }
-    
-    func logData(url: String, method: HTTPMethod, headers: [String : String], body: Data?)
 }
 
 public struct AnyEncodable: Encodable {
@@ -112,7 +110,10 @@ extension APICall {
             request.url = queryItems(url: url, encoder: encoder)
         }
         
-        logData(url: url.absoluteString, method: method, headers: request.allHTTPHeaderFields ?? [:], body: request.httpBody)
+        APIService.logData(url: url.absoluteString, 
+                           method: method, 
+                           headers: request.allHTTPHeaderFields ?? [:], 
+                           body: request.httpBody)
         
         return request
     }
@@ -163,7 +164,10 @@ extension APICall {
             }
         }
         
-        logData(url: url.absoluteString, method: method, headers: request.allHTTPHeaderFields ?? [:], body: request.httpBody)
+        APIService.logData(url: url.absoluteString,
+                           method: method, 
+                           headers: request.allHTTPHeaderFields ?? [:],
+                           body: request.httpBody)
         
         return request
     }
@@ -195,15 +199,13 @@ extension APICall {
         return try encoder.encode(params)
     }
     
-    func logData(url: String, method: HTTPMethod, headers: [String : String], body: Data?) {
-        log.info("REQUEST: \(url) - METHOD: \(method.method) \nHEADERS: \(headers.json) \nBODY: \(body?.toDictionary?.json ?? "Empty")")
-    }
+    
 }
 
 public enum HTTPMethod {
     case connect, delete, get, head, options, patch, post, put, trace
     
-    fileprivate var method: String {
+    var method: String {
         switch self {
         case .connect: return "CONNECT"
         case .delete: return "DELETE"

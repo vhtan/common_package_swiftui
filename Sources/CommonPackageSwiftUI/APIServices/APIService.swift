@@ -44,6 +44,10 @@ open class APIService: NSObject {
         case hasSSL
         case path(String)
     }
+    
+    static public func logData(url: String, method: HTTPMethod, headers: [String : String], body: Data?) {
+        log.info("REQUEST: \(url) - METHOD: \(method.method) \nHEADERS: \(headers.json) \nBODY: \(body?.toDictionary?.json ?? "Empty")")
+    }
 }
 
 extension APIService: URLSessionDelegate {
