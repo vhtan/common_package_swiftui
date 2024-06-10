@@ -48,6 +48,14 @@ open class APIService: NSObject {
     static public func logData(url: String, method: HTTPMethod, headers: [String : String], body: Data?) {
         log.info("REQUEST: \(url) - METHOD: \(method.method) \nHEADERS: \(headers.json) \nBODY: \(body?.toDictionary?.json ?? "Empty")")
     }
+    
+    static public func queryItems(url: URL,
+                                  queryItems: [URLQueryItem]?,
+                                  encoder: JSONEncoder) -> URL? {
+        var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
+        urlComponents?.queryItems = queryItems
+        return urlComponents?.url
+    }
 }
 
 extension APIService: URLSessionDelegate {

@@ -93,30 +93,34 @@ private extension URLQueryItem {
 
 extension APICall {
     
-    public func urlRequestMexc(baseURL: URL, encoder: JSONEncoder, headers: [String : String]) -> URLRequest {
-        let url = baseURL.appendingPathComponent(path)
-        var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData)
-        request.httpMethod = method.method
-        
-        var baseHeaders = headers
-        if let apiHeaders = self.headers {
-            apiHeaders.forEach { baseHeaders[$0.key] = $0.value }
-        }
-        request.allHTTPHeaderFields = baseHeaders
-        
-        if method == .get {
-            request.url = queryItems(url: url, encoder: encoder)
-        } else {
-            request.url = queryItems(url: url, encoder: encoder)
-        }
-        
-        APIService.logData(url: url.absoluteString, 
-                           method: method, 
-                           headers: request.allHTTPHeaderFields ?? [:], 
-                           body: request.httpBody)
-        
-        return request
-    }
+//    public func urlRequestMexc(baseURL: URL, encoder: JSONEncoder, headers: [String : String]) -> URLRequest {
+//        let url = baseURL.appendingPathComponent(path)
+//        var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData)
+//        request.httpMethod = method.method
+//        
+//        var baseHeaders = headers
+//        if let apiHeaders = self.headers {
+//            apiHeaders.forEach { baseHeaders[$0.key] = $0.value }
+//        }
+//        request.allHTTPHeaderFields = baseHeaders
+//        
+//        if method == .get {
+//            request.url = APIService.queryItems(url: url,
+//                                     queryItems: dataTask?.queryItem(encoder: encoder),
+//                                     encoder: encoder)
+//        } else {
+//            request.url = APIService.queryItems(url: url,
+//                                     queryItems: dataTask?.queryItem(encoder: encoder),
+//                                     encoder: encoder)
+//        }
+//        
+//        APIService.logData(url: url.absoluteString, 
+//                           method: method, 
+//                           headers: request.allHTTPHeaderFields ?? [:], 
+//                           body: request.httpBody)
+//        
+//        return request
+//    }
     
     public func urlRequest(baseURL: URL, encoder: JSONEncoder, headers: [String : String]) -> URLRequest {
         let url = baseURL.appendingPathComponent(path)
@@ -130,7 +134,9 @@ extension APICall {
         request.allHTTPHeaderFields = baseHeaders
         
         if method == .get {
-            request.url = queryItems(url: url, encoder: encoder)
+            request.url = APIService.queryItems(url: url,
+                                                queryItems: dataTask?.queryItem(encoder: encoder), 
+                                                encoder: encoder)
             request.allHTTPHeaderFields?["Content-Type"] = "application/x-www-form-urlencoded; charset=utf-8"
         } else {
             request.allHTTPHeaderFields?["Content-Type"] = "application/json"
@@ -172,12 +178,6 @@ extension APICall {
         return request
     }
     
-    private func queryItems(url: URL, encoder: JSONEncoder) -> URL? {
-        var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
-        urlComponents?.queryItems = dataTask?.queryItem(encoder: encoder)
-        return urlComponents?.url
-    }
-    
     private func createData(binaryData: Data, name: String, mimeType: String, boundary: String) -> Data {
         var postContent = "--\(boundary)\r\n"
         let fileName = "\(UUID().uuidString).jpeg"
@@ -198,14 +198,12 @@ extension APICall {
     func customJSONEncodable<T: Encodable>(_ params: T, encoder: JSONEncoder) throws -> Data {
         return try encoder.encode(params)
     }
-    
-    
 }
 
 public enum HTTPMethod {
     case connect, delete, get, head, options, patch, post, put, trace
     
-    var method: String {
+    public var method: String {
         switch self {
         case .connect: return "CONNECT"
         case .delete: return "DELETE"
