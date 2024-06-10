@@ -57,7 +57,7 @@ extension DataTask {
         }
     }
     
-    fileprivate func queryItem(encoder: JSONEncoder) -> [URLQueryItem]? {
+    public func queryItem(encoder: JSONEncoder) -> [URLQueryItem]? {
         switch self {
         case let .encodable(v):
             return v.asDictionary(encoder: encoder)?.map { URLQueryItem(name: $0.key, 
