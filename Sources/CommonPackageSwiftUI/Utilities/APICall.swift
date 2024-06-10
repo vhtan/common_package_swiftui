@@ -12,6 +12,8 @@ public protocol APICall {
     var method: HTTPMethod { get }
     var headers: [String : String]? { get }
     var dataTask: DataTask? { get }
+    
+    func logData(url: String, method: HTTPMethod, headers: [String : String], body: Data?)
 }
 
 public struct AnyEncodable: Encodable {
@@ -131,7 +133,6 @@ extension APICall {
             request.allHTTPHeaderFields?["Content-Type"] = "application/x-www-form-urlencoded; charset=utf-8"
         } else {
             request.allHTTPHeaderFields?["Content-Type"] = "application/json"
-//            request.url = queryItems(url: url, encoder: encoder)
             do {
                 switch dataTask {
                 case let .encodable(v):
@@ -194,7 +195,7 @@ extension APICall {
         return try encoder.encode(params)
     }
     
-    private func logData(url: String, method: HTTPMethod, headers: [String : String], body: Data?) {
+    func logData(url: String, method: HTTPMethod, headers: [String : String], body: Data?) {
         log.info("REQUEST: \(url) - METHOD: \(method.method) \nHEADERS: \(headers.json) \nBODY: \(body?.toDictionary?.json ?? "Empty")")
     }
 }
