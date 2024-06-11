@@ -27,8 +27,7 @@ public struct AnyEncodable: Encodable {
     }
 }
 
-public struct AnyDecodable: Decodable {
-}
+public struct AnyDecodable: Decodable { }
 
 public enum DataTask {
     case encodable(Encodable)
@@ -92,35 +91,6 @@ private extension URLQueryItem {
 }
 
 extension APICall {
-    
-//    public func urlRequestMexc(baseURL: URL, encoder: JSONEncoder, headers: [String : String]) -> URLRequest {
-//        let url = baseURL.appendingPathComponent(path)
-//        var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData)
-//        request.httpMethod = method.method
-//        
-//        var baseHeaders = headers
-//        if let apiHeaders = self.headers {
-//            apiHeaders.forEach { baseHeaders[$0.key] = $0.value }
-//        }
-//        request.allHTTPHeaderFields = baseHeaders
-//        
-//        if method == .get {
-//            request.url = APIService.queryItems(url: url,
-//                                     queryItems: dataTask?.queryItem(encoder: encoder),
-//                                     encoder: encoder)
-//        } else {
-//            request.url = APIService.queryItems(url: url,
-//                                     queryItems: dataTask?.queryItem(encoder: encoder),
-//                                     encoder: encoder)
-//        }
-//        
-//        APIService.logData(url: url.absoluteString, 
-//                           method: method, 
-//                           headers: request.allHTTPHeaderFields ?? [:], 
-//                           body: request.httpBody)
-//        
-//        return request
-//    }
     
     public func urlRequest(baseURL: URL, encoder: JSONEncoder, headers: [String : String]) -> URLRequest {
         let url = baseURL.appendingPathComponent(path)

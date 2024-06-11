@@ -11,10 +11,10 @@ import Combine
 open class APIService: NSObject {
     lazy public private (set) var session: URLSession = {
         let configuration = URLSessionConfiguration.default
-        configuration.timeoutIntervalForRequest = 30
-        configuration.timeoutIntervalForResource = 30
+        configuration.timeoutIntervalForRequest = 20
+        configuration.timeoutIntervalForResource = 20
         configuration.waitsForConnectivity = true
-        configuration.httpMaximumConnectionsPerHost = 5
+        configuration.httpMaximumConnectionsPerHost = 10
         configuration.requestCachePolicy = .returnCacheDataElseLoad
         configuration.urlCache = .shared
         return URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
