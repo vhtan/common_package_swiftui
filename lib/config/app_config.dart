@@ -19,8 +19,7 @@ class Environment {
   // build: flutter build -t lib/main.dart --dart-define=env=stg
   // flutter build apk --dart-define=env=stg
   Future<void> initConfig() async {
-    const environmentParam =
-        String.fromEnvironment('env', defaultValue: 'prod');
+    const environmentParam = String.fromEnvironment('env', defaultValue: 'stg');
     switch (environmentParam) {
       case 'stg':
         environmentConfig = Env.STAG;
