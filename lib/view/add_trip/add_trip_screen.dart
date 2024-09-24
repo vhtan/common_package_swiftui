@@ -539,7 +539,7 @@ class _AddTripScreen extends State<AddTripScreen> {
                     });
                   },
                   inputFormatters: [
-                    CurrencyTextInputFormatter(
+                    CurrencyTextInputFormatter.currency(
                       locale: 'vi',
                       decimalDigits: 0,
                       symbol: '',
